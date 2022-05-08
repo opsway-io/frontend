@@ -11,7 +11,7 @@ import StatusPagesView from "./views/Dashboard/StatusPages";
 import MonitorsView from "./views/Dashboard/Monitors";
 import LoginView from "./views/Login";
 import NotFoundView from "./views/Errors/404";
-import TeamView from "./views/Dashboard/Team";
+import TeamView from "./views/Dashboard/People";
 import Account from "./views/Dashboard/Account";
 
 const root = ReactDOM.createRoot(document.getElementById("root") as HTMLElement);

@@ -1,11 +1,14 @@
 import { Avatar, Button, Card, Chip, List, ListItemAvatar, ListItemButton, ListItemText, Stack } from "@mui/material";
-import { FunctionComponent } from "react";
+import { FunctionComponent, useState } from "react";
 import Container from "../../../components/Container";
 import ContainerHeader from "../../../components/Container/header";
 import * as falso from "@ngneat/falso";
 import { IoLinkOutline, IoMailOutline } from "react-icons/io5";
+import CustomizedDialogs from "./dialog";
 
 const TeamView: FunctionComponent = () => {
+    const [open, setOpen] = useState(false);
+
     const n = 10;
     const names = falso.randFullName({ length: n });
     const emails = falso.randEmail({ length: n });
@@ -34,7 +37,9 @@ const TeamView: FunctionComponent = () => {
 
             <Stack direction="row" alignItems="left" spacing={2}>
                 <Button startIcon={<IoLinkOutline />}>Invite people with a link</Button>
-                <Button startIcon={<IoMailOutline />}>Invite people by email</Button>
+                <Button startIcon={<IoMailOutline />} onClick={(_) => setOpen(true)}>
+                    Invite people by email
+                </Button>
             </Stack>
 
             <Card>
@@ -50,6 +55,13 @@ const TeamView: FunctionComponent = () => {
                     ))}
                 </List>
             </Card>
+
+            <CustomizedDialogs
+                open={open}
+                onClose={() => {
+                    setOpen(false);
+                }}
+            />
         </Container>
     );
 };

@@ -21,7 +21,7 @@ import Container from "../../../components/Container";
 import ContainerHeader from "../../../components/Container/header";
 import PulsingDot from "../../../components/PulsingDot";
 import ResultThumbGraph from "../../../components/ResultThumbGraph";
-import CustomizedDialogs from "./dialog";
+import CustomizedDialogs from "../People/dialog";
 
 const MonitorsView: FunctionComponent = () => {
     const theme = useTheme();

@@ -48,14 +48,15 @@ const BootstrapDialogTitle = (props: DialogTitleProps) => {
     );
 };
 
-export default function CustomizedDialogs() {
-    const [open, setOpen] = React.useState(true);
+export default function CustomizedDialogs(props: {open?: boolean, onClose: () => void}) {
+    const [open, setOpen] = React.useState(false);
 
-    const handleClickOpen = () => {
-        setOpen(true);
-    };
+    React.useEffect(() => {
+        setOpen(!!props.open);
+    }, [props.open]);
+
     const handleClose = () => {
-        setOpen(false);
+        props.onClose();
     };
 
     return (

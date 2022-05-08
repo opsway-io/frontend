@@ -36,7 +36,9 @@ const TeamView: FunctionComponent = () => {
             <ContainerHeader>People</ContainerHeader>
 
             <Stack direction="row" alignItems="left" spacing={2}>
-                <Button startIcon={<IoLinkOutline />}>Invite people with a link</Button>
+                <Button startIcon={<IoLinkOutline />} onClick={(_) => setOpen(true)}>
+                    Invite people with a link
+                </Button>
                 <Button startIcon={<IoMailOutline />} onClick={(_) => setOpen(true)}>
                     Invite people by email
                 </Button>

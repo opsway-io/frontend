@@ -46,12 +46,22 @@ const MonitorsView: FunctionComponent = () => {
                             Pause all
                         </Button>
 
-                        <Button startIcon={<IoPlay color="#84be79" />}>
-                            Run all now
-                        </Button>
+                        <Button startIcon={<IoPlay color="#84be79" />}>Run all now</Button>
                     </Stack>
                 </CardContent>
             </Card>
+
+            <Card sx={{
+                textAlign: "center",
+                backgroundColor: theme.palette.success.main,
+                color: theme.palette.success.contrastText,
+                fontSize: theme.typography.h6.fontSize,
+                fontWeight: 500,
+                padding: theme.spacing(2),
+            }}>
+                5 checks are passing
+            </Card>
+
             <Card>
                 <CardContent>
                     <Stack direction="row" alignContent="center">

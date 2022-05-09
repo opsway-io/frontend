@@ -20,7 +20,7 @@ const useAuthentication = create<AuthenticationState>()(
             },
 
             logIn: (email: string, password: string): boolean => {
-                set({ accessToken: "accessToken" });
+                set({ accessToken: "oC5ash2oot6Nohliy3ohfahfaichongu" });
                 return true;
             },
         }),

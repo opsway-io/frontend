@@ -10,7 +10,7 @@ const ProtectedRoute: FunctionComponent<ProtectedRouteProps> = (props) => {
     const authentication = useAuthentication();
 
     if (!authentication.isAuthenticated()) {
-        return <Navigate to="/login" replace />;
+        return <Navigate to="/login"  replace />;
     }
 
     return <>{props.children}</>;

@@ -33,9 +33,9 @@ interface ResultThumbGraphProps {}
 const ResultThumbGraph: FunctionComponent<ResultThumbGraphProps> = () => {
     return (
         <Container>
-            {new Array(24).fill(1).map((i) => (
-                <LineContainer>
-                    <Line key={i} value={falso.randNumber({ min: 0, max: 100 })} />
+            {new Array(24).fill(1).map((_, i) => (
+                <LineContainer key={i}>
+                    <Line value={falso.randNumber({ min: 0, max: 100 })} />
                 </LineContainer>
             ))}
         </Container>

@@ -34,6 +34,10 @@ const LoginForm: FunctionComponent<LoginFormProps> = () => {
             style={{
                 width: "300px",
             }}
+            onSubmit={(e) => {
+                e.preventDefault();
+                handleLogin();
+            }}
         >
             <Stack spacing={2}>
                 <FormControl disabled={loading}>

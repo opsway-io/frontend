@@ -49,7 +49,7 @@ const PeopleView: FunctionComponent = () => {
             <Card>
                 <List disablePadding>
                     {names.map((name, i) => (
-                        <ListItemButton divider>
+                        <ListItemButton divider key={i}>
                             <ListItemAvatar color="grey">
                                 <Avatar src={images[i]} />
                             </ListItemAvatar>

@@ -1,4 +1,4 @@
-import { Avatar, Button, Chip, Paper, styled, useTheme } from "@mui/material";
+import { Button, Chip, Paper, styled, useTheme } from "@mui/material";
 import { FunctionComponent } from "react";
 import { AiOutlineTeam } from "react-icons/ai";
 import { IoBuildOutline, IoPulseOutline } from "react-icons/io5";
@@ -6,6 +6,7 @@ import { GoBrowser, GoGraph } from "react-icons/go";
 import { RiAlarmWarningLine } from "react-icons/ri";
 import { NavLink } from "react-router-dom";
 import useUser from "../../stores/user";
+import Avatar from "../Avatar";
 
 const SidebarContainer = styled(Paper)(({ theme }) => ({
     display: "flex",

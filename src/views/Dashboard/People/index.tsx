@@ -1,4 +1,4 @@
-import { Avatar, Button, Card, Chip, List, ListItemAvatar, ListItemButton, ListItemText, Stack } from "@mui/material";
+import { Button, Card, Chip, List, ListItemAvatar, ListItemButton, ListItemText, Stack } from "@mui/material";
 import { FunctionComponent, useState } from "react";
 import Container from "../../../components/Container";
 import ContainerHeader from "../../../components/Container/header";
@@ -6,6 +6,7 @@ import * as falso from "@ngneat/falso";
 import { IoLinkOutline, IoMailOutline } from "react-icons/io5";
 import EmailsDialog from "./EmailsDialog";
 import LinkDialog from "./LinkDialog";
+import Avatar from "../../../components/Avatar";
 
 const PeopleView: FunctionComponent = () => {
     const [openLinkDialog, setOpenLinkDialog] = useState(false);

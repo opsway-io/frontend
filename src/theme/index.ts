@@ -61,7 +61,13 @@ const theme = createTheme({
         },
         h6: {
             fontWeight: 500,
-        }
+        },
+        body1: {
+            fontSize: "0.9rem"
+        },
+        body2: {
+            fontSize: "1rem"
+        },
     },
     transitions: {
         duration: {

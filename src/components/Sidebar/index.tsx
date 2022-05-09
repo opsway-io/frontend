@@ -11,16 +11,17 @@ const SidebarContainer = styled(Paper)(({ theme }) => ({
     display: "flex",
     flexDirection: "column",
     height: "100%",
-    width: 300,
+    width: 250,
     flexShrink: 0,
-    padding: theme.spacing(4),
+    padding: theme.spacing(2),
     paddingTop: theme.spacing(6),
     boxSizing: "border-box",
 }));
 
 const SidebarLogo = styled("header")(({ theme }) => ({
-    fontSize: 24,
-    fontWeight: "bold",
+    fontSize: theme.typography.h5.fontSize,
+    fontWeight: "500",
+    opacity: 0.8,
     marginBottom: theme.spacing(4),
     color: theme.palette.primary.main,
 }));
@@ -31,9 +32,13 @@ const SidebarActions = styled("div")(({ theme }) => ({
 }));
 
 const Sidebar: FunctionComponent = () => {
+    const theme = useTheme();
+
     return (
         <SidebarContainer sx={{ display: { md: "inherit", xs: "none" } }}>
-            <SidebarLogo>opsway</SidebarLogo>
+            {/* <SidebarLogo>
+                opsway
+            </SidebarLogo> */}
 
             <SidebarItem to="/monitors" text="Monitors" icon={<IoPulseOutline />} />
             <SidebarItem to="/incidents" text="Incidents" icon={<RiAlarmWarningLine />} count={2} />
@@ -50,8 +55,8 @@ const Sidebar: FunctionComponent = () => {
                         justifyContent: "left",
                         textTransform: "none",
                         fontWeight: 500,
-                        fontSize: "1rem",
-                        padding: "8px",
+                        fontSize: theme.typography.body2.fontSize,
+                        padding: theme.spacing(1),
                         flex: 1,
                         whiteSpace: "nowrap",
                         textOverflow: "ellipsis",
@@ -59,7 +64,7 @@ const Sidebar: FunctionComponent = () => {
                     }}
                     to="/account"
                 >
-                    {falso.randFullName()}
+                    {falso.randFirstName()}
                 </Button>
             </SidebarActions>
         </SidebarContainer>
@@ -74,6 +79,8 @@ interface SidebarItemProps {
 }
 
 const SidebarItem: FunctionComponent<SidebarItemProps> = (props) => {
+    const theme = useTheme();
+
     return (
         <Button
             startIcon={props.icon}
@@ -81,8 +88,8 @@ const SidebarItem: FunctionComponent<SidebarItemProps> = (props) => {
                 justifyContent: "left",
                 textTransform: "none",
                 fontWeight: 500,
-                fontSize: "1rem",
-                padding: "8px",
+                fontSize: theme.typography.body2.fontSize,
+                padding: theme.spacing(1),
             }}
             component={NavLink}
             to={props.to}

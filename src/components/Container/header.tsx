@@ -8,7 +8,7 @@ interface ContainerHeaderProps {
 const ContainerHeader: FunctionComponent<ContainerHeaderProps> = (props) => {
     return (
         <Typography
-            variant="h4"
+            variant="h5"
             style={{
                 margin: "0",
             }}

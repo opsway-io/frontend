@@ -31,7 +31,7 @@ const MonitorsView: FunctionComponent = () => {
             <ContainerHeader>Monitors</ContainerHeader>
 
             <Card>
-                <CardContent>
+                <CardContent sx={{ '&:last-child': { pb: theme.spacing(2) }}}>
                     <Stack spacing={2} direction="row" alignItems="center">
                         <PulsingDot />
 

@@ -4,33 +4,15 @@ import "./index.scss";
 import reportWebVitals from "./reportWebVitals";
 import { ThemeProvider } from "@mui/material";
 import theme from "./theme";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
-import IncidentsView from "./views/Dashboard/Incidents";
-import MaintenanceView from "./views/Dashboard/Maintenance";
-import StatusPagesView from "./views/Dashboard/StatusPages";
-import MonitorsView from "./views/Dashboard/Monitors";
-import LoginView from "./views/Login";
-import NotFoundView from "./views/Errors/404";
-import TeamView from "./views/Dashboard/People";
-import Account from "./views/Dashboard/Account";
+import { BrowserRouter} from "react-router-dom";
+import Routes from "./Routes/Routes";
 
 const root = ReactDOM.createRoot(document.getElementById("root") as HTMLElement);
 root.render(
     <React.StrictMode>
         <BrowserRouter>
             <ThemeProvider theme={theme}>
-                <Routes>
-                    <Route path="/account" element={<Account />} />
-                    <Route path="/monitors" element={<MonitorsView />} />
-                    <Route path="/incidents" element={<IncidentsView />} />
-                    <Route path="/maintenance" element={<MaintenanceView />} />
-                    <Route path="/status-pages" element={<StatusPagesView />} />
-                    <Route path="/people" element={<TeamView />} />
-
-                    <Route path="/login" element={<LoginView />} />
-
-                    <Route path="*" element={<NotFoundView />} />
-                </Routes>
+                <Routes />
             </ThemeProvider>
         </BrowserRouter>
     </React.StrictMode>

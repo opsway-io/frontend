@@ -91,6 +91,8 @@ theme.components = {
         styleOverrides: {
             root: {
                 background: "#eef2f7",
+
+        
             },
         },
     },
@@ -105,6 +107,10 @@ theme.components = {
                 },
                 "&:active": {
                     opacity: 0.6,
+                },
+                "&:focus": {
+                    background: theme.palette.grey[200],
+                    // boxShadow: `inset 0 0 0 1px ${theme.palette.grey[500]}`,
                 },
             },
         },

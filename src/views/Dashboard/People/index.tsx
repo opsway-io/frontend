@@ -4,10 +4,12 @@ import Container from "../../../components/Container";
 import ContainerHeader from "../../../components/Container/header";
 import * as falso from "@ngneat/falso";
 import { IoLinkOutline, IoMailOutline } from "react-icons/io5";
-import CustomizedDialogs from "./dialog";
+import EmailsDialog from "./EmailsDialog";
+import LinkDialog from "./LinkDialog";
 
-const TeamView: FunctionComponent = () => {
-    const [open, setOpen] = useState(false);
+const PeopleView: FunctionComponent = () => {
+    const [openLinkDialog, setOpenLinkDialog] = useState(false);
+    const [openEmailsDialog, setOpenEmailsDialog] = useState(false);
 
     const n = 10;
     const names = falso.randFullName({ length: n });
@@ -36,10 +38,10 @@ const TeamView: FunctionComponent = () => {
             <ContainerHeader>People</ContainerHeader>
 
             <Stack direction="row" alignItems="left" spacing={2}>
-                <Button startIcon={<IoLinkOutline />} onClick={(_) => setOpen(true)}>
+                <Button startIcon={<IoLinkOutline />} onClick={(_) => setOpenLinkDialog(true)}>
                     Invite people with a link
                 </Button>
-                <Button startIcon={<IoMailOutline />} onClick={(_) => setOpen(true)}>
+                <Button startIcon={<IoMailOutline />} onClick={(_) => setOpenEmailsDialog(true)}>
                     Invite people by email
                 </Button>
             </Stack>
@@ -58,14 +60,10 @@ const TeamView: FunctionComponent = () => {
                 </List>
             </Card>
 
-            <CustomizedDialogs
-                open={open}
-                onClose={() => {
-                    setOpen(false);
-                }}
-            />
+            <EmailsDialog open={openEmailsDialog} onClose={() => setOpenEmailsDialog(false)}/>
+            <LinkDialog open={openLinkDialog} onClose={() => setOpenLinkDialog(false)}/>
         </Container>
     );
 };
 
-export default TeamView;
+export default PeopleView;

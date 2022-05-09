@@ -10,13 +10,24 @@ import {
     Stack,
 } from "@mui/material";
 import { FunctionComponent, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import useAuthentication from "../../stores/authentication";
 
 interface LoginFormProps {}
 
 const LoginForm: FunctionComponent<LoginFormProps> = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [loading, setLoading] = useState(false);
+
+    const authentication = useAuthentication();
+    const navigate = useNavigate();
+
+    const handleLogin = async () => {
+        authentication.logIn("admin", "admin");
+        navigate("/monitors", {
+            replace: true,
+        });
+    };
 
     return (
         <form
@@ -51,7 +62,7 @@ const LoginForm: FunctionComponent<LoginFormProps> = () => {
                     />
                 </FormControl>
 
-                <Button color="primary" variant="contained" size="large" type="submit" component={Link} to="/monitors">
+                <Button color="primary" variant="contained" size="large" type="submit" onClick={() => handleLogin()}>
                     Login
                 </Button>
             </Stack>

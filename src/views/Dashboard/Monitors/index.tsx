@@ -21,10 +21,11 @@ import Container from "../../../components/Container";
 import ContainerHeader from "../../../components/Container/header";
 import PulsingDot from "../../../components/PulsingDot";
 import ResultThumbGraph from "../../../components/ResultThumbGraph";
-import CustomizedDialogs from "../People/dialog";
+import useMonitors from "../../../stores/monitors";
 
 const MonitorsView: FunctionComponent = () => {
     const theme = useTheme();
+    const monitorsStore = useMonitors();
 
     return (
         <Container>
@@ -94,8 +95,8 @@ const MonitorsView: FunctionComponent = () => {
                 </CardContent>
 
                 <List disablePadding>
-                    {[1, 2, 3, 4, 5].map((item, index) => (
-                        <ListItem divider>
+                    {monitorsStore.monitors?.map((monitor, index) => (
+                        <ListItem divider key={index}>
                             <ListItemAvatar>
                                 <Avatar
                                     style={{
@@ -107,8 +108,8 @@ const MonitorsView: FunctionComponent = () => {
                             </ListItemAvatar>
 
                             <ListItemText
-                                primary="User API"
-                                secondary="2 minutes ago"
+                                primary={monitor.name}
+                                secondary={monitor.lastRunTimestamp ? `Last run ${monitor.lastRunTimestamp}` : "No runs yet"}
                                 style={{
                                     flex: "0 0 auto",
                                     marginRight: theme.spacing(4),

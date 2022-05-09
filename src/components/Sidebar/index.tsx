@@ -1,11 +1,11 @@
-import { Avatar, Button, ButtonBase, Chip, Paper, styled, Typography, useTheme } from "@mui/material";
+import { Avatar, Button, Chip, Paper, styled, useTheme } from "@mui/material";
 import { FunctionComponent } from "react";
 import { AiOutlineTeam } from "react-icons/ai";
 import { IoBuildOutline, IoPulseOutline } from "react-icons/io5";
 import { GoBrowser, GoGraph } from "react-icons/go";
-import { RiAlarmWarningLine, RiPhoneLine } from "react-icons/ri";
-import { Link, NavLink } from "react-router-dom";
-import * as falso from "@ngneat/falso";
+import { RiAlarmWarningLine } from "react-icons/ri";
+import { NavLink } from "react-router-dom";
+import useUser from "../../stores/user";
 
 const SidebarContainer = styled(Paper)(({ theme }) => ({
     display: "flex",
@@ -33,6 +33,7 @@ const SidebarActions = styled("div")(({ theme }) => ({
 
 const Sidebar: FunctionComponent = () => {
     const theme = useTheme();
+    const user = useUser();
 
     return (
         <SidebarContainer sx={{ display: { md: "inherit", xs: "none" } }}>
@@ -49,8 +50,7 @@ const Sidebar: FunctionComponent = () => {
 
             <SidebarActions>
                 <Button
-                    startIcon={<Avatar src={falso.randImg()} />}
-                    component={NavLink}
+                    startIcon={<Avatar src={user.picture} />}
                     style={{
                         justifyContent: "left",
                         textTransform: "none",
@@ -62,9 +62,10 @@ const Sidebar: FunctionComponent = () => {
                         textOverflow: "ellipsis",
                         overflow: "hidden",
                     }}
+                    component={NavLink}
                     to="/account"
                 >
-                    {falso.randFirstName()}
+                    {user.firstName} {user.lastName}
                 </Button>
             </SidebarActions>
         </SidebarContainer>

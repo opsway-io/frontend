@@ -4,25 +4,26 @@ import { GoSignOut } from "react-icons/go";
 import { Link } from "react-router-dom";
 import Container from "../../../components/Container";
 import ContainerHeader from "../../../components/Container/header";
+import useAuthentication from "../../../stores/authentication";
+import useUser from "../../../stores/user";
 
-const OnCallView: FunctionComponent = () => {
+const AccountView: FunctionComponent = () => {
+    const user = useUser();
+    const authentication = useAuthentication();
+
     return (
         <Container>
             <ContainerHeader>Account</ContainerHeader>
 
             <Stack direction="row" alignItems="left" spacing={2}>
-                <Button startIcon={<GoSignOut />} component={Link} to="/login">
+                <Button startIcon={<GoSignOut />} onClick={authentication.logOut}>
                     Sign me out
                 </Button>
             </Stack>
 
             <Card>
                 <CardHeader title="Your information" />
-                <CardContent>
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Illum nesciunt sed mollitia at. Unde quidem
-                    voluptas quod accusantium laudantium! Saepe ipsam cupiditate corrupti, sunt nostrum ratione
-                    laboriosam asperiores sed provident.
-                </CardContent>
+                <CardContent>{user.email}</CardContent>
             </Card>
 
             <Card>
@@ -46,4 +47,4 @@ const OnCallView: FunctionComponent = () => {
     );
 };
 
-export default OnCallView;
+export default AccountView;

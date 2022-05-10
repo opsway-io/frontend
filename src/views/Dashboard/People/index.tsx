@@ -7,21 +7,13 @@ import { IoLinkOutline, IoMailOutline } from "react-icons/io5";
 import EmailsDialog from "./EmailsDialog";
 import LinkDialog from "./LinkDialog";
 import Avatar from "../../../components/Avatar";
+import usePeople from "../../../stores/people";
 
 const PeopleView: FunctionComponent = () => {
     const [openLinkDialog, setOpenLinkDialog] = useState(false);
     const [openEmailsDialog, setOpenEmailsDialog] = useState(false);
 
-    const n = 10;
-    const names = falso.randFullName({ length: n });
-    const emails = falso.randEmail({ length: n });
-    const chips = falso.rand(["Owner", "Manager", "Member"], { length: n });
-    const images = falso.randImg({
-        width: 40,
-        height: 40,
-        category: "people",
-        length: n,
-    });
+    const people = usePeople();
 
     const chipToColor = (chip: string) => {
         switch (chip) {
@@ -35,35 +27,37 @@ const PeopleView: FunctionComponent = () => {
     };
 
     return (
-        <Container>
-            <ContainerHeader>People</ContainerHeader>
+        <>
+            <Container>
+                <ContainerHeader>People</ContainerHeader>
 
-            <Stack direction="row" alignItems="left" spacing={2}>
-                <Button startIcon={<IoLinkOutline />} onClick={(_) => setOpenLinkDialog(true)}>
-                    Invite people with a link
-                </Button>
-                <Button startIcon={<IoMailOutline />} onClick={(_) => setOpenEmailsDialog(true)}>
-                    Invite people by email
-                </Button>
-            </Stack>
+                <Stack direction="row" alignItems="left" spacing={2}>
+                    <Button startIcon={<IoLinkOutline />} onClick={(_) => setOpenLinkDialog(true)}>
+                        Invite people with a link
+                    </Button>
+                    <Button startIcon={<IoMailOutline />} onClick={(_) => setOpenEmailsDialog(true)}>
+                        Invite people by email
+                    </Button>
+                </Stack>
 
-            <Card>
-                <List disablePadding>
-                    {names.map((name, i) => (
-                        <ListItemButton divider key={i}>
-                            <ListItemAvatar color="grey">
-                                <Avatar src={images[i]} />
-                            </ListItemAvatar>
-                            <ListItemText primary={name} secondary={emails[i]} />
-                            <Chip label={chips[i]} color={chipToColor(chips[i])} />
-                        </ListItemButton>
-                    ))}
-                </List>
-            </Card>
+                <Card>
+                    <List disablePadding>
+                        {people.users?.map((user, i) => (
+                            <ListItemButton divider key={i}>
+                                <ListItemAvatar color="grey">
+                                    <Avatar src={user.picture} />
+                                </ListItemAvatar>
+                                <ListItemText primary={`${user.firstName} ${user.lastName}`} secondary={user.email} />
+                                <Chip label={"Member"} color={chipToColor("Member")} />
+                            </ListItemButton>
+                        ))}
+                    </List>
+                </Card>
+            </Container>
 
-            <EmailsDialog open={openEmailsDialog} onClose={() => setOpenEmailsDialog(false)}/>
-            <LinkDialog open={openLinkDialog} onClose={() => setOpenLinkDialog(false)}/>
-        </Container>
+            <EmailsDialog open={openEmailsDialog} onClose={() => setOpenEmailsDialog(false)} />
+            <LinkDialog open={openLinkDialog} onClose={() => setOpenLinkDialog(false)} />
+        </>
     );
 };
 

@@ -1,5 +1,5 @@
-import { Button, Chip, Paper, styled, useTheme } from "@mui/material";
-import { FunctionComponent } from "react";
+import { Button, Chip, Paper, styled } from "@mui/material";
+import { FunctionComponent, memo } from "react";
 import { AiOutlineTeam } from "react-icons/ai";
 import { IoBuildOutline, IoPulseOutline } from "react-icons/io5";
 import { GoBrowser, GoGraph } from "react-icons/go";
@@ -19,29 +19,11 @@ const SidebarContainer = styled(Paper)(({ theme }) => ({
     boxSizing: "border-box",
 }));
 
-const SidebarLogo = styled("header")(({ theme }) => ({
-    fontSize: theme.typography.h5.fontSize,
-    fontWeight: "500",
-    opacity: 0.8,
-    marginBottom: theme.spacing(4),
-    color: theme.palette.primary.main,
-}));
-
-const SidebarActions = styled("div")(({ theme }) => ({
-    marginTop: "auto",
-    display: "flex",
-}));
-
 const Sidebar: FunctionComponent = () => {
-    const theme = useTheme();
     const user = useUser();
 
     return (
         <SidebarContainer sx={{ display: { md: "inherit", xs: "none" } }}>
-            {/* <SidebarLogo>
-                opsway
-            </SidebarLogo> */}
-
             <SidebarItem to="/monitors" text="Monitors" icon={<IoPulseOutline />} />
             <SidebarItem to="/incidents" text="Incidents" icon={<RiAlarmWarningLine />} count={2} />
             <SidebarItem to="/maintenance" text="Maintenance" icon={<IoBuildOutline />} count={1} />
@@ -49,26 +31,7 @@ const Sidebar: FunctionComponent = () => {
             <SidebarItem to="/reports" text="Reports" icon={<GoGraph />} />
             <SidebarItem to="/people" text="People" icon={<AiOutlineTeam />} />
 
-            <SidebarActions>
-                <Button
-                    startIcon={<Avatar src={user.picture} />}
-                    style={{
-                        justifyContent: "left",
-                        textTransform: "none",
-                        fontWeight: 500,
-                        fontSize: theme.typography.body2.fontSize,
-                        padding: theme.spacing(1),
-                        flex: 1,
-                        whiteSpace: "nowrap",
-                        textOverflow: "ellipsis",
-                        overflow: "hidden",
-                    }}
-                    component={NavLink}
-                    to="/account"
-                >
-                    {user.firstName} {user.lastName}
-                </Button>
-            </SidebarActions>
+            <SidebarActions picture={user.picture} name={user.getFullName()} />
         </SidebarContainer>
     );
 };
@@ -81,17 +44,15 @@ interface SidebarItemProps {
 }
 
 const SidebarItem: FunctionComponent<SidebarItemProps> = (props) => {
-    const theme = useTheme();
-
     return (
         <Button
             startIcon={props.icon}
-            style={{
+            sx={{
                 justifyContent: "left",
                 textTransform: "none",
                 fontWeight: 500,
-                fontSize: theme.typography.body2.fontSize,
-                padding: theme.spacing(1),
+                fontSize: (theme) => theme.typography.body2.fontSize,
+                padding: (theme) => theme.spacing(1),
             }}
             component={NavLink}
             to={props.to}
@@ -99,6 +60,41 @@ const SidebarItem: FunctionComponent<SidebarItemProps> = (props) => {
             {props.text}
             {props.count && <Chip style={{ marginLeft: "auto" }} label={props.count} size="small" />}
         </Button>
+    );
+};
+
+const SidebarActionsContainer = styled("div")(({ theme }) => ({
+    marginTop: "auto",
+    display: "flex",
+}));
+
+interface SidebarActionsProps {
+    name?: string;
+    picture?: string;
+}
+
+const SidebarActions: FunctionComponent<SidebarActionsProps> = (props) => {
+    return (
+        <SidebarActionsContainer>
+            <Button
+                startIcon={<Avatar src={props.picture} />}
+                sx={{
+                    justifyContent: "left",
+                    textTransform: "none",
+                    fontWeight: 500,
+                    fontSize: (theme) => theme.typography.body2.fontSize,
+                    padding: (theme) => theme.spacing(1),
+                    flex: 1,
+                    whiteSpace: "nowrap",
+                    textOverflow: "ellipsis",
+                    overflow: "hidden",
+                }}
+                component={NavLink}
+                to="/account"
+            >
+                {props.name}
+            </Button>
+        </SidebarActionsContainer>
     );
 };
 

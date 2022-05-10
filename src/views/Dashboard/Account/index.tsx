@@ -1,7 +1,6 @@
 import { Button, Card, CardContent, CardHeader, Stack } from "@mui/material";
 import { FunctionComponent } from "react";
 import { GoSignOut } from "react-icons/go";
-import { Link } from "react-router-dom";
 import Container from "../../../components/Container";
 import ContainerHeader from "../../../components/Container/header";
 import useAuthentication from "../../../stores/authentication";

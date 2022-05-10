@@ -1,5 +1,6 @@
 import { FunctionComponent } from "react";
 import { Route, Routes as RouterRoutes } from "react-router-dom";
+import DashboardView from "../views/Dashboard";
 import AccountView from "../views/Dashboard/Account";
 import IncidentsView from "../views/Dashboard/Incidents";
 import MaintenanceView from "../views/Dashboard/Maintenance";
@@ -16,61 +17,21 @@ const Routes: FunctionComponent = () => {
     return (
         <RouterRoutes>
             <Route
-                path="/account"
+                path="/"
                 element={
                     <ProtectedRoute>
-                        <AccountView />
+                        <DashboardView />
                     </ProtectedRoute>
                 }
-            />
-            <Route
-                path="/monitors"
-                element={
-                    <ProtectedRoute>
-                        <MonitorsView />
-                    </ProtectedRoute>
-                }
-            />
-            <Route
-                path="/incidents"
-                element={
-                    <ProtectedRoute>
-                        <IncidentsView />
-                    </ProtectedRoute>
-                }
-            />
-            <Route
-                path="/maintenance"
-                element={
-                    <ProtectedRoute>
-                        <MaintenanceView />
-                    </ProtectedRoute>
-                }
-            />
-            <Route
-                path="/status-pages"
-                element={
-                    <ProtectedRoute>
-                        <StatusPagesView />
-                    </ProtectedRoute>
-                }
-            />
-            <Route
-                path="/reports"
-                element={
-                    <ProtectedRoute>
-                        <ReportsView />
-                    </ProtectedRoute>
-                }
-            />
-            <Route
-                path="/people"
-                element={
-                    <ProtectedRoute>
-                        <PeopleView />
-                    </ProtectedRoute>
-                }
-            />
+            >
+                <Route path="/account" element={<AccountView />} />
+                <Route path="/monitors" element={<MonitorsView />} />
+                <Route path="/incidents" element={<IncidentsView />} />
+                <Route path="/maintenance" element={<MaintenanceView />} />
+                <Route path="/status-pages" element={<StatusPagesView />} />
+                <Route path="/reports" element={<ReportsView />} />
+                <Route path="/people" element={<PeopleView />} />
+            </Route>
 
             <Route
                 path="/login"

@@ -1,11 +1,12 @@
 import { Avatar as MuiAvatar, AvatarProps, Skeleton } from "@mui/material";
-import { FunctionComponent, useEffect, useState } from "react";
+import { FunctionComponent, memo, useEffect, useState } from "react";
 
 const Avatar: FunctionComponent<AvatarProps> = (props) => {
-    const [loaded, setLoaded] = useState(false);
+    const [loaded, setLoaded] = useState(true);
 
     useEffect(() => {
         if (props.src) {
+            setLoaded(false);
             const img = new Image();
             img.src = props.src;
             img.onload = () => {
@@ -13,6 +14,7 @@ const Avatar: FunctionComponent<AvatarProps> = (props) => {
             };
         }
     }, [props.src]);
+
 
     return (
         <>

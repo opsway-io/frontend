@@ -10,7 +10,7 @@ const RedirectAuthenticatedRoute: FunctionComponent<RedirectAuthenticatedRoutePr
     const authentication = useAuthentication();
 
     if (authentication.isAuthenticated()) {
-        return <Navigate to="/monitors" replace />;
+        return <Navigate to="/" replace />;
     }
 
     return <>{props.children}</>;

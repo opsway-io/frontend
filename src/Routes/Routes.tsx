@@ -1,5 +1,5 @@
 import { FunctionComponent } from "react";
-import { Route, Routes as RouterRoutes } from "react-router-dom";
+import { Navigate, Route, Routes as RouterRoutes } from "react-router-dom";
 import DashboardView from "../views/Dashboard";
 import AccountView from "../views/Dashboard/Account";
 import IncidentsView from "../views/Dashboard/Incidents";
@@ -17,24 +17,25 @@ const Routes: FunctionComponent = () => {
     return (
         <RouterRoutes>
             <Route
-                path="/"
                 element={
                     <ProtectedRoute>
                         <DashboardView />
                     </ProtectedRoute>
                 }
             >
-                <Route path="/account" element={<AccountView />} />
-                <Route path="/monitors" element={<MonitorsView />} />
-                <Route path="/incidents" element={<IncidentsView />} />
-                <Route path="/maintenance" element={<MaintenanceView />} />
-                <Route path="/status-pages" element={<StatusPagesView />} />
-                <Route path="/reports" element={<ReportsView />} />
-                <Route path="/people" element={<PeopleView />} />
+                <Route index element={<Navigate to="monitors" replace />} />
+
+                <Route path="monitors" element={<MonitorsView />} />
+                <Route path="account" element={<AccountView />} />
+                <Route path="incidents" element={<IncidentsView />} />
+                <Route path="maintenance" element={<MaintenanceView />} />
+                <Route path="status-pages" element={<StatusPagesView />} />
+                <Route path="reports" element={<ReportsView />} />
+                <Route path="people" element={<PeopleView />} />
             </Route>
 
             <Route
-                path="/login"
+                path="login"
                 element={
                     <RedirectAuthenticatedRoute>
                         <LoginView />

@@ -1,13 +1,33 @@
 import { DataGridProps, DataGrid as MuiDataGrid } from "@mui/x-data-grid";
 import { FunctionComponent, useEffect, useRef, useState } from "react";
+import { debounce } from "../../helpers/debounce";
 
 const DataGrid: FunctionComponent<DataGridProps> = (props) => {
-    const [doRender, setDoRender] = useState(false);
+    const [rootRefReady, setRootRefReady] = useState(false);
     const rootRef = useRef<HTMLDivElement>(null);
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const [_, setDimensions] = useState({
+        height: window.innerHeight,
+        width: window.innerWidth,
+    });
+
     useEffect(() => {
-        setDoRender(true);
-    }, [rootRef, doRender]);
+        const debouncedHandleResize = debounce(() => {
+            setDimensions({
+                height: window.innerHeight,
+                width: window.innerWidth,
+            });
+        }, 10);
+
+        window.addEventListener("resize", debouncedHandleResize);
+
+        return () => {
+            window.removeEventListener("resize", debouncedHandleResize);
+        };
+    });
+
+    useEffect(() => setRootRefReady(!!rootRef.current), [rootRef]);
 
     const gridProps: DataGridProps = {
         autoPageSize: true,
@@ -19,10 +39,11 @@ const DataGrid: FunctionComponent<DataGridProps> = (props) => {
         ...props,
         sx: {
             border: "none",
-            "& .MuiDataGrid-cell:focus-within, & .MuiDataGrid-cell:focus, & .MuiDataGrid-columnHeader:focus, & .MuiDataGrid-columnHeader": {
-                outline: "none !important",
-                userSelect: "none",
-            },
+            "& .MuiDataGrid-cell:focus-within, & .MuiDataGrid-cell:focus, & .MuiDataGrid-columnHeader:focus, & .MuiDataGrid-columnHeader":
+                {
+                    outline: "none !important",
+                    userSelect: "none",
+                },
             "& .MuiDataGrid-row:hover, & .MuiDataGrid-row.Mui-selected, & .MuiDataGrid-row.Mui-selected:hover": {
                 backgroundColor: "inherit",
             },
@@ -39,8 +60,8 @@ const DataGrid: FunctionComponent<DataGridProps> = (props) => {
 
     return (
         <div style={{ height: "100%", width: "100%" }} ref={rootRef}>
-            {doRender && rootRef.current && (
-                <div style={{ height: rootRef.current.clientHeight, width: "100%" }}>
+            {rootRefReady && (
+                <div style={{ height: rootRef.current?.clientHeight, width: "100%" }}>
                     <MuiDataGrid {...gridProps} />
                 </div>
             )}

@@ -42,7 +42,7 @@ interface SidebarItemProps {
     to: string;
     count?: number;
 }
-
+    
 const SidebarItem: FunctionComponent<SidebarItemProps> = (props) => {
     return (
         <Button

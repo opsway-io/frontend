@@ -29,4 +29,5 @@ const useAuthentication = create<AuthenticationState>()(
         }
     )
 );
+
 export default useAuthentication;

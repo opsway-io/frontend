@@ -14,11 +14,13 @@ import {
     ListItem,
     useTheme,
 } from "@mui/material";
+import { GridColDef, GridRowsProp } from "@mui/x-data-grid";
 import { FunctionComponent } from "react";
 import { IoCheckmark, IoSearch, IoPause, IoPlay } from "react-icons/io5";
 import { RiMore2Line } from "react-icons/ri";
 import Container from "../../../components/Container";
 import ContainerHeader from "../../../components/Container/header";
+import DataGrid from "../../../components/DataGrid";
 import PulsingDot from "../../../components/PulsingDot";
 import ResultThumbGraph from "../../../components/ResultThumbGraph";
 import useMonitors from "../../../stores/monitors";
@@ -27,12 +29,70 @@ const MonitorsView: FunctionComponent = () => {
     const theme = useTheme();
     const monitorsStore = useMonitors();
 
+    const rows: GridRowsProp =
+        monitorsStore.monitors?.map((monitor) => ({
+            id: monitor.id,
+            name: monitor.name,
+            lastRunTimestamp: monitor.lastRunTimestamp,
+        })) || [];
+
+    const columns: GridColDef[] = [
+        {
+            field: "status",
+            headerName: "",
+            width: 70,
+            align: "right",
+            sortable: false,
+            renderCell: (row) => (
+                <Avatar
+                    sx={{
+                        backgroundColor: "#84be79",
+                    }}
+                >
+                    <IoCheckmark />
+                </Avatar>
+            ),
+        },
+        { field: "name", headerName: "Name", width: 300, sortable: true },
+        {
+            field: "stats",
+            headerName: "Latest results",
+            width: 320,
+            sortable: false,
+            renderCell: (row) => <ResultThumbGraph />,
+        },
+        { field: "stat-24h", headerName: "24H", sortable: true, valueGetter: () => "100%" },
+        { field: "stat-7d", headerName: "7D", sortable: true, valueGetter: () => "100%" },
+        { field: "stat-avg", headerName: "AVG", sortable: true, valueGetter: () => "86ms" },
+        { field: "stat-p95", headerName: "P95", sortable: true, valueGetter: () => "105ms" },
+        {
+            field: "last-run-time",
+            headerName: "Latest run",
+            sortable: true,
+            flex: 1,
+            align: "right",
+            headerAlign: "right",
+            valueGetter: () => "2 minutes ago",
+        },
+        {
+            field: "actions",
+            headerName: "",
+            align: "right",
+            sortable: false,
+            renderCell: (row) => (
+                <IconButton>
+                    <RiMore2Line />
+                </IconButton>
+            ),
+        },
+    ];
+
     return (
         <Container>
             <ContainerHeader>Monitors</ContainerHeader>
 
             <Card>
-                <CardContent sx={{ '&:last-child': { pb: theme.spacing(2) }}}>
+                <CardContent sx={{ "&:last-child": { pb: theme.spacing(2) } }}>
                     <Stack spacing={2} direction="row" alignItems="center">
                         <PulsingDot />
 
@@ -49,93 +109,25 @@ const MonitorsView: FunctionComponent = () => {
 
                         <Button startIcon={<IoPlay color="#84be79" />}>Run all now</Button>
                     </Stack>
+                    <Card
+                        sx={{
+                            textAlign: "center",
+                            backgroundColor: theme.palette.success.main,
+                            color: theme.palette.success.contrastText,
+                            fontSize: theme.typography.h6.fontSize,
+                            fontWeight: 500,
+                            marginTop: theme.spacing(2),
+                            padding: theme.spacing(2),
+                        }}
+                    >
+                        checks are passing
+                    </Card>
                 </CardContent>
             </Card>
 
-            <Card sx={{
-                textAlign: "center",
-                backgroundColor: theme.palette.success.main,
-                color: theme.palette.success.contrastText,
-                fontSize: theme.typography.h6.fontSize,
-                fontWeight: 500,
-                padding: theme.spacing(2),
-            }}>
-                5 checks are passing
+            <Card sx={{ flex: 1 }}>
+                <DataGrid columns={columns} rows={rows} />
             </Card>
-
-            <Card>
-                <CardContent>
-                    <Stack direction="row" alignContent="center">
-                        <Paper
-                            style={{
-                                backgroundColor: "#eef2f7",
-                            }}
-                        >
-                            <InputBase
-                                sx={{ ml: 1, flex: 1 }}
-                                style={{
-                                    minWidth: "300px",
-                                }}
-                                placeholder="Search by name, request URL..."
-                            />
-                            <IconButton type="submit" sx={{ p: "10px" }} aria-label="search">
-                                <IoSearch />
-                            </IconButton>
-                        </Paper>
-                        <Button
-                            variant="contained"
-                            color="success"
-                            style={{
-                                marginLeft: "auto",
-                            }}
-                        >
-                            Create new
-                        </Button>
-                    </Stack>
-                </CardContent>
-
-                <List disablePadding>
-                    {monitorsStore.monitors?.map((monitor, index) => (
-                        <ListItem divider key={index}>
-                            <ListItemAvatar>
-                                <Avatar
-                                    style={{
-                                        backgroundColor: "#84be79",
-                                    }}
-                                >
-                                    <IoCheckmark />
-                                </Avatar>
-                            </ListItemAvatar>
-
-                            <ListItemText
-                                primary={monitor.name}
-                                secondary={monitor.lastRunTimestamp ? `Last run ${monitor.lastRunTimestamp}` : "No runs yet"}
-                                style={{
-                                    flex: "0 0 auto",
-                                    marginRight: theme.spacing(4),
-                                }}
-                            />
-
-                            <ListItemText
-                                style={{
-                                    flex: "0 0 auto",
-                                    marginRight: theme.spacing(4),
-                                }}
-                            >
-                                <ResultThumbGraph />
-                            </ListItemText>
-
-                            <ListItemSecondaryAction>
-                                <IconButton>
-                                    <RiMore2Line />
-                                </IconButton>
-                            </ListItemSecondaryAction>
-                        </ListItem>
-                    ))}
-                </List>
-            </Card>
-
-            {/* <CustomizedDialogs /> */}
         </Container>
     );
 };

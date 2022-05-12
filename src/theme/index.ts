@@ -87,6 +87,11 @@ theme.components = {
             elevation: 1,
         },
     },
+    MuiSkeleton: {
+        defaultProps: {
+            animation: "pulse",
+        },
+    },
     MuiInputBase: {
         styleOverrides: {
             root: {
@@ -110,7 +115,6 @@ theme.components = {
                 },
                 "&:focus": {
                     background: theme.palette.grey[200],
-                    // boxShadow: `inset 0 0 0 1px ${theme.palette.grey[500]}`,
                 },
             },
         },

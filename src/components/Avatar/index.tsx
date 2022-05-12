@@ -1,5 +1,5 @@
 import { Avatar as MuiAvatar, AvatarProps, Skeleton } from "@mui/material";
-import { FunctionComponent, memo, useEffect, useState } from "react";
+import { FunctionComponent, useEffect, useState } from "react";
 
 const Avatar: FunctionComponent<AvatarProps> = (props) => {
     const [loaded, setLoaded] = useState(true);
@@ -15,7 +15,6 @@ const Avatar: FunctionComponent<AvatarProps> = (props) => {
         }
     }, [props.src]);
 
-
     return (
         <>
             <Skeleton
@@ -25,7 +24,10 @@ const Avatar: FunctionComponent<AvatarProps> = (props) => {
                 sx={{
                     display: !loaded ? "inherit" : "none",
                 }}
-            />
+            >
+                {/* used for Inferring dimensions */}
+                <MuiAvatar {...props} src={undefined} />
+            </Skeleton>
 
             <MuiAvatar
                 {...props}

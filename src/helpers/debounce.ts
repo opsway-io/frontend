@@ -5,7 +5,6 @@ export function debounce(fn: () => void, ms: number) {
         timer = setTimeout((_) => {
             timer = undefined;
             fn();
-            console.log("yeah");
         }, ms);
     };
 }

@@ -3,6 +3,7 @@ import { FunctionComponent } from "react";
 import { GoSignOut } from "react-icons/go";
 import Container from "../../../components/Container";
 import ContainerHeader from "../../../components/Container/header";
+import Placeholder from "../../../components/Placeholder";
 import useAuthentication from "../../../stores/authentication";
 import useUser from "../../../stores/user";
 
@@ -28,18 +29,14 @@ const AccountView: FunctionComponent = () => {
             <Card>
                 <CardHeader title="Settings" />
                 <CardContent>
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Illum nesciunt sed mollitia at. Unde quidem
-                    voluptas quod accusantium laudantium! Saepe ipsam cupiditate corrupti, sunt nostrum ratione
-                    laboriosam asperiores sed provident.
+                    <Placeholder />
                 </CardContent>
             </Card>
 
             <Card>
                 <CardHeader title="Security" />
                 <CardContent>
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Illum nesciunt sed mollitia at. Unde quidem
-                    voluptas quod accusantium laudantium! Saepe ipsam cupiditate corrupti, sunt nostrum ratione
-                    laboriosam asperiores sed provident.
+                    <Placeholder />
                 </CardContent>
             </Card>
         </Container>

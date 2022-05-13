@@ -1,20 +1,14 @@
-import { Card, CardContent } from "@mui/material";
 import { FunctionComponent } from "react";
 import Container from "../../../components/Container";
 import ContainerHeader from "../../../components/Container/header";
+import Placeholder from "../../../components/Placeholder";
 
 const ReportsView: FunctionComponent = () => {
     return (
         <Container>
             <ContainerHeader>Reports</ContainerHeader>
 
-            <Card>
-                <CardContent>
-                    Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolorum illum, consectetur beatae ducimus
-                    dicta aperiam ipsam, ab suscipit accusamus, harum quam corrupti voluptatem iusto! Delectus assumenda
-                    qui ducimus. Perspiciatis, ipsa.
-                </CardContent>
-            </Card>
+            <Placeholder />
         </Container>
     );
 };

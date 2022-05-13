@@ -17,7 +17,7 @@ const DashboardView: FunctionComponent = () => {
     return (
         <>
             <Sidebar />
-            <Container spacing={2}>
+            <Container spacing={1}>
                 <Outlet />
             </Container>
         </>

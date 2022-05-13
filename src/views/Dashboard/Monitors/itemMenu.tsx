@@ -27,7 +27,6 @@ const ItemMenu: FunctionComponent<ItemMenuProps> = () => {
                 open={open}
                 onClose={() => setOpen(false)}
                 anchorEl={anchorEl}
-                elevation={2}
                 anchorOrigin={{
                     vertical: "center",
                     horizontal: "left",

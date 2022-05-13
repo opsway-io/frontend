@@ -1,14 +1,7 @@
-import {
-    Avatar,
-    Button,
-    Card,
-    CardContent,
-    Stack,
-    useTheme,
-} from "@mui/material";
+import { Avatar, Button, Card, CardContent, Stack, Typography, useTheme } from "@mui/material";
 import { GridColDef, GridRowsProp } from "@mui/x-data-grid";
 import { FunctionComponent, memo } from "react";
-import { IoCheckmark, IoPause } from "react-icons/io5";
+import { IoAddCircleSharp, IoCheckmark, IoPause } from "react-icons/io5";
 import Container from "../../../components/Container";
 import ContainerHeader from "../../../components/Container/header";
 import DataGrid from "../../../components/DataGrid";
@@ -38,7 +31,7 @@ const MonitorsView: FunctionComponent = () => {
             renderCell: (row) => (
                 <Avatar
                     sx={{
-                        backgroundColor: "#84be79",
+                        backgroundColor: theme.palette.success.main,
                     }}
                 >
                     <IoCheckmark />
@@ -71,15 +64,27 @@ const MonitorsView: FunctionComponent = () => {
             headerName: "",
             align: "right",
             sortable: false,
-            renderCell: (row) => (
-               <ItemMenu monitor={row.value}/>
-            ),
+            renderCell: (row) => <ItemMenu monitor={row.value} />,
         },
     ];
 
     return (
         <Container>
             <ContainerHeader>Monitors</ContainerHeader>
+
+            <Card
+                sx={{
+                    textAlign: "center",
+                    backgroundColor: theme.palette.success.main,
+                    color: theme.palette.success.contrastText,
+                    fontSize: theme.typography.h6.fontSize,
+                    fontWeight: 500,
+                    marginTop: theme.spacing(2),
+                    padding: theme.spacing(2),
+                }}
+            >
+                checks are passing
+            </Card>
 
             <Card>
                 <CardContent sx={{ "&:last-child": { pb: theme.spacing(2) } }}>
@@ -89,27 +94,20 @@ const MonitorsView: FunctionComponent = () => {
                         <div>All monitors are active</div>
 
                         <Button
-                            startIcon={<IoPause color={theme.palette.warning.main} />}
+                            startIcon={<IoPause />}
                             style={{
                                 marginLeft: "auto",
                             }}
+                            color="primary"
+                            variant="outlined"
                         >
                             Pause all
                         </Button>
+
+                        <Button color="success" variant="contained" startIcon={<IoAddCircleSharp />}>
+                            <Typography>New monitor</Typography>
+                        </Button>
                     </Stack>
-                    <Card
-                        sx={{
-                            textAlign: "center",
-                            backgroundColor: theme.palette.success.main,
-                            color: theme.palette.success.contrastText,
-                            fontSize: theme.typography.h6.fontSize,
-                            fontWeight: 500,
-                            marginTop: theme.spacing(2),
-                            padding: theme.spacing(2),
-                        }}
-                    >
-                        checks are passing
-                    </Card>
                 </CardContent>
             </Card>
 

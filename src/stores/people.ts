@@ -7,7 +7,7 @@ interface PeopleState {
 }
 
 const usePeople = create<PeopleState>()((set) => ({
-    users: falso.randUser({ length: 10 }).map((user) => ({
+    users: falso.randUser({ length: 20 }).map((user) => ({
         id: user.id,
         email: user.email,
         picture: user.img + "?id=" + user.id,

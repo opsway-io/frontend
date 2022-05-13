@@ -64,10 +64,10 @@ const theme = createTheme({
             fontWeight: 500,
         },
         body1: {
-            fontSize: "0.9rem"
+            fontSize: "0.9rem",
         },
         body2: {
-            fontSize: "1rem"
+            fontSize: "1rem",
         },
     },
     transitions: {
@@ -78,6 +78,11 @@ const theme = createTheme({
 });
 
 theme.components = {
+    MuiMenu: {
+        defaultProps: {
+            elevation: 2,
+        },
+    },
     MuiPaper: {
         defaultProps: {
             elevation: 0,
@@ -97,8 +102,6 @@ theme.components = {
         styleOverrides: {
             root: {
                 background: "#eef2f7",
-
-        
             },
         },
     },
@@ -108,9 +111,6 @@ theme.components = {
         },
         styleOverrides: {
             root: {
-                "&.active": {
-                    backgroundColor: "#f4f5f8",
-                },
                 "&:active": {
                     opacity: 0.6,
                 },

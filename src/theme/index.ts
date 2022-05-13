@@ -3,6 +3,7 @@ import { Shadows } from "@mui/material/styles/shadows";
 
 const shadows = new Array(25).fill("none") as Shadows;
 shadows[1] = "0px 0px 6px -2px rgba(0,0,0,0.2)";
+shadows[2] = "0px 0px 6px 0px rgba(0,0,0,0.2)";
 
 const theme = createTheme({
     shape: {

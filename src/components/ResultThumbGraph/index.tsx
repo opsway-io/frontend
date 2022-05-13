@@ -1,5 +1,5 @@
 import { styled, Theme } from "@mui/material";
-import { FunctionComponent } from "react";
+import { FunctionComponent, memo } from "react";
 import * as falso from "@ngneat/falso";
 
 const Container = styled("div")(({ theme }) => ({
@@ -42,4 +42,4 @@ const ResultThumbGraph: FunctionComponent<ResultThumbGraphProps> = () => {
     );
 };
 
-export default ResultThumbGraph;
+export default memo(ResultThumbGraph);

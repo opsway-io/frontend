@@ -3,27 +3,19 @@ import {
     Button,
     Card,
     CardContent,
-    IconButton,
-    InputBase,
-    List,
-    ListItemAvatar,
-    ListItemText,
-    Paper,
     Stack,
-    ListItemSecondaryAction,
-    ListItem,
     useTheme,
 } from "@mui/material";
 import { GridColDef, GridRowsProp } from "@mui/x-data-grid";
-import { FunctionComponent } from "react";
-import { IoCheckmark, IoSearch, IoPause, IoPlay } from "react-icons/io5";
-import { RiMore2Line } from "react-icons/ri";
+import { FunctionComponent, memo } from "react";
+import { IoCheckmark, IoPause } from "react-icons/io5";
 import Container from "../../../components/Container";
 import ContainerHeader from "../../../components/Container/header";
 import DataGrid from "../../../components/DataGrid";
 import PulsingDot from "../../../components/PulsingDot";
 import ResultThumbGraph from "../../../components/ResultThumbGraph";
 import useMonitors from "../../../stores/monitors";
+import ItemMenu from "./itemMenu";
 
 const MonitorsView: FunctionComponent = () => {
     const theme = useTheme();
@@ -80,9 +72,7 @@ const MonitorsView: FunctionComponent = () => {
             align: "right",
             sortable: false,
             renderCell: (row) => (
-                <IconButton>
-                    <RiMore2Line />
-                </IconButton>
+               <ItemMenu monitor={row.value}/>
             ),
         },
     ];
@@ -99,15 +89,13 @@ const MonitorsView: FunctionComponent = () => {
                         <div>All monitors are active</div>
 
                         <Button
-                            startIcon={<IoPause color="#f5de88" />}
+                            startIcon={<IoPause color={theme.palette.warning.main} />}
                             style={{
                                 marginLeft: "auto",
                             }}
                         >
                             Pause all
                         </Button>
-
-                        <Button startIcon={<IoPlay color="#84be79" />}>Run all now</Button>
                     </Stack>
                     <Card
                         sx={{
@@ -132,4 +120,4 @@ const MonitorsView: FunctionComponent = () => {
     );
 };
 
-export default MonitorsView;
+export default memo(MonitorsView);

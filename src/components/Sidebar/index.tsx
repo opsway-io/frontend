@@ -58,7 +58,7 @@ const SidebarItem: FunctionComponent<SidebarItemProps> = (props) => {
             to={props.to}
         >
             {props.text}
-            {props.count && <Chip style={{ marginLeft: "auto" }} label={props.count} size="small" />}
+            {props.count && <Chip color="info" style={{ marginLeft: "auto" }} label={props.count} size="small" />}
         </Button>
     );
 };

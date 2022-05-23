@@ -20,12 +20,12 @@ const theme = createTheme({
             secondary: "#a4a4a4",
         },
         info: {
-            main: "#a3d2d2",
+            main: "#4F759B",
             contrastText: "#fff",
         },
         warning: {
-            main: "#f5de88",
-            contrastText: "#fff",
+            main: "#F4AC45",
+            contrastText: "#121826",
         },
         error: {
             main: "#ea7663",

@@ -19,11 +19,10 @@ const Avatar: FunctionComponent<AvatarProps> = (props) => {
         <>
             <Skeleton
                 variant="circular"
-                width={40}
-                height={40}
                 sx={{
                     display: !loaded ? "inherit" : "none",
                 }}
+
             >
                 {/* used for Inferring dimensions */}
                 <MuiAvatar {...props} src={undefined} />
@@ -32,6 +31,7 @@ const Avatar: FunctionComponent<AvatarProps> = (props) => {
             <MuiAvatar
                 {...props}
                 sx={{
+                    ...props.sx,
                     display: loaded ? "inherit" : "none",
                 }}
             />

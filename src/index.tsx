@@ -5,12 +5,22 @@ import { ThemeProvider } from "@mui/material";
 import theme from "./theme";
 import { BrowserRouter } from "react-router-dom";
 import Routes from "./Routes/Routes";
+import { SnackbarProvider } from "notistack";
 
 const root = ReactDOM.createRoot(document.getElementById("root") as HTMLElement);
 root.render(
     <BrowserRouter>
         <ThemeProvider theme={theme}>
-            <Routes />
+            <SnackbarProvider
+                maxSnack={4}
+                autoHideDuration={3000}
+                anchorOrigin={{
+                    vertical: "bottom",
+                    horizontal: "right",
+                }}
+            >
+                <Routes />
+            </SnackbarProvider>
         </ThemeProvider>
     </BrowserRouter>
 );

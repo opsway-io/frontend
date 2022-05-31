@@ -1,31 +1,22 @@
-import {
-    Button,
-    Card,
-    Chip,
-    List,
-    ListItemAvatar,
-    ListItemButton,
-    ListItemText,
-    Stack,
-    Typography,
-} from "@mui/material";
+import { Button, Card, Chip, Stack, Typography } from "@mui/material";
 import { FunctionComponent, useState } from "react";
 import Container from "../../../components/Container";
 import ContainerHeader from "../../../components/Container/header";
 import { IoLinkOutline, IoMailOutline } from "react-icons/io5";
 import EmailsDialog from "./EmailsDialog";
-import LinkDialog from "./LinkDialog";
 import Avatar from "../../../components/Avatar";
 import usePeople from "../../../stores/people";
 import DataGrid from "../../../components/DataGrid";
 import { GridColDef, GridRowsProp } from "@mui/x-data-grid";
 import { User } from "../../../interfaces/user";
+import { useSnackbar } from "notistack";
 
 const PeopleView: FunctionComponent = () => {
-    const [openLinkDialog, setOpenLinkDialog] = useState(false);
     const [openEmailsDialog, setOpenEmailsDialog] = useState(false);
 
     const people = usePeople();
+
+    const { enqueueSnackbar } = useSnackbar();
 
     const chipToColor = (chip: string) => {
         switch (chip) {
@@ -87,7 +78,14 @@ const PeopleView: FunctionComponent = () => {
                 <ContainerHeader>People</ContainerHeader>
 
                 <Stack direction="row" alignItems="left" spacing={2}>
-                    <Button startIcon={<IoLinkOutline />} onClick={(_) => setOpenLinkDialog(true)}>
+                    <Button
+                        startIcon={<IoLinkOutline />}
+                        onClick={(_) =>
+                            enqueueSnackbar("Link copied to clipboard", {
+                                variant: "info",
+                            })
+                        }
+                    >
                         Invite people with a link
                     </Button>
                     <Button startIcon={<IoMailOutline />} onClick={(_) => setOpenEmailsDialog(true)}>
@@ -96,12 +94,11 @@ const PeopleView: FunctionComponent = () => {
                 </Stack>
 
                 <Card sx={{ flex: 1 }}>
-                    <DataGrid columns={columns} rows={rows} />
+                    <DataGrid columns={columns} rows={rows}/>
                 </Card>
             </Container>
 
             <EmailsDialog open={openEmailsDialog} onClose={() => setOpenEmailsDialog(false)} />
-            <LinkDialog open={openLinkDialog} onClose={() => setOpenLinkDialog(false)} />
         </>
     );
 };

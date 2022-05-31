@@ -105,6 +105,14 @@ theme.components = {
             },
         },
     },
+    MuiSnackbarContent: {
+        styleOverrides: {
+            root: {
+                BackgroundColor: "#fff !important",
+                borderRadius: "0px !important",
+            },
+        },
+    },
     MuiButtonBase: {
         defaultProps: {
             disableRipple: true,

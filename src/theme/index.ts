@@ -1,4 +1,4 @@
-import { createTheme } from "@mui/material/styles";
+import { alpha, createTheme } from "@mui/material/styles";
 import { Shadows } from "@mui/material/styles/shadows";
 
 const shadows = new Array(25).fill("none") as Shadows;
@@ -101,7 +101,7 @@ theme.components = {
     MuiInputBase: {
         styleOverrides: {
             root: {
-                background: "#eef2f7",
+                background: theme.palette.background.default,
             },
         },
     },
@@ -113,19 +113,15 @@ theme.components = {
             },
         },
     },
+    MuiButton: {
+        defaultProps: {
+            disableElevation: true,
+        },
+    },
     MuiButtonBase: {
         defaultProps: {
             disableRipple: true,
-        },
-        styleOverrides: {
-            root: {
-                "&:active": {
-                    opacity: 0.6,
-                },
-                "&:focus": {
-                    background: theme.palette.grey[200],
-                },
-            },
+            disableTouchRipple: true,
         },
     },
 };

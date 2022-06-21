@@ -8,8 +8,8 @@ const Container = styled(Stack)(({ theme }) => ({
     flexDirection: "column",
     flex: 1,
     backgroundColor: theme.palette.background.default,
-    padding: theme.spacing(4),
-    paddingTop: theme.spacing(6),
+    padding: theme.spacing(2),
+    paddingTop: theme.spacing(4),
     boxSizing: "border-box",
 }));
 

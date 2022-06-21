@@ -1,4 +1,4 @@
-import { Button, Card, Chip, Stack, Typography } from "@mui/material";
+import { Button, Card, Chip, Stack, TextField, Typography } from "@mui/material";
 import { FunctionComponent, useState } from "react";
 import Container from "../../../components/Container";
 import ContainerHeader from "../../../components/Container/header";
@@ -33,8 +33,7 @@ const PeopleView: FunctionComponent = () => {
         people.users?.map((u) => ({
             id: u.id,
             picture: u.picture,
-            firstName: u.firstName,
-            lastName: u.lastName,
+            name: u.name,
             email: u.email,
             role: "Member",
         })) || [];
@@ -48,8 +47,7 @@ const PeopleView: FunctionComponent = () => {
             sortable: false,
             renderCell: (row) => <Avatar src={row.value} />,
         },
-        { field: "firstName", headerName: "First name", width: 150, sortable: true },
-        { field: "lastName", headerName: "Last name", width: 300, sortable: true },
+        { field: "name", headerName: "Name", width: 300, sortable: true },
         {
             field: "email",
             headerName: "Email",
@@ -94,7 +92,7 @@ const PeopleView: FunctionComponent = () => {
                 </Stack>
 
                 <Card sx={{ flex: 1 }}>
-                    <DataGrid columns={columns} rows={rows}/>
+                    <DataGrid columns={columns} rows={rows} />
                 </Card>
             </Container>
 

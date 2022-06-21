@@ -1,7 +1,6 @@
 import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { LoadingButton } from "@mui/lab";
 import {
-    Button,
-    Divider,
     FormControl,
     IconButton,
     InputAdornment,
@@ -10,8 +9,9 @@ import {
     Stack,
 } from "@mui/material";
 import { FunctionComponent, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import useAuthentication from "../../stores/authentication";
+import useUser from "../../stores/user";
 
 interface LoginFormProps {}
 
@@ -19,11 +19,21 @@ const LoginForm: FunctionComponent<LoginFormProps> = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [loading, setLoading] = useState(false);
 
-    const authentication = useAuthentication();
+    const logIn = useAuthentication(state => state.logIn);
+    const setUser = useUser(state => state.setUser);
     const navigate = useNavigate();
 
     const handleLogin = async () => {
-        authentication.logIn("admin", "admin");
+        setLoading(true);
+        const { success, user } = await logIn("admin@opsway.io", "admin");
+        setLoading(false);
+
+        if (!success) {
+            return;
+        }
+
+        setUser(user);
+
         navigate("/monitors", {
             replace: true,
         });
@@ -32,7 +42,7 @@ const LoginForm: FunctionComponent<LoginFormProps> = () => {
     return (
         <form
             style={{
-                width: "300px",
+                width: "400px",
             }}
             onSubmit={(e) => {
                 e.preventDefault();
@@ -41,8 +51,8 @@ const LoginForm: FunctionComponent<LoginFormProps> = () => {
         >
             <Stack spacing={2}>
                 <FormControl disabled={loading}>
-                    <InputLabel htmlFor="username">Username</InputLabel>
-                    <OutlinedInput id="username" type={"text"} autoFocus required label="Username" />
+                    <InputLabel htmlFor="email">Email</InputLabel>
+                    <OutlinedInput id="email" type={"text"} autoFocus required label="email" />
                 </FormControl>
 
                 <FormControl disabled={loading}>
@@ -66,9 +76,16 @@ const LoginForm: FunctionComponent<LoginFormProps> = () => {
                     />
                 </FormControl>
 
-                <Button color="primary" variant="contained" size="large" type="submit" onClick={() => handleLogin()}>
+                <LoadingButton
+                    color="primary"
+                    variant="contained"
+                    size="large"
+                    type="submit"
+                    onClick={() => handleLogin()}
+                    loading={loading}
+                >
                     Login
-                </Button>
+                </LoadingButton>
             </Stack>
         </form>
     );

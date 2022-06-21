@@ -42,7 +42,7 @@ const HomeView: FunctionComponent = () => {
                                 textAlign: "center",
                             }}
                         >
-                            API monitoring, incident management and status page hosting for your stack in one place{" "}
+                            API monitoring, incident management, and status page hosting for your stack in one place{" "}
                             <Blinking>_</Blinking>
                         </Typography>
 

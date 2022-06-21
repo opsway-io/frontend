@@ -72,20 +72,6 @@ const MonitorsView: FunctionComponent = () => {
         <Container>
             <ContainerHeader>Monitors</ContainerHeader>
 
-            <Card
-                sx={{
-                    textAlign: "center",
-                    backgroundColor: theme.palette.success.main,
-                    color: theme.palette.success.contrastText,
-                    fontSize: theme.typography.h6.fontSize,
-                    fontWeight: 500,
-                    marginTop: theme.spacing(2),
-                    padding: theme.spacing(2),
-                }}
-            >
-                checks are passing
-            </Card>
-
             <Card>
                 <CardContent sx={{ "&:last-child": { pb: theme.spacing(2) } }}>
                     <Stack spacing={2} direction="row" alignItems="center">

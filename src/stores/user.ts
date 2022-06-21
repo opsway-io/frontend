@@ -1,29 +1,18 @@
 import create from "zustand";
-import * as falso from "@ngneat/falso";
 import { User } from "../interfaces/user";
+import { persist } from "zustand/middleware"
 
 export interface UserState extends User {
-    setEmail: (email: string) => void;
-    getFullName(): string;
+    user?: User;
+    setUser: (user?: User) => void;
+    clearUser: () => void;
 }
 
-const useUser = create<UserState>()((set, get) => ({
-    id: falso.randUuid(),
-    email: falso.randEmail(),
-    firstName: falso.randFirstName(),
-    lastName: falso.randLastName(),
-    picture: falso.randImg(),
-    createdAt: falso.randPastDate(),
-    updatedAt: falso.randPastDate(),
-
-    setEmail: (email: string) => {
-        set(() => ({ email }));
-    },
-
-    getFullName: () => {
-        const state = get();
-        return `${state.firstName} ${state.lastName}`;
-    },
+const useUser = create<UserState>()(persist((set, get) => ({
+    setUser: (user?: User) => set({ user }),
+    clearUser: () => set({ user: undefined }),
+}), {
+    name: "userState",
 }));
 
 export default useUser;

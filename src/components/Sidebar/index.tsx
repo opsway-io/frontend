@@ -56,7 +56,7 @@ const SidebarItem: FunctionComponent<SidebarItemProps> = (props) => {
                 fontWeight: 500,
                 fontSize: (theme) => theme.typography.body2.fontSize,
                 padding: (theme) => theme.spacing(1),
-                marginTop: (theme) => theme.spacing(1),
+                marginBottom: (theme) => theme.spacing(1),
                 "&.active": {
                     backgroundColor: theme => theme.palette.grey[100],
                 }

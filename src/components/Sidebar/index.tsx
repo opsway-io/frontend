@@ -18,6 +18,7 @@ const SidebarContainer = styled(Paper)(({ theme }) => ({
     paddingTop: theme.spacing(4),
     boxSizing: "border-box",
     zIndex: 0,
+    borderRadius: 0,
 }));
 
 const Sidebar: FunctionComponent = () => {

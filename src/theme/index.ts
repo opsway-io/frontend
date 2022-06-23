@@ -1,4 +1,4 @@
-import { alpha, createTheme } from "@mui/material/styles";
+import { createTheme } from "@mui/material/styles";
 import { Shadows } from "@mui/material/styles/shadows";
 
 const shadows = new Array(25).fill("none") as Shadows;
@@ -102,14 +102,6 @@ theme.components = {
         styleOverrides: {
             root: {
                 background: theme.palette.background.default,
-            },
-        },
-    },
-    MuiSnackbarContent: {
-        styleOverrides: {
-            root: {
-                BackgroundColor: "#fff !important",
-                borderRadius: "0px !important",
             },
         },
     },

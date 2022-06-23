@@ -6,7 +6,7 @@ const Container = styled("div")(({ theme }) => ({
     display: "flex",
     width: "100%",
     flexDirection: "column",
-    backgroundColor: theme.palette.background.default,
+    backgroundColor: theme.palette.background.paper,
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
@@ -15,7 +15,7 @@ const Container = styled("div")(({ theme }) => ({
 const LoginView: FunctionComponent = () => {
     return (
         <Container>
-                <Card elevation={1}>
+                <Card elevation={0}>
                     <CardContent sx={{ margin: 2 }}>
                         <Stack spacing={2}>
                             <Typography

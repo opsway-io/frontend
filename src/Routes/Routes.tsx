@@ -9,7 +9,6 @@ import PeopleView from "../views/Dashboard/People";
 import ReportsView from "../views/Dashboard/Reports";
 import StatusPagesView from "../views/Dashboard/StatusPages";
 import NotFoundView from "../views/Errors/404";
-import HomeView from "../views/Home";
 import LoginView from "../views/Login";
 import ProtectedRoute from "./ProtectedRoute";
 import RedirectAuthenticatedRoute from "./RedirectAuthenticatedRoute";
@@ -17,8 +16,6 @@ import RedirectAuthenticatedRoute from "./RedirectAuthenticatedRoute";
 const Routes: FunctionComponent = () => {
     return (
         <RouterRoutes>
-            <Route index element={<HomeView />} />
-
             <Route
                 element={
                     <ProtectedRoute>

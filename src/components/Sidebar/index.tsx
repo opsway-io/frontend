@@ -1,9 +1,10 @@
-import { alpha, Button, Chip, Paper, styled, Typography, useTheme } from "@mui/material";
+import { Button, Chip, Paper, styled, useTheme } from "@mui/material";
 import { FunctionComponent } from "react";
 import { AiOutlineTeam } from "react-icons/ai";
-import { IoBuildOutline, IoPulseOutline } from "react-icons/io5";
+import { IoBuildOutline, IoCallOutline, IoPulseOutline } from "react-icons/io5";
 import { GoBrowser, GoGraph } from "react-icons/go";
 import { RiAlarmWarningLine } from "react-icons/ri";
+import { TbComponents } from "react-icons/tb";
 import { NavLink } from "react-router-dom";
 import useUser from "../../stores/user";
 import Avatar from "../Avatar";
@@ -30,10 +31,12 @@ const Sidebar: FunctionComponent = () => {
         <SidebarContainer sx={{ display: { md: "inherit", xs: "none" } }} elevation={1}>
             <SidebarItem to="/monitors" text="Monitors" icon={<IoPulseOutline color={iconColor} />} />
             <SidebarItem to="/incidents" text="Incidents" icon={<RiAlarmWarningLine color={iconColor} />} count={2} />
+            <SidebarItem to="/on-call" text="On-Call" icon={<IoCallOutline color={iconColor} />} />
             <SidebarItem to="/maintenance" text="Maintenance" icon={<IoBuildOutline color={iconColor} />} count={1} />
             <SidebarItem to="/status-pages" text="Status pages" icon={<GoBrowser color={iconColor} />} />
             <SidebarItem to="/reports" text="Reports" icon={<GoGraph color={iconColor} />} />
             <SidebarItem to="/people" text="People" icon={<AiOutlineTeam color={iconColor} />} />
+            <SidebarItem to="/integrations" text="Integrations" icon={<TbComponents color={iconColor} />} />
 
             <SidebarActions picture={user?.picture} name={user?.displayName} />
         </SidebarContainer>

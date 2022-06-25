@@ -3,7 +3,7 @@ import { FunctionComponent, useState } from "react";
 import { IoPlay, IoStopCircle, IoTrash } from "react-icons/io5";
 import { TiPencil } from "react-icons/ti";
 import { RiMore2Line } from "react-icons/ri";
-import { Monitor } from "../../../interfaces/monitor";
+import { Monitor } from "../../../../interfaces/monitor";
 
 interface ItemMenuProps {
     monitor: Monitor;
@@ -19,6 +19,7 @@ const ItemMenu: FunctionComponent<ItemMenuProps> = () => {
                 onClick={(event: React.MouseEvent<HTMLElement>) => {
                     setAnchorEl(event.currentTarget);
                     setOpen(true);
+                    event.preventDefault();
                 }}
             >
                 <RiMore2Line />

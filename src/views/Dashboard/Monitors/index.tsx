@@ -2,17 +2,19 @@ import { Avatar, Button, Card, CardContent, Stack, Typography, useTheme } from "
 import { GridColDef, GridRowsProp } from "@mui/x-data-grid";
 import { FunctionComponent, memo } from "react";
 import { IoAddCircleSharp, IoCheckmark, IoPause } from "react-icons/io5";
+import { NavLink, useNavigate } from "react-router-dom";
 import Container from "../../../components/Container";
 import ContainerHeader from "../../../components/Container/header";
 import DataGrid from "../../../components/DataGrid";
 import PulsingDot from "../../../components/PulsingDot";
 import ResultThumbGraph from "../../../components/ResultThumbGraph";
 import useMonitors from "../../../stores/monitors";
-import ItemMenu from "./itemMenu";
+import ItemMenu from "./components/itemMenu";
 
 const MonitorsView: FunctionComponent = () => {
     const theme = useTheme();
     const monitorsStore = useMonitors();
+    const navigate = useNavigate();
 
     const rows: GridRowsProp =
         monitorsStore.monitors?.map((monitor) => ({
@@ -90,7 +92,13 @@ const MonitorsView: FunctionComponent = () => {
                             Pause all
                         </Button>
 
-                        <Button color="success" variant="contained" startIcon={<IoAddCircleSharp />}>
+                        <Button
+                            component={NavLink}
+                            to="new"
+                            color="success"
+                            variant="contained"
+                            startIcon={<IoAddCircleSharp />}
+                        >
                             <Typography>New monitor</Typography>
                         </Button>
                     </Stack>
@@ -98,7 +106,9 @@ const MonitorsView: FunctionComponent = () => {
             </Card>
 
             <Card sx={{ flex: 1 }}>
-                <DataGrid columns={columns} rows={rows} />
+                <DataGrid columns={columns} rows={rows} onRowClick={r => {
+                    navigate(`/monitors/${r.id}`);
+                }}/>
             </Card>
         </Container>
     );

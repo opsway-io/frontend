@@ -3,14 +3,14 @@ import Container from "../../../components/Container";
 import ContainerHeader from "../../../components/Container/header";
 import Placeholder from "../../../components/Placeholder";
 
-const StatusPagesView: FunctionComponent = () => {
+const OnCallView: FunctionComponent = () => {
     return (
         <Container>
-            <ContainerHeader>Status pages</ContainerHeader>
+            <ContainerHeader>On call</ContainerHeader>
 
             <Placeholder />
         </Container>
     );
 };
 
-export default StatusPagesView;
+export default OnCallView;

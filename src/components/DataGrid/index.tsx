@@ -44,7 +44,10 @@ const DataGrid: FunctionComponent<DataGridProps> = (props) => {
                     outline: "none !important",
                     userSelect: "none",
                 },
-            "& .MuiDataGrid-row:hover, & .MuiDataGrid-row.Mui-selected, & .MuiDataGrid-row.Mui-selected:hover": {
+            "& .MuiDataGrid-row:hover": {
+                cursor: "pointer",
+            },
+            "& .MuiDataGrid-row.Mui-selected": {
                 backgroundColor: "inherit",
             },
             "& .MuiDataGrid-footerContainer": {

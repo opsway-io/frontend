@@ -1,13 +1,6 @@
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { LoadingButton } from "@mui/lab";
-import {
-    FormControl,
-    IconButton,
-    InputAdornment,
-    InputLabel,
-    OutlinedInput,
-    Stack,
-} from "@mui/material";
+import { FormControl, IconButton, InputAdornment, InputLabel, OutlinedInput, Stack } from "@mui/material";
 import { FunctionComponent, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useAuthentication from "../../stores/authentication";
@@ -19,8 +12,8 @@ const LoginForm: FunctionComponent<LoginFormProps> = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [loading, setLoading] = useState(false);
 
-    const logIn = useAuthentication(state => state.logIn);
-    const setUser = useUser(state => state.setUser);
+    const logIn = useAuthentication((state) => state.logIn);
+    const setUser = useUser((state) => state.setUser);
     const navigate = useNavigate();
 
     const handleLogin = async () => {
@@ -41,9 +34,6 @@ const LoginForm: FunctionComponent<LoginFormProps> = () => {
 
     return (
         <form
-            style={{
-                width: "400px",
-            }}
             onSubmit={(e) => {
                 e.preventDefault();
                 handleLogin();

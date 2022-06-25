@@ -15,37 +15,36 @@ const Container = styled("div")(({ theme }) => ({
 const LoginView: FunctionComponent = () => {
     return (
         <Container>
-                <Card elevation={0}>
-                    <CardContent sx={{ margin: 2 }}>
-                        <Stack spacing={2}>
-                            <Typography
-                                variant="h5"
-                                fontWeight="500"
-                                textAlign="center"
-                                sx={{
-                                    
-                                    paddingBottom: 4,
-                                }}
-                            >
-                                Sign in to your account
-                            </Typography>
+            <Card sx={{ maxWidth: 500 }} elevation={0}>
+                <CardContent sx={{ margin: 2 }}>
+                    <Stack spacing={2}>
+                        <Typography
+                            variant="h5"
+                            fontWeight="500"
+                            textAlign="center"
+                            sx={{
+                                paddingBottom: 4,
+                            }}
+                        >
+                            Sign in to your account
+                        </Typography>
 
-                            <LoginForm />
+                        <LoginForm />
 
-                            <Button variant="text">I forgot my password</Button>
-                            <Divider
-                                sx={{
-                                    paddingTop: 2,
-                                    paddingBottom: 2,
-                                }}
-                            >
-                                or
-                            </Divider>
+                        <Button variant="text">I forgot my password</Button>
+                        <Divider
+                            sx={{
+                                paddingTop: 2,
+                                paddingBottom: 2,
+                            }}
+                        >
+                            or
+                        </Divider>
 
-                            <Button variant="outlined">Create an account</Button>
-                        </Stack>
-                    </CardContent>
-                </Card>
+                        <Button variant="outlined">Create an account</Button>
+                    </Stack>
+                </CardContent>
+            </Card>
         </Container>
     );
 };

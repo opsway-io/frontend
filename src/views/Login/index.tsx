@@ -15,7 +15,13 @@ const Container = styled("div")(({ theme }) => ({
 const LoginView: FunctionComponent = () => {
     return (
         <Container>
-            <Card sx={{ maxWidth: 500 }} elevation={0}>
+            <Card
+                sx={{
+                    width: "100%",
+                    maxWidth: 500,
+                }}
+                elevation={0}
+            >
                 <CardContent sx={{ margin: 2 }}>
                     <Stack spacing={2}>
                         <Typography

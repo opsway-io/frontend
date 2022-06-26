@@ -34,15 +34,21 @@ const AccountView: FunctionComponent = () => {
                 <CardHeader title="Basic information" />
                 <CardContent>
                     <CategoryList>
-                        <CategoryListItem title="Name" description="Some description of this category.">
+                        <CategoryListItem
+                            title="Name"
+                            description="Your full name and display name which other people can see."
+                        >
                             <Placeholder />
                         </CategoryListItem>
 
-                        <CategoryListItem title="Emails" description="Some description of this category.">
+                        <CategoryListItem title="Emails" description="Your primary email.">
                             <Placeholder />
                         </CategoryListItem>
 
-                        <CategoryListItem title="Phone numbers" description="Some description of this category.">
+                        <CategoryListItem
+                            title="Phone numbers"
+                            description="We're going to call all your phone numbers to get in touch with you in case of an incident."
+                        >
                             <Placeholder />
                         </CategoryListItem>
                     </CategoryList>
@@ -53,11 +59,14 @@ const AccountView: FunctionComponent = () => {
                 <CardHeader title="Settings" />
                 <CardContent>
                     <CategoryList>
-                        <CategoryListItem title="Timezone" description="Some description of this category.">
+                        <CategoryListItem
+                            title="Timezone"
+                            description="Your timezone, used for timestamps and schedules."
+                        >
                             <Placeholder />
                         </CategoryListItem>
 
-                        <CategoryListItem title="Language" description="Some description of this category.">
+                        <CategoryListItem title="Language" description="Language the page should use.">
                             <Placeholder />
                         </CategoryListItem>
                     </CategoryList>
@@ -73,13 +82,23 @@ const AccountView: FunctionComponent = () => {
                 <CardHeader title="Security" />
                 <CardContent>
                     <CategoryList>
-                        <CategoryListItem title="Password" description="Some description of this category.">
+                        <CategoryListItem
+                            title="Password"
+                            description="Set your password if you want to be able to sign in using password."
+                        >
                             <Placeholder />
                         </CategoryListItem>
 
                         <CategoryListItem
                             title="Two Factor Authentication"
-                            description="Some description of this category."
+                            description="Use Google Authenticator, 1Password or any other OTP client."
+                        >
+                            <Placeholder />
+                        </CategoryListItem>
+
+                        <CategoryListItem
+                            title="Account deletion"
+                            description="Permanently delete your account and all your data. This is irreversible."
                         >
                             <Placeholder />
                         </CategoryListItem>

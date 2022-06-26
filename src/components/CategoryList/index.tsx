@@ -45,8 +45,12 @@ const CategoryListItem: FunctionComponent<CategoryListItemProps> = (props) => {
                     flexGrow: 0,
                 }}
             >
-                <Typography variant="h6">{props.title}</Typography>
-                <Typography variant="subtitle2">{props.description}</Typography>
+                <Typography variant="body1" fontWeight={600}>
+                    {props.title}
+                </Typography>
+                <Typography variant="subtitle2" sx={{ opacity: 0.6 }}>
+                    {props.description}
+                </Typography>
             </span>
 
             {props.divided && <Divider orientation="vertical" flexItem />}

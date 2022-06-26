@@ -22,7 +22,7 @@ interface PlaceholderProps {
 }
  
 const Placeholder: FunctionComponent<PlaceholderProps> = (props) => {
-    return <Container>{props.children || "Nothing here yet"}</Container>;
+    return <Container>{props.children || ""}</Container>;
 }
  
 export default Placeholder;

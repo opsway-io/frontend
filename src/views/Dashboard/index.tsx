@@ -11,6 +11,7 @@ const Container = styled(Stack)(({ theme }) => ({
     padding: theme.spacing(2),
     paddingTop: theme.spacing(4),
     boxSizing: "border-box",
+    height: "100%",
 }));
 
 const DashboardView: FunctionComponent = () => {

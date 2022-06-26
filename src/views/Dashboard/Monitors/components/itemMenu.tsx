@@ -19,7 +19,7 @@ const ItemMenu: FunctionComponent<ItemMenuProps> = () => {
                 onClick={(event: React.MouseEvent<HTMLElement>) => {
                     setAnchorEl(event.currentTarget);
                     setOpen(true);
-                    event.preventDefault();
+                    event.stopPropagation();
                 }}
             >
                 <RiMore2Line />

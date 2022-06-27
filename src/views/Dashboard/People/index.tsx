@@ -72,7 +72,7 @@ const PeopleView: FunctionComponent = () => {
 
     return (
         <>
-            <Container>
+            <Container flex>
                 <ContainerHeader>People</ContainerHeader>
 
                 <Stack direction="row" alignItems="left" spacing={2}>

@@ -1,26 +1,30 @@
-import { Stack, styled } from "@mui/material";
+import { styled } from "@mui/material";
 import { FunctionComponent } from "react";
 import { Outlet } from "react-router-dom";
 import Sidebar from "../../components/Sidebar";
 
-const Container = styled(Stack)(({ theme }) => ({
+const Main = styled("main")(({ theme }) => ({
+    overflow: "auto",
+    width: "100%",
+    height: "100%",
     display: "flex",
-    flexDirection: "column",
-    flex: 1,
     backgroundColor: theme.palette.background.default,
-    padding: theme.spacing(2),
-    paddingTop: theme.spacing(4),
-    boxSizing: "border-box",
+}));
+
+const Navigation = styled("nav")(({ theme }) => ({
+    display: "flex",
     height: "100%",
 }));
 
 const DashboardView: FunctionComponent = () => {
     return (
         <>
-            <Sidebar />
-            <Container spacing={1}>
+            <Navigation>
+                <Sidebar />
+            </Navigation>
+            <Main>
                 <Outlet />
-            </Container>
+            </Main>
         </>
     );
 };

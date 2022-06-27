@@ -13,7 +13,7 @@ const CategoryList: FunctionComponent<CategoryListProps> = (props) => {
             {props.children.map((child, index) => {
                 return (
                     <>
-                        {props.divided && index > 0 && <Divider />}
+                        {props.divided && index > 0 && <Divider key={index} />}
                         {child}
                     </>
                 );

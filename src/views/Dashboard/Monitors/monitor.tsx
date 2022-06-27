@@ -1,4 +1,3 @@
-import { Card, CardContent } from "@mui/material";
 import { FunctionComponent } from "react";
 import { useParams } from "react-router-dom";
 import Container from "../../../components/Container";
@@ -12,11 +11,7 @@ const MonitorView: FunctionComponent = () => {
         <Container>
             <ContainerHeader>{id}</ContainerHeader>
 
-            <Card>
-                <CardContent>
-                    <Placeholder />
-                </CardContent>
-            </Card>
+            <Placeholder />
         </Container>
     );
 };

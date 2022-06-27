@@ -71,7 +71,7 @@ const MonitorsView: FunctionComponent = () => {
     ];
 
     return (
-        <Container>
+        <Container flex>
             <ContainerHeader>Monitors</ContainerHeader>
 
             <Card>

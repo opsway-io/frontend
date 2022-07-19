@@ -14,6 +14,10 @@ const ContainerStyle = styled("div")(({ theme }) => ({
     paddingTop: theme.spacing(4),
     gap: theme.spacing(1),
 
+    maxWidth: "1400px",
+    marginLeft: "auto",
+    marginRight: "auto",
+
     "& > *": {
         flexShrink: 0,
     },

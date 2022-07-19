@@ -13,7 +13,7 @@ const SidebarContainer = styled(Paper)(({ theme }) => ({
     display: "flex",
     flexDirection: "column",
     height: "100%",
-    width: 250,
+    width: 220,
     flexShrink: 0,
     padding: theme.spacing(2),
     paddingTop: theme.spacing(4),

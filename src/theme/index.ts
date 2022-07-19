@@ -41,7 +41,7 @@ const theme = createTheme({
         },
     },
     typography: {
-        fontFamily: "Libre Franklin",
+        fontFamily: "Inter",
         button: {
             textTransform: "none",
         },

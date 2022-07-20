@@ -1,4 +1,4 @@
-import { Button, Chip, Paper, styled, useTheme } from "@mui/material";
+import { Button, Chip, Divider, Paper, styled, useTheme } from "@mui/material";
 import { FunctionComponent } from "react";
 import { AiOutlineTeam } from "react-icons/ai";
 import { IoBuildOutline, IoCallOutline, IoPulseOutline } from "react-icons/io5";
@@ -13,7 +13,7 @@ const SidebarContainer = styled(Paper)(({ theme }) => ({
     display: "flex",
     flexDirection: "column",
     height: "100%",
-    width: 220,
+    width: 246,
     flexShrink: 0,
     padding: theme.spacing(2),
     paddingTop: theme.spacing(4),
@@ -58,11 +58,12 @@ const SidebarItem: FunctionComponent<SidebarItemProps> = (props) => {
                 justifyContent: "left",
                 textTransform: "none",
                 fontWeight: 500,
-                fontSize: (theme) => theme.typography.body2.fontSize,
+                fontSize: (theme) => theme.typography.body1.fontSize,
                 padding: (theme) => theme.spacing(1),
                 marginBottom: (theme) => theme.spacing(1),
                 "&.active": {
-                    backgroundColor: theme => theme.palette.grey[100],
+                    backgroundColor: theme => theme.palette.grey[200],
+                    fontWeight: 600,
                 }
             }}
             component={NavLink}
@@ -75,7 +76,9 @@ const SidebarItem: FunctionComponent<SidebarItemProps> = (props) => {
 };
 
 const SidebarActionsContainer = styled("div")(({ theme }) => ({
+    borderTop: `1px solid ${theme.palette.divider}`,
     marginTop: "auto",
+    paddingTop: theme.spacing(2),
     display: "flex",
 }));
 
@@ -93,7 +96,7 @@ const SidebarActions: FunctionComponent<SidebarActionsProps> = (props) => {
                     justifyContent: "left",
                     textTransform: "none",
                     fontWeight: 500,
-                    fontSize: (theme) => theme.typography.body2.fontSize,
+                    fontSize: (theme) => theme.typography.body1.fontSize,
                     padding: (theme) => theme.spacing(1),
                     flex: 1,
                     whiteSpace: "nowrap",

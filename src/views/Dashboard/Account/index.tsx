@@ -30,7 +30,12 @@ const AccountView: FunctionComponent = () => {
                 </Button>
             </Stack>
 
-            <Card sx={{}}>
+            <Card
+                sx={{
+                    borderLeft: (theme) => `4px solid ${theme.palette.info.main}`,
+                    boxSizing: "border-box",
+                }}
+            >
                 <CardHeader title="Basic information" />
                 <CardContent>
                     <CategoryList>
@@ -55,7 +60,12 @@ const AccountView: FunctionComponent = () => {
                 </CardContent>
             </Card>
 
-            <Card>
+            <Card
+                sx={{
+                    borderLeft: (theme) => `4px solid ${theme.palette.grey[800]}`,
+                    boxSizing: "border-box",
+                }}
+            >
                 <CardHeader title="Settings" />
                 <CardContent>
                     <CategoryList>
@@ -79,19 +89,12 @@ const AccountView: FunctionComponent = () => {
                     boxSizing: "border-box",
                 }}
             >
-                <CardHeader title="Security" />
+                <CardHeader title="Danger Zone" />
                 <CardContent>
                     <CategoryList>
                         <CategoryListItem
                             title="Password"
                             description="Set your password if you want to be able to sign in using password."
-                        >
-                            <Placeholder />
-                        </CategoryListItem>
-
-                        <CategoryListItem
-                            title="Two Factor Authentication"
-                            description="Use Google Authenticator, 1Password or any other OTP client."
                         >
                             <Placeholder />
                         </CategoryListItem>

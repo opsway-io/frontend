@@ -1,0 +1,21 @@
+@import url("@fontsource/inter");
+
+:root {
+  color-scheme: dark;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: "Inter", sans-serif;
+}
+
+body,
+#root {
+  display: flex;
+  flex: 1;
+}

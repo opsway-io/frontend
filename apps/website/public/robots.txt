@@ -1,0 +1,3 @@
+User-agent: *
+Disallow: 
+Sitemap: https://opsway.io/sitemap.xml

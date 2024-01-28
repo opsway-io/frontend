@@ -1,4 +1,4 @@
-name: Build
+name: Build status page
 
 on:
   push:
@@ -9,7 +9,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    name: Build status page
     steps:
       - name: Checkout
         uses: actions/checkout@v3

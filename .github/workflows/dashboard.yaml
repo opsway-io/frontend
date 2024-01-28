@@ -1,4 +1,4 @@
-name: Build
+name: Build dashboard
 
 on:
   push:
@@ -9,7 +9,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    name: Build dashboard
     steps:
       - name: Checkout
         uses: actions/checkout@v3

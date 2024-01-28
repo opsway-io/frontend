@@ -1,0 +1,12 @@
+.vscode
+.github
+build
+dist
+node_modules
+
+**/node_modules
+**/dist
+**/build
+**/coverage
+**/.vscode
+**/.github

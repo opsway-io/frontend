@@ -44,7 +44,7 @@ export function TokenInterceptor(inst: AxiosInstance) {
     },
     (error) => {
       Promise.reject(error);
-    }
+    },
   );
 }
 
@@ -53,12 +53,12 @@ let refreshSubscribers: ((failure?: boolean) => void)[] = [];
 
 async function refreshTokens(
   axiosInst: AxiosInstance,
-  authStore: AuthenticationState
+  authStore: AuthenticationState,
 ): Promise<void> {
   if (isRefreshing) {
     return new Promise((resolve, reject) => {
       subscribeTokenRefresh((failure?: boolean) =>
-        failure ? reject() : resolve()
+        failure ? reject() : resolve(),
       );
     });
   }

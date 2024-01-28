@@ -199,7 +199,7 @@ interface CreateNewTeamButtonProps {
 }
 
 const CreateNewTeamButton: FunctionComponent<CreateNewTeamButtonProps> = (
-  props
+  props,
 ) => {
   return (
     <Paper

@@ -27,5 +27,5 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
     <ThemeProvider theme={DarkTheme}>
       <RouterProvider router={router} />
     </ThemeProvider>
-  </StrictMode>
+  </StrictMode>,
 );

@@ -20,7 +20,7 @@ export const useCreateChangelog = () => {
       onSuccess: () => {
         queryClient.invalidateQueries(["teams", teamId, "changelogs"]);
       },
-    }
+    },
   );
 };
 
@@ -39,7 +39,7 @@ export const useDeleteChangelog = () => {
       onSuccess: () => {
         queryClient.invalidateQueries(["teams", teamId, "changelogs"]);
       },
-    }
+    },
   );
 };
 
@@ -78,6 +78,6 @@ export const useChangelogs = (offset = 0, limit = 10, query?: string) => {
     },
     {
       keepPreviousData: true,
-    }
+    },
   );
 };

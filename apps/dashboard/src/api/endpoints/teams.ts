@@ -11,7 +11,7 @@ export interface IGetTeamResponse {
 }
 
 export async function getTeam(
-  teamId: string | number
+  teamId: string | number,
 ): Promise<IGetTeamResponse> {
   const response = await client.get<IGetTeamResponse>(`/v1/teams/${teamId}`);
   return response.data;
@@ -23,7 +23,7 @@ export interface IPutTeamRequest {
 
 export async function putTeam(
   teamId: string | number,
-  data: IPutTeamRequest
+  data: IPutTeamRequest,
 ): Promise<void> {
   await client.put(`/v1/teams/${teamId}`, data);
 }
@@ -46,7 +46,7 @@ export async function getUsers(
   teamId: string | number,
   offset?: number,
   limit?: number,
-  query?: string
+  query?: string,
 ): Promise<IGetTeamUsersResponse> {
   const response = await client.get(`/v1/teams/${teamId}/users`, {
     params: {
@@ -61,7 +61,7 @@ export async function getUsers(
 
 export async function removeUser(
   teamId: string | number,
-  userId: string | number
+  userId: string | number,
 ): Promise<void> {
   return await client.delete(`/v1/teams/${teamId}/users/${userId}`);
 }
@@ -75,13 +75,13 @@ export interface IPostTeamNameAvailableResponse {
 }
 
 export async function postNameAvailable(
-  name: string
+  name: string,
 ): Promise<IPostTeamNameAvailableResponse> {
   const response = await client.post<IPostTeamNameAvailableResponse>(
     `/v1/teams/available`,
     {
       name,
-    }
+    },
   );
   return response.data;
 }
@@ -101,7 +101,7 @@ export interface IPostTeamResponse {
 
 export async function postTeam(
   name: string,
-  displayName: string
+  displayName: string,
 ): Promise<IPostTeamResponse> {
   const response = await client.post<IPostTeamResponse>(`/v1/teams`, {
     name,
@@ -122,7 +122,7 @@ export interface IPutTeamUserRequest {
 export async function putTeamUser(
   teamId: string | number,
   userId: string | number,
-  data: IPutTeamUserRequest
+  data: IPutTeamUserRequest,
 ): Promise<void> {
   await client.put(`/v1/teams/${teamId}/users/${userId}`, data);
 }
@@ -134,14 +134,14 @@ export interface IPostTeamUserInviteRequest {
 
 export async function postTeamUserInvite(
   teamId: string | number,
-  data: IPostTeamUserInviteRequest
+  data: IPostTeamUserInviteRequest,
 ): Promise<void> {
   await client.post(`/v1/teams/${teamId}/users/invites`, data);
 }
 
 export async function updateAvatar(
   teamId: number | string,
-  data: string | Blob
+  data: string | Blob,
 ): Promise<void> {
   const form = new FormData();
   form.append("file", data);
@@ -155,7 +155,7 @@ export async function acceptInvite(token: string): Promise<void> {
 
 export async function postCreateCheckoutSession(
   teamId: string | number,
-  priceLookupKey: string
+  priceLookupKey: string,
 ): Promise<void> {
   console.log(teamId, priceLookupKey);
   await client.post(`/v1/teams/${teamId}/create-checkout-session`, {

@@ -43,7 +43,7 @@ export async function getMonitors(
   teamId: number,
   offset?: number,
   limit?: number,
-  query?: string
+  query?: string,
 ): Promise<GetMonitorsResponse> {
   const response = await client.get(`/v1/teams/${teamId}/monitors`, {
     params: {
@@ -58,10 +58,10 @@ export async function getMonitors(
 
 export async function getMonitor(
   teamId: number,
-  monitorId: number
+  monitorId: number,
 ): Promise<IMonitorResponse> {
   const response = await client.get(
-    `/v1/teams/${teamId}/monitors/${monitorId}`
+    `/v1/teams/${teamId}/monitors/${monitorId}`,
   );
   return response?.data;
 }
@@ -84,7 +84,7 @@ export interface IPostMonitorRequest {
 
 export async function postMonitor(
   teamId: number,
-  data: IPostMonitorRequest
+  data: IPostMonitorRequest,
 ): Promise<void> {
   const response = await client.post(`/v1/teams/${teamId}/monitors`, data);
   return response?.data;
@@ -98,7 +98,7 @@ export async function getMonitorChecks(
   teamId: number,
   monitorId: number,
   offset?: number,
-  limit?: number
+  limit?: number,
 ): Promise<IMonitorChecksResponse> {
   const response = await client.get(
     `/v1/teams/${teamId}/monitors/${monitorId}/checks`,
@@ -107,7 +107,7 @@ export async function getMonitorChecks(
         offset,
         limit,
       },
-    }
+    },
   );
 
   return response?.data;
@@ -116,10 +116,10 @@ export async function getMonitorChecks(
 export async function getMonitorCheck(
   teamId: number,
   monitorId: number,
-  checkId: number
+  checkId: number,
 ): Promise<Check> {
   const response = await client.get(
-    `/v1/teams/${teamId}/monitors/${monitorId}/checks/${checkId}`
+    `/v1/teams/${teamId}/monitors/${monitorId}/checks/${checkId}`,
   );
 
   return response?.data;
@@ -130,17 +130,17 @@ export interface IMonitorMetricsResponse {
 
 export async function getMonitorMetrics(
   teamId: number,
-  monitorId: number
+  monitorId: number,
 ): Promise<IMonitorMetricsResponse> {
   const response = await client.get(
-    `/v1/teams/${teamId}/monitors/${monitorId}/metrics`
+    `/v1/teams/${teamId}/monitors/${monitorId}/metrics`,
   );
   return response?.data;
 }
 
 export async function deleteMonitor(
   teamId: number,
-  monitorId: number
+  monitorId: number,
 ): Promise<void> {
   await client.delete(`/v1/teams/${teamId}/monitors/${monitorId}`);
 }
@@ -154,7 +154,7 @@ export interface IPutMonitorRequest {
 export async function putMonitor(
   teamId: number,
   monitorId: number,
-  data: IPutMonitorRequest
+  data: IPutMonitorRequest,
 ): Promise<void> {
   await client.put(`/v1/teams/${teamId}/monitors/${monitorId}`, data);
 }

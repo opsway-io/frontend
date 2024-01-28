@@ -10,7 +10,7 @@ interface ResponseTimesGraphProps {
 }
 
 const ResponseTimesGraph: FunctionComponent<ResponseTimesGraphProps> = (
-  props
+  props,
 ) => {
   const theme = useTheme();
 

@@ -29,7 +29,7 @@ interface ChangeTeamAvatarModalProps {
 }
 
 const ChangeTeamAvatarModal: FunctionComponent<ChangeTeamAvatarModalProps> = (
-  props
+  props,
 ) => {
   // Image selection
 

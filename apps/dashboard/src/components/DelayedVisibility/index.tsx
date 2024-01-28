@@ -6,7 +6,7 @@ interface DelayedVisibilityProps {
 }
 
 const DelayedVisibility: FunctionComponent<DelayedVisibilityProps> = (
-  props
+  props,
 ) => {
   const [visible, setVisible] = useState(false);
 

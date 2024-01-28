@@ -25,7 +25,7 @@ const TransferOwnerShipDialog: FunctionComponent<
   const { enqueueSnackbar } = useSnackbar();
   const { mutate, isLoading } = useMutateTeamUser(
     props.team.id,
-    props.receiver.id
+    props.receiver.id,
   );
 
   const transferOwnership = () => {
@@ -42,7 +42,7 @@ const TransferOwnerShipDialog: FunctionComponent<
             variant: "error",
           });
         },
-      }
+      },
     );
   };
 

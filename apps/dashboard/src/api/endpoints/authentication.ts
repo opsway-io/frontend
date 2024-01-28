@@ -14,7 +14,7 @@ export interface ILoginResponse {
 
 export async function login(
   email: string,
-  password: string
+  password: string,
 ): Promise<ILoginResponse> {
   const data: ILoginRequest = {
     email: email,
@@ -51,7 +51,7 @@ export async function refresh(refreshToken: string): Promise<IRefreshResponse> {
       headers: {
         Authorization: "", // Skip auth interceptor
       },
-    }
+    },
   );
 
   return response.data;

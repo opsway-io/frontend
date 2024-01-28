@@ -95,7 +95,7 @@ interface EditableInputIndicatorProps {
 }
 
 const EditableInputIndicator: FunctionComponent<EditableInputIndicatorProps> = (
-  props
+  props,
 ) => {
   const theme = useTheme();
 

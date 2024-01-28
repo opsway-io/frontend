@@ -21,7 +21,7 @@ const DeleteTeamDialog: FunctionComponent<DeleteTeamDialogProps> = (props) => {
   const [textFieldValue, setTextFieldValue] = useState<string>("");
   const { enqueueSnackbar } = useSnackbar();
   const setCurrentTeamID = useAuthenticationStore(
-    (state) => state.setCurrentTeamID
+    (state) => state.setCurrentTeamID,
   );
 
   const { mutate: deleteTeam, isLoading } = useDeleteTeam(props.team.id);

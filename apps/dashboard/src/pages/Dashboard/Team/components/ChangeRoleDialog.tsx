@@ -40,7 +40,7 @@ const ChangeRoleModal: FunctionComponent<ChangeRoleModalProps> = (props) => {
             variant: "error",
           });
         },
-      }
+      },
     );
   };
 

@@ -76,7 +76,7 @@ const MonitorSettingsView: FunctionComponent = () => {
             variant: "error",
           });
         },
-      }
+      },
     );
   };
 

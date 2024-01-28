@@ -45,12 +45,12 @@ const TeamPeopleTabView: FunctionComponent = () => {
         teamId,
         offset,
         10,
-        debouncedQuery ? debouncedQuery : undefined
+        debouncedQuery ? debouncedQuery : undefined,
       );
     },
     {
       keepPreviousData: true,
-    }
+    },
   );
 
   return (

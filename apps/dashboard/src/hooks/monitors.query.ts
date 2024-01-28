@@ -20,7 +20,7 @@ export const useCreateMonitor = () => {
       onSuccess: () => {
         queryClient.invalidateQueries(["teams", teamId, "monitors"]);
       },
-    }
+    },
   );
 };
 
@@ -39,7 +39,7 @@ export const useDeleteMonitor = () => {
       onSuccess: () => {
         queryClient.invalidateQueries(["teams", teamId, "monitors"]);
       },
-    }
+    },
   );
 };
 
@@ -79,7 +79,7 @@ export const useMonitorChecks = (monitorId?: number, offset = 0, limit = 5) => {
     },
     {
       keepPreviousData: true,
-    }
+    },
   );
 };
 
@@ -109,7 +109,7 @@ export const useLatestMonitorCheck = (monitorId?: number) => {
       }
 
       return null;
-    }
+    },
   );
 };
 
@@ -135,7 +135,7 @@ export const useMonitorCheck = (monitorId: number, checkId: number) => {
       }
 
       return MonitorsAPI.getMonitorCheck(teamId, monitorId, checkId);
-    }
+    },
   );
 };
 
@@ -154,6 +154,6 @@ export const useMutateMonitor = (moniterId: number) => {
       onSuccess: () => {
         queryClient.invalidateQueries(["teams", teamId, "monitors"]);
       },
-    }
+    },
   );
 };

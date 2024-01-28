@@ -16,7 +16,7 @@ interface DeleteMonitorDialogProps extends Omit<DialogProps, "onClose"> {
 }
 
 const DeleteMonitorDialog: FunctionComponent<DeleteMonitorDialogProps> = (
-  props
+  props,
 ) => {
   const [textFieldValue, setTextFieldValue] = useState<string>("");
 

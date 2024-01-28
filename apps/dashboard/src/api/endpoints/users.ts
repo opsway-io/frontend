@@ -19,7 +19,7 @@ export interface IGetUserTeamResponse {
 }
 
 export async function getUser(
-  userId: number | string
+  userId: number | string,
 ): Promise<IGetUserResponse> {
   const response = await client.get(`/v1/users/${userId}`);
   return response?.data;
@@ -37,7 +37,7 @@ export interface IPutUserRequest {
 
 export async function updateUser(
   userId: number | string,
-  data: IPutUserRequest
+  data: IPutUserRequest,
 ): Promise<void> {
   const response = await client.put(`/v1/users/${userId}`, data);
   return response?.data;
@@ -46,7 +46,7 @@ export async function updateUser(
 export async function updatePassword(
   userId: number | string,
   oldPassword: string,
-  newPassword: string
+  newPassword: string,
 ): Promise<void> {
   await client.put(`/v1/users/${userId}/password`, {
     oldPassword,
@@ -56,7 +56,7 @@ export async function updatePassword(
 
 export async function updateAvatar(
   userId: number | string,
-  data: string | Blob
+  data: string | Blob,
 ): Promise<void> {
   const form = new FormData();
   form.append("file", data);

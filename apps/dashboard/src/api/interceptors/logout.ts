@@ -22,7 +22,7 @@ export function LogOutInterceptor(inst: AxiosInstance) {
     },
     async (error) => {
       return Promise.reject(error);
-    }
+    },
   );
 
   inst.interceptors.response.use(
@@ -35,6 +35,6 @@ export function LogOutInterceptor(inst: AxiosInstance) {
       }
 
       return Promise.reject(error);
-    }
+    },
   );
 }

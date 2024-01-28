@@ -9,7 +9,7 @@ export const createImage = (url: string): Promise<HTMLImageElement> =>
 
 export default async function cropImage(
   imageSrc: string,
-  pixelCrop: { width: number; height: number; x: number; y: number }
+  pixelCrop: { width: number; height: number; x: number; y: number },
 ): Promise<Blob> {
   const image = await createImage(imageSrc);
   const canvas = document.createElement("canvas");
@@ -28,7 +28,7 @@ export default async function cropImage(
     pixelCrop.x,
     pixelCrop.y,
     pixelCrop.width,
-    pixelCrop.height
+    pixelCrop.height,
   );
 
   canvas.width = pixelCrop.width;

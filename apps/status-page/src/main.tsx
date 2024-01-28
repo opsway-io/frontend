@@ -27,5 +27,5 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
         {/* <Builder /> */}
       </ThemeProvider>
     </Suspense>
-  </React.StrictMode>
+  </React.StrictMode>,
 );

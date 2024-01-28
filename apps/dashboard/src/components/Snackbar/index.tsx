@@ -55,7 +55,7 @@ const SuccessVariant = forwardRef<HTMLDivElement, CustomContentProps>(
         </Card>
       </StyledSnackbarContent>
     );
-  }
+  },
 );
 
 const ErrorVariant = forwardRef<HTMLDivElement, CustomContentProps>(
@@ -89,7 +89,7 @@ const ErrorVariant = forwardRef<HTMLDivElement, CustomContentProps>(
         </Card>
       </StyledSnackbarContent>
     );
-  }
+  },
 );
 
 const InfoVariant = forwardRef<HTMLDivElement, CustomContentProps>(
@@ -123,7 +123,7 @@ const InfoVariant = forwardRef<HTMLDivElement, CustomContentProps>(
         </Card>
       </StyledSnackbarContent>
     );
-  }
+  },
 );
 
 const WarningVariant = forwardRef<HTMLDivElement, CustomContentProps>(
@@ -160,7 +160,7 @@ const WarningVariant = forwardRef<HTMLDivElement, CustomContentProps>(
         </Card>
       </StyledSnackbarContent>
     );
-  }
+  },
 );
 
 export const SnackbarProvider = (props: SnackbarProviderProps) => {

@@ -3,13 +3,13 @@ name: Build
 on:
   push:
     paths:
-      - "apps/website/**"
+      - "apps/status-page/**"
       - "packages/ui/**"
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    name: Build website
+    name: Build status page
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -35,15 +35,15 @@ jobs:
         with:
           version: 8
 
-      - name: Build website application
+      - name: Build status page application
         run: |
           pnpm install
-          pnpm run build --filter website
+          pnpm run build --filter status-page
 
-      - name: Build and push Docker image for website
+      - name: Build and push Docker image for status page
         uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
         with:
-          context: ./apps/website
+          context: ./apps/status-page
           push: true
           tags: |
-            naueramant/opsway-website:${{ steps.prep.outputs.BUILD_ID }}
+            naueramant/opsway-status-page:${{ steps.prep.outputs.BUILD_ID }}

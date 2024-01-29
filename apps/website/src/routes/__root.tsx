@@ -1,4 +1,8 @@
-import { createRootRoute, Outlet } from "@tanstack/react-router";
+import {
+  createRootRoute,
+  Outlet,
+  ScrollRestoration,
+} from "@tanstack/react-router";
 import Navbar from "../components/Navbar";
 import Spacer from "../components/Spacer";
 import Footer from "../components/Footer";
@@ -14,6 +18,7 @@ function Index() {
 
       <Spacer />
 
+      <ScrollRestoration />
       <Outlet />
 
       <Spacer />

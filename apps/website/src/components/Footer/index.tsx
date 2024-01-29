@@ -53,10 +53,18 @@ const Footer: FunctionComponent = () => {
               <Typography variant="body1" component={Link} to="/privacy-policy">
                 Privacy Policy
               </Typography>
+              <br />
+              <Typography variant="body1" component={Link} to="/gdpr">
+                GDPR
+              </Typography>
             </Grid>
 
             <Grid item xs={12} md={3}>
               <Typography variant="h6">Company</Typography>
+              <Typography variant="body1" component={Link} to="/contact">
+                Contact
+              </Typography>
+              <br />
               <Typography variant="body1" component={Link}>
                 Blog
               </Typography>

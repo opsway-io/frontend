@@ -3,6 +3,7 @@ import {
   Box,
   Button,
   Container,
+  Fade,
   IconButton,
   List,
   ListItem,
@@ -20,11 +21,10 @@ import { MdOutlineNavigateNext } from "react-icons/md";
 
 const Navbar = () => {
   return (
-    <Box>
+    <>
       <BigDeviceNavbar />
-
       <SmallDeviceNavbar />
-    </Box>
+    </>
   );
 };
 
@@ -150,57 +150,54 @@ const SmallDeviceNavbar: FunctionComponent = () => {
         </IconButton>
       </Toolbar>
 
-      <List
-        sx={{
-          display: open ? "block" : "none",
-        }}
-        dense
-      >
-        <ListItem>
-          <ListItemButton component={Link} to="/pricing">
-            <ListItemText primary="Pricing" />
+      <Fade in={open} unmountOnExit>
+        <List sx={{}} dense>
+          <ListItem>
+            <ListItemButton component={Link} to="/pricing">
+              <ListItemText primary="Pricing" />
 
-            <ListItemIcon
-              sx={{
-                minWidth: "auto",
-              }}
+              <ListItemIcon
+                sx={{
+                  minWidth: "auto",
+                }}
+              >
+                <MdOutlineNavigateNext />
+              </ListItemIcon>
+            </ListItemButton>
+          </ListItem>
+          <ListItem>
+            <ListItemButton component={"a"} href="https://github.com/opsway-io">
+              <ListItemText primary="GitHub" />
+
+              <ListItemIcon
+                sx={{
+                  minWidth: "auto",
+                }}
+              >
+                <MdOutlineNavigateNext />
+              </ListItemIcon>
+            </ListItemButton>
+          </ListItem>
+
+          <ListItem>
+            <ListItemButton
+              component={"a"}
+              href="https://my.opsway.io"
+              color="success"
             >
-              <MdOutlineNavigateNext />
-            </ListItemIcon>
-          </ListItemButton>
-        </ListItem>
-        <ListItem>
-          <ListItemButton component={"a"} href="https://github.com/opsway-io">
-            <ListItemText primary="GitHub" />
+              <ListItemText primary="Dashboard" />
 
-            <ListItemIcon
-              sx={{
-                minWidth: "auto",
-              }}
-            >
-              <MdOutlineNavigateNext />
-            </ListItemIcon>
-          </ListItemButton>
-        </ListItem>
-
-        <ListItem>
-          <ListItemButton
-            component={"a"}
-            href="https://my.opsway.io"
-            color="success"
-          >
-            <ListItemText primary="Dashboard" />
-
-            <ListItemIcon
-              sx={{
-                minWidth: "auto",
-              }}
-            >
-              <MdOutlineNavigateNext />
-            </ListItemIcon>
-          </ListItemButton>
-        </ListItem>
-      </List>
+              <ListItemIcon
+                sx={{
+                  minWidth: "auto",
+                }}
+              >
+                <MdOutlineNavigateNext />
+              </ListItemIcon>
+            </ListItemButton>
+          </ListItem>
+        </List>
+      </Fade>
     </AppBar>
   );
 };

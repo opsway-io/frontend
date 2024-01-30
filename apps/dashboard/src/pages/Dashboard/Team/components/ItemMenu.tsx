@@ -39,7 +39,7 @@ const ItemMenu: FunctionComponent<ItemMenuProps> = (props) => {
     } catch {
       enqueueSnackbar(
         `Failed to remove ${props.user?.displayName} from the team.`,
-        { variant: "error" }
+        { variant: "error" },
       );
     }
 

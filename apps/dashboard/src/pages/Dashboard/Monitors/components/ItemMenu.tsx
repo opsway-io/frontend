@@ -26,7 +26,7 @@ const ItemMenu: FunctionComponent<ItemMenuProps> = (props) => {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   const { mutate: update, isLoading: isUpdating } = useMutateMonitor(
-    props.monitor.id
+    props.monitor.id,
   );
 
   const setMonitorState = (state: "ACTIVE" | "INACTIVE") => {
@@ -46,7 +46,7 @@ const ItemMenu: FunctionComponent<ItemMenuProps> = (props) => {
 
   const isActive = useMemo(
     () => props.monitor.state === "ACTIVE",
-    [props.monitor.state]
+    [props.monitor.state],
   );
 
   return (

@@ -16,7 +16,7 @@ interface MonitorChecksDataGridProps {
 }
 
 const ChecksDataGrid: FunctionComponent<MonitorChecksDataGridProps> = (
-  props
+  props,
 ) => {
   const navigate = useNavigate();
 
@@ -25,7 +25,7 @@ const ChecksDataGrid: FunctionComponent<MonitorChecksDataGridProps> = (
   const { data, isLoading } = useMonitorChecks(
     props.monitorId,
     offset,
-    CHECKS_PER_PAGE
+    CHECKS_PER_PAGE,
   );
 
   const formatTime = (time: number) => {

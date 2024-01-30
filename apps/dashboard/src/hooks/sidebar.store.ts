@@ -13,8 +13,8 @@ const useSidebarStore = create<SidebarState>()(
     }),
     {
       name: "sidebarState",
-    }
-  )
+    },
+  ),
 );
 
 export default useSidebarStore;

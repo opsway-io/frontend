@@ -28,7 +28,7 @@ const TeamInvitationView: FunctionComponent = () => {
   const { data: currentTeam, isLoading: isCurrentTeamLoading } =
     useCurrentTeam();
   const setCurrentTeamID = useAuthenticationStore(
-    (state) => state.setCurrentTeamID
+    (state) => state.setCurrentTeamID,
   );
 
   const isLoading = useMemo(() => {

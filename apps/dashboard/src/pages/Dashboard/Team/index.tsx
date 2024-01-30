@@ -82,7 +82,7 @@ const TeamView: FunctionComponent = () => {
           component={Link}
           to="/team/settings"
           value="/team/settings"
-        />
+        />,
       );
     }
 
@@ -94,7 +94,7 @@ const TeamView: FunctionComponent = () => {
           component={Link}
           to="/team/plan"
           value="/team/plan"
-        />
+        />,
       );
     }
 

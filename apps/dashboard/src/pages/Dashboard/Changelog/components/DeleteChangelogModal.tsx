@@ -17,7 +17,7 @@ interface DeleteChangelogDialogProps extends Omit<DialogProps, "onClose"> {
 }
 
 const DeleteChangelogDialog: FunctionComponent<DeleteChangelogDialogProps> = (
-  props
+  props,
 ) => {
   const [textFieldValue, setTextFieldValue] = useState<string>("");
 

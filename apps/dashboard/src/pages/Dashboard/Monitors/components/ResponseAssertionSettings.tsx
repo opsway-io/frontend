@@ -317,7 +317,7 @@ const ResponseAssertionSettings: FunctionComponent = () => {
               },
               {
                 shouldFocus: false,
-              }
+              },
             );
           }}
           startIcon={<VscAdd />}

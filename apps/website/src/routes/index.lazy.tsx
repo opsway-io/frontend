@@ -19,6 +19,7 @@ import { VscLayers } from "react-icons/vsc";
 import { FaHeart } from "react-icons/fa";
 import { CgWebsite } from "react-icons/cg";
 import Spacer from "../components/Spacer";
+import { Helmet } from "react-helmet";
 
 export const Route = createLazyFileRoute("/")({
   component: Index,
@@ -29,6 +30,14 @@ function Index() {
 
   return (
     <>
+      <Helmet>
+        <title>opsway.io</title>
+        <meta
+          name="keywords"
+          content="opsway, opsway.io, status page, incident management, changelogs, real-time monitoring"
+        />
+      </Helmet>
+
       <Box
         sx={{
           textAlign: "center",
@@ -36,10 +45,14 @@ function Index() {
       >
         <Typography
           sx={{
-            fontSize: 80,
+            fontSize: {
+              xs: 48,
+              md: 80,
+            },
             color: (t) => t.palette.success.main,
             fontWeight: 700,
             display: "inline",
+            lineHeight: 1.2,
             backgroundImage: (t) =>
               `linear-gradient(45deg, ${t.palette.success.main}, ${t.palette.info.main})`,
             backgroundClip: "text",
@@ -53,7 +66,10 @@ function Index() {
 
         <Typography
           sx={{
-            fontSize: 36,
+            fontSize: {
+              xs: 20,
+              md: 36,
+            },
             color: (t) => t.palette.text.secondary,
             fontWeight: 300,
             display: "inline",
@@ -66,12 +82,12 @@ function Index() {
       <Spacer />
 
       <Container maxWidth="xl">
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            gap: 2,
+        <Stack
+          spacing={2}
+          justifyContent="center"
+          direction={{
+            xs: "column",
+            md: "row",
           }}
         >
           <Button
@@ -101,8 +117,10 @@ function Index() {
           >
             GitHub
           </Button>
-        </Box>
+        </Stack>
+
         <Spacer />
+
         <Stack
           sx={{
             textAlign: "center",
@@ -117,9 +135,13 @@ function Index() {
           >
             All you need is here
           </Typography>
+
           <Grid
             container
-            direction="row"
+            direction={{
+              xs: "column",
+              md: "row",
+            }}
             gap={2}
             sx={{
               padding: 0,
@@ -233,7 +255,10 @@ function Index() {
 
           <Grid
             container
-            direction="row"
+            direction={{
+              xs: "column",
+              md: "row",
+            }}
             gap={2}
             sx={{
               padding: 0,
@@ -337,20 +362,25 @@ function Index() {
             sx={{
               marginBottom: 4,
               opacity: 0.5,
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              gap: 1,
             }}
           >
-            Companies of all sizes <FaHeart color={t.palette.error.main} />{" "}
+            Companies of all sizes{" "}
+            <FaHeart
+              color={t.palette.error.main}
+              style={{
+                verticalAlign: "middle",
+              }}
+            />{" "}
             opsway
           </Typography>
 
           <Grid
             container
             direction="row"
-            spacing={8}
+            spacing={{
+              xs: 4,
+              md: 8,
+            }}
             justifyContent="center"
             sx={{
               padding: 0,

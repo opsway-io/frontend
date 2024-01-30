@@ -32,7 +32,7 @@ export const useMutateCurrentUser = () => {
       onSuccess: () => {
         queryClient.invalidateQueries(["users", userId]);
       },
-    }
+    },
   );
 };
 

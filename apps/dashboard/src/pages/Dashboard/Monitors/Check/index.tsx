@@ -107,16 +107,16 @@ const MonitorCheckView: FunctionComponent = () => {
             phases={{
               dnsLookup: Math.floor((check?.timing.dnsLookup || 0) / 1000000),
               tcpConnection: Math.floor(
-                (check?.timing.tcpConnection || 0) / 1000000
+                (check?.timing.tcpConnection || 0) / 1000000,
               ),
               tlsHandshake: Math.floor(
-                (check?.timing.tlsHandshake || 0) / 1000000
+                (check?.timing.tlsHandshake || 0) / 1000000,
               ),
               serverProcessing: Math.floor(
-                (check?.timing.serverProcessing || 0) / 1000000
+                (check?.timing.serverProcessing || 0) / 1000000,
               ),
               contentTransfer: Math.floor(
-                (check?.timing.contentTransfer || 0) / 1000000
+                (check?.timing.contentTransfer || 0) / 1000000,
               ),
             }}
           />

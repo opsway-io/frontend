@@ -27,7 +27,7 @@ const ChangelogView: FunctionComponent = () => {
   const { data, isLoading } = useChangelogs(
     offset,
     CHANGELOGS_PER_PAGE,
-    debouncedQuery ? debouncedQuery : undefined
+    debouncedQuery ? debouncedQuery : undefined,
   );
 
   return (

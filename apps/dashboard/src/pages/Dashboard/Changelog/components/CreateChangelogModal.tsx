@@ -17,7 +17,7 @@ interface CreateChangelogModalProps {
 }
 
 const CreateChangelogModal: FunctionComponent<CreateChangelogModalProps> = (
-  props
+  props,
 ) => {
   const { mutate, isLoading } = useCreateChangelog();
 

@@ -16,7 +16,7 @@ interface ChangelogsDataGridProps
 }
 
 const ChangelogsDataGrid: FunctionComponent<ChangelogsDataGridProps> = (
-  props
+  props,
 ) => {
   const navigate = useNavigate();
   const currentRole = useCurrentUserRole();

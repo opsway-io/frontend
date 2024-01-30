@@ -12,6 +12,8 @@ const IndexLazyImport = createFileRoute('/')()
 const TermsOfServiceIndexLazyImport = createFileRoute('/terms-of-service/')()
 const PrivacyPolicyIndexLazyImport = createFileRoute('/privacy-policy/')()
 const PricingIndexLazyImport = createFileRoute('/pricing/')()
+const GdprIndexLazyImport = createFileRoute('/gdpr/')()
+const ContactIndexLazyImport = createFileRoute('/contact/')()
 
 // Create/Update Routes
 
@@ -39,12 +41,30 @@ const PricingIndexLazyRoute = PricingIndexLazyImport.update({
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/pricing/index.lazy').then((d) => d.Route))
 
+const GdprIndexLazyRoute = GdprIndexLazyImport.update({
+  path: '/gdpr/',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() => import('./routes/gdpr/index.lazy').then((d) => d.Route))
+
+const ContactIndexLazyRoute = ContactIndexLazyImport.update({
+  path: '/contact/',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() => import('./routes/contact/index.lazy').then((d) => d.Route))
+
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
     '/': {
       preLoaderRoute: typeof IndexLazyImport
+      parentRoute: typeof rootRoute
+    }
+    '/contact/': {
+      preLoaderRoute: typeof ContactIndexLazyImport
+      parentRoute: typeof rootRoute
+    }
+    '/gdpr/': {
+      preLoaderRoute: typeof GdprIndexLazyImport
       parentRoute: typeof rootRoute
     }
     '/pricing/': {
@@ -66,6 +86,8 @@ declare module '@tanstack/react-router' {
 
 export const routeTree = rootRoute.addChildren([
   IndexLazyRoute,
+  ContactIndexLazyRoute,
+  GdprIndexLazyRoute,
   PricingIndexLazyRoute,
   PrivacyPolicyIndexLazyRoute,
   TermsOfServiceIndexLazyRoute,

@@ -26,7 +26,7 @@ const Line = styled("div")(
     height: `${value}%`,
     width: 8,
     backgroundColor: theme?.palette.success.main,
-  })
+  }),
 );
 
 interface ResultThumbGraphProps {

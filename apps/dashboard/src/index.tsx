@@ -11,7 +11,7 @@ import Routes from "./routes/routes";
 import { DarkTheme } from "@opsway/ui";
 
 const root = ReactDOM.createRoot(
-  document.getElementById("root") as HTMLElement
+  document.getElementById("root") as HTMLElement,
 );
 
 root.render(
@@ -35,7 +35,7 @@ root.render(
         </SnackbarProvider>
       </ThemeProvider>
     </QueryClientProvider>
-  </BrowserRouter>
+  </BrowserRouter>,
 );
 
 // If you want to start measuring performance in your app, pass a function

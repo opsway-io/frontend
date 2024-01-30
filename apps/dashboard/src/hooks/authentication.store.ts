@@ -28,7 +28,7 @@ interface AuthenticationActions {
   logOut(): void;
   logIn(
     email: string,
-    password: string
+    password: string,
   ): Promise<{ success: boolean; user?: IGetUserResponse }>;
 
   setCurrentUserID(userId?: number): void;
@@ -63,7 +63,7 @@ const useAuthenticationStore = create<
 
       logIn: async (
         email: string,
-        password: string
+        password: string,
       ): Promise<{ success: boolean; user?: IGetUserResponse }> => {
         try {
           const response = await AuthenticationAPI.login(email, password);
@@ -145,8 +145,8 @@ const useAuthenticationStore = create<
     }),
     {
       name: "authenticationState",
-    }
-  )
+    },
+  ),
 );
 
 function hasTokenExpired(token: string) {

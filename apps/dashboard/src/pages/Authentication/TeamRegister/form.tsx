@@ -15,7 +15,7 @@ interface TeamRegistrationFormData {
 const TeamRegistrationForm: FunctionComponent = () => {
   const { enqueueSnackbar } = useSnackbar();
   const setCurrentTeamId = useAuthenticationStore(
-    (state) => state.setCurrentTeamID
+    (state) => state.setCurrentTeamID,
   );
   const navigate = useNavigate();
 

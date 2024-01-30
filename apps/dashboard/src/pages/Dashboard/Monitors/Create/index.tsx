@@ -101,7 +101,7 @@ const MonitorCreateView: FunctionComponent = () => {
         onError: () => {
           enqueueSnackbar("Failed to create monitor", { variant: "error" });
         },
-      }
+      },
     );
   };
 

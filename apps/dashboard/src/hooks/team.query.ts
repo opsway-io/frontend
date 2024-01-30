@@ -7,7 +7,7 @@ const queryClient = getQueryClient();
 
 export const removeTeamUser = async (
   teamId: string | number,
-  userId: string | number
+  userId: string | number,
 ): Promise<void> => {
   await TeamsAPI.removeUser(teamId, userId);
   queryClient.invalidateQueries(["teams", teamId, "users"]);
@@ -40,7 +40,7 @@ export const useMutateCurrentTeam = () => {
       onSuccess: () => {
         queryClient.invalidateQueries(["teams", currentTeamId]);
       },
-    }
+    },
   );
 };
 
@@ -56,7 +56,7 @@ export const useDeleteTeam = (teamId: number) => {
         queryClient.invalidateQueries(["teams", teamId]);
         queryClient.invalidateQueries(["users", userId]);
       },
-    }
+    },
   );
 };
 
@@ -70,7 +70,7 @@ export const useMutateTeamUser = (teamId: number, userId: number) => {
         queryClient.invalidateQueries(["teams", teamId]);
         queryClient.invalidateQueries(["users", userId]);
       },
-    }
+    },
   );
 };
 
@@ -84,13 +84,13 @@ export const useAcceptTeamInvite = () => {
         queryClient.invalidateQueries(["teams"]);
         queryClient.invalidateQueries(["users"]);
       },
-    }
+    },
   );
 };
 
 export const usePostCreateCheckoutSession = (
   teamId: number,
-  priceLookupKey: string
+  priceLookupKey: string,
 ) => {
   return useMutation(
     () => {
@@ -105,6 +105,6 @@ export const usePostCreateCheckoutSession = (
           priceLookupKey,
         ]);
       },
-    }
+    },
   );
 };

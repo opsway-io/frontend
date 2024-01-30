@@ -153,7 +153,7 @@ const HeaderSettings: FunctionComponent = () => {
               { key: "", value: "" },
               {
                 shouldFocus: false,
-              }
+              },
             );
           }}
           startIcon={<VscAdd />}

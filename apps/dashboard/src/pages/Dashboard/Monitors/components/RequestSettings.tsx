@@ -123,10 +123,10 @@ const RequestSettings: FunctionComponent = () => {
                 render={(bodyProps) => (
                   <Editor
                     defaultLanguage={bodyTypeToEditorLanguage(
-                      bodyTypeProps.field.value
+                      bodyTypeProps.field.value,
                     )}
                     language={bodyTypeToEditorLanguage(
-                      bodyTypeProps.field.value
+                      bodyTypeProps.field.value,
                     )}
                     value={bodyProps.field.value}
                     onChange={bodyProps.field.onChange}

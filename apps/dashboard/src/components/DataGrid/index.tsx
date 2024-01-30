@@ -107,7 +107,7 @@ interface CustomNoRowsOverlayProps {
 }
 
 const CustomNoRowsOverlay: FunctionComponent<CustomNoRowsOverlayProps> = (
-  props
+  props,
 ) => {
   return (
     <Box

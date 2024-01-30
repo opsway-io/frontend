@@ -15,60 +15,60 @@ const AccessRestrictedView = lazy(() => import("../pages/Errors/403"));
 const LoginView = lazy(() => import("../pages/Authentication/Login"));
 const OAuthLoginView = lazy(() => import("../pages/Authentication/OAuth"));
 const RegisterAccountView = lazy(
-  () => import("../pages/Authentication/UserRegister")
+  () => import("../pages/Authentication/UserRegister"),
 );
 const ResetPasswordView = lazy(
-  () => import("../pages/Authentication/ResetPassword")
+  () => import("../pages/Authentication/ResetPassword"),
 );
 const ForgotPasswordView = lazy(
-  () => import("../pages/Authentication/ForgotPassword")
+  () => import("../pages/Authentication/ForgotPassword"),
 );
 
 const AccountView = lazy(() => import("../pages/Dashboard/Account"));
 const AccountGeneralTabView = lazy(
-  () => import("../pages/Dashboard/Account/tabs/General")
+  () => import("../pages/Dashboard/Account/tabs/General"),
 );
 const AccountSecurityTabView = lazy(
-  () => import("../pages/Dashboard/Account/tabs/Security")
+  () => import("../pages/Dashboard/Account/tabs/Security"),
 );
 
 const TeamView = lazy(() => import("../pages/Dashboard/Team"));
 const TeamPeopleTabView = lazy(
-  () => import("../pages/Dashboard/Team/tabs/People")
+  () => import("../pages/Dashboard/Team/tabs/People"),
 );
 const TeamSettingsTabView = lazy(
-  () => import("../pages/Dashboard/Team/tabs/Settings")
+  () => import("../pages/Dashboard/Team/tabs/Settings"),
 );
 const TeamPlanTabView = lazy(() => import("../pages/Dashboard/Team/tabs/Plan"));
 const TeamSelectionView = lazy(
-  () => import("../pages/Authentication/TeamSelection")
+  () => import("../pages/Authentication/TeamSelection"),
 );
 const TeamRegisterView = lazy(
-  () => import("../pages/Authentication/TeamRegister")
+  () => import("../pages/Authentication/TeamRegister"),
 );
 
 const MonitorsView = lazy(() => import("../pages/Dashboard/Monitors"));
 const MonitorDetailView = lazy(
-  () => import("../pages/Dashboard/Monitors/Detail")
+  () => import("../pages/Dashboard/Monitors/Detail"),
 );
 const MonitorCreateView = lazy(
-  () => import("../pages/Dashboard/Monitors/Create")
+  () => import("../pages/Dashboard/Monitors/Create"),
 );
 const MonitorCheckView = lazy(
-  () => import("../pages/Dashboard/Monitors/Check")
+  () => import("../pages/Dashboard/Monitors/Check"),
 );
 const MonitorSettingsView = lazy(
-  () => import("../pages/Dashboard/Monitors/Settings")
+  () => import("../pages/Dashboard/Monitors/Settings"),
 );
 
 const HeartbeatsView = lazy(() => import("../pages/Dashboard/Heartbeats"));
 
 const MaintenanceView = lazy(() => import("../pages/Dashboard/Maintenance"));
 const MaintenanceCreateView = lazy(
-  () => import("../pages/Dashboard/Maintenance/Create")
+  () => import("../pages/Dashboard/Maintenance/Create"),
 );
 const MaintenanceDetailView = lazy(
-  () => import("../pages/Dashboard/Maintenance/Detail")
+  () => import("../pages/Dashboard/Maintenance/Detail"),
 );
 
 const IncidentsView = lazy(() => import("../pages/Dashboard/Incidents"));
@@ -77,27 +77,27 @@ const AlertingView = lazy(() => import("../pages/Dashboard/Alerting"));
 
 const ChangelogView = lazy(() => import("../pages/Dashboard/Changelog"));
 const ChangelogEntriesCreateView = lazy(
-  () => import("../pages/Dashboard/Changelog/Entries/Create")
+  () => import("../pages/Dashboard/Changelog/Entries/Create"),
 );
 const ChangelogEntriesView = lazy(
-  () => import("../pages/Dashboard/Changelog/Entries")
+  () => import("../pages/Dashboard/Changelog/Entries"),
 );
 const ChangelogEntriesDetailView = lazy(
-  () => import("../pages/Dashboard/Changelog/Entries/Detail")
+  () => import("../pages/Dashboard/Changelog/Entries/Detail"),
 );
 
 const StatusPagesView = lazy(() => import("../pages/Dashboard/StatusPages"));
 const StatusPagesCreateView = lazy(
-  () => import("../pages/Dashboard/StatusPages/Create")
+  () => import("../pages/Dashboard/StatusPages/Create"),
 );
 const StatusPagesDetailView = lazy(
-  () => import("../pages/Dashboard/StatusPages/Detail")
+  () => import("../pages/Dashboard/StatusPages/Detail"),
 );
 
 const ReportsView = lazy(() => import("../pages/Dashboard/Reports"));
 
 const TeamInvitationView = lazy(
-  () => import("../pages/Authentication/TeamInvitation")
+  () => import("../pages/Authentication/TeamInvitation"),
 );
 
 const Routes: FunctionComponent = () => {

@@ -40,13 +40,13 @@ const RequestTimeline: FunctionComponent<RequestTimelineProps> = (props) => {
   const preTransferWidth = getRowWidth(phases.tlsHandshake, total);
   const preTransferOffset = getRowWidth(
     phases.dnsLookup + phases.tcpConnection,
-    total
+    total,
   );
 
   const startTransferWidth = getRowWidth(phases.serverProcessing, total);
   const startTransferOffset = getRowWidth(
     phases.dnsLookup + phases.tcpConnection + phases.tlsHandshake,
-    total
+    total,
   );
 
   const contentTransferWidth = getRowWidth(phases.contentTransfer, total);
@@ -55,7 +55,7 @@ const RequestTimeline: FunctionComponent<RequestTimelineProps> = (props) => {
       phases.tcpConnection +
       phases.tlsHandshake +
       phases.serverProcessing,
-    total
+    total,
   );
 
   return (

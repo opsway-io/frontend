@@ -26,12 +26,28 @@ const Footer: FunctionComponent = () => {
         <Container
           maxWidth="xl"
           sx={{
-            paddingTop: 8,
-            paddingBottom: 8,
+            paddingTop: {
+              xs: 4,
+              md: 8,
+            },
+            paddingBottom: {
+              xs: 4,
+              md: 8,
+            },
             opacity: 0.75,
+            textAlign: {
+              xs: "center",
+              md: "left",
+            },
           }}
         >
-          <Grid container spacing={4}>
+          <Grid
+            container
+            spacing={{
+              xs: 2,
+              md: 4,
+            }}
+          >
             <Grid item xs={12} md={3}>
               <Typography variant="h6">Open source</Typography>
               <Typography variant="body1">
@@ -53,10 +69,18 @@ const Footer: FunctionComponent = () => {
               <Typography variant="body1" component={Link} to="/privacy-policy">
                 Privacy Policy
               </Typography>
+              <br />
+              <Typography variant="body1" component={Link} to="/gdpr">
+                GDPR
+              </Typography>
             </Grid>
 
             <Grid item xs={12} md={3}>
               <Typography variant="h6">Company</Typography>
+              <Typography variant="body1" component={Link} to="/contact">
+                Contact
+              </Typography>
+              <br />
               <Typography variant="body1" component={Link}>
                 Blog
               </Typography>

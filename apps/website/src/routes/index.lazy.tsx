@@ -19,6 +19,7 @@ import { VscLayers } from "react-icons/vsc";
 import { FaHeart } from "react-icons/fa";
 import { CgWebsite } from "react-icons/cg";
 import Spacer from "../components/Spacer";
+import { Helmet } from "react-helmet";
 
 export const Route = createLazyFileRoute("/")({
   component: Index,
@@ -29,6 +30,14 @@ function Index() {
 
   return (
     <>
+      <Helmet>
+        <title>opsway.io</title>
+        <meta
+          name="keywords"
+          content="opsway, opsway.io, status page, incident management, changelogs, real-time monitoring"
+        />
+      </Helmet>
+
       <Box
         sx={{
           textAlign: "center",

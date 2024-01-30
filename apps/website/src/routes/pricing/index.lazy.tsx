@@ -21,6 +21,7 @@ import {
 } from "@mui/material";
 import { BsCheckLg } from "react-icons/bs";
 import { createLazyFileRoute } from "@tanstack/react-router";
+import { Helmet } from "react-helmet";
 
 export const Route = createLazyFileRoute("/pricing/")({
   component: Index,
@@ -29,6 +30,14 @@ export const Route = createLazyFileRoute("/pricing/")({
 function Index() {
   return (
     <>
+      <Helmet>
+        <title>Pricing - opsway.io</title>
+        <meta
+          name="keywords"
+          content="pricing, plans, free, team, enterprise"
+        />
+      </Helmet>
+
       <Box
         sx={{
           textAlign: "center",

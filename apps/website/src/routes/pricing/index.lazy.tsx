@@ -49,6 +49,10 @@ function Index() {
             color: (t) => t.palette.success.main,
             fontWeight: 700,
             display: "inline",
+            fontSize: {
+              xs: 36,
+              md: 48,
+            },
           }}
         >
           Choose the plan{" "}
@@ -58,12 +62,14 @@ function Index() {
           sx={{
             display: "inline",
             fontWeight: 700,
+            fontSize: {
+              xs: 36,
+              md: 48,
+            },
           }}
         >
           right for your team
         </Typography>
-
-        <br />
 
         <Typography
           variant="h6"
@@ -71,6 +77,7 @@ function Index() {
           sx={{
             maxWidth: 800,
             margin: "auto",
+            marginTop: 2,
           }}
         >
           Whatever you need a simple monitor and status page or full enterprise
@@ -319,6 +326,14 @@ const FeatureOverview: FunctionComponent = () => {
           "& td": {
             backgroundColor: t.palette.background.paper,
           },
+
+          "& *": {
+            fontSize: {
+              xs: 10,
+              md: 16,
+            },
+          },
+
           maxWidth: 1000,
           margin: "auto",
         }}

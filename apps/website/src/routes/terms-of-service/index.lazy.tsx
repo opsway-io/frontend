@@ -9,18 +9,18 @@ function Index() {
   return (
     <Container maxWidth="xl">
       <Stack spacing={2}>
-        <h1>Website Terms and Conditions of Use</h1>
+        <h1>Terms of Service</h1>
         <p>Last updated: January 29, 2024</p>
 
         <h2>1. Terms</h2>
 
         <p>
           By accessing this Website, accessible from https://opsway.io, you are
-          agreeing to be bound by these Website Terms and Conditions of Use and
-          agree that you are responsible for the agreement with any applicable
-          local laws. If you disagree with any of these terms, you are
-          prohibited from accessing this site. The materials contained in this
-          Website are protected by copyright and trade mark law.
+          agreeing to be bound by these Terms of Service and agree that you are
+          responsible for the agreement with any applicable local laws. If you
+          disagree with any of these terms, you are prohibited from accessing
+          this site. The materials contained in this Website are protected by
+          copyright and trade mark law.
         </p>
 
         <h2>2. Use License</h2>

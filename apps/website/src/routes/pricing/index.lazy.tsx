@@ -4,6 +4,7 @@ import {
   Button,
   Card,
   CardContent,
+  Container,
   Divider,
   Grid,
   List,
@@ -38,115 +39,117 @@ function Index() {
         />
       </Helmet>
 
-      <Box
-        sx={{
-          textAlign: "center",
-        }}
-      >
-        <Typography
-          variant="h3"
+      <Container maxWidth="xl">
+        <Box
           sx={{
-            color: (t) => t.palette.success.main,
-            fontWeight: 700,
-            display: "inline",
-            fontSize: {
-              xs: 36,
-              md: 48,
-            },
+            textAlign: "center",
           }}
         >
-          Choose the plan{" "}
-        </Typography>
-        <Typography
-          variant="h3"
+          <Typography
+            variant="h3"
+            sx={{
+              color: (t) => t.palette.success.main,
+              fontWeight: 700,
+              display: "inline",
+              fontSize: {
+                xs: 36,
+                md: 48,
+              },
+            }}
+          >
+            Choose the plan{" "}
+          </Typography>
+          <Typography
+            variant="h3"
+            sx={{
+              display: "inline",
+              fontWeight: 700,
+              fontSize: {
+                xs: 36,
+                md: 48,
+              },
+            }}
+          >
+            right for your team
+          </Typography>
+
+          <Typography
+            variant="h6"
+            color="text.secondary"
+            sx={{
+              maxWidth: 800,
+              margin: "auto",
+              marginTop: 2,
+            }}
+          >
+            Whatever you need a simple monitor and status page or full
+            enterprise super powers 🦸, we got you covered.
+          </Typography>
+        </Box>
+
+        <Grid
+          container
+          spacing={2}
+          justifyContent="center"
           sx={{
-            display: "inline",
-            fontWeight: 700,
-            fontSize: {
-              xs: 36,
-              md: 48,
-            },
+            marginTop: 4,
           }}
         >
-          right for your team
-        </Typography>
+          <Grid item>
+            <PricingCard
+              title="Free"
+              description="For small teams"
+              price="0£"
+              features={[
+                "Up to 10 users",
+                "Up to 5 monitors",
+                "Up to 5 status pages",
+                "1 month of history",
+              ]}
+            />
+          </Grid>
+          <Grid item>
+            <PricingCard
+              title="Team"
+              description="For medium teams"
+              price="20£"
+              features={[
+                "Up to 25 users",
+                "Up to 25 monitors",
+                "Up to 10 status pages",
+                "Up to 5 on-call schedules",
+                "1 year of history",
+              ]}
+            />
+          </Grid>
+          <Grid item>
+            <PricingCard
+              title="Enterprise"
+              description="For large teams"
+              price="100£"
+              features={[
+                "Unlimited users",
+                "Unlimited monitors",
+                "Unlimited status pages",
+                "Unlimited On-call schedules",
+                "1 year of history",
+                "Priority support",
+              ]}
+            />
+          </Grid>
+        </Grid>
 
         <Typography
-          variant="h6"
+          variant="h5"
           color="text.secondary"
-          sx={{
-            maxWidth: 800,
-            margin: "auto",
-            marginTop: 2,
-          }}
+          sx={{ marginTop: 12, marginBottom: 2 }}
+          textAlign="center"
         >
-          Whatever you need a simple monitor and status page or full enterprise
-          super powers 🦸, we got you covered.
+          Feature overview
         </Typography>
-      </Box>
 
-      <Grid
-        container
-        spacing={2}
-        justifyContent="center"
-        sx={{
-          marginTop: 4,
-        }}
-      >
-        <Grid item>
-          <PricingCard
-            title="Free"
-            description="For small teams"
-            price="0£"
-            features={[
-              "Up to 10 users",
-              "Up to 5 monitors",
-              "Up to 5 status pages",
-              "1 month of history",
-            ]}
-          />
-        </Grid>
-        <Grid item>
-          <PricingCard
-            title="Team"
-            description="For medium teams"
-            price="20£"
-            features={[
-              "Up to 25 users",
-              "Up to 25 monitors",
-              "Up to 10 status pages",
-              "Up to 5 on-call schedules",
-              "1 year of history",
-            ]}
-          />
-        </Grid>
-        <Grid item>
-          <PricingCard
-            title="Enterprise"
-            description="For large teams"
-            price="100£"
-            features={[
-              "Unlimited users",
-              "Unlimited monitors",
-              "Unlimited status pages",
-              "Unlimited On-call schedules",
-              "1 year of history",
-              "Priority support",
-            ]}
-          />
-        </Grid>
-      </Grid>
-
-      <Typography
-        variant="h5"
-        color="text.secondary"
-        sx={{ marginTop: 12, marginBottom: 2 }}
-        textAlign="center"
-      >
-        Feature overview
-      </Typography>
-
-      <FeatureOverview />
+        <FeatureOverview />
+      </Container>
     </>
   );
 }

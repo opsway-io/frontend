@@ -154,6 +154,8 @@ const PhasesThumb: FunctionComponent<PhasesThumbProps> = (props) => {
       height={barHeight}
       sx={{
         opacity: 0.5,
+        borderRadius: 1,
+        overflow: "hidden",
       }}
     >
       <Box
@@ -161,8 +163,6 @@ const PhasesThumb: FunctionComponent<PhasesThumbProps> = (props) => {
           width: dnsLookupWidth,
           height: barHeight,
           bgcolor: "info.main",
-          borderTopLeftRadius: (t) => t.shape.borderRadius,
-          borderBottomLeftRadius: (t) => t.shape.borderRadius,
         }}
       />
       <Box
@@ -191,8 +191,6 @@ const PhasesThumb: FunctionComponent<PhasesThumbProps> = (props) => {
           width: contentTransferWidth,
           height: barHeight,
           bgcolor: "error.main",
-          borderTopRightRadius: (t) => t.shape.borderRadius,
-          borderBottomRightRadius: (t) => t.shape.borderRadius,
         }}
       />
     </Stack>

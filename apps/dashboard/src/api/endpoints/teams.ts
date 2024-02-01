@@ -157,7 +157,7 @@ export async function postCreateCheckoutSession(
   teamId: string | number,
   priceLookupKey: string,
 ): Promise<void> {
-  const res =  client.post(`/v1/teams/${teamId}/create-checkout-session`, {
+  const res = client.post(`/v1/teams/${teamId}/create-checkout-session`, {
     priceLookupKey,
   });
   const body = (await res).data;

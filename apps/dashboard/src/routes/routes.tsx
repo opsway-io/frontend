@@ -36,10 +36,15 @@ const TeamView = lazy(() => import("../pages/Dashboard/Team"));
 const TeamPeopleTabView = lazy(
   () => import("../pages/Dashboard/Team/tabs/People"),
 );
+const TeamInvitationsTabView = lazy(
+  () => import("../pages/Dashboard/Team/tabs/Invitations"),
+);
 const TeamSettingsTabView = lazy(
   () => import("../pages/Dashboard/Team/tabs/Settings"),
 );
-const TeamPlanTabView = lazy(() => import("../pages/Dashboard/Team/tabs/Plan"));
+const TeamSubscriptionTabView = lazy(
+  () => import("../pages/Dashboard/Team/tabs/Subscription"),
+);
 const TeamSelectionView = lazy(
   () => import("../pages/Authentication/TeamSelection"),
 );
@@ -96,8 +101,8 @@ const StatusPagesDetailView = lazy(
 
 const ReportsView = lazy(() => import("../pages/Dashboard/Reports"));
 
-const TeamInvitationView = lazy(
-  () => import("../pages/Authentication/TeamInvitation"),
+const TeamAcceptInvitationView = lazy(
+  () => import("../pages/Authentication/TeamAcceptInvitation"),
 );
 
 const Routes: FunctionComponent = () => {
@@ -202,6 +207,14 @@ const Routes: FunctionComponent = () => {
           {/* Team */}
           <Route path="team" element={<TeamView />}>
             <Route path="people" element={<TeamPeopleTabView />} />
+            <Route
+              path="invitations"
+              element={
+                <RestrictedRoute minRole={Role.ADMIN}>
+                  <TeamInvitationsTabView />
+                </RestrictedRoute>
+              }
+            />
 
             <Route
               path="settings"
@@ -212,10 +225,10 @@ const Routes: FunctionComponent = () => {
               }
             />
             <Route
-              path="plan"
+              path="subscription"
               element={
                 <RestrictedRoute minRole={Role.OWNER}>
-                  <TeamPlanTabView />
+                  <TeamSubscriptionTabView />
                 </RestrictedRoute>
               }
             />
@@ -240,7 +253,7 @@ const Routes: FunctionComponent = () => {
           <Route path="" element={<RestrictedRoute authenticated />}>
             <Route path="team/select" element={<TeamSelectionView />} />
             <Route path="team/register" element={<TeamRegisterView />} />
-            <Route path="team/invite" element={<TeamInvitationView />} />
+            <Route path="team/invite" element={<TeamAcceptInvitationView />} />
           </Route>
         </Route>
 

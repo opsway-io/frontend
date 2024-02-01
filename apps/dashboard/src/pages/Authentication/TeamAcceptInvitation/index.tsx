@@ -18,7 +18,7 @@ import { useWindowSize } from "react-use";
 import useAuthenticationStore from "../../../hooks/authentication.store";
 import jwt_decode from "jwt-decode";
 
-const TeamInvitationView: FunctionComponent = () => {
+const TeamAcceptInvitationView: FunctionComponent = () => {
   const { params, isLoading: isLoadingQueryParams } = useQueryParams();
   const navigate = useNavigate();
   const { width: windowWidth, height: windowHeight } = useWindowSize();
@@ -150,4 +150,4 @@ const TeamInvitationView: FunctionComponent = () => {
   );
 };
 
-export default TeamInvitationView;
+export default TeamAcceptInvitationView;

@@ -191,6 +191,14 @@ theme.components = {
     },
   },
 
+  MuiTabs: {
+    styleOverrides: {
+      indicator: {
+        backgroundColor: theme.palette.warning.main,
+      },
+    },
+  },
+
   MuiTextField: {
     defaultProps: {
       variant: "outlined",

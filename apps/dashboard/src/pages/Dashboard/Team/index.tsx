@@ -77,6 +77,16 @@ const TeamView: FunctionComponent = () => {
     if (Role.ADMIN.equalOrHigher(currentRole)) {
       tabs.push(
         <Tab
+          label="Invitations"
+          key="invitations"
+          component={Link}
+          to="/team/invitations"
+          value="/team/invitations"
+        />,
+      );
+
+      tabs.push(
+        <Tab
           label="Settings"
           key="settings"
           component={Link}
@@ -89,11 +99,11 @@ const TeamView: FunctionComponent = () => {
     if (Role.OWNER.equalOrHigher(currentRole)) {
       tabs.push(
         <Tab
-          label="Billing & Plan"
-          key="plan"
+          label="Subscription"
+          key="subscription"
           component={Link}
-          to="/team/plan"
-          value="/team/plan"
+          to="/team/subscription"
+          value="/team/subscription"
         />,
       );
     }

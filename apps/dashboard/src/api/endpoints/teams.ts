@@ -161,5 +161,7 @@ export async function postCreateCheckoutSession(
     priceLookupKey,
   });
   const body = (await res).data;
-  window.location.href = body;
+  if (body != "") {
+    window.location.href = body;
+  }
 }

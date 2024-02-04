@@ -1,5 +1,5 @@
-import client from "../client";
-import { IGetUserResponse } from "./users";
+import client from "../../client";
+import { IGetUserResponse } from "../users";
 
 export interface ILoginRequest {
   email: string;

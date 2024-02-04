@@ -4,7 +4,7 @@ import { FunctionComponent } from "react";
 import { AiOutlinePause } from "react-icons/ai";
 import { IoCheckmark } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
-import { IMonitorResponse } from "../../../../api/endpoints/monitors";
+import { MonitorWithStats } from "../../../../api/endpoints/monitors";
 import Avatar from "../../../../components/Avatar";
 import DataGrid from "../../../../components/DataGrid";
 import { Role } from "../../../../components/Restrict";
@@ -16,7 +16,7 @@ import ItemMenu from "./ItemMenu";
 
 interface MonitorsDataGridProps
   extends Omit<DataGridProps, "columns" | "rows"> {
-  monitors?: IMonitorResponse[];
+  monitors?: MonitorWithStats[];
 }
 
 const MonitorsDataGrid: FunctionComponent<MonitorsDataGridProps> = (props) => {
@@ -25,7 +25,7 @@ const MonitorsDataGrid: FunctionComponent<MonitorsDataGridProps> = (props) => {
 
   const rows: GridRowsProp = props.monitors || [];
 
-  const columns: GridColDef<IMonitorResponse>[] = [
+  const columns: GridColDef<MonitorWithStats>[] = [
     {
       field: "status",
       headerName: "",
@@ -74,7 +74,11 @@ const MonitorsDataGrid: FunctionComponent<MonitorsDataGridProps> = (props) => {
       sortable: false,
       renderCell: (col) => (
         <ResultThumbGraph
-          stats={col.row.stats ? col.row.stats : []}
+          stats={
+            col.row.stats.averageResponseTimes
+              ? col.row.stats.averageResponseTimes
+              : []
+          }
           onClick={() => {
             navigate(`/monitors/1/checks/1`);
           }}
@@ -95,7 +99,7 @@ const MonitorsDataGrid: FunctionComponent<MonitorsDataGridProps> = (props) => {
       align: "right",
       headerAlign: "right",
       sortable: false,
-      valueGetter: (col) => `${col.row.p99}ms`,
+      valueGetter: (col) => `${col.row.stats.p99}ms`,
     },
     {
       field: "p95",
@@ -103,7 +107,7 @@ const MonitorsDataGrid: FunctionComponent<MonitorsDataGridProps> = (props) => {
       align: "right",
       headerAlign: "right",
       sortable: false,
-      valueGetter: (col) => `${col.row.p95}ms`,
+      valueGetter: (col) => `${col.row.stats.p95}ms`,
     },
     {
       field: "frequency",

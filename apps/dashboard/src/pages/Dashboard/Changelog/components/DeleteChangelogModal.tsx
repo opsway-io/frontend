@@ -8,11 +8,11 @@ import {
   DialogProps,
 } from "../../../../components/Dialog";
 import { useDeleteChangelog } from "../../../../hooks/changelogs.query";
-import { IChangelog } from "../../../../api/endpoints/changelogs";
+import { Changelog } from "../../../../api/endpoints/changelogs";
 import { enqueueSnackbar } from "notistack";
 
 interface DeleteChangelogDialogProps extends Omit<DialogProps, "onClose"> {
-  changelog: IChangelog;
+  changelog: Changelog;
   onClose: (ok?: boolean) => void;
 }
 

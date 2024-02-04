@@ -1,7 +1,7 @@
 import { LoadingButton } from "@mui/lab";
 import { Alert, Stack, TextField, Typography } from "@mui/material";
 import { FunctionComponent, useEffect, useState } from "react";
-import { IMonitorResponse } from "../../../../api/endpoints/monitors";
+import { Monitor } from "../../../../api/endpoints/monitors";
 import {
   Dialog,
   DialogActions,
@@ -11,7 +11,7 @@ import {
 import { useDeleteMonitor } from "../../../../hooks/monitors.query";
 
 interface DeleteMonitorDialogProps extends Omit<DialogProps, "onClose"> {
-  monitor: IMonitorResponse;
+  monitor: Monitor;
   onClose: (ok?: boolean) => void;
 }
 

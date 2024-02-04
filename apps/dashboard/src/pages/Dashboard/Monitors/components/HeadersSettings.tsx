@@ -21,7 +21,7 @@ import Conditional from "../../../../components/Conditional";
 const HeaderSettings: FunctionComponent = () => {
   const { control, register } = useFormContext<FormData>();
   const { fields, append, remove } = useFieldArray<FormData>({
-    name: "headers",
+    name: "settings.headers",
   });
 
   const t = useTheme();
@@ -87,7 +87,7 @@ const HeaderSettings: FunctionComponent = () => {
               <TableRow key={index}>
                 <TableCell sx={{ flex: 1 }}>
                   <Controller
-                    name={`headers.${index}.key` as const}
+                    name={`settings.headers.${index}.key` as const}
                     control={control}
                     rules={{
                       required: true,
@@ -120,7 +120,7 @@ const HeaderSettings: FunctionComponent = () => {
                   <TextField
                     fullWidth
                     size="small"
-                    {...register(`headers.${index}.value` as const)}
+                    {...register(`settings.headers.${index}.value` as const)}
                   />
                 </TableCell>
 

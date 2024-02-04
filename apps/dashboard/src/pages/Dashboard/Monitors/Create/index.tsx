@@ -9,7 +9,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { FunctionComponent, useEffect, useMemo, useState } from "react";
+import { FunctionComponent, useMemo } from "react";
 import { Controller, FormProvider, useForm } from "react-hook-form";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import Container from "../../../../components/Container";
@@ -25,6 +25,7 @@ import TLSVerificationSettings from "../components/TLSVerificationSettings";
 import { v4 as uuidv4 } from "uuid";
 import HowAssertionsWork from "../components/HowAssertionsWork";
 import { Helmet } from "react-helmet";
+import { DevTool } from "@hookform/devtools";
 
 const MonitorCreateView: FunctionComponent = () => {
   const teamId = useAuthenticationStore((state) => state.currentTeamId);
@@ -39,32 +40,33 @@ const MonitorCreateView: FunctionComponent = () => {
 
   const formMethods = useForm<FormData>({
     defaultValues: {
+      teamId: teamId,
       name: "",
-      method: "GET",
-      url: "",
-      bodyType: "NONE",
-      body: "",
-      headers: [],
+      settings: {
+        method: "GET",
+        url: "",
+        headers: [],
+        body: {
+          type: "NONE",
+          content: null,
+        },
+        tls: {
+          enabled: true,
+          verifyHostname: true,
+          checkExpiration: true,
+          expirationThresholdDays: 7,
+        },
+        frequencySeconds: 300,
+        locations: ["eu-central-1"],
+      },
       assertions: [
         {
           key: uuidv4(),
           source: "STATUS_CODE",
-          property: "",
           operator: "EQUAL",
           target: "200",
         },
       ],
-      frequencySeconds: 300, // 5 minutes
-      locations: ["eu-central-1"],
-      tls: {
-        validate: {
-          enabled: true,
-        },
-        expiration: {
-          enabled: true,
-          thresholdDays: 7,
-        },
-      },
     },
     mode: "onChange",
   });
@@ -76,37 +78,24 @@ const MonitorCreateView: FunctionComponent = () => {
 
     const data = formMethods.getValues();
 
-    mutate(
-      {
-        teamId: teamId,
-        name: data.name,
-        settings: {
-          method: data.method,
-          url: data.url,
-          headers: data.headers,
-          bodyType: data.bodyType,
-          body: data.body,
-          frequencySeconds: data.frequencySeconds,
-          locations: data.locations,
-        },
-      },
-      {
-        onSuccess: () => {
-          enqueueSnackbar(`Monitor \`${data.name}\` created.`, {
-            variant: "success",
-          });
+    mutate(data, {
+      onSuccess: () => {
+        enqueueSnackbar(`Monitor \`${data.name}\` created.`, {
+          variant: "success",
+        });
 
-          navigate("/monitors");
-        },
-        onError: () => {
-          enqueueSnackbar("Failed to create monitor", { variant: "error" });
-        },
+        navigate("/monitors");
       },
-    );
+      onError: () => {
+        enqueueSnackbar("Failed to create monitor", { variant: "error" });
+      },
+    });
   };
 
   return (
     <>
+      <DevTool control={formMethods.control} />
+
       <Helmet>
         <title>Monitors | Create </title>
       </Helmet>
@@ -159,7 +148,7 @@ const MonitorCreateView: FunctionComponent = () => {
             <Tab value="request" label="Request" />
             <Tab value="assertions" label="Response assertions" />
             <Tab value="frequencyAndLocation" label="Frequency & Location" />
-            <Tab value="tlsVerification" label="SSL/TLS verification" />
+            <Tab value="tlsVerification" label="SSL/TLS" />
           </Tabs>
 
           <Box sx={{ display: selectedTab === "request" ? "block" : "none" }}>

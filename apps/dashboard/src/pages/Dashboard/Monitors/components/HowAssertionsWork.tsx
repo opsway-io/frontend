@@ -16,8 +16,8 @@ const HowAssertionsWork: FunctionComponent = () => {
             assert various aspects of a response, for example:
           </Typography>
 
-          <Typography variant="body2" color="text.secondary">
-            <ul>
+          <ul>
+            <Typography variant="body2" color="text.secondary">
               <li>Response status code equals 200.</li>
               <li>Response body equals the text “success”.</li>
               <li>Response total time is lower than 2000 milliseconds.</li>
@@ -26,8 +26,8 @@ const HowAssertionsWork: FunctionComponent = () => {
                 Response JSON object has a key called “accountBalance” with a
                 value greater than 9999
               </li>
-            </ul>
-          </Typography>
+            </Typography>
+          </ul>
 
           <Typography variant="body2" color="text.secondary" gutterBottom>
             In each assertion, a source is connected to a operator and a target.

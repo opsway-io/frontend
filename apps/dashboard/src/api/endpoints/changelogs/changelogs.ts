@@ -1,23 +1,31 @@
-import client from "../client";
+import client from "../../client";
 
-export interface IChangelog {
+/*
+  Shared
+*/
+
+export interface Changelog {
   id: number;
   name: string;
   createdAt: Date;
   updatedAt: string;
 }
 
-export interface IChangelogsResponse {
-  changelogs: IChangelog[];
+export interface GetChangelogsResponse {
+  changelogs: Changelog[];
   totalCount: number;
 }
+
+/*
+  Get Changelogs
+*/
 
 export async function getChangelogs(
   teamId: number,
   offset?: number,
   limit?: number,
   query?: string,
-): Promise<IChangelogsResponse> {
+): Promise<GetChangelogsResponse> {
   const response = await client.get(`/v1/teams/${teamId}/changelogs`, {
     params: {
       offset,
@@ -29,12 +37,16 @@ export async function getChangelogs(
   return response?.data;
 }
 
-export interface IChangelogResponse extends IChangelog {}
+/*
+  Get Changelog
+*/
+
+export interface GetChangelogResponse extends Changelog {}
 
 export async function getChangelog(
   teamId: number,
   changelogId: number,
-): Promise<IChangelogResponse> {
+): Promise<GetChangelogResponse> {
   const response = await client.get(
     `/v1/teams/${teamId}/changelogs/${changelogId}`,
   );
@@ -42,16 +54,24 @@ export async function getChangelog(
   return response?.data;
 }
 
-export async function postChangelog(
+/*
+  Create Changelog
+*/
+
+export async function createChangelog(
   teamId: number,
   name: string,
-): Promise<IChangelogResponse> {
+): Promise<GetChangelogResponse> {
   const response = await client.post(`/v1/teams/${teamId}/changelogs`, {
     name,
   });
 
   return response?.data;
 }
+
+/*
+  Delete Changelog
+*/
 
 export async function deleteChangelog(
   teamId: number,

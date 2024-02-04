@@ -18,7 +18,7 @@ import { IoPause, IoPlay, IoSettings } from "react-icons/io5";
 import ResponseTimeGraph from "./components/ResponseTimesGraph";
 import { Link, NavLink, useNavigate, useParams } from "react-router-dom";
 import { ChecksDataGrid } from "./components/ChecksDataGrid";
-import { useMonitor, useMutateMonitor } from "../../../../hooks/monitors.query";
+import { useMonitor, useUpdateMonitor } from "../../../../hooks/monitors.query";
 import useAuthenticationStore from "../../../../hooks/authentication.store";
 import { useCurrentUserRole } from "../../../../hooks/user.query";
 import { Role } from "../../../../components/Restrict";
@@ -46,7 +46,7 @@ const MonitorDetailView: FunctionComponent = () => {
   const currentRole = useCurrentUserRole();
 
   const { data, error, isLoading } = useMonitor(monitorId);
-  const { mutate: update, isLoading: isUpdating } = useMutateMonitor(monitorId);
+  const { mutate: update, isLoading: isUpdating } = useUpdateMonitor(monitorId);
 
   const isActive = useMemo(() => data?.state === "ACTIVE", [data?.state]);
 

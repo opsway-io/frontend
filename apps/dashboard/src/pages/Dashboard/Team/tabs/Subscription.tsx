@@ -43,7 +43,7 @@ const TeamPlanTabView: FunctionComponent = () => {
                   ]}
                   selected={team?.paymentPlan === "FREE"}
                   teamId={team?.id!}
-                  priceLookupKey={"FREE"}
+                  priceLookupKey={""}
                 />
               </Grid>
               <Grid item>
@@ -60,7 +60,7 @@ const TeamPlanTabView: FunctionComponent = () => {
                   ]}
                   selected={team?.paymentPlan === "TEAM"}
                   teamId={team?.id!}
-                  priceLookupKey={"TEAM"}
+                  priceLookupKey={"price_1NjhTUAAd26uMXu2JFv0zKjd"}
                 />
               </Grid>
               <Grid item>
@@ -78,7 +78,7 @@ const TeamPlanTabView: FunctionComponent = () => {
                   ]}
                   selected={team?.paymentPlan === "ENTERPRISE"}
                   teamId={team?.id!}
-                  priceLookupKey={"ENTERPRISE"}
+                  priceLookupKey={"price_1NjhXOAAd26uMXu2InlkMmDS"}
                 />
               </Grid>
             </Grid>

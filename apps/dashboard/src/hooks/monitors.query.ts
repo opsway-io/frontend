@@ -9,12 +9,12 @@ export const useCreateMonitor = () => {
   const teamId = useAuthenticationStore((state) => state.currentTeamId);
 
   return useMutation(
-    (data: MonitorsAPI.IPostMonitorRequest) => {
+    (data: MonitorsAPI.CreateMonitorRequest) => {
       if (!teamId) {
         return Promise.resolve(null);
       }
 
-      return MonitorsAPI.postMonitor(teamId, data);
+      return MonitorsAPI.createMonitor(teamId, data);
     },
     {
       onSuccess: () => {
@@ -34,6 +34,25 @@ export const useDeleteMonitor = () => {
       }
 
       return MonitorsAPI.deleteMonitor(teamId, monitorId);
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries(["teams", teamId, "monitors"]);
+      },
+    },
+  );
+};
+
+export const useUpdateMonitor = (moniterId: number) => {
+  const teamId = useAuthenticationStore((state) => state.currentTeamId);
+
+  return useMutation(
+    (data: MonitorsAPI.UpdateMonitorRequest) => {
+      if (!teamId) {
+        return Promise.resolve(null);
+      }
+
+      return MonitorsAPI.updateMonitor(teamId, moniterId, data);
     },
     {
       onSuccess: () => {
@@ -113,17 +132,6 @@ export const useLatestMonitorCheck = (monitorId?: number) => {
   );
 };
 
-export const useMonitorMetrics = (monitorId: number) => {
-  const teamId = useAuthenticationStore((state) => state.currentTeamId);
-
-  return useQuery(["teams", teamId, "monitors", monitorId, "metrics"], () => {
-    if (!teamId) {
-      return Promise.resolve(null);
-    }
-    return MonitorsAPI.getMonitorMetrics(teamId, monitorId);
-  });
-};
-
 export const useMonitorCheck = (monitorId: number, checkId: number) => {
   const teamId = useAuthenticationStore((state) => state.currentTeamId);
 
@@ -139,21 +147,13 @@ export const useMonitorCheck = (monitorId: number, checkId: number) => {
   );
 };
 
-export const useMutateMonitor = (moniterId: number) => {
+export const useMonitorMetrics = (monitorId: number) => {
   const teamId = useAuthenticationStore((state) => state.currentTeamId);
 
-  return useMutation(
-    (data: MonitorsAPI.IPutMonitorRequest) => {
-      if (!teamId) {
-        return Promise.resolve(null);
-      }
-
-      return MonitorsAPI.putMonitor(teamId, moniterId, data);
-    },
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries(["teams", teamId, "monitors"]);
-      },
-    },
-  );
+  return useQuery(["teams", teamId, "monitors", monitorId, "metrics"], () => {
+    if (!teamId) {
+      return Promise.resolve(null);
+    }
+    return MonitorsAPI.getMonitorMetrics(teamId, monitorId);
+  });
 };

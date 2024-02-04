@@ -9,14 +9,14 @@ import { FunctionComponent, useMemo, useState } from "react";
 import { IoPause, IoPlay, IoTrash } from "react-icons/io5";
 import { TiPencil } from "react-icons/ti";
 import { RiMore2Line } from "react-icons/ri";
-import { IMonitorResponse } from "../../../../api/endpoints/monitors";
 import DeleteMonitorDialog from "./DeleteMonitorDialog";
-import { useMutateMonitor } from "../../../../hooks/monitors.query";
+import { useUpdateMonitor } from "../../../../hooks/monitors.query";
 import { enqueueSnackbar } from "notistack";
 import { Link } from "react-router-dom";
+import { Monitor } from "../../../../api/endpoints/monitors";
 
 interface ItemMenuProps {
-  monitor: IMonitorResponse;
+  monitor: Monitor;
 }
 
 const ItemMenu: FunctionComponent<ItemMenuProps> = (props) => {
@@ -25,7 +25,7 @@ const ItemMenu: FunctionComponent<ItemMenuProps> = (props) => {
 
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
-  const { mutate: update, isLoading: isUpdating } = useMutateMonitor(
+  const { mutate: update, isLoading: isUpdating } = useUpdateMonitor(
     props.monitor.id,
   );
 

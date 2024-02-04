@@ -533,7 +533,7 @@ const HeadersAssertionCells: FunctionComponent<{
                     if (opr === "LESS_THAN" || opr === "GREATER_THAN") {
                       const target = getValues(`assertions.${index}.target`);
 
-                      if (!isNumber(target)) {
+                      if (target && !isNumber(target)) {
                         setValue(`assertions.${index}.target`, "");
                       }
                     }
@@ -620,7 +620,7 @@ const RawBodyAssertionCells: FunctionComponent<{
                   if (opr === "LESS_THAN" || opr === "GREATER_THAN") {
                     const target = getValues(`assertions.${index}.target`);
 
-                    if (!isNumber(target)) {
+                    if (target && !isNumber(target)) {
                       setValue(`assertions.${index}.target`, "");
                     }
                   }
@@ -677,7 +677,11 @@ const JSONBodyAssertionCells: FunctionComponent<{
 }> = ({ index }) => {
   const { control, setValue, getValues } = useFormContext<FormData>();
 
-  const validateJSONPath = (value: string): boolean => {
+  const validateJSONPath = (value?: string): boolean => {
+    if (!value) {
+      return false;
+    }
+
     try {
       jsonpath.parse(value);
       return true;
@@ -737,7 +741,7 @@ const JSONBodyAssertionCells: FunctionComponent<{
                   if (opr === "LESS_THAN" || opr === "GREATER_THAN") {
                     const target = getValues(`assertions.${index}.target`);
 
-                    if (!isNumber(target)) {
+                    if (target && !isNumber(target)) {
                       setValue(`assertions.${index}.target`, "");
                     }
                   }

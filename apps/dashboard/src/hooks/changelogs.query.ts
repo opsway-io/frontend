@@ -14,7 +14,7 @@ export const useCreateChangelog = () => {
         return Promise.resolve(null);
       }
 
-      return ChangelogsAPI.postChangelog(teamId, name);
+      return ChangelogsAPI.createChangelog(teamId, name);
     },
     {
       onSuccess: () => {

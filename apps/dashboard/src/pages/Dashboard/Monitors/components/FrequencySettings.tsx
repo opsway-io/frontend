@@ -20,7 +20,7 @@ const FrequencySettings: FunctionComponent = () => {
 
   return (
     <Controller
-      name="frequencySeconds"
+      name="settings.frequencySeconds"
       control={control}
       render={(props) => (
         <ToggleButtonGroup

@@ -1,9 +1,9 @@
+import jwt_decode from "jwt-decode";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import * as AuthenticationAPI from "../api/endpoints/authentication";
-import { getQueryClient } from "./client.query";
-import jwt_decode from "jwt-decode";
 import { IGetUserResponse } from "../api/endpoints/users";
+import { getQueryClient } from "./client.query";
 
 const queryClient = getQueryClient();
 

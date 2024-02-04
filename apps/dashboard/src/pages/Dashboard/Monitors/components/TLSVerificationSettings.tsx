@@ -17,16 +17,15 @@ const TLSVerificationSettings: FunctionComponent = () => {
     <Stack spacing={2}>
       <Stack spacing={2}>
         <Stack>
-          <Typography variant="subtitle1">Certificate validation</Typography>
+          <Typography variant="subtitle1">SSL/TLS enabled</Typography>
           <Typography variant="body1" color="textSecondary">
-            Verify that the certificate used by the server is valid, globally
-            trusted and matches the host.
+            Require that the server presents a valid certificate.
           </Typography>
         </Stack>
 
         <Controller
           control={control}
-          name="tls.validate.enabled"
+          name="settings.tls.enabled"
           render={({ field }) => (
             <FormControlLabel
               control={
@@ -36,7 +35,33 @@ const TLSVerificationSettings: FunctionComponent = () => {
                   onChange={(e) => field.onChange(e.target.checked)}
                 />
               }
-              label="Enable validation"
+              label=""
+            />
+          )}
+        />
+
+        <Divider />
+
+        <Stack>
+          <Typography variant="subtitle1">Host verification</Typography>
+          <Typography variant="body1" color="textSecondary">
+            Verify the hostname on the certificate matches the URL.
+          </Typography>
+        </Stack>
+
+        <Controller
+          control={control}
+          name="settings.tls.verifyHostname"
+          render={({ field }) => (
+            <FormControlLabel
+              control={
+                <Switch
+                  {...field}
+                  checked={field.value}
+                  onChange={(e) => field.onChange(e.target.checked)}
+                />
+              }
+              label=""
             />
           )}
         />
@@ -45,13 +70,13 @@ const TLSVerificationSettings: FunctionComponent = () => {
 
         <Controller
           control={control}
-          name="tls.expiration.enabled"
+          name="settings.tls.checkExpiration"
           render={({ field: enabledField }) => (
             <>
               <Stack>
                 <Typography variant="subtitle1">Expiration</Typography>
                 <Typography variant="body1" color="textSecondary">
-                  Trigger an alert if the certificate is about to expire.
+                  Check if the certificate is about to expire.
                 </Typography>
               </Stack>
 
@@ -66,15 +91,15 @@ const TLSVerificationSettings: FunctionComponent = () => {
                     title="Enable expiration alerting"
                   />
                 }
-                label="Enable expiration alerting"
+                label=""
               />
 
               <Typography variant="body1" color="textSecondary">
-                Days before expiration to trigger an alert.
+                Number of days left before the certificate expires.
               </Typography>
 
               <TextField
-                {...register("tls.expiration.thresholdDays", {
+                {...register("settings.tls.expirationThresholdDays", {
                   valueAsNumber: true,
                   min: 1,
                   max: 365,

@@ -33,7 +33,7 @@ const RequestSettings: FunctionComponent = () => {
       <Stack direction="row" spacing={2}>
         <Stack>
           <Controller
-            name="method"
+            name="settings.method"
             control={control}
             rules={{ required: true }}
             render={({ field }) => (
@@ -50,7 +50,7 @@ const RequestSettings: FunctionComponent = () => {
 
         <Stack flex="1">
           <Controller
-            name="url"
+            name="settings.url"
             control={control}
             rules={{
               required: true,
@@ -91,7 +91,7 @@ const RequestSettings: FunctionComponent = () => {
       </Stack>
 
       <Controller
-        name="bodyType"
+        name="settings.body.type"
         control={control}
         render={(bodyTypeProps) => (
           <>
@@ -103,8 +103,8 @@ const RequestSettings: FunctionComponent = () => {
                 bodyTypeProps.field.onChange(value);
 
                 if (value === "NONE") {
-                  setValue("body", "");
-                  trigger("body");
+                  setValue("settings.body.content", null);
+                  trigger("settings.body.content");
                 }
               }}
               size="small"
@@ -118,7 +118,7 @@ const RequestSettings: FunctionComponent = () => {
 
             <Conditional value={bodyTypeProps.field.value !== "NONE"}>
               <Controller
-                name="body"
+                name="settings.body.content"
                 control={control}
                 render={(bodyProps) => (
                   <Editor
@@ -128,7 +128,7 @@ const RequestSettings: FunctionComponent = () => {
                     language={bodyTypeToEditorLanguage(
                       bodyTypeProps.field.value,
                     )}
-                    value={bodyProps.field.value}
+                    value={bodyProps.field.value || ""}
                     onChange={bodyProps.field.onChange}
                   />
                 )}

@@ -3,8 +3,7 @@ import { FunctionComponent, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { IconButton, Stack, Tooltip, Typography } from "@mui/material";
 import { VscEdit, VscRemove } from "react-icons/vsc";
-import { useChangelogs } from "../../../../hooks/changelogs.query";
-import { IChangelog } from "../../../../api/endpoints/changelogs";
+import { Changelog } from "../../../../api/endpoints/changelogs";
 import { useCurrentUserRole } from "../../../../hooks/user.query";
 import { Role } from "../../../../components/Restrict";
 import DataGrid from "../../../../components/DataGrid";
@@ -12,7 +11,7 @@ import DeleteChangelogDialog from "./DeleteChangelogModal";
 
 interface ChangelogsDataGridProps
   extends Omit<DataGridProps, "columns" | "rows"> {
-  changelogs?: IChangelog[];
+  changelogs?: Changelog[];
 }
 
 const ChangelogsDataGrid: FunctionComponent<ChangelogsDataGridProps> = (
@@ -21,7 +20,7 @@ const ChangelogsDataGrid: FunctionComponent<ChangelogsDataGridProps> = (
   const navigate = useNavigate();
   const currentRole = useCurrentUserRole();
 
-  const rows: GridRowsProp<IChangelog> = props.changelogs || [];
+  const rows: GridRowsProp<Changelog> = props.changelogs || [];
 
   const columns: GridColDef<any>[] = [
     {

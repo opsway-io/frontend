@@ -43,7 +43,7 @@ const TeamPlanTabView: FunctionComponent = () => {
                   ]}
                   selected={team?.paymentPlan === "FREE"}
                   teamId={team?.id!}
-                  priceLookupKey={""}
+                  priceLookupKey={"FREE"}
                 />
               </Grid>
               <Grid item>

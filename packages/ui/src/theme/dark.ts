@@ -20,6 +20,12 @@ declare module "@mui/material/styles/createPalette" {
   }
 }
 
+declare module "@mui/material/Button" {
+  interface ButtonPropsVariantOverrides {
+    gradiant1: true;
+  }
+}
+
 const shadows = new Array(25).fill("none") as Shadows;
 
 const theme = createTheme({
@@ -248,11 +254,5 @@ theme.components = {
     },
   },
 };
-
-declare module "@mui/material/Button" {
-  interface ButtonPropsVariantOverrides {
-    gradiant1: true;
-  }
-}
 
 export { theme as DarkTheme };

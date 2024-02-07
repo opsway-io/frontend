@@ -31,11 +31,10 @@ function Index() {
   return (
     <>
       <Helmet>
-        <title>opsway.io</title>
-        <meta
-          name="keywords"
-          content="opsway, opsway.io, status page, incident management, changelogs, real-time monitoring"
-        />
+        <title>
+          opsway.io: Real-time Monitoring, Status Pages and Alerting for your
+          websites and services 🚀
+        </title>
       </Helmet>
 
       <Box

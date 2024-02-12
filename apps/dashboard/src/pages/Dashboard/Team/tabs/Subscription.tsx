@@ -1,4 +1,4 @@
-import { FunctionComponent } from "react";
+import { FunctionComponent, useState } from "react";
 import Placeholder from "../../../../components/Placeholder";
 import {
   Box,
@@ -14,6 +14,10 @@ import {
   ListItemText,
   Typography,
   useTheme,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
 } from "@mui/material";
 import { BsCheckLg } from "react-icons/bs";
 import { useCurrentTeam } from "../../../../hooks/team.query";
@@ -111,6 +115,20 @@ const PricingCard: FunctionComponent<PricingCardProps> = ({
   priceLookupKey,
 }) => {
   const theme = useTheme();
+  const [open, setOpen] = useState(false);
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const onSubscribe = () => {
+    TeamsAPI.postCreateCheckoutSession(teamId, priceLookupKey)
+    handleClose();
+  };
 
   return (
     <Card
@@ -207,13 +225,29 @@ const PricingCard: FunctionComponent<PricingCardProps> = ({
               marginTop: "auto",
             }}
             component="a"
-            onClick={() =>
-              TeamsAPI.postCreateCheckoutSession(teamId, priceLookupKey)
-            }
+            onClick={handleClickOpen}
           >
-            Upgrade
+            Select
           </Button>
         )}
+        <Dialog
+          open={open}
+          onClose={handleClose}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogContent>
+            <DialogContentText id="alert-dialog-description">
+              This Action will change your subscription plan to {priceLookupKey}
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleClose}>CLOSE</Button>
+            <Button onClick={onSubscribe} autoFocus>
+              CHANGE PLAN
+            </Button>
+          </DialogActions>
+        </Dialog>
       </CardContent>
     </Card>
   );

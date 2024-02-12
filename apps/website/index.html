@@ -2,33 +2,71 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/img/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-    <title>opsway.io</title>
-
     <meta name="color-scheme" content="dark" />
     <meta name="theme-color" content="#1d2128" />
+
+    <link rel="icon" type="image/svg+xml" href="/img/favicon.svg" />
+    <link rel="canonical" href="https://opsway.io" />
+
+    <title>
+      opsway.io: Real-time Monitoring, Status Pages and Alerting for your
+      websites and services 🚀
+    </title>
+
+    <meta name="robots" content="index, follow" />
+    <meta name="googlebot" content="index, follow" />
+    <meta name="google" content="nositelinkssearchbox" />
+
+    <!-- Document metadata -->
+
+    <meta
+      name="title"
+      content="opsway: Real-time Monitoring, Status Pages and Alerting for your websites and services 🚀"
+    />
+    <meta
+      name="description"
+      content="opsway helps you monitor your websites and services in real-time, create status pages and get alerts when things go wrong."
+    />
+    <meta
+      name="keywords"
+      content="real-time,monitoring,alerting,status-page,open-source"
+    />
+
+    <!-- Open Graph Protocol -->
+
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://opsway.io" />
+    <meta
+      property="og:title"
+      content="opsway: Real-time Monitoring, Status Pages and Alerting for your websites and services 🚀"
+    />
+    <meta
+      property="og:description"
+      content="opsway helps you monitor your websites and services in real-time, create status pages and get alerts when things go wrong."
+    />
+    <meta property="og:image" content="https://opsway.io/img/cover.png" />
   </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
 
     <script>
-      (function(d,t) {
-        var BASE_URL="https://chatwoot.opsway.io";
-        var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
-        g.src=BASE_URL+"/packs/js/sdk.js";
+      (function (d, t) {
+        var BASE_URL = "https://chatwoot.opsway.io";
+        var g = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+        g.src = BASE_URL + "/packs/js/sdk.js";
         g.defer = true;
         g.async = true;
-        s.parentNode.insertBefore(g,s);
-        g.onload=function(){
+        s.parentNode.insertBefore(g, s);
+        g.onload = function () {
           window.chatwootSDK.run({
-            websiteToken: 'ZdFNDWAZYUbwoTDF73xK8w4V',
-            baseUrl: BASE_URL
-          })
-        }
-      })(document,"script");
+            websiteToken: "ZdFNDWAZYUbwoTDF73xK8w4V",
+            baseUrl: BASE_URL,
+          });
+        };
+      })(document, "script");
     </script>
   </body>
 </html>

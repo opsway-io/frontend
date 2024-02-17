@@ -1,3 +1,4 @@
+import { AxiosError } from "axios";
 import jwt_decode from "jwt-decode";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
@@ -29,8 +30,7 @@ interface AuthenticationActions {
   logIn(
     email: string,
     password: string,
-  ): Promise<{ success: boolean; user?: IGetUserResponse }>;
-
+  ): Promise<{ success: boolean; user?: IGetUserResponse; error?: any }>;
   setCurrentUserID(userId?: number): void;
   setCurrentTeamID(teamId?: number): void;
 
@@ -64,7 +64,11 @@ const useAuthenticationStore = create<
       logIn: async (
         email: string,
         password: string,
-      ): Promise<{ success: boolean; user?: IGetUserResponse }> => {
+      ): Promise<{
+        success: boolean;
+        user?: IGetUserResponse;
+        error?: AxiosError<any>;
+      }> => {
         try {
           const response = await AuthenticationAPI.login(email, password);
 
@@ -88,10 +92,10 @@ const useAuthenticationStore = create<
           });
 
           return { success: true, user: response.user };
-        } catch (error) {
+        } catch (error: any) {
           console.error(error);
 
-          return { success: false };
+          return { success: false, error };
         }
       },
 

@@ -1,15 +1,24 @@
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { LoadingButton } from "@mui/lab";
-import { Alert, IconButton, Stack, TextField } from "@mui/material";
+import {
+  Alert,
+  AlertTitle,
+  IconButton,
+  Stack,
+  TextField,
+  Typography,
+} from "@mui/material";
 import { validate } from "email-validator";
 import { FunctionComponent, useEffect, useRef, useState } from "react";
 import useAuthenticationStore from "../../../hooks/authentication.store";
 import Conditional from "../../../components/Conditional";
+import { AxiosError } from "axios";
 
 const LoginForm: FunctionComponent = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [failure, setFailure] = useState(false);
+  const [error, setError] = useState<AxiosError<any> | null>();
 
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -22,13 +31,20 @@ const LoginForm: FunctionComponent = () => {
 
   const handleLogin = async () => {
     setFailure(false);
+    setError(null);
     setLoading(true);
-    const { success } = await logIn(email, password);
+
+    const { success, error } = await logIn(email, password);
 
     if (!success) {
       setPassword("");
-      setFailure(true);
       passwordField.current?.focus();
+
+      if (error) {
+        setError(error);
+      } else {
+        setFailure(true);
+      }
     }
 
     setLoading(false);
@@ -93,6 +109,19 @@ const LoginForm: FunctionComponent = () => {
 
         <Conditional value={failure}>
           <Alert severity="error">Invalid email or password</Alert>
+        </Conditional>
+
+        <Conditional value={error}>
+          <Alert severity="error">
+            <AlertTitle>Unknown login error</AlertTitle>
+            <Typography variant="caption" component="div">
+              {error?.response?.headers["x-request-id"] && (
+                <span>
+                  Request ID: {error.response.headers["x-request-id"]}
+                </span>
+              )}
+            </Typography>
+          </Alert>
         </Conditional>
 
         <LoadingButton

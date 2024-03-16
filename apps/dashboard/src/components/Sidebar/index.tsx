@@ -1,24 +1,21 @@
 import { FunctionComponent, useMemo } from "react";
-import { AiFillFire, AiOutlineTeam } from "react-icons/ai";
+import { AiOutlineTeam } from "react-icons/ai";
+import { GoBrowser, GoGraph } from "react-icons/go";
 import {
   IoArrowBack,
   IoArrowForward,
-  IoBookOutline,
   IoBuildOutline,
   IoPulseOutline,
 } from "react-icons/io5";
-import { VscRequestChanges } from "react-icons/vsc";
+import { PiFireSimpleBold } from "react-icons/pi";
+import { RiAlarmWarningLine } from "react-icons/ri";
 import useSidebarStore from "../../hooks/sidebar.store";
+import { useCurrentTeam } from "../../hooks/team.query";
+import { useCurrentUser } from "../../hooks/user.query";
 import SidebarContainer from "./container";
 import SidebarDivider from "./divider";
 import SidebarHeader from "./header";
 import SidebarItem from "./item";
-import { useCurrentUser } from "../../hooks/user.query";
-import { useCurrentTeam } from "../../hooks/team.query";
-import { GoBrowser, GoGraph } from "react-icons/go";
-import { RiAlarmWarningLine } from "react-icons/ri";
-import { BsHeartPulse } from "react-icons/bs";
-import { PiFireSimpleBold } from "react-icons/pi";
 
 const Sidebar: FunctionComponent = () => {
   const {
@@ -106,11 +103,11 @@ const Sidebar: FunctionComponent = () => {
 
       <SidebarDivider />
 
-      <SidebarItem
+      {/* <SidebarItem
         link="https://opsway.io/docs"
         text="Documentation"
         icon={<IoBookOutline />}
-      />
+      /> */}
 
       <SidebarItem
         onClick={() => setCollapsed(!collapsed)}

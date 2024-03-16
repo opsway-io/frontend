@@ -118,7 +118,7 @@ const LoginForm: FunctionComponent = () => {
         </Conditional>
 
         {/* Catch all error */}
-        <Conditional value={status !== StatusCodes.UNAUTHORIZED}>
+        <Conditional value={status && status !== StatusCodes.UNAUTHORIZED}>
           <Alert severity="error">
             <AlertTitle>Unknown login error</AlertTitle>
 

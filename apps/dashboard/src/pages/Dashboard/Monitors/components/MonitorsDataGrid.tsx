@@ -1,16 +1,18 @@
+import { Stack, Typography } from "@mui/material";
 import { DataGridProps, GridColDef, GridRowsProp } from "@mui/x-data-grid";
 import { FunctionComponent } from "react";
 import { AiOutlinePause } from "react-icons/ai";
 import { IoCheckmark } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
+import { MonitorWithStats } from "../../../../api/endpoints/monitors";
 import Avatar from "../../../../components/Avatar";
 import DataGrid from "../../../../components/DataGrid";
 import { Role } from "../../../../components/Restrict";
 import ResultThumbGraph from "../../../../components/ResultThumbGraph";
 import { useCurrentUserRole } from "../../../../hooks/user.query";
-import ItemMenu from "./ItemMenu";
 import { secondsHumanize } from "../../../../utilities/time";
-import { MonitorWithStats } from "../../../../api/endpoints/monitors";
+import { stripProtocolAndPath } from "../../../../utilities/url";
+import ItemMenu from "./ItemMenu";
 
 interface MonitorsDataGridProps
   extends Omit<DataGridProps, "columns" | "rows"> {
@@ -49,6 +51,21 @@ const MonitorsDataGrid: FunctionComponent<MonitorsDataGridProps> = (props) => {
       headerName: "Name",
       flex: 1,
       sortable: false,
+      renderCell: (col) => (
+        <Stack>
+          <Typography
+            variant="subtitle1"
+            sx={{
+              lineHeight: 1,
+            }}
+          >
+            {col.row.name}
+          </Typography>
+          <Typography variant="caption" color="text.secondary">
+            {stripProtocolAndPath(col.row.settings.url)}
+          </Typography>
+        </Stack>
+      ),
     },
     {
       field: "stats",

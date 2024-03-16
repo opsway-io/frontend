@@ -30,7 +30,11 @@ interface AuthenticationActions {
   logIn(
     email: string,
     password: string,
-  ): Promise<{ success: boolean; user?: IGetUserResponse; error?: any }>;
+  ): Promise<{
+    success: boolean;
+    user?: IGetUserResponse;
+    error?: AxiosError<any>;
+  }>;
   setCurrentUserID(userId?: number): void;
   setCurrentTeamID(teamId?: number): void;
 
@@ -93,9 +97,7 @@ const useAuthenticationStore = create<
 
           return { success: true, user: response.user };
         } catch (error: any) {
-          console.error(error);
-
-          return { success: false, error };
+          return { success: false, error: error as AxiosError<any> };
         }
       },
 

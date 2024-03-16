@@ -8,17 +8,19 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { validate } from "email-validator";
-import { FunctionComponent, useEffect, useRef, useState } from "react";
-import useAuthenticationStore from "../../../hooks/authentication.store";
-import Conditional from "../../../components/Conditional";
 import { AxiosError } from "axios";
+import { validate } from "email-validator";
+import { StatusCodes } from "http-status-codes";
+import { FunctionComponent, useEffect, useRef, useState } from "react";
+import Conditional from "../../../components/Conditional";
+import useAuthenticationStore from "../../../hooks/authentication.store";
 
 const LoginForm: FunctionComponent = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [failure, setFailure] = useState(false);
-  const [error, setError] = useState<AxiosError<any> | null>();
+
+  const [status, setStatus] = useState<StatusCodes>();
+  const [error, setError] = useState<AxiosError>();
 
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -30,21 +32,24 @@ const LoginForm: FunctionComponent = () => {
   const logIn = useAuthenticationStore((state) => state.logIn);
 
   const handleLogin = async () => {
-    setFailure(false);
-    setError(null);
     setLoading(true);
+    setError(undefined);
 
     const { success, error } = await logIn(email, password);
+
+    if (error) {
+      setError(error);
+    }
+
+    if (error && error.response && error.response.status) {
+      setStatus(error.response.status as StatusCodes);
+    } else if (error && error.isAxiosError) {
+      setStatus(StatusCodes.INTERNAL_SERVER_ERROR);
+    }
 
     if (!success) {
       setPassword("");
       passwordField.current?.focus();
-
-      if (error) {
-        setError(error);
-      } else {
-        setFailure(true);
-      }
     }
 
     setLoading(false);
@@ -107,20 +112,23 @@ const LoginForm: FunctionComponent = () => {
           }}
         />
 
-        <Conditional value={failure}>
+        {/* Unauthorized */}
+        <Conditional value={status == StatusCodes.UNAUTHORIZED}>
           <Alert severity="error">Invalid email or password</Alert>
         </Conditional>
 
-        <Conditional value={error}>
+        {/* Catch all error */}
+        <Conditional value={status !== StatusCodes.UNAUTHORIZED}>
           <Alert severity="error">
             <AlertTitle>Unknown login error</AlertTitle>
-            <Typography variant="caption" component="div">
-              {error?.response?.headers["x-request-id"] && (
+
+            {error?.response?.headers["x-request-id"] && (
+              <Typography variant="caption" component="div">
                 <span>
                   Request ID: {error.response.headers["x-request-id"]}
                 </span>
-              )}
-            </Typography>
+              </Typography>
+            )}
           </Alert>
         </Conditional>
 

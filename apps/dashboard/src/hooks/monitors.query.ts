@@ -62,6 +62,25 @@ export const useUpdateMonitor = (moniterId: number) => {
   );
 };
 
+export const useUpdateMonitorState = (monitorId: number) => {
+  const teamId = useAuthenticationStore((state) => state.currentTeamId);
+
+  return useMutation(
+    (state: "ACTIVE" | "INACTIVE") => {
+      if (!teamId) {
+        return Promise.resolve(null);
+      }
+
+      return MonitorsAPI.updateMonitorState(teamId, monitorId, state);
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries(["teams", teamId, "monitors"]);
+      },
+    },
+  );
+};
+
 export const useMonitor = (monitorId: number) => {
   const teamId = useAuthenticationStore((state) => state.currentTeamId);
 

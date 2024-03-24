@@ -11,15 +11,15 @@ import { FunctionComponent } from "react";
 import { Controller, useFormContext } from "react-hook-form";
 import Conditional from "../../../../components/Conditional";
 import Editor from "../../../../components/Editor";
-import { FormData } from "../models/formData";
 import {
   requestBodyTypeOptions,
   requestMethodOptions,
 } from "../models/requestOptions";
+import { SettingsFormData } from "../models/settingsFormData";
 import HeaderSettings from "./HeadersSettings";
 
 const RequestSettings: FunctionComponent = () => {
-  const { register, control, setValue, trigger } = useFormContext<FormData>();
+  const { control, setValue, trigger } = useFormContext<SettingsFormData>();
 
   return (
     <Stack spacing={2}>
@@ -37,7 +37,13 @@ const RequestSettings: FunctionComponent = () => {
             control={control}
             rules={{ required: true }}
             render={({ field }) => (
-              <TextField select {...field} sx={{ width: "150px" }} size="small">
+              <TextField
+                select
+                {...field}
+                sx={{ width: "150px" }}
+                size="small"
+                value={field.value || ""}
+              >
                 {requestMethodOptions.map((option) => (
                   <MenuItem key={option.value} value={option.value}>
                     {option.label}
@@ -116,7 +122,12 @@ const RequestSettings: FunctionComponent = () => {
               ))}
             </ToggleButtonGroup>
 
-            <Conditional value={bodyTypeProps.field.value !== "NONE"}>
+            <Conditional
+              value={
+                bodyTypeProps.field.value &&
+                bodyTypeProps.field.value !== "NONE"
+              }
+            >
               <Controller
                 name="settings.body.content"
                 control={control}

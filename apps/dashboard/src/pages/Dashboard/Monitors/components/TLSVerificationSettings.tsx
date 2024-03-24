@@ -1,4 +1,3 @@
-import { FunctionComponent } from "react";
 import {
   Divider,
   FormControlLabel,
@@ -7,11 +6,12 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { FormData } from "../models/formData";
+import { FunctionComponent } from "react";
 import { Controller, useFormContext } from "react-hook-form";
+import { SettingsFormData } from "../models/settingsFormData";
 
 const TLSVerificationSettings: FunctionComponent = () => {
-  const { register, control, setValue } = useFormContext<FormData>();
+  const { register, control, watch } = useFormContext<SettingsFormData>();
 
   return (
     <Stack spacing={2}>
@@ -52,6 +52,7 @@ const TLSVerificationSettings: FunctionComponent = () => {
         <Controller
           control={control}
           name="settings.tls.verifyHostname"
+          disabled={!watch("settings.tls.enabled")}
           render={({ field }) => (
             <FormControlLabel
               control={
@@ -71,6 +72,7 @@ const TLSVerificationSettings: FunctionComponent = () => {
         <Controller
           control={control}
           name="settings.tls.checkExpiration"
+          disabled={!watch("settings.tls.enabled")}
           render={({ field: enabledField }) => (
             <>
               <Stack>
@@ -104,7 +106,7 @@ const TLSVerificationSettings: FunctionComponent = () => {
                   min: 1,
                   max: 365,
                 })}
-                disabled={!enabledField.value}
+                disabled={!enabledField.value || !watch("settings.tls.enabled")}
                 type="number"
                 InputProps={{
                   endAdornment: "days",

@@ -3,10 +3,10 @@ import {
   MonitorAssertion,
 } from "../../../../api/endpoints/monitors";
 
-interface FormData extends CreateMonitorRequest {
+interface SettingsFormData extends CreateMonitorRequest {
   assertions: (MonitorAssertion & {
     key: string;
   })[];
 }
 
-export type { FormData };
+export type { SettingsFormData };

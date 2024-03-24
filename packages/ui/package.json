@@ -2,6 +2,7 @@
   "name": "@opsway/ui",
   "version": "0.0.0",
   "main": "./src/index.ts",
+  "private": true,
   "scripts": {},
   "dependencies": {
     "@mui/material": "^5.14.12"

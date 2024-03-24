@@ -1,7 +1,7 @@
 import { ToggleButton, ToggleButtonGroup } from "@mui/material";
 import { FunctionComponent } from "react";
 import { Controller, useFormContext } from "react-hook-form";
-import { FormData } from "../models/formData";
+import { SettingsFormData } from "../models/settingsFormData";
 
 const options = [
   { value: 30, label: "30 secs" },
@@ -16,7 +16,7 @@ const options = [
 ];
 
 const FrequencySettings: FunctionComponent = () => {
-  const { control } = useFormContext<FormData>();
+  const { control } = useFormContext<SettingsFormData>();
 
   return (
     <Controller

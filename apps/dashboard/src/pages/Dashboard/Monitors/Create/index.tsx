@@ -1,3 +1,4 @@
+import { DevTool } from "@hookform/devtools";
 import {
   Box,
   Button,
@@ -7,25 +8,23 @@ import {
   Tab,
   Tabs,
   TextField,
-  Typography,
 } from "@mui/material";
+import { useSnackbar } from "notistack";
 import { FunctionComponent, useMemo } from "react";
+import { Helmet } from "react-helmet";
 import { Controller, FormProvider, useForm } from "react-hook-form";
+import { IoAdd } from "react-icons/io5";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { v4 as uuidv4 } from "uuid";
 import Container from "../../../../components/Container";
+import useAuthenticationStore from "../../../../hooks/authentication.store";
+import { useCreateMonitor } from "../../../../hooks/monitors.query";
+import FrequencyAndLocationSettings from "../components/FrequencyAndLocationSettings";
+import HowAssertionsWork from "../components/HowAssertionsWork";
 import RequestSettings from "../components/RequestSettings";
 import ResponseAssertionSettings from "../components/ResponseAssertionSettings";
-import { FormData } from "../models/formData";
-import { useCreateMonitor } from "../../../../hooks/monitors.query";
-import useAuthenticationStore from "../../../../hooks/authentication.store";
-import { useSnackbar } from "notistack";
-import { IoAdd } from "react-icons/io5";
-import FrequencyAndLocationSettings from "../components/FrequencyAndLocationSettings";
 import TLSVerificationSettings from "../components/TLSVerificationSettings";
-import { v4 as uuidv4 } from "uuid";
-import HowAssertionsWork from "../components/HowAssertionsWork";
-import { Helmet } from "react-helmet";
-import { DevTool } from "@hookform/devtools";
+import { SettingsFormData } from "../models/settingsFormData";
 
 const MonitorCreateView: FunctionComponent = () => {
   const teamId = useAuthenticationStore((state) => state.currentTeamId);
@@ -38,7 +37,7 @@ const MonitorCreateView: FunctionComponent = () => {
   });
   const selectedTab = useMemo(() => params.get("tab"), [params]);
 
-  const formMethods = useForm<FormData>({
+  const formMethods = useForm<SettingsFormData>({
     defaultValues: {
       teamId: teamId,
       name: "",
@@ -80,7 +79,7 @@ const MonitorCreateView: FunctionComponent = () => {
 
     mutate(data, {
       onSuccess: () => {
-        enqueueSnackbar(`Monitor \`${data.name}\` created.`, {
+        enqueueSnackbar(`Monitor '${data.name}' created.`, {
           variant: "success",
         });
 

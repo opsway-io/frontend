@@ -1,26 +1,26 @@
-import { FunctionComponent } from "react";
-import { Controller, useFieldArray, useFormContext } from "react-hook-form";
-import { FormData } from "../models/formData";
 import {
   Autocomplete,
-  TextField,
+  Box,
+  Button,
   IconButton,
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableRow,
-  Button,
-  Box,
+  TextField,
   useTheme,
 } from "@mui/material";
+import { FunctionComponent } from "react";
+import { Controller, useFieldArray, useFormContext } from "react-hook-form";
 import { VscAdd, VscClose } from "react-icons/vsc";
-import { requestHeaders } from "../models/requestOptions";
 import Conditional from "../../../../components/Conditional";
+import { requestHeaders } from "../models/requestOptions";
+import { SettingsFormData } from "../models/settingsFormData";
 
 const HeaderSettings: FunctionComponent = () => {
-  const { control, register } = useFormContext<FormData>();
-  const { fields, append, remove } = useFieldArray<FormData>({
+  const { control, register } = useFormContext<SettingsFormData>();
+  const { fields, append, remove } = useFieldArray<SettingsFormData>({
     name: "settings.headers",
   });
 

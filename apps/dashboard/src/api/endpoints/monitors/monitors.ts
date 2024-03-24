@@ -84,12 +84,12 @@ export async function getMonitors(
   Get monitor
 */
 
-export interface GetMonitorResponse extends Monitor {}
+export interface GetMonitorResponse extends MonitorWithStats {}
 
 export async function getMonitor(
   teamId: number,
   monitorId: number,
-): Promise<any> {
+): Promise<GetMonitorResponse> {
   const response = await client.get(
     `/v1/teams/${teamId}/monitors/${monitorId}`,
   );
@@ -147,4 +147,18 @@ export async function deleteMonitor(
   monitorId: number,
 ): Promise<void> {
   await client.delete(`/v1/teams/${teamId}/monitors/${monitorId}`);
+}
+
+/*
+  Set monitor state
+*/
+
+export async function updateMonitorState(
+  teamId: number,
+  monitorId: number,
+  state: "ACTIVE" | "INACTIVE",
+): Promise<void> {
+  await client.put(`/v1/teams/${teamId}/monitors/${monitorId}/state`, {
+    state,
+  });
 }

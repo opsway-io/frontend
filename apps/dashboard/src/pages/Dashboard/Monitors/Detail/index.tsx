@@ -1,7 +1,5 @@
-import { FunctionComponent, useMemo, useState } from "react";
-import Container from "../../../../components/Container";
+import { LoadingButton } from "@mui/lab";
 import {
-  alpha,
   Button,
   Card,
   CardContent,
@@ -12,27 +10,32 @@ import {
   ToggleButton,
   ToggleButtonGroup,
   Typography,
+  alpha,
   useTheme,
 } from "@mui/material";
-import { IoPause, IoPlay, IoSettings } from "react-icons/io5";
-import ResponseTimeGraph from "./components/ResponseTimesGraph";
-import { Link, NavLink, useNavigate, useParams } from "react-router-dom";
-import { ChecksDataGrid } from "./components/ChecksDataGrid";
-import { useMonitor, useUpdateMonitor } from "../../../../hooks/monitors.query";
-import useAuthenticationStore from "../../../../hooks/authentication.store";
-import { useCurrentUserRole } from "../../../../hooks/user.query";
-import { Role } from "../../../../components/Restrict";
 import { enqueueSnackbar } from "notistack";
-import { LoadingButton } from "@mui/lab";
-import { stripProtocolAndPath } from "../../../../utilities/url";
-import PulseDot from "../../../../components/PulseDot";
-import TLSCard from "./components/TLSCard";
-import LastCheckCard from "./components/LastCheckCard";
-import Conditional from "../../../../components/Conditional";
-import { secondsHumanize } from "../../../../utilities/time";
-import AverageResponseTimeCard from "./components/AverageResponseTimeCard";
-import UptimeCard from "./components/UptimeCard";
+import { FunctionComponent, useMemo, useState } from "react";
 import { Helmet } from "react-helmet";
+import { IoPause, IoPlay, IoSettings } from "react-icons/io5";
+import { Link, NavLink, useParams } from "react-router-dom";
+import Conditional from "../../../../components/Conditional";
+import Container from "../../../../components/Container";
+import PulseDot from "../../../../components/PulseDot";
+import { Role } from "../../../../components/Restrict";
+import useAuthenticationStore from "../../../../hooks/authentication.store";
+import {
+  useMonitor,
+  useUpdateMonitorState,
+} from "../../../../hooks/monitors.query";
+import { useCurrentUserRole } from "../../../../hooks/user.query";
+import { secondsHumanize } from "../../../../utilities/time";
+import { stripProtocolAndPath } from "../../../../utilities/url";
+import AverageResponseTimeCard from "./components/AverageResponseTimeCard";
+import { ChecksDataGrid } from "./components/ChecksDataGrid";
+import LastCheckCard from "./components/LastCheckCard";
+import ResponseTimeGraph from "./components/ResponseTimesGraph";
+import TLSCard from "./components/TLSCard";
+import UptimeCard from "./components/UptimeCard";
 
 const MonitorDetailView: FunctionComponent = () => {
   let params = useParams();
@@ -46,20 +49,18 @@ const MonitorDetailView: FunctionComponent = () => {
   const currentRole = useCurrentUserRole();
 
   const { data, error, isLoading } = useMonitor(monitorId);
-  const { mutate: update, isLoading: isUpdating } = useUpdateMonitor(monitorId);
+  const { mutate: updateState, isLoading: isUpdatingState } =
+    useUpdateMonitorState(monitorId);
 
   const isActive = useMemo(() => data?.state === "ACTIVE", [data?.state]);
 
   const setMonitorState = (state: "ACTIVE" | "INACTIVE") => {
-    if (!data || isUpdating) {
+    if (isLoading) {
       return;
     }
 
     try {
-      update({
-        ...data,
-        state: state,
-      });
+      updateState(state);
     } catch (e) {
       enqueueSnackbar("Failed to update monitor state", { variant: "error" });
     }
@@ -84,7 +85,7 @@ const MonitorDetailView: FunctionComponent = () => {
               isActive ? t.palette.info.main : t.palette.success.main,
           },
         }}
-        loading={isUpdating}
+        loading={isUpdatingState}
         onClick={() => setMonitorState(isActive ? "INACTIVE" : "ACTIVE")}
       >
         {isActive ? "Pause monitor" : "Resume monitor"}
@@ -100,10 +101,10 @@ const MonitorDetailView: FunctionComponent = () => {
         component={NavLink}
         to={`/monitors/${params.id}/settings`}
       >
-        Edit
+        Settings
       </Button>,
     ];
-  }, [currentRole, data, params, isUpdating]);
+  }, [currentRole, data, params, isUpdatingState]);
 
   return (
     <>

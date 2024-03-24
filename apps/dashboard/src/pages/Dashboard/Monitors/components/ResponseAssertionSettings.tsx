@@ -1,4 +1,3 @@
-import { FunctionComponent } from "react";
 import {
   Autocomplete,
   Box,
@@ -15,9 +14,11 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import * as jsonpath from "jsonpath";
+import { FunctionComponent } from "react";
 import { Controller, useFieldArray, useFormContext } from "react-hook-form";
-import { FormData } from "../models/formData";
-import { VscClose, VscAdd } from "react-icons/vsc";
+import { VscAdd, VscClose } from "react-icons/vsc";
+import { v4 as uuidv4 } from "uuid";
 import Conditional from "../../../../components/Conditional";
 import {
   assertionHeadersOperators,
@@ -29,8 +30,7 @@ import {
   assertionStatusCodeOperators,
 } from "../models/assertionOptions";
 import { requestHeaders } from "../models/requestOptions";
-import { v4 as uuidv4 } from "uuid";
-import * as jsonpath from "jsonpath";
+import { SettingsFormData } from "../models/settingsFormData";
 
 const getOptionLabel = (option: string) => {
   switch (option) {
@@ -142,9 +142,9 @@ const sanitizeNumber = (value: string) => {
 };
 
 const ResponseAssertionSettings: FunctionComponent = () => {
-  const { control, getValues } = useFormContext<FormData>();
+  const { control, getValues } = useFormContext<SettingsFormData>();
 
-  const { fields, append, remove, update } = useFieldArray<FormData>({
+  const { fields, append, remove, update } = useFieldArray<SettingsFormData>({
     name: "assertions",
   });
 
@@ -350,7 +350,7 @@ const NoSourceCells: FunctionComponent = () => {
 const StatusCodeAssertionCells: FunctionComponent<{
   index: number;
 }> = ({ index }) => {
-  const { control } = useFormContext<FormData>();
+  const { control } = useFormContext<SettingsFormData>();
 
   return (
     <>
@@ -404,7 +404,7 @@ const StatusCodeAssertionCells: FunctionComponent<{
 const ResponseTimeAssertionCells: FunctionComponent<{
   index: number;
 }> = ({ index }) => {
-  const { control } = useFormContext<FormData>();
+  const { control } = useFormContext<SettingsFormData>();
 
   return (
     <>
@@ -476,7 +476,7 @@ const ResponseTimeAssertionCells: FunctionComponent<{
 const HeadersAssertionCells: FunctionComponent<{
   index: number;
 }> = ({ index }) => {
-  const { control, getValues, setValue } = useFormContext<FormData>();
+  const { control, getValues, setValue } = useFormContext<SettingsFormData>();
 
   return (
     <>
@@ -589,7 +589,7 @@ const HeadersAssertionCells: FunctionComponent<{
 const RawBodyAssertionCells: FunctionComponent<{
   index: number;
 }> = ({ index }) => {
-  const { control, setValue, getValues } = useFormContext<FormData>();
+  const { control, setValue, getValues } = useFormContext<SettingsFormData>();
 
   return (
     <>
@@ -675,7 +675,7 @@ const RawBodyAssertionCells: FunctionComponent<{
 const JSONBodyAssertionCells: FunctionComponent<{
   index: number;
 }> = ({ index }) => {
-  const { control, setValue, getValues } = useFormContext<FormData>();
+  const { control, setValue, getValues } = useFormContext<SettingsFormData>();
 
   const validateJSONPath = (value?: string): boolean => {
     if (!value) {

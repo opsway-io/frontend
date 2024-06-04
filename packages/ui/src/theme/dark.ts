@@ -246,8 +246,8 @@ theme.components = {
       root: {
         "& input": {
           "&:-webkit-autofill": {
-            borderRadius: "0px !important",
-            "-webkit-box-shadow": "0 0 0 100000px #2a3239 inset !important",
+            // Hack to prevent autofill from changing the text color
+            transitionDelay: "9999999999999999s",
           },
         },
       },

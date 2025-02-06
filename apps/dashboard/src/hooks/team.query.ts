@@ -108,3 +108,18 @@ export const usePostCreateCheckoutSession = (
     },
   );
 };
+
+
+export const useGetCustomerSession = (
+) => {
+  const currentTeamId = useAuthenticationStore((state) => state.currentTeamId);
+  return useMutation(
+    () => {
+      if (!currentTeamId) {
+        return Promise.resolve(null);
+      }
+      return TeamsAPI.getCustomerSession(currentTeamId);
+    }
+     
+  );
+};

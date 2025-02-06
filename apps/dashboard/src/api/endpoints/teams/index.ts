@@ -165,3 +165,15 @@ export async function postCreateCheckoutSession(
     window.location.href = body;
   }
 }
+
+export interface IGetCustomerSessionResponse {
+  sessionId: string;
+}
+
+export async function getCustomerSession(
+  teamId: string | number,
+): Promise<IGetCustomerSessionResponse> {
+  const response = await client.get<IGetCustomerSessionResponse>(`/v1/teams/${teamId}/customer-session`);
+
+  return response.data;
+}

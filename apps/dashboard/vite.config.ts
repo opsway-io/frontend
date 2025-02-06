@@ -10,7 +10,7 @@ export default defineConfig({
   server: {
     proxy: {
       "/v1": {
-        target: "http://localhost:8001",
+        target: "http://localhost:8005",
         // target: "https://api.opsway.io",
         changeOrigin: true,
       },

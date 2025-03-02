@@ -166,6 +166,18 @@ export async function postCreateCheckoutSession(
   }
 }
 
+export interface IPostCustomerPortalResponse {
+  url: string;
+}
+
+export async function postCustomerPortal(
+  teamId: string | number,
+): Promise<IPostCustomerPortalResponse> {
+  const response = await client.post<IPostCustomerPortalResponse>(`/v1/teams/${teamId}/customer-portal`);
+
+  return response.data;
+}
+
 export interface IGetCustomerSessionResponse {
   sessionId: string;
 }

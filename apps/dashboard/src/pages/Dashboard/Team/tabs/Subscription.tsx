@@ -1,10 +1,30 @@
 import { FunctionComponent, useState } from "react";
 import Placeholder from "../../../../components/Placeholder";
 import {
+  Box,
+  Button,
   Card,
   CardContent,
+  CardHeader,
+  Divider,
+  Grid,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  Typography,
+  useTheme,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
 } from "@mui/material";
-import { useCurrentTeam, useGetCustomerSession } from "../../../../hooks/team.query";
+import { BsCheckLg } from "react-icons/bs";
+import {
+  useCurrentTeam,
+  usePostCustomerPortal,
+  useGetCustomerSession,
+} from "../../../../hooks/team.query";
 import * as TeamsAPI from "../../../../api/endpoints/teams";
 
 declare global {
@@ -20,28 +40,44 @@ declare global {
 
 const TeamPlanTabView: FunctionComponent = () => {
   const { data: team, isLoading: isLoadingTeam } = useCurrentTeam();
-  const { data: teamSubscription, isLoading: isLoadingSubscription } = useGetCustomerSession();
-
-  console.log(teamSubscription?.sessionId)
-
+  const { data: customerPortal, isLoading: isLoadingPortal } =
+    usePostCustomerPortal();
+  // const { data: teamSubscription, isLoading: isLoadingSubscription } =
+  //   useGetCustomerSession();
 
   return (
     <>
-      <Card>
-        <CardContent>
-        {(isLoadingTeam || isLoadingSubscription) ? (
-            <Placeholder />
-          ) : (
+    {isLoadingTeam ? (
+      <Placeholder />
+    ) : (
+      <>
+      {team?.paymentPlan ? (
+        <Card>
+          <CardHeader title="Current Subscription" />
+          <CardContent>
+            <Typography variant="h6">{team?.paymentPlan}</Typography>
+            <div>
+            <a href={customerPortal?.url}>
+        <button>Manage Subscriptions here </button>
+      </a>
+            </div>
+          </CardContent>
+        </Card>
+      ) : (
+        <Card>
+          <CardHeader title="Choose a Subscription"/>
+          <CardContent>
           <stripe-pricing-table
-            pricing-table-id="prctbl_1PzENqAAd26uMXu2gnpkNNGV"
-            publishable-key="pk_test_51NjhPuAAd26uMXu2mDsC5CrJzCokmFCMDEiyZFGanTQAy2exlztxyuLDpg2TXC26LK8j9wqnACLAAwEyWS0AJ4r500U1rDn672"
-            client-reference-id={team?.id}
-            customer-session-client-secret={teamSubscription?.sessionId}
-            
-          ></stripe-pricing-table>
-          )}
-        </CardContent>
-      </Card>
+              pricing-table-id="prctbl_1PzENqAAd26uMXu2gnpkNNGV"
+              publishable-key="pk_test_51NjhPuAAd26uMXu2mDsC5CrJzCokmFCMDEiyZFGanTQAy2exlztxyuLDpg2TXC26LK8j9wqnACLAAwEyWS0AJ4r500U1rDn672"
+              client-reference-id={team?.id}
+              // customer-session-client-secret={teamSubscription?.sessionId}
+            ></stripe-pricing-table>
+          </CardContent>
+        </Card>
+      )}
+      </>
+    )}
     </>
   );
 };

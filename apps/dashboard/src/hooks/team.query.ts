@@ -109,12 +109,23 @@ export const usePostCreateCheckoutSession = (
   );
 };
 
+export const usePostCustomerPortal = (
+) => {
+  const currentTeamId = useAuthenticationStore((state) => state.currentTeamId);
+  return useQuery([], () => {
+      if (!currentTeamId) {
+        return Promise.resolve(null);
+      }
+      return TeamsAPI.postCustomerPortal(currentTeamId);
+    });
+};
+
+
 
 export const useGetCustomerSession = (
 ) => {
   const currentTeamId = useAuthenticationStore((state) => state.currentTeamId);
-  return useMutation(
-    () => {
+  return useQuery([], () => {
       if (!currentTeamId) {
         return Promise.resolve(null);
       }

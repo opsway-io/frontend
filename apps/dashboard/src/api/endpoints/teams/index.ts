@@ -178,6 +178,14 @@ export async function postCustomerPortal(
   return response.data;
 }
 
+export async function getProducts(
+  teamId: string | number,
+): Promise<IPostCustomerPortalResponse> {
+  const response = await client.post<IPostCustomerPortalResponse>(`/v1/teams/${teamId}/customer-portal`);
+
+  return response.data;
+}
+
 export interface IGetCustomerSessionResponse {
   sessionId: string;
 }

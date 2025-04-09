@@ -175,12 +175,15 @@ const MonitorDetailView: FunctionComponent = () => {
               sx={{
                 maxHeight: 32,
               }}
-              onChange={(_, value) => setTimeInterval(value)}
+              onChange={(_, value) => {
+                if (value != null) {
+                setTimeInterval(value)
+              }}}
             >
               <ToggleButton value={86400000}>Day</ToggleButton>
               <ToggleButton value={604800000}>Week</ToggleButton>
               <ToggleButton value={18144000000}>Month</ToggleButton>
-              <ToggleButton value={18144000000}>Custom</ToggleButton>
+              <ToggleButton value={217728000000}>Year</ToggleButton>
             </ToggleButtonGroup>
           </Stack>
         </Stack>

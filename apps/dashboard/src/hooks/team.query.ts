@@ -124,11 +124,11 @@ export const usePostCustomerPortal = (
 export const useGetProducts = (
 ) => {
   const currentTeamId = useAuthenticationStore((state) => state.currentTeamId);
-  return useQuery([], () => {
-      if (!currentTeamId) {
+  return useQuery(["products"], () => {
+    if (!currentTeamId) {
         return Promise.resolve(null);
       }
-      return TeamsAPI.postCustomerPortal(currentTeamId);
+      return TeamsAPI.getProducts(currentTeamId);
     });
 };
 

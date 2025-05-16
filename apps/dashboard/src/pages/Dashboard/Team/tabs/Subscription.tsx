@@ -14,84 +14,93 @@ import {
   ListItemText,
   Typography,
   useTheme,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
 } from "@mui/material";
 import { BsCheckLg } from "react-icons/bs";
-import { useCurrentTeam } from "../../../../hooks/team.query";
-import * as TeamsAPI from "../../../../api/endpoints/teams";
+import {
+  useCurrentTeam,
+  usePostCustomerPortal,
+  useGetProducts,
+} from "../../../../hooks/team.query";
+
+declare global {
+  namespace JSX {
+    interface IntrinsicElements {
+      "stripe-pricing-table": React.DetailedHTMLProps<
+        React.HTMLAttributes<HTMLElement>,
+        HTMLElement
+      >;
+    }
+  }
+}
 
 const TeamPlanTabView: FunctionComponent = () => {
   const { data: team, isLoading: isLoadingTeam } = useCurrentTeam();
+  const { data: customerPortal, isLoading: isLoadingPortal } =
+    usePostCustomerPortal();
+    const { data: products, isLoading: isLoadingProduct } =
+    useGetProducts();
 
   return (
     <>
-      <Card>
+    {isLoadingTeam ? (
+      <Placeholder />
+    ) : (
+      <>
+      {team?.paymentPlan ? (
+        <Card>
         <CardContent>
-          {isLoadingTeam ? (
+          {isLoadingProduct ? (
             <Placeholder />
           ) : (
             <Grid container spacing={2} justifyContent="center">
+              {products?.products.map((product) => (
               <Grid item>
                 <PricingCard
-                  title="Free"
+                  key={product.id}
+                  title={product.name}
                   description="For small teams"
-                  price="0£"
-                  features={[
-                    "Up to 10 users",
-                    "Up to 5 monitors",
-                    "Up to 5 status pages",
-                    "1 month of history",
-                  ]}
-                  selected={team?.paymentPlan === "FREE"}
-                  teamId={team?.id!}
-                  priceLookupKey={"FREE"}
-                />
+                  price={product.currency + " " + product.price.toString()} 
+                  features={product.marketing_features ? product.marketing_features : []}
+                  selected={team?.paymentPlan.toLocaleLowerCase() === product.name.toLocaleLowerCase()}
+                  />
               </Grid>
-              <Grid item>
-                <PricingCard
-                  title="Team"
-                  description="For medium teams"
-                  price="20£"
-                  features={[
-                    "Up to 25 users",
-                    "Up to 25 monitors",
-                    "Up to 10 status pages",
-                    "Up to 5 on-call schedules",
-                    "1 year of history",
-                  ]}
-                  selected={team?.paymentPlan === "TEAM"}
-                  teamId={team?.id!}
-                  priceLookupKey={"TEAM"}
-                />
-              </Grid>
-              <Grid item>
-                <PricingCard
-                  title="Enterprise"
-                  description="For large teams"
-                  price="100£"
-                  features={[
-                    "Unlimited users",
-                    "Unlimited monitors",
-                    "Unlimited status pages",
-                    "Unlimited On-call schedules",
-                    "1 year of history",
-                    "Priority support",
-                  ]}
-                  selected={team?.paymentPlan === "ENTERPRISE"}
-                  teamId={team?.id!}
-                  priceLookupKey={"ENTERPRISE"}
-                />
-              </Grid>
+                ))}
             </Grid>
           )}
         </CardContent>
+        <Button
+            variant="contained"
+            color="success"
+            fullWidth
+            sx={{
+              marginTop: "auto",
+            }}
+            component="a"
+            href={customerPortal?.url}
+          >
+            Manage Subscriptions
+          </Button>
       </Card>
+      ) : (
+        <Card>
+          <CardHeader align="center" title="Choose a Subscription"/>
+          <CardContent>
+          <stripe-pricing-table
+              pricing-table-id="prctbl_1PzENqAAd26uMXu2gnpkNNGV"
+              publishable-key="pk_test_51NjhPuAAd26uMXu2mDsC5CrJzCokmFCMDEiyZFGanTQAy2exlztxyuLDpg2TXC26LK8j9wqnACLAAwEyWS0AJ4r500U1rDn672"
+              client-reference-id={team?.id}
+              // customer-session-client-secret={teamSubscription?.sessionId}
+            ></stripe-pricing-table>
+          </CardContent>
+        </Card>
+      )}
+      </>
+    )}
+      
     </>
   );
 };
+
 
 export default TeamPlanTabView;
 
@@ -101,8 +110,6 @@ interface PricingCardProps {
   price: string;
   features: string[];
   selected: boolean;
-  teamId: number;
-  priceLookupKey: string;
 }
 
 const PricingCard: FunctionComponent<PricingCardProps> = ({
@@ -111,24 +118,8 @@ const PricingCard: FunctionComponent<PricingCardProps> = ({
   price,
   features,
   selected,
-  teamId,
-  priceLookupKey,
 }) => {
   const theme = useTheme();
-  const [open, setOpen] = useState(false);
-
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-  };
-
-  const onSubscribe = () => {
-    TeamsAPI.postCreateCheckoutSession(teamId, priceLookupKey)
-    handleClose();
-  };
 
   return (
     <Card
@@ -140,6 +131,7 @@ const PricingCard: FunctionComponent<PricingCardProps> = ({
         flexDirection: "column",
         border: "none",
       }}
+      variant={selected ? "outlined" : "elevation"}
     >
       <Box
         sx={{
@@ -147,7 +139,7 @@ const PricingCard: FunctionComponent<PricingCardProps> = ({
         }}
       >
         <Typography variant="h4" color="text.primary">
-          {title}
+          {selected ?  title + " (Current Plan)" : title}
         </Typography>
 
         <Typography variant="body1" color="text.secondary">
@@ -202,52 +194,6 @@ const PricingCard: FunctionComponent<PricingCardProps> = ({
             </ListItem>
           ))}
         </List>
-
-        {selected ? (
-          <Button
-            disabled
-            variant="contained"
-            color="success"
-            fullWidth
-            sx={{
-              marginTop: "auto",
-            }}
-            component="a"
-          >
-            Selected
-          </Button>
-        ) : (
-          <Button
-            variant="contained"
-            color="success"
-            fullWidth
-            sx={{
-              marginTop: "auto",
-            }}
-            component="a"
-            onClick={handleClickOpen}
-          >
-            Select
-          </Button>
-        )}
-        <Dialog
-          open={open}
-          onClose={handleClose}
-          aria-labelledby="alert-dialog-title"
-          aria-describedby="alert-dialog-description"
-        >
-          <DialogContent>
-            <DialogContentText id="alert-dialog-description">
-              This Action will change your subscription plan to {priceLookupKey}
-            </DialogContentText>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={handleClose}>CLOSE</Button>
-            <Button onClick={onSubscribe} autoFocus>
-              CHANGE PLAN
-            </Button>
-          </DialogActions>
-        </Dialog>
       </CardContent>
     </Card>
   );

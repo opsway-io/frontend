@@ -165,3 +165,45 @@ export async function postCreateCheckoutSession(
     window.location.href = body;
   }
 }
+
+export interface IPostCustomerPortalResponse {
+  url: string;
+}
+
+export async function postCustomerPortal(
+  teamId: string | number,
+): Promise<IPostCustomerPortalResponse> {
+  const response = await client.post<IPostCustomerPortalResponse>(`/v1/teams/${teamId}/customer-portal`);
+
+  return response.data;
+}
+
+export interface IGetProductsResponse {
+  products: {
+    id: string;
+    name: string;
+    price: number;
+    currency: string;
+    marketing_features: string[];
+  }[];
+}
+
+export async function getProducts(
+  teamId: string | number,
+): Promise<IGetProductsResponse> {
+  const response = await client.get<IGetProductsResponse>(`/v1/teams/${teamId}/products`);
+
+  return response.data;
+}
+
+export interface IGetCustomerSessionResponse {
+  sessionId: string;
+}
+
+export async function getCustomerSession(
+  teamId: string | number,
+): Promise<IGetCustomerSessionResponse> {
+  const response = await client.get<IGetCustomerSessionResponse>(`/v1/teams/${teamId}/customer-session`);
+
+  return response.data;
+}

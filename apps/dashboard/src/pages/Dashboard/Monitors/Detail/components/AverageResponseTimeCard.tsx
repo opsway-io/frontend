@@ -14,11 +14,11 @@ const AverageResponseTimeCard: FunctionComponent<
   const [Average, setAverage] = useState<string>("None");
 
   useEffect(() => {
-    if (!data?.avg) {
+    if (!data?.stats.averageResponseTime) {
       return;
     }
 
-    setAverage(`${data.avg} ms`);
+    setAverage(`${Math.floor(data.stats.averageResponseTime)} ms`);
   }, [monitorId, data]);
 
   return (

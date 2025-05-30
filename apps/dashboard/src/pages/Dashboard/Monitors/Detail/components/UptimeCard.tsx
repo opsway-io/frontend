@@ -12,11 +12,11 @@ const UptimeCard: FunctionComponent<UptimeCardProps> = ({ monitorId }) => {
   const [uptime, setUptime] = useState<string>("None");
 
   useEffect(() => {
-    if (!data?.uptimePercentage) {
+    if (!data?.stats.uptimePercentage) {
       return;
     }
 
-    setUptime(`${data.uptimePercentage}%`);
+    setUptime(`${data.stats.uptimePercentage}%`);
   }, [monitorId, data]);
 
   return (

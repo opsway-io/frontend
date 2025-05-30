@@ -49,7 +49,7 @@ export interface MonitorAssertion {
 export interface MonitorStats {
   totalCount: number;
   uptimePercentage: number;
-  averageResponseTimes: number[];
+  averageResponseTime: number;
   p99: number;
   p95: number;
 }

@@ -24,7 +24,7 @@ const AverageResponseTimeCard: FunctionComponent<
   return (
     <Card sx={{ flex: 1 }}>
       <CardContent>
-        <Typography sx={{ opacity: 0.5 }}>Average response time</Typography>
+        <Typography sx={{ opacity: 0.5 }}>Average response time (24-hour)</Typography>
 
         <Conditional value={isLoading}>
           <Skeleton variant="text" width={100} height={28} />

@@ -56,6 +56,37 @@ export async function getMonitorChecks(
   return response?.data;
 }
 
+export interface GetMonitorsIncidentsResponse {
+  monitors: MonitorsWithIncidents[];
+}
+
+export interface MonitorsWithIncidents {
+  id: number;
+  teamId: number;
+  state: string;
+  name: string;
+  createdAt: string;
+  updatedAt: string;
+  incidents: Incident[];
+}
+export interface Incident {
+  id: number;
+  createdAt: string;
+  updatedAt: string;
+  MonitorAssertionID: number;
+}
+
+
+export async function getMonitorsIncidents(
+  teamId: number,
+): Promise<GetMonitorsIncidentsResponse> {
+  const response = await client.get(
+    `/v1/teams/${teamId}/monitors/incidents`,
+  );
+
+  return response?.data;
+}
+
 /*
   Get Monitor Check
 */

@@ -61,7 +61,7 @@ const OverviewListItem: FunctionComponent<OverviewListItemProps> = (
             columns={{ xs: 1, md: 2 }}
             justifyContent="space-between"
             gap={{ xs: 2, md: 4 }}
-            onClick={() => navigate("/status-pages/1")}
+            onClick={() => navigate(`/incidents/${monitor.id}`)} // Navigate to the incident page
           >
             <Grid item>
               <Stack spacing={1}>

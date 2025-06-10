@@ -11,10 +11,10 @@ import {
 import { FunctionComponent } from "react";
 import { IoOpenOutline, IoStatsChart } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
-import { Incident } from "../../../../../src/api/endpoints/incidents";
+import { MonitorIncident } from "../../../../../src/api/endpoints/incidents";
 
 interface MonitorIncidentPageIncidentsListProps {
-  incidents?: Incident[]; 
+  incidents?: MonitorIncident[]; 
 }
 
 const IncidentPageIncidentsList: FunctionComponent<
@@ -32,7 +32,7 @@ MonitorIncidentPageIncidentsListProps
 };
 
 interface IncidentsListItemProps {
-  incident: Incident;
+  incident: MonitorIncident;
 }
 
 const IncidentsListItem: FunctionComponent<IncidentsListItemProps> = (
@@ -65,7 +65,7 @@ const IncidentsListItem: FunctionComponent<IncidentsListItemProps> = (
           >
             <Grid item>
               <Stack spacing={1}>
-                <Typography variant="body2">{incident.title}</Typography>
+                <Typography variant="body2">ERROR: {incident.title} {incident.operator} {incident.target}</Typography>
 
                 <Stack direction="row" spacing={1}>
                   <Chip size="small" label="api" color="info" />

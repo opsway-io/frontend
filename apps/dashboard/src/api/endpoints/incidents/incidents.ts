@@ -40,12 +40,34 @@ export async function getIncidents(
 }
 
 
+export interface MonitorIncident {
+  id: string;
+  teamId: number;
+  monitorId: number;
+  title: string;
+  description: string;
+  createdAt: string;
+  updatedAt: string;
+  property: string;
+  target: string;
+  operator: string;
+}
+
+/*
+  Get Team Incidents
+*/
+
+export interface GetMonitorIncidentsResponse {
+  incidents: MonitorIncident[];
+}
+
+
 export async function getMonitorIncidents(
   teamId: number,
   monitorId: number,
   offset?: number,
   limit?: number,
-): Promise<GetIncidentsResponse> {
+): Promise<GetMonitorIncidentsResponse> {
   const response = await client.get(`/v1/teams/${teamId}/incidents/monitor/${monitorId}`,
     {
         params: {

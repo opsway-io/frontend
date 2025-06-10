@@ -9,7 +9,7 @@ const queryClient = getQueryClient();
 export const useIncidents = (offset = 0, limit = 5) => {
   const teamId = useAuthenticationStore((state) => state.currentTeamId);
 
-  return useQuery(["team", teamId, "checks",
+  return useQuery(["team", teamId, "incidents",
     {
       offset,
       limit,
@@ -20,6 +20,23 @@ export const useIncidents = (offset = 0, limit = 5) => {
     }
 
     return IncidentsAPI.getIncidents(teamId, offset, limit);
+  });
+};
+
+export const useMonitorIncidents = (monitorId: number, offset = 0, limit = 5) => {
+  const teamId = useAuthenticationStore((state) => state.currentTeamId);
+
+  return useQuery(["team", teamId, "monitor", monitorId, "incidents",
+    {
+      offset,
+      limit,
+    },
+  ], () => {
+    if (!teamId) {
+      return Promise.resolve(null);
+    }
+
+    return IncidentsAPI.getMonitorIncidents(teamId, monitorId, offset, limit);
   });
 };
 

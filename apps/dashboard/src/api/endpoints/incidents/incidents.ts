@@ -11,6 +11,7 @@ export interface Incident {
   title: string;
   description: string;
   createdAt: string;
+  updatedAt: string;
 }
 
 /*
@@ -27,6 +28,25 @@ export async function getIncidents(
   limit?: number,
 ): Promise<GetIncidentsResponse> {
   const response = await client.get(`/v1/teams/${teamId}/incidents`,
+    {
+        params: {
+          offset,
+          limit,
+        },
+      },
+  );
+
+  return response?.data;
+}
+
+
+export async function getMonitorIncidents(
+  teamId: number,
+  monitorId: number,
+  offset?: number,
+  limit?: number,
+): Promise<GetIncidentsResponse> {
+  const response = await client.get(`/v1/teams/${teamId}/incidents/monitor/${monitorId}`,
     {
         params: {
           offset,

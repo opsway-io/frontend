@@ -3,7 +3,6 @@ import { Helmet } from "react-helmet";
 import Container from "../../../components/Container";
 import Placeholder from "../../../components/Placeholder";
 import IncidentOverviewList from "./components/OverviewList";
-// import { useIncidents } from "../../../hooks/incidents.query";
 import { useMonitorsIncidents } from "../../../hooks/monitors.query";
 
 

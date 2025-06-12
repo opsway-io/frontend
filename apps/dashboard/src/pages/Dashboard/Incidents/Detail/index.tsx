@@ -48,13 +48,11 @@ const IncidentsWindowDetailView: FunctionComponent<
               {stripProtocolAndPath(data?.settings.url)}
             </Typography>
             <Typography color="secondary">
-
-              <Conditional value={!incidentsAreLoading && monitorIncidents != undefined && monitorIncidents?.incidents.length > 0}>
-                {monitorIncidents?.incidents.length} active incidents on monitor
-               
-              </Conditional>
-
-              <Conditional value={monitorIncidents?.incidents.length == 0}>No Incidents!! :D</Conditional>
+                {
+                    !incidentsAreLoading && monitorIncidents != undefined && monitorIncidents?.incidents.length > 0
+                        ? `${monitorIncidents?.incidents.length} active incidents on monitor`
+                        : "No incidents yet"
+                }
             </Typography>
           </Stack>
         </Stack>

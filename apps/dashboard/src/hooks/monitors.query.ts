@@ -121,6 +121,36 @@ export const useMonitorChecks = (monitorId?: number, offset = 0, limit = 5) => {
   );
 };
 
+export const useFailedMonitorChecks = (monitorId: number, assertionId: number, offset = 0, limit = 5) => {
+  const teamId = useAuthenticationStore((state) => state.currentTeamId);
+
+  return useQuery(
+    [
+      "teams",
+      teamId,
+      "monitors",
+      monitorId,
+      "checks",
+      "assertion",
+      assertionId,
+      {
+        offset,
+        limit,
+      },
+    ],
+    () => {
+      if (!teamId || !monitorId) {
+        return Promise.resolve(null);
+      }
+
+      return MonitorsAPI.getFailedMonitorChecks(teamId, monitorId, assertionId, offset, limit);
+    },
+    {
+      keepPreviousData: true,
+    },
+  );
+};
+
 export const useMonitorsIncidents = () => {
   const teamId = useAuthenticationStore((state) => state.currentTeamId);
 

@@ -1,13 +1,16 @@
 import { FunctionComponent } from "react";
 import { useMonitorIncidents } from "../../../../hooks/incidents.query";
 import { Helmet } from "react-helmet";
-import { Link, NavLink, useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { useMonitor } from "../../../../hooks/monitors.query";
 interface IncidentsWindowDetailViewProps {}
 import Container from "../../../../components/Container";
-import { Button, Skeleton } from "@mui/material";
+import { Skeleton , Stack, Typography } from "@mui/material";
 import Placeholder from "../../../../components/Placeholder";
 import IncidentsList from "../components/IncidentsList";
+import Conditional from "../../../../components/Conditional";
+import { stripProtocolAndPath } from "../../../../utilities/url";
+
 
 const IncidentsWindowDetailView: FunctionComponent<
   IncidentsWindowDetailViewProps
@@ -39,9 +42,26 @@ const IncidentsWindowDetailView: FunctionComponent<
           ),
         ]}
       >
+        <Stack direction="row" spacing={2} alignItems={"center"}>
+          <Stack>
+            <Typography color="primary" fontSize={24}>
+              {stripProtocolAndPath(data?.settings.url)}
+            </Typography>
+            <Typography color="secondary">
+
+              <Conditional value={!incidentsAreLoading && monitorIncidents != undefined && monitorIncidents?.incidents.length > 0}>
+                {monitorIncidents?.incidents.length} active incidents monitor
+               
+              </Conditional>
+
+              <Conditional value={monitorIncidents?.incidents.length == 0}>No Incidents!! :D</Conditional>
+            </Typography>
+          </Stack>
+        </Stack>
         {incidentsAreLoading ? (
           <Placeholder />
         ) : (
+            
           <IncidentsList incidents={monitorIncidents?.incidents} />
         )}
       </Container>

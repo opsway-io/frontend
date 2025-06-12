@@ -56,6 +56,35 @@ export async function getMonitorChecks(
   return response?.data;
 }
 
+/*
+  Get Failed Monitor Checks
+*/
+
+export interface GetFailedMonitorChecksResponse {
+  checks: Check[];
+}
+
+export async function getFailedMonitorChecks(
+  teamId: number,
+  monitorId: number,
+  assertionId: number,
+  offset?: number,
+  limit?: number,
+): Promise<GetFailedMonitorChecksResponse> {
+  const response = await client.get(
+    `/v1/teams/${teamId}/monitors/${monitorId}/checks/failed/${assertionId}`,
+    {
+      params: {
+        offset,
+        limit,
+      },
+    },
+  );
+
+  return response?.data;
+}
+
+
 export interface GetMonitorsIncidentsResponse {
   monitors: MonitorsWithIncidents[];
 }

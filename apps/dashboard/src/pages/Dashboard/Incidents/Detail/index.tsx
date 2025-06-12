@@ -50,7 +50,7 @@ const IncidentsWindowDetailView: FunctionComponent<
             <Typography color="secondary">
 
               <Conditional value={!incidentsAreLoading && monitorIncidents != undefined && monitorIncidents?.incidents.length > 0}>
-                {monitorIncidents?.incidents.length} active incidents monitor
+                {monitorIncidents?.incidents.length} active incidents on monitor
                
               </Conditional>
 

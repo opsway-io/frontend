@@ -61,7 +61,7 @@ const IncidentsListItem: FunctionComponent<IncidentsListItemProps> = (
             columns={{ xs: 1, md: 2 }}
             justifyContent="space-between"
             gap={{ xs: 2, md: 4 }}
-            onClick={() => navigate(`/incidents/${incident.id}`)} // Navigate to the incident page
+            onClick={() => navigate(`/incidents/${incident.monitorId}/details`)} // Navigate to the incident page
           >
             <Grid item>
               <Stack spacing={1}>

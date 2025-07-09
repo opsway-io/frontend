@@ -3,7 +3,6 @@ import { useMonitorIncidents } from "../../../../hooks/incidents.query";
 import { Helmet } from "react-helmet";
 import { Link, useParams } from "react-router-dom";
 import { useMonitor } from "../../../../hooks/monitors.query";
-interface IncidentsWindowDetailViewProps {}
 import Container from "../../../../components/Container";
 import { Skeleton , Stack, Typography } from "@mui/material";
 import Placeholder from "../../../../components/Placeholder";
@@ -11,9 +10,10 @@ import IncidentsList from "../components/IncidentsList";
 import Conditional from "../../../../components/Conditional";
 import { stripProtocolAndPath } from "../../../../utilities/url";
 
+interface IncidentsWindowMonitorViewProps {}
 
-const IncidentsWindowDetailView: FunctionComponent<
-  IncidentsWindowDetailViewProps
+const IncidentsWindowMonitorView: FunctionComponent<
+  IncidentsWindowMonitorViewProps
 > = () => {
   let params = useParams();
   const monitorId = (params.id as number | undefined) || 0;
@@ -67,4 +67,4 @@ const IncidentsWindowDetailView: FunctionComponent<
   );
 };
 
-export default IncidentsWindowDetailView;
+export default IncidentsWindowMonitorView;

@@ -45,7 +45,7 @@ const IncidentMonitorDetailsView: FunctionComponent = () => {
 
   const [timeInterval, setTimeInterval] = useState(604800000);
 
-  const teamId = useAuthenticationStore((state) => state.currentTeamId);
+  const teamId = useAuthenticationStore((state: any) => state.currentTeamId);
   const currentRole = useCurrentUserRole();
 
   const { data, error, isLoading } = useMonitor(monitorId);
@@ -81,7 +81,7 @@ const IncidentMonitorDetailsView: FunctionComponent = () => {
         color="secondary"
         sx={{
           span: {
-            color: (t) =>
+            color: (t: any) =>
               isActive ? t.palette.info.main : t.palette.success.main,
           },
         }}
@@ -95,7 +95,7 @@ const IncidentMonitorDetailsView: FunctionComponent = () => {
         color="secondary"
         sx={{
           span: {
-            color: (t) => t.palette.grey[800],
+            color: (t: any) => t.palette.grey[800],
           },
         }}
         component={NavLink}
@@ -175,7 +175,7 @@ const IncidentMonitorDetailsView: FunctionComponent = () => {
               sx={{
                 maxHeight: 32,
               }}
-              onChange={(_, value) => {
+              onChange={(_: any, value: any) => {
                 if (value != null) {
                 setTimeInterval(value)
               }}}

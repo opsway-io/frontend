@@ -41,7 +41,7 @@ export async function getIncidents(
 
 
 export interface MonitorIncident {
-  id: string;
+  id: number;
   teamId: number;
   monitorId: number;
   title: string;
@@ -75,6 +75,22 @@ export async function getMonitorIncidents(
           limit,
         },
       },
+  );
+
+  return response?.data;
+}
+
+export interface PatchSolveMonitorIncidentRequest {
+  resolved: boolean;
+}
+
+export async function patchSolveMonitorIncident(
+  teamId: number,
+  incidentId: number,
+  data: PatchSolveMonitorIncidentRequest,
+): Promise<void> {
+  const response = await client.patch(`/v1/teams/${teamId}/incidents/${incidentId}/resolved`,
+    data,
   );
 
   return response?.data;

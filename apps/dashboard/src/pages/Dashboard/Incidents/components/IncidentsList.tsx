@@ -9,9 +9,9 @@ import {
   Typography,
 } from "@mui/material";
 import { FunctionComponent } from "react";
-import { IoOpenOutline, IoStatsChart } from "react-icons/io5";
+import { IoCheckmark, IoStatsChart } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
-import { MonitorIncident } from "../../../../../src/api/endpoints/incidents";
+import { MonitorIncident, patchSolveMonitorIncident } from "../../../../../src/api/endpoints/incidents";
 
 interface MonitorIncidentPageIncidentsListProps {
   incidents?: MonitorIncident[]; 
@@ -102,9 +102,9 @@ const IncidentsListItem: FunctionComponent<IncidentsListItemProps> = (
         </Stack>
       </Card>
 
-      <Tooltip title="Open in a new tab">
-        <Card component={Button} color="primary">
-          <IoOpenOutline size={18} />
+      <Tooltip title="Solve incident">
+        <Card component={Button} color="primary" onClick={() => patchSolveMonitorIncident(incident.teamId, incident.id, { resolved: true })}>
+          <IoCheckmark size={18} />
         </Card>
       </Tooltip>
     </Stack>

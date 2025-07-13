@@ -69,10 +69,7 @@ const OverviewListItem: FunctionComponent<OverviewListItemProps> = (
 
                 <Stack direction="row" spacing={1}>
                   <Chip size="small" label="api" color="info" />
-                  <Chip size="small" label="login" color="info" />
                   <Chip size="small" label="monitors" color="info" />
-                  <Chip size="small" label="foo" color="info" />
-                  <Chip size="small" label="bar" color="info" />
                 </Stack>
               </Stack>
             </Grid>

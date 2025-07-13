@@ -11,8 +11,17 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
+import { useReports } from "../../../hooks/reports.query";
+import ReportPageOverviewList from "./components/OverviewList";
+
 
 const ReportsView: FunctionComponent = () => {
+    // Get reports
+      const {
+        data: teamReports,
+        error: reportsError,
+        isLoading: reportsAreLoading,
+      } = useReports();
   return (
     <>
       <Helmet>
@@ -98,7 +107,9 @@ const ReportsView: FunctionComponent = () => {
           </Typography>
         </Stack>
 
-        <Placeholder />
+        {reportsAreLoading ? (<Placeholder />) :
+             ( <ReportPageOverviewList reports={teamReports?.reports} />)
+        }
       </Container>
     </>
   );

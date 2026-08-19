@@ -27,15 +27,16 @@ const TeamPeopleTabView: FunctionComponent = () => {
 
   const [query, setQuery] = useState("");
   const debouncedQuery = useDebounce(query, 250);
+  const [roleFilter, setRoleFilter] = useState<string>("ALL");
 
   const [offset, setOffset] = useState(0);
 
   useEffect(() => {
     setOffset(0);
-  }, [query]);
+  }, [query, roleFilter]);
 
   const { data, isLoading, error } = useQuery(
-    ["teams", teamId, "users", "offset", offset, "query", debouncedQuery],
+    ["teams", teamId, "users", "offset", offset, "query", debouncedQuery, "role", roleFilter],
     () => {
       if (!teamId) {
         return Promise.resolve(null);
@@ -46,6 +47,7 @@ const TeamPeopleTabView: FunctionComponent = () => {
         offset,
         10,
         debouncedQuery ? debouncedQuery : undefined,
+        roleFilter !== "ALL" ? roleFilter : undefined,
       );
     },
     {
@@ -83,6 +85,27 @@ const TeamPeopleTabView: FunctionComponent = () => {
             <IconButton type="submit" sx={{ p: "10px" }} size="small">
               <IoSearch />
             </IconButton>
+          </Paper>
+
+          <Paper variant="outlined" sx={{ minWidth: 150, p: "4px 8px", display: "flex", alignItems: "center" }}>
+            <select
+              value={roleFilter}
+              onChange={(e) => setRoleFilter(e.target.value)}
+              style={{
+                width: "100%",
+                border: "none",
+                background: "transparent",
+                outline: "none",
+                color: "inherit",
+                fontSize: "inherit",
+                fontFamily: "inherit",
+              }}
+            >
+              <option value="ALL">All Roles</option>
+              <option value="OWNER">Owner</option>
+              <option value="ADMIN">Admin</option>
+              <option value="MEMBER">Member</option>
+            </select>
           </Paper>
         </Stack>
 

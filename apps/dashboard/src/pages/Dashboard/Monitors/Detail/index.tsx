@@ -1,5 +1,6 @@
 import { LoadingButton } from "@mui/lab";
 import {
+  Alert,
   Button,
   Card,
   CardContent,
@@ -28,6 +29,8 @@ import {
   useUpdateMonitorState,
 } from "../../../../hooks/monitors.query";
 import { useCurrentUserRole } from "../../../../hooks/user.query";
+import { useMaintenanceWindows } from "../../../../hooks/maintenance.query";
+import moment from "moment";
 import { secondsHumanize } from "../../../../utilities/time";
 import { stripProtocolAndPath } from "../../../../utilities/url";
 import AverageResponseTimeCard from "./components/AverageResponseTimeCard";
@@ -38,7 +41,7 @@ import TLSCard from "./components/TLSCard";
 import UptimeCard from "./components/UptimeCard";
 
 const MonitorDetailView: FunctionComponent = () => {
-  let params = useParams();
+  const params = useParams();
   const monitorId = (params.id as number | undefined) || 0;
 
   const theme = useTheme();
@@ -53,6 +56,26 @@ const MonitorDetailView: FunctionComponent = () => {
     useUpdateMonitorState(monitorId);
 
   const isActive = useMemo(() => data?.state === "ACTIVE", [data?.state]);
+
+  const { data: maintenances } = useMaintenanceWindows();
+  const now = moment();
+  const isGlobalMaintenance = useMemo(() => {
+    if (!maintenances) return false;
+    return maintenances.some((w) => {
+      const start = moment(w.settings?.startAt);
+      const end = moment(w.settings?.endAt);
+      const isWindowActive = start.isSameOrBefore(now) && end.isAfter(now);
+      if (!isWindowActive) return false;
+      // Check if it applies to all monitors or specifically this one
+      if (!w.monitors || w.monitors.length === 0) return true;
+      return w.monitors.some((m: any) => m.id === monitorId);
+    });
+  }, [maintenances, monitorId]);
+
+  const isMaintenance = useMemo(
+    () => data?.state === "MAINTENANCE" || isGlobalMaintenance,
+    [data?.state, isGlobalMaintenance],
+  );
 
   const setMonitorState = (state: "ACTIVE" | "INACTIVE") => {
     if (isLoading) {
@@ -76,20 +99,24 @@ const MonitorDetailView: FunctionComponent = () => {
     }
 
     return [
-      <LoadingButton
-        startIcon={isActive ? <IoPause /> : <IoPlay />}
-        color="secondary"
-        sx={{
-          span: {
-            color: (t) =>
-              isActive ? t.palette.info.main : t.palette.success.main,
-          },
-        }}
-        loading={isUpdatingState}
-        onClick={() => setMonitorState(isActive ? "INACTIVE" : "ACTIVE")}
-      >
-        {isActive ? "Pause monitor" : "Resume monitor"}
-      </LoadingButton>,
+      <div key="resume" style={{ display: 'inline-block' }} title={isMaintenance ? "Cannot resume while an active maintenance window is ongoing" : undefined}>
+        <LoadingButton
+          startIcon={isActive ? <IoPause /> : <IoPlay />}
+          color="secondary"
+          sx={{
+            span: {
+              color: (t) =>
+                isActive && !isMaintenance ? t.palette.info.main :
+                !isMaintenance ? t.palette.success.main : t.palette.grey[500],
+            },
+          }}
+          loading={isUpdatingState}
+          disabled={isMaintenance}
+          onClick={() => setMonitorState(isActive ? "INACTIVE" : "ACTIVE")}
+        >
+          {isActive ? "Pause monitor" : "Resume monitor"}
+        </LoadingButton>
+      </div>,
       <Button
         startIcon={<IoSettings />}
         color="secondary"
@@ -156,7 +183,15 @@ const MonitorDetailView: FunctionComponent = () => {
                 {secondsHumanize(data?.settings.frequencySeconds as number)}
               </Conditional>
 
-              <Conditional value={!isActive}>Monitoring is paused</Conditional>
+              <Conditional value={!isActive && !isMaintenance}>
+                Monitoring is paused
+              </Conditional>
+
+              <Conditional value={isMaintenance}>
+                <Alert severity="warning" sx={{ mt: 1 }}>
+                  Prober and alerts are turned off due to maintenance.
+                </Alert>
+              </Conditional>
             </Typography>
           </Stack>
         </Stack>
@@ -177,8 +212,9 @@ const MonitorDetailView: FunctionComponent = () => {
               }}
               onChange={(_, value) => {
                 if (value != null) {
-                setTimeInterval(value)
-              }}}
+                  setTimeInterval(value);
+                }
+              }}
             >
               <ToggleButton value={86400000}>Day</ToggleButton>
               <ToggleButton value={604800000}>Week</ToggleButton>
@@ -243,7 +279,7 @@ const MonitorDetailView: FunctionComponent = () => {
                 label="TLS"
               />
               <Chip
-                sx={{ backgroundColor: alpha("#9b59b6", 0.5) }} // TODO: use theme color
+                sx={{ backgroundColor: alpha(theme.palette.secondary.main, 0.5) }}
                 label="Processing"
               />
               <Chip

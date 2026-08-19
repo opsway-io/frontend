@@ -5,6 +5,7 @@ import { TokenInterceptor } from "../interceptors/token";
 
 const instance = axios.create({
   baseURL: env.API_BASE_URL,
+  withCredentials: true,
 });
 
 LogOutInterceptor(instance);

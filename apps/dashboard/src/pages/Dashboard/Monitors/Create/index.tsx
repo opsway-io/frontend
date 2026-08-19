@@ -25,12 +25,16 @@ import RequestSettings from "../components/RequestSettings";
 import ResponseAssertionSettings from "../components/ResponseAssertionSettings";
 import TLSVerificationSettings from "../components/TLSVerificationSettings";
 import { SettingsFormData } from "../models/settingsFormData";
+import UpgradePromptModal from "../../../../components/UpgradePromptModal";
+import { isAxiosError } from "axios";
+import { useState } from "react";
 
 const MonitorCreateView: FunctionComponent = () => {
   const teamId = useAuthenticationStore((state) => state.currentTeamId);
   const { mutate } = useCreateMonitor();
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
+  const [openUpgradeModal, setOpenUpgradeModal] = useState(false);
 
   const [params, setParams] = useSearchParams({
     tab: "request",
@@ -56,7 +60,7 @@ const MonitorCreateView: FunctionComponent = () => {
           expirationThresholdDays: 7,
         },
         frequencySeconds: 300,
-        locations: ["eu-central-1"],
+        locations: ["global"],
       },
       assertions: [
         {
@@ -85,14 +89,23 @@ const MonitorCreateView: FunctionComponent = () => {
 
         navigate("/monitors");
       },
-      onError: () => {
-        enqueueSnackbar("Failed to create monitor", { variant: "error" });
+      onError: (error) => {
+        if (isAxiosError(error) && error.response?.status === 402) {
+          setOpenUpgradeModal(true);
+        } else {
+          enqueueSnackbar("Failed to create monitor", { variant: "error" });
+        }
       },
     });
   };
 
   return (
     <>
+      <UpgradePromptModal 
+        open={openUpgradeModal} 
+        onClose={() => setOpenUpgradeModal(false)} 
+        featureName="Monitors" 
+      />
       <DevTool control={formMethods.control} />
 
       <Helmet>
@@ -147,7 +160,9 @@ const MonitorCreateView: FunctionComponent = () => {
             <Tab value="request" label="Request" />
             <Tab value="assertions" label="Response assertions" />
             <Tab value="frequencyAndLocation" label="Frequency & Location" />
-            <Tab value="tlsVerification" label="SSL/TLS" />
+            {!["TCP", "ICMP", "DNS", "POSTGRES", "MYSQL", "REDIS"].includes(formMethods.watch("settings.method")) && (
+              <Tab value="tlsVerification" label="SSL/TLS" />
+            )}
           </Tabs>
 
           <Box sx={{ display: selectedTab === "request" ? "block" : "none" }}>

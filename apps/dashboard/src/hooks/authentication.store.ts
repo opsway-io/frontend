@@ -11,16 +11,11 @@ const queryClient = getQueryClient();
 const initialState: AuthenticationState = {
   currentUserId: undefined,
   currentTeamId: undefined,
-  accessToken: undefined,
-  refreshToken: undefined,
 };
 
 interface AuthenticationState {
   currentUserId?: number;
   currentTeamId?: number;
-
-  accessToken?: string;
-  refreshToken?: string;
 }
 
 interface AuthenticationActions {
@@ -35,16 +30,18 @@ interface AuthenticationActions {
     user?: IGetUserResponse;
     error?: AxiosError<any>;
   }>;
+  register(data: AuthenticationAPI.IRegisterRequest): Promise<{
+    success: boolean;
+    user?: IGetUserResponse;
+    error?: AxiosError<any>;
+  }>;
   setCurrentUserID(userId?: number): void;
   setCurrentTeamID(teamId?: number): void;
 
-  setAccessToken(token: string): void;
-  setRefreshToken(token: string): void;
+  forgotPassword(email: string): Promise<void>;
+  resetPassword(token: string, password: string): Promise<void>;
 
   refreshTokens(): Promise<void>;
-
-  isAccessTokenExpired(): boolean;
-  isRefreshTokenExpired(): boolean;
 }
 
 const useAuthenticationStore = create<
@@ -55,10 +52,11 @@ const useAuthenticationStore = create<
       ...initialState,
 
       isAuthenticated: () => {
-        return !get().isRefreshTokenExpired() && !!get().currentUserId;
+        return !!get().currentUserId;
       },
 
       logOut: () => {
+        AuthenticationAPI.logout().catch(() => {});
         queryClient.clear();
         localStorage.clear();
 
@@ -89,8 +87,38 @@ const useAuthenticationStore = create<
           }
 
           set({
-            accessToken: response.accessToken,
-            refreshToken: response.refreshToken,
+            currentUserId: response.user?.id,
+            currentTeamId: teamId,
+          });
+
+          return { success: true, user: response.user };
+        } catch (error: any) {
+          return { success: false, error: error as AxiosError<any> };
+        }
+      },
+
+      register: async (
+        data: AuthenticationAPI.IRegisterRequest,
+      ): Promise<{
+        success: boolean;
+        user?: IGetUserResponse;
+        error?: AxiosError<any>;
+      }> => {
+        try {
+          const response = await AuthenticationAPI.register(data);
+
+          if (!response.user) {
+            throw new Error("User missing in register response");
+          }
+
+          let teamId = undefined;
+
+          // If the user only has one team, set it as the current team
+          if (response.user.teams.length === 1) {
+            teamId = response.user.teams[0].id;
+          }
+
+          set({
             currentUserId: response.user?.id,
             currentTeamId: teamId,
           });
@@ -109,44 +137,17 @@ const useAuthenticationStore = create<
         set({ currentTeamId: teamId });
       },
 
-      setAccessToken: (token: string) => {
-        set({ accessToken: token });
+      forgotPassword: async (email: string) => {
+        await AuthenticationAPI.forgotPassword(email);
       },
 
-      setRefreshToken: (token: string) => {
-        set({ refreshToken: token });
+      resetPassword: async (token: string, password: string) => {
+        await AuthenticationAPI.resetPassword(token, password);
       },
 
       refreshTokens: async () => {
-        const refreshToken = get().refreshToken;
-        if (!refreshToken) {
-          throw new Error("No refresh token found");
-        }
-
-        const resp = await AuthenticationAPI.refresh(refreshToken);
-
-        set({
-          accessToken: resp.accessToken,
-          refreshToken: resp.refreshToken,
-        });
-      },
-
-      isAccessTokenExpired: () => {
-        const token = get().accessToken;
-        if (!token) {
-          return true;
-        }
-
-        return hasTokenExpired(token);
-      },
-
-      isRefreshTokenExpired: () => {
-        const token = get().refreshToken;
-        if (!token) {
-          return true;
-        }
-
-        return hasTokenExpired(token);
+        // Backend reads refresh token from HttpOnly cookie
+        await AuthenticationAPI.refresh("");
       },
     }),
     {
@@ -155,10 +156,5 @@ const useAuthenticationStore = create<
   ),
 );
 
-function hasTokenExpired(token: string) {
-  const jwt: any = jwt_decode(token);
-  return jwt.exp < Date.now() / 1000;
-}
-
-export type { AuthenticationState };
+export type { AuthenticationState, AuthenticationActions };
 export default useAuthenticationStore;

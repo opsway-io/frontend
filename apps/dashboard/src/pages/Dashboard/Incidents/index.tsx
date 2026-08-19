@@ -5,16 +5,13 @@ import Placeholder from "../../../components/Placeholder";
 import IncidentOverviewList from "./components/OverviewList";
 import { useMonitorsIncidents } from "../../../hooks/monitors.query";
 
-
-
 const IncidentsView: FunctionComponent = () => {
-
   // Get incidents
-    const {
-      data: monitorsIncidents,
-      error: incidentsError,
-      isLoading: incidentsAreLoading,
-    } = useMonitorsIncidents();
+  const {
+    data: monitorsIncidents,
+    error: incidentsError,
+    isLoading: incidentsAreLoading,
+  } = useMonitorsIncidents();
   return (
     <>
       <Helmet>
@@ -25,10 +22,11 @@ const IncidentsView: FunctionComponent = () => {
         header="Incidents"
         description="An overview active and resolved incidents across your infrastructure."
       >
-        {incidentsAreLoading ? (<Placeholder />) :
-             ( <IncidentOverviewList monitors={monitorsIncidents?.monitors} />)
-        }
-
+        {incidentsAreLoading ? (
+          <Placeholder />
+        ) : (
+          <IncidentOverviewList monitors={monitorsIncidents?.monitors} />
+        )}
       </Container>
     </>
   );

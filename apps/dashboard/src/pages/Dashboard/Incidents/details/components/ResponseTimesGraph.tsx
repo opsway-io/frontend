@@ -47,7 +47,7 @@ const ResponseTimesGraph: FunctionComponent<ResponseTimesGraphProps> = (
         theme.palette.info.main,
         theme.palette.success.main,
         theme.palette.warning.main,
-        "#9b59b6", // TODO: use theme color
+        theme.palette.secondary.main,
         theme.palette.error.main,
       ],
       grid: {

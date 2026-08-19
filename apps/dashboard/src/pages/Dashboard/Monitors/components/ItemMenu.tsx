@@ -49,6 +49,11 @@ const ItemMenu: FunctionComponent<ItemMenuProps> = (props) => {
     [props.monitor.state],
   );
 
+  const isMaintenance = useMemo(
+    () => props.monitor.state === "MAINTENANCE",
+    [props.monitor.state],
+  );
+
   return (
     <>
       <IconButton
@@ -74,6 +79,7 @@ const ItemMenu: FunctionComponent<ItemMenuProps> = (props) => {
         }}
       >
         <MenuItem
+          disabled={isMaintenance}
           onClick={() => {
             setMonitorState(isActive ? "INACTIVE" : "ACTIVE");
           }}

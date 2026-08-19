@@ -13,11 +13,17 @@ import { FunctionComponent, useEffect, useState } from "react";
 import { validate } from "email-validator";
 import { NavLink } from "react-router-dom";
 import { Helmet } from "react-helmet";
+import useAuthenticationStore from "../../../hooks/authentication.store";
+import { toast } from "react-hot-toast";
 
 const ForgotPasswordView: FunctionComponent = () => {
   const [email, setEmail] = useState("");
-
   const [buttonDisabled, setButtonDisabled] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const forgotPassword = useAuthenticationStore(
+    (state) => state.forgotPassword,
+  );
 
   useEffect(() => {
     if (email.length < 1) {
@@ -33,8 +39,16 @@ const ForgotPasswordView: FunctionComponent = () => {
     setButtonDisabled(false);
   }, [email]);
 
-  const submit = () => {
-    // TODO
+  const submit = async () => {
+    setSubmitting(true);
+    try {
+      await forgotPassword(email);
+      setSuccess(true);
+    } catch (err: any) {
+      toast.error(err.response?.data?.message || "Failed to send reset link");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -69,46 +83,74 @@ const ForgotPasswordView: FunctionComponent = () => {
               Forgot your password?
             </Typography>
 
-            <Typography
-              variant="body2"
-              textAlign="center"
-              sx={{
-                color: "text.secondary",
-                paddingBottom: 2,
-              }}
-            >
-              Please enter your registered email address and we will send you a
-              link to reset your password.
-            </Typography>
+            {success ? (
+              <>
+                <Typography
+                  variant="body2"
+                  textAlign="center"
+                  sx={{
+                    color: "success.main",
+                    paddingBottom: 2,
+                  }}
+                >
+                  If an account exists with that email, we have sent a reset
+                  link.
+                </Typography>
+                <Button
+                  variant="outlined"
+                  component={NavLink}
+                  to="/login"
+                  size="large"
+                >
+                  Back to login
+                </Button>
+              </>
+            ) : (
+              <>
+                <Typography
+                  variant="body2"
+                  textAlign="center"
+                  sx={{
+                    color: "text.secondary",
+                    paddingBottom: 2,
+                  }}
+                >
+                  Please enter your registered email address and we will send
+                  you a link to reset your password.
+                </Typography>
 
-            <TextField
-              placeholder="Email address"
-              type="email"
-              variant="outlined"
-              onChange={(e) => setEmail(e.target.value)}
-              autoFocus
-            />
+                <TextField
+                  placeholder="Email address"
+                  type="email"
+                  variant="outlined"
+                  onChange={(e) => setEmail(e.target.value)}
+                  disabled={submitting}
+                  autoFocus
+                />
 
-            <Divider />
+                <Divider />
 
-            <Button
-              variant="contained"
-              color="success"
-              disabled={buttonDisabled}
-              onSubmit={submit}
-              size="large"
-            >
-              Sent reset link
-            </Button>
+                <Button
+                  variant="contained"
+                  color="success"
+                  disabled={buttonDisabled || submitting}
+                  onClick={submit}
+                  size="large"
+                >
+                  {submitting ? "Sending..." : "Send reset link"}
+                </Button>
 
-            <Button
-              variant="outlined"
-              component={NavLink}
-              to="/login"
-              size="large"
-            >
-              Back to login
-            </Button>
+                <Button
+                  variant="outlined"
+                  component={NavLink}
+                  to="/login"
+                  size="large"
+                  disabled={submitting}
+                >
+                  Back to login
+                </Button>
+              </>
+            )}
           </CardContent>
         </Card>
       </Fade>

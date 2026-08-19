@@ -42,6 +42,12 @@ const TeamInvitationsTabView = lazy(
 const TeamSettingsTabView = lazy(
   () => import("../pages/Dashboard/Team/tabs/Settings"),
 );
+const TeamEscalationTabView = lazy(
+  () => import("../pages/Dashboard/Team/tabs/Escalation"),
+);
+const TeamApiKeysTabView = lazy(
+  () => import("../pages/Dashboard/Team/tabs/ApiKeys"),
+);
 const TeamSubscriptionTabView = lazy(
   () => import("../pages/Dashboard/Team/tabs/Subscription"),
 );
@@ -66,7 +72,24 @@ const MonitorSettingsView = lazy(
   () => import("../pages/Dashboard/Monitors/Settings"),
 );
 
-const HeartbeatsView = lazy(() => import("../pages/Dashboard/Heartbeats"));
+const AlertingView = lazy(() => import("../pages/Dashboard/Alerting"));
+const AlertRuleCreateView = lazy(
+  () => import("../pages/Dashboard/Alerting/Create"),
+);
+const AlertRuleDetailView = lazy(
+  () => import("../pages/Dashboard/Alerting/Detail"),
+);
+
+const HeartbeatView = lazy(() => import("../pages/Dashboard/Heartbeats"));
+const HeartbeatCreateView = lazy(
+  () => import("../pages/Dashboard/Heartbeats/Create"),
+);
+const HeartbeatDetailView = lazy(
+  () => import("../pages/Dashboard/Heartbeats/Detail"),
+);
+const IncidentDetailView = lazy(
+  () => import("../pages/Dashboard/Incidents/incident"),
+);
 
 const MaintenanceView = lazy(() => import("../pages/Dashboard/Maintenance"));
 const MaintenanceCreateView = lazy(
@@ -77,10 +100,12 @@ const MaintenanceDetailView = lazy(
 );
 
 const IncidentsView = lazy(() => import("../pages/Dashboard/Incidents"));
-const IncidentsMontiorView = lazy(() => import("../pages/Dashboard/Incidents/monitors"));
-const IncidentMonitorDetailsView = lazy(() => import("../pages/Dashboard/Incidents/details"));
-
-const AlertingView = lazy(() => import("../pages/Dashboard/Alerting"));
+const IncidentsMontiorView = lazy(
+  () => import("../pages/Dashboard/Incidents/monitors"),
+);
+const IncidentMonitorDetailsView = lazy(
+  () => import("../pages/Dashboard/Incidents/details"),
+);
 
 const ChangelogView = lazy(() => import("../pages/Dashboard/Changelog"));
 const ChangelogEntriesCreateView = lazy(
@@ -102,6 +127,9 @@ const StatusPagesDetailView = lazy(
 );
 
 const ReportsView = lazy(() => import("../pages/Dashboard/Reports"));
+const ReportDetailView = lazy(
+  () => import("../pages/Dashboard/Reports/Detail"),
+);
 
 const TeamAcceptInvitationView = lazy(
   () => import("../pages/Authentication/TeamAcceptInvitation"),
@@ -146,21 +174,31 @@ const Routes: FunctionComponent = () => {
             <Route path="create" element={<MonitorCreateView />} />
           </Route>
 
-          {/* Heartbeats */}
-          <Route path="heartbeats">
-            <Route index path="" element={<HeartbeatsView />} />
-          </Route>
-
           {/* Alerting */}
           <Route path="alerting">
             <Route index path="" element={<AlertingView />} />
+            <Route path="create" element={<AlertRuleCreateView />} />
+            <Route path=":ruleId" element={<AlertRuleDetailView />} />
+          </Route>
+
+          <Route path="heartbeats">
+            <Route index path="" element={<HeartbeatView />} />
+            <Route path="create" element={<HeartbeatCreateView />} />
+            <Route path=":heartbeatId" element={<HeartbeatDetailView />} />
           </Route>
 
           {/* Incidents  */}
           <Route path="incidents">
             <Route index path="" element={<IncidentsView />} />
             <Route path=":id/monitor" element={<IncidentsMontiorView />} />
-            <Route path=":id/details" element={<IncidentMonitorDetailsView />} />
+            <Route
+              path=":id/details"
+              element={<IncidentMonitorDetailsView />}
+            />
+            <Route
+              path="incident/:incidentId"
+              element={<IncidentDetailView />}
+            />
           </Route>
 
           {/* Maintenance */}
@@ -206,6 +244,7 @@ const Routes: FunctionComponent = () => {
           {/* Reports */}
           <Route path="reports">
             <Route index path="" element={<ReportsView />} />
+            <Route path=":id" element={<ReportDetailView />} />
           </Route>
 
           {/* Team */}
@@ -229,6 +268,22 @@ const Routes: FunctionComponent = () => {
               }
             />
             <Route
+              path="escalation"
+              element={
+                <RestrictedRoute minRole={Role.ADMIN}>
+                  <TeamEscalationTabView />
+                </RestrictedRoute>
+              }
+            />
+            <Route
+              path="apikeys"
+              element={
+                <RestrictedRoute minRole={Role.ADMIN}>
+                  <TeamApiKeysTabView />
+                </RestrictedRoute>
+              }
+            />
+            <Route
               path="subscription"
               element={
                 <RestrictedRoute minRole={Role.OWNER}>
@@ -243,8 +298,8 @@ const Routes: FunctionComponent = () => {
 
         {/* Authentication  */}
         <Route path="login" element={<AuthenticationBaseView />}>
-          <Route path="" element={<RestrictedRoute unauthenticated />}>
-            <Route path="" element={<LoginView />} />
+          <Route element={<RestrictedRoute unauthenticated />}>
+            <Route index element={<LoginView />} />
 
             <Route path="forgot-password" element={<ForgotPasswordView />} />
             <Route path="reset-password" element={<ResetPasswordView />} />
@@ -254,7 +309,7 @@ const Routes: FunctionComponent = () => {
             <Route path="oauth" element={<OAuthLoginView />} />
           </Route>
 
-          <Route path="" element={<RestrictedRoute authenticated />}>
+          <Route element={<RestrictedRoute authenticated />}>
             <Route path="team/select" element={<TeamSelectionView />} />
             <Route path="team/register" element={<TeamRegisterView />} />
             <Route path="team/invite" element={<TeamAcceptInvitationView />} />

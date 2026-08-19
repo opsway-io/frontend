@@ -36,7 +36,8 @@ const AuthenticatedRoute = (props: RestrictedProps) => {
   const location = useLocation();
 
   if (!authentication.isAuthenticated()) {
-    return <Navigate to="/login" replace />;
+    const returnTo = encodeURIComponent(location.pathname + location.search);
+    return <Navigate to={`/login?returnTo=${returnTo}`} replace />;
   }
 
   // allow team selection or create team if no team is selected
@@ -56,8 +57,16 @@ const AuthenticatedRoute = (props: RestrictedProps) => {
 
 const UnauthenticatedRoute = (props: RestrictedProps) => {
   const authentication = useAuthenticationStore();
+  const location = useLocation();
 
   if (authentication.isAuthenticated()) {
+    const params = new URLSearchParams(location.search);
+    const returnTo = params.get("returnTo");
+
+    if (returnTo) {
+      return <Navigate to={returnTo} replace />;
+    }
+
     return <Navigate to="/monitors" replace />;
   }
 

@@ -4,7 +4,7 @@ import { Helmet } from "react-helmet";
 import { Link, useParams } from "react-router-dom";
 import { useMonitor } from "../../../../hooks/monitors.query";
 import Container from "../../../../components/Container";
-import { Skeleton , Stack, Typography } from "@mui/material";
+import { Skeleton, Stack, Typography } from "@mui/material";
 import Placeholder from "../../../../components/Placeholder";
 import IncidentsList from "../components/IncidentsList";
 import Conditional from "../../../../components/Conditional";
@@ -15,7 +15,7 @@ interface IncidentsWindowMonitorViewProps {}
 const IncidentsWindowMonitorView: FunctionComponent<
   IncidentsWindowMonitorViewProps
 > = () => {
-  let params = useParams();
+  const params = useParams();
   const monitorId = (params.id as number | undefined) || 0;
 
   const { data, error, isLoading } = useMonitor(monitorId);
@@ -48,18 +48,17 @@ const IncidentsWindowMonitorView: FunctionComponent<
               {stripProtocolAndPath(data?.settings.url)}
             </Typography>
             <Typography color="secondary">
-                {
-                    !incidentsAreLoading && monitorIncidents != undefined && monitorIncidents?.incidents.length > 0
-                        ? `${monitorIncidents?.incidents.length} active incidents on monitor`
-                        : "No incidents yet"
-                }
+              {!incidentsAreLoading &&
+              monitorIncidents != undefined &&
+              monitorIncidents?.incidents.length > 0
+                ? `${monitorIncidents?.incidents.length} active incidents on monitor`
+                : "No incidents yet"}
             </Typography>
           </Stack>
         </Stack>
         {incidentsAreLoading ? (
           <Placeholder />
         ) : (
-            
           <IncidentsList incidents={monitorIncidents?.incidents} />
         )}
       </Container>

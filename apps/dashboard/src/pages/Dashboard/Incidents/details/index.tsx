@@ -1,5 +1,7 @@
 import { LoadingButton } from "@mui/lab";
 import {
+  Alert,
+  AlertTitle,
   Button,
   Card,
   CardContent,
@@ -16,7 +18,7 @@ import {
 import { enqueueSnackbar } from "notistack";
 import { FunctionComponent, useMemo, useState } from "react";
 import { Helmet } from "react-helmet";
-import { IoPause, IoPlay, IoSettings } from "react-icons/io5";
+import { IoCheckmark, IoPause, IoPlay, IoSettings } from "react-icons/io5";
 import { Link, NavLink, useParams } from "react-router-dom";
 import Conditional from "../../../../components/Conditional";
 import Container from "../../../../components/Container";
@@ -27,6 +29,10 @@ import {
   useMonitor,
   useUpdateMonitorState,
 } from "../../../../hooks/monitors.query";
+import {
+  useMonitorIncidents,
+  useSolveIncident,
+} from "../../../../hooks/incidents.query";
 import { useCurrentUserRole } from "../../../../hooks/user.query";
 import { secondsHumanize } from "../../../../utilities/time";
 import { stripProtocolAndPath } from "../../../../utilities/url";
@@ -38,7 +44,7 @@ import TLSCard from "./components/TLSCard";
 import UptimeCard from "./components/UptimeCard";
 
 const IncidentMonitorDetailsView: FunctionComponent = () => {
-  let params = useParams();
+  const params = useParams();
   const monitorId = (params.id as number | undefined) || 0;
 
   const theme = useTheme();
@@ -53,6 +59,14 @@ const IncidentMonitorDetailsView: FunctionComponent = () => {
     useUpdateMonitorState(monitorId);
 
   const isActive = useMemo(() => data?.state === "ACTIVE", [data?.state]);
+  const isMaintenance = useMemo(
+    () => data?.state === "MAINTENANCE",
+    [data?.state],
+  );
+
+  const { data: monitorIncidents } = useMonitorIncidents(monitorId);
+  const solveIncident = useSolveIncident();
+  const activeIncidents = monitorIncidents?.incidents || [];
 
   const setMonitorState = (state: "ACTIVE" | "INACTIVE") => {
     if (isLoading) {
@@ -139,6 +153,52 @@ const IncidentMonitorDetailsView: FunctionComponent = () => {
           </>
         }
       >
+        {activeIncidents.length > 0 && (
+          <Stack spacing={2} mb={2}>
+            {activeIncidents.map((incident) => (
+              <Alert
+                key={incident.id}
+                severity="error"
+                action={
+                  <Button
+                    color="inherit"
+                    size="small"
+                    startIcon={<IoCheckmark />}
+                    onClick={() =>
+                      solveIncident.mutate({ incidentId: incident.id })
+                    }
+                  >
+                    Mark Resolved
+                  </Button>
+                }
+              >
+                <AlertTitle sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 1 }}>
+                  <span>Active Incident:</span>
+                </AlertTitle>
+                
+                <Stack spacing={1} mt={1}>
+                  <Typography variant="body1">
+                    Assertion failed: The <strong>{incident.property || "Unknown"}</strong> property was checked.
+                  </Typography>
+                  <Stack direction="row" spacing={1} alignItems="center">
+                    <Typography variant="body2" color="text.secondary">Trigger condition:</Typography>
+                    <Chip size="small" color="error" label={incident.operator || "N/A"} />
+                    <Chip size="small" variant="outlined" color="error" label={incident.target || "N/A"} />
+                  </Stack>
+                  <Stack direction="row" spacing={4} mt={1}>
+                    <Typography variant="body2">
+                      <strong>First occurrence:</strong> {incident.createdAt}
+                    </Typography>
+                    <Typography variant="body2">
+                      <strong>Latest occurrence:</strong> {incident.updatedAt}
+                    </Typography>
+                  </Stack>
+                </Stack>
+              </Alert>
+            ))}
+          </Stack>
+        )}
+
         <Stack direction="row" spacing={2} alignItems={"center"}>
           <PulseDot
             color={
@@ -156,7 +216,15 @@ const IncidentMonitorDetailsView: FunctionComponent = () => {
                 {secondsHumanize(data?.settings.frequencySeconds as number)}
               </Conditional>
 
-              <Conditional value={!isActive}>Monitoring is paused</Conditional>
+              <Conditional value={!isActive && !isMaintenance}>
+                Monitoring is paused
+              </Conditional>
+
+              <Conditional value={isMaintenance}>
+                <Alert severity="warning" sx={{ mt: 1 }}>
+                  Prober and alerts are turned off due to maintenance.
+                </Alert>
+              </Conditional>
             </Typography>
           </Stack>
         </Stack>
@@ -177,8 +245,9 @@ const IncidentMonitorDetailsView: FunctionComponent = () => {
               }}
               onChange={(_: any, value: any) => {
                 if (value != null) {
-                setTimeInterval(value)
-              }}}
+                  setTimeInterval(value);
+                }
+              }}
             >
               <ToggleButton value={86400000}>Day</ToggleButton>
               <ToggleButton value={604800000}>Week</ToggleButton>
@@ -243,7 +312,7 @@ const IncidentMonitorDetailsView: FunctionComponent = () => {
                 label="TLS"
               />
               <Chip
-                sx={{ backgroundColor: alpha("#9b59b6", 0.5) }} // TODO: use theme color
+                sx={{ backgroundColor: alpha(theme.palette.secondary.main, 0.5) }}
                 label="Processing"
               />
               <Chip

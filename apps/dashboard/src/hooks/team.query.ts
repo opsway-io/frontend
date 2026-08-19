@@ -13,6 +13,16 @@ export const removeTeamUser = async (
   queryClient.invalidateQueries(["teams", teamId, "users"]);
 };
 
+export const useTeamUsers = () => {
+  const teamId = useAuthenticationStore((state) => state.currentTeamId);
+  return useQuery(["teams", teamId, "users", "all"], () => {
+    if (!teamId) return Promise.resolve(null);
+    return TeamsAPI.getUsers(teamId, 0, 1000);
+  }, {
+    enabled: !!teamId,
+  });
+};
+
 export const useCurrentTeam = () => {
   const currentTeamId = useAuthenticationStore((state) => state.currentTeamId);
 
@@ -90,58 +100,84 @@ export const useAcceptTeamInvite = () => {
 
 export const usePostCreateCheckoutSession = (
   teamId: number,
-  priceLookupKey: string,
+  plan: string,
 ) => {
   return useMutation(
     () => {
-      return TeamsAPI.postCreateCheckoutSession(teamId, priceLookupKey);
+      return TeamsAPI.postCreateCheckoutSession(teamId, plan);
     },
     {
       onSuccess: () => {
         queryClient.invalidateQueries([
           "teams",
           teamId,
-          "priceLookupKey",
-          priceLookupKey,
+          "plan",
+          plan,
         ]);
       },
     },
   );
 };
 
-export const usePostCustomerPortal = (
-) => {
+export const usePostCustomerPortal = () => {
   const currentTeamId = useAuthenticationStore((state) => state.currentTeamId);
   return useQuery([], () => {
-      if (!currentTeamId) {
-        return Promise.resolve(null);
-      }
-      return TeamsAPI.postCustomerPortal(currentTeamId);
-    });
+    if (!currentTeamId) {
+      return Promise.resolve(null);
+    }
+    return TeamsAPI.postCustomerPortal(currentTeamId);
+  });
 };
 
-
-export const useGetProducts = (
-) => {
+export const useGetProducts = () => {
   const currentTeamId = useAuthenticationStore((state) => state.currentTeamId);
   return useQuery(["products"], () => {
     if (!currentTeamId) {
-        return Promise.resolve(null);
-      }
-      return TeamsAPI.getProducts(currentTeamId);
-    });
+      return Promise.resolve(null);
+    }
+    return TeamsAPI.getProducts(currentTeamId);
+  });
 };
 
-
-export const useGetCustomerSession = (
-) => {
+export const useGetCustomerSession = () => {
   const currentTeamId = useAuthenticationStore((state) => state.currentTeamId);
   return useQuery([], () => {
-      if (!currentTeamId) {
-        return Promise.resolve(null);
-      }
-      return TeamsAPI.getCustomerSession(currentTeamId);
+    if (!currentTeamId) {
+      return Promise.resolve(null);
     }
-     
+    return TeamsAPI.getCustomerSession(currentTeamId);
+  });
+};
+
+export const useInviteTeamMember = (teamId: number) => {
+  return useMutation(
+    (data: TeamsAPI.IPostTeamUserInviteRequest) => {
+      return TeamsAPI.postTeamUserInvite(teamId, data);
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries(["teams", teamId, "users"]);
+        queryClient.invalidateQueries(["teams", teamId, "invites"]);
+      },
+    },
+  );
+};
+
+export const useTeamInvitations = (teamId: number) => {
+  return useQuery(["teams", teamId, "invites"], () => {
+    return TeamsAPI.getInvitations(teamId);
+  });
+};
+
+export const useRevokeTeamInvitation = (teamId: number) => {
+  return useMutation(
+    (email: string) => {
+      return TeamsAPI.deleteInvitation(teamId, email);
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries(["teams", teamId, "invites"]);
+      },
+    },
   );
 };

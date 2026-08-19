@@ -31,11 +31,15 @@ const covertToType = (value: any) => {
 };
 
 for (const key in ENV) {
-  if (import.meta.env?.hasOwnProperty(`VITE_${key}`)) {
+  if (
+    Object.prototype.hasOwnProperty.call(import.meta.env || {}, `VITE_${key}`)
+  ) {
     (ENV as any)[key] = covertToType(import.meta.env[`VITE_${key}`]);
   }
 
-  if ((window as any).SERVER_DATA?.hasOwnProperty(key)) {
+  if (
+    Object.prototype.hasOwnProperty.call((window as any).SERVER_DATA || {}, key)
+  ) {
     (ENV as any)[key] = (window as any).SERVER_DATA[key];
   }
 }

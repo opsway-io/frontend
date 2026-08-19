@@ -14,18 +14,26 @@ import { useNavigate } from "react-router-dom";
 import { MonitorsWithIncidents } from "../../../../../src/api/endpoints/monitors";
 
 interface MonitorIncidentPageOverviewListProps {
-  monitors?: MonitorsWithIncidents[]; 
+  monitors?: MonitorsWithIncidents[];
 }
 
 const IncidentPageOverviewList: FunctionComponent<
-MonitorIncidentPageOverviewListProps
-> = ({
-  monitors
-}) => {
+  MonitorIncidentPageOverviewListProps
+> = ({ monitors }) => {
+  if (!monitors || monitors.length === 0) {
+    return (
+      <Stack alignItems="center" justifyContent="center" py={4}>
+        <Typography variant="body1" color="text.secondary">
+          No active incidents right now. Everything is running smoothly!
+        </Typography>
+      </Stack>
+    );
+  }
+
   return (
     <Stack spacing={2}>
-      {monitors?.map((monitor) => (
-        <OverviewListItem monitor={monitor} />
+      {monitors.map((monitor) => (
+        <OverviewListItem key={monitor.id} monitor={monitor} />
       ))}
     </Stack>
   );
@@ -35,11 +43,9 @@ interface OverviewListItemProps {
   monitor: MonitorsWithIncidents;
 }
 
-const OverviewListItem: FunctionComponent<OverviewListItemProps> = (
-  {
-    monitor,
-  }
-) => {
+const OverviewListItem: FunctionComponent<OverviewListItemProps> = ({
+  monitor,
+}) => {
   const navigate = useNavigate();
 
   return (

@@ -1,7 +1,6 @@
 import {
   Box,
   Card,
-  Divider,
   Grid,
   Stack,
   ToggleButton,
@@ -9,137 +8,55 @@ import {
 } from "@mui/material";
 import { FunctionComponent } from "react";
 import { GiWorld } from "react-icons/gi";
+import { useFormContext, Controller } from "react-hook-form";
+import { SettingsFormData } from "../models/settingsFormData";
+import { useLocations } from "../../../../hooks/prober.query";
 
-interface LocationSettingsProps {}
+const LocationSettings: FunctionComponent = () => {
+  const { data } = useLocations();
+  const { control } = useFormContext<SettingsFormData>();
 
-const LocationSettings: FunctionComponent<LocationSettingsProps> = () => {
+  const availableLocations = data?.locations || [];
+
   return (
-    <>
-      <Grid container>
-        <Grid item xs={12}>
-          <LocationItem
-            selected={true}
-            value="random"
-            name="Random"
-            description="Randomly selected locations for each check"
-            countryCode="random"
-          />
-        </Grid>
-      </Grid>
+    <Controller
+      name="settings.locations"
+      control={control}
+      render={({ field }) => (
+        <Grid container spacing={2}>
+          {availableLocations.map((loc) => {
+            const currentValues = field.value || [];
+            const isSelected = currentValues.includes(loc);
 
-      <Divider sx={{ my: 2 }} />
+            const toggleLocation = () => {
+              if (isSelected) {
+                // If it's the last one, prevent unselecting
+                if (currentValues.length > 1) {
+                  field.onChange(currentValues.filter((l: string) => l !== loc));
+                }
+              } else {
+                field.onChange([...currentValues, loc]);
+              }
+            };
 
-      <Grid container>
-        <Grid item xs={4}>
-          <LocationItem
-            value="eu-central-1"
-            name="Germany"
-            description="eu-central-1"
-            countryCode="de"
-            disabled={true}
-          />
+            return (
+              <Grid item xs={12} sm={6} md={4} key={loc}>
+                <LocationItem
+                  value={loc}
+                  name={loc.toUpperCase()}
+                  description={loc}
+                  countryCode={
+                    loc === "global" ? "random" : loc.substring(0, 2)
+                  }
+                  selected={isSelected}
+                  onClick={toggleLocation}
+                />
+              </Grid>
+            );
+          })}
         </Grid>
-        <Grid item xs={4}>
-          <LocationItem
-            value="eu-west-1"
-            name="Ireland"
-            description="eu-west-1"
-            countryCode="ie"
-            disabled={true}
-          />
-        </Grid>
-        <Grid item xs={4}>
-          <LocationItem
-            value="eu-north-1"
-            name="Denmark"
-            description="eu-north-1"
-            countryCode="dk"
-            disabled={true}
-          />
-        </Grid>
-        <Grid item xs={4}>
-          <LocationItem
-            value="eu-west-2"
-            name="Great Britain"
-            description="eu-west-2"
-            countryCode="gb"
-            disabled={true}
-          />
-        </Grid>
-        <Grid item xs={4}>
-          <LocationItem
-            value="eu-west-3"
-            name="France"
-            description="eu-west-3"
-            countryCode="fr"
-            disabled={true}
-          />
-        </Grid>
-        <Grid item xs={4}>
-          <LocationItem
-            value="eu-south-1"
-            name="Italy"
-            description="eu-south-1"
-            countryCode="it"
-            disabled={true}
-          />
-        </Grid>
-        <Grid item xs={4}>
-          <LocationItem
-            value="eu-central-2"
-            name="Poland"
-            description="eu-central-2"
-            countryCode="pl"
-            disabled={true}
-          />
-        </Grid>
-        <Grid item xs={4}>
-          <LocationItem
-            value="eu-central-3"
-            name="Spain"
-            description="eu-central-3"
-            countryCode="es"
-            disabled={true}
-          />
-        </Grid>
-        <Grid item xs={4}>
-          <LocationItem
-            value="us-west-1"
-            name="California"
-            description="us-west-1"
-            countryCode="us"
-            disabled={true}
-          />
-        </Grid>
-        <Grid item xs={4}>
-          <LocationItem
-            value="us-east-1"
-            name="New York"
-            description="us-east-1"
-            countryCode="us"
-            disabled={true}
-          />
-        </Grid>
-        <Grid item xs={4}>
-          <LocationItem
-            value="asia-south-1"
-            name="India"
-            description="asia-south-1"
-            countryCode="in"
-            disabled={true}
-          />
-        </Grid>
-        <Grid item xs={4}>
-          <LocationItem
-            value="asia-east-1"
-            name="Japan"
-            description="asia-east-1"
-            countryCode="jp"
-            disabled={true}
-          />
-        </Grid>
-      </Grid>
-    </>
+      )}
+    />
   );
 };
 
@@ -149,7 +66,7 @@ interface LocationItemProps {
   description: string;
   countryCode: string;
   disabled?: boolean;
-  onChange?: (value: string) => void;
+  onClick?: () => void;
   selected?: boolean;
 }
 
@@ -160,14 +77,19 @@ const LocationItem: FunctionComponent<LocationItemProps> = (props) => {
       component={ToggleButton}
       value={props.value}
       disabled={props.disabled}
+      selected={props.selected}
+      onChange={props.onClick}
       sx={{
-        display: "xs",
+        display: "flex",
         justifyContent: "left",
         gap: 2,
         overflow: "hidden",
         opacity: props.disabled ? 0.5 : 1,
         border: (t) =>
           props.selected ? `1px solid ${t.palette.primary.main}` : "none",
+        "&.Mui-selected": {
+          border: (t) => `1px solid ${t.palette.primary.main}`,
+        },
       }}
       fullWidth
     >
@@ -176,6 +98,9 @@ const LocationItem: FunctionComponent<LocationItemProps> = (props) => {
           sx={{
             width: 50,
             height: 40,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
           }}
         >
           <GiWorld size={40} />
@@ -185,7 +110,7 @@ const LocationItem: FunctionComponent<LocationItemProps> = (props) => {
           sx={{
             width: 50,
             height: 40,
-            backgroundImage: `url(/img/flags/${props.countryCode}.svg)`,
+            backgroundImage: `url(/img/flags/${props.countryCode.toLowerCase()}.svg)`,
             backgroundSize: "cover",
             backgroundPosition: "center",
             borderRadius: (t) => `${t.shape.borderRadius}px`,

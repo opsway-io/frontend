@@ -6,6 +6,11 @@ export interface IGetTeamResponse {
   displayName: string;
   paymentPlan: string;
   avatarUrl: string;
+  slackWebhookUrl?: string;
+  discordWebhookUrl?: string;
+  telegramChatId?: string;
+  datadogWebhookUrl?: string;
+  newRelicWebhookUrl?: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -19,6 +24,11 @@ export async function getTeam(
 
 export interface IPutTeamRequest {
   displayName: string;
+  slackWebhookUrl?: string;
+  discordWebhookUrl?: string;
+  telegramChatId?: string;
+  datadogWebhookUrl?: string;
+  newRelicWebhookUrl?: string;
 }
 
 export async function putTeam(
@@ -47,12 +57,14 @@ export async function getUsers(
   offset?: number,
   limit?: number,
   query?: string,
+  role?: string,
 ): Promise<IGetTeamUsersResponse> {
   const response = await client.get(`/v1/teams/${teamId}/users`, {
     params: {
       offset,
       limit,
       query,
+      role,
     },
   });
 
@@ -139,6 +151,32 @@ export async function postTeamUserInvite(
   await client.post(`/v1/teams/${teamId}/users/invites`, data);
 }
 
+export interface IGetTeamUsersInviteResponse {
+  email: string;
+  role: string;
+  createdAt: string;
+}
+
+export interface IGetTeamUsersInvitesResponse {
+  invites: IGetTeamUsersInviteResponse[];
+}
+
+export async function getInvitations(
+  teamId: string | number,
+): Promise<IGetTeamUsersInvitesResponse> {
+  const response = await client.get<IGetTeamUsersInvitesResponse>(
+    `/v1/teams/${teamId}/users/invites`,
+  );
+  return response.data;
+}
+
+export async function deleteInvitation(
+  teamId: string | number,
+  email: string,
+): Promise<void> {
+  await client.delete(`/v1/teams/${teamId}/users/invites/${email}`);
+}
+
 export async function updateAvatar(
   teamId: number | string,
   data: string | Blob,
@@ -155,10 +193,10 @@ export async function acceptInvite(token: string): Promise<void> {
 
 export async function postCreateCheckoutSession(
   teamId: string | number,
-  priceLookupKey: string,
+  plan: string,
 ): Promise<void> {
   const res = client.post(`/v1/teams/${teamId}/create-checkout-session`, {
-    priceLookupKey,
+    plan,
   });
   const body = (await res).data;
   if (body != "") {
@@ -173,7 +211,9 @@ export interface IPostCustomerPortalResponse {
 export async function postCustomerPortal(
   teamId: string | number,
 ): Promise<IPostCustomerPortalResponse> {
-  const response = await client.post<IPostCustomerPortalResponse>(`/v1/teams/${teamId}/customer-portal`);
+  const response = await client.post<IPostCustomerPortalResponse>(
+    `/v1/teams/${teamId}/customer-portal`,
+  );
 
   return response.data;
 }
@@ -191,7 +231,9 @@ export interface IGetProductsResponse {
 export async function getProducts(
   teamId: string | number,
 ): Promise<IGetProductsResponse> {
-  const response = await client.get<IGetProductsResponse>(`/v1/teams/${teamId}/products`);
+  const response = await client.get<IGetProductsResponse>(
+    `/v1/teams/${teamId}/products`,
+  );
 
   return response.data;
 }
@@ -203,7 +245,72 @@ export interface IGetCustomerSessionResponse {
 export async function getCustomerSession(
   teamId: string | number,
 ): Promise<IGetCustomerSessionResponse> {
-  const response = await client.get<IGetCustomerSessionResponse>(`/v1/teams/${teamId}/customer-session`);
+  const response = await client.get<IGetCustomerSessionResponse>(
+    `/v1/teams/${teamId}/customer-session`,
+  );
 
   return response.data;
+}
+
+export interface IGetApiKeysResponseApiKey {
+  id: number;
+  name: string;
+  createdAt: string;
+}
+
+export interface IGetApiKeysResponse {
+  apiKeys: IGetApiKeysResponseApiKey[];
+}
+
+export async function getApiKeys(
+  teamId: string | number,
+): Promise<IGetApiKeysResponse> {
+  const response = await client.get<IGetApiKeysResponse>(`/v1/teams/${teamId}/apikeys`);
+  return response.data;
+}
+
+export interface IPostApiKeyRequest {
+  name: string;
+}
+
+export interface IPostApiKeyResponse {
+  plaintextKey: string;
+}
+
+export async function createApiKey(
+  teamId: string | number,
+  data: IPostApiKeyRequest,
+): Promise<IPostApiKeyResponse> {
+  const response = await client.post<IPostApiKeyResponse>(
+    `/v1/teams/${teamId}/apikeys`,
+    data,
+  );
+  return response.data;
+}
+
+export async function deleteApiKey(
+  teamId: string | number,
+  keyId: string | number,
+): Promise<void> {
+  await client.delete(`/v1/teams/${teamId}/apikeys/${keyId}`);
+}
+
+export interface OnCallRotation {
+  userId: number;
+  tier: number;
+}
+
+export interface EscalationPolicy {
+  name: string;
+  escalationTimeoutMinutes: number;
+  rotations: OnCallRotation[];
+}
+
+export async function getEscalationPolicy(teamId: number): Promise<EscalationPolicy> {
+  const response = await client.get(`/v1/teams/${teamId}/escalation`);
+  return response?.data;
+}
+
+export async function putEscalationPolicy(teamId: number, policy: EscalationPolicy): Promise<void> {
+  await client.put(`/v1/teams/${teamId}/escalation`, policy);
 }

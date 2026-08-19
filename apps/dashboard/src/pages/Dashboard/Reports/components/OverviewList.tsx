@@ -14,14 +14,12 @@ import { useNavigate } from "react-router-dom";
 import { Report } from "../../../../../src/api/endpoints/reports";
 
 interface ReportPageOverviewListProps {
-  reports?: Report[]; 
+  reports?: Report[];
 }
 
 const ReportPageOverviewList: FunctionComponent<
-ReportPageOverviewListProps
-> = ({
-  reports
-}) => {
+  ReportPageOverviewListProps
+> = ({ reports }) => {
   return (
     <Stack spacing={2}>
       {reports?.map((report) => (
@@ -35,11 +33,9 @@ interface OverviewListItemProps {
   report: Report;
 }
 
-const OverviewListItem: FunctionComponent<OverviewListItemProps> = (
-  {
-    report,
-  }
-) => {
+const OverviewListItem: FunctionComponent<OverviewListItemProps> = ({
+  report,
+}) => {
   const navigate = useNavigate();
 
   return (
@@ -61,15 +57,25 @@ const OverviewListItem: FunctionComponent<OverviewListItemProps> = (
             columns={{ xs: 1, md: 2 }}
             justifyContent="space-between"
             gap={{ xs: 2, md: 4 }}
-            onClick={() => navigate(`/${report.id}`)} // Navigate to the incident page
+            onClick={() => navigate(String(report.id))} // Navigate to the report detail page
           >
             <Grid item>
               <Stack spacing={1}>
                 <Typography variant="body2">{report.id}</Typography>
 
                 <Stack direction="row" spacing={1}>
-                  <Chip size="small" label="api" color="info" />
-                  <Chip size="small" label="reports" color="info" />
+                  <Chip size="small" label={report.type} color="info" />
+                  <Chip
+                    size="small"
+                    label={report.status}
+                    color={
+                      report.status === "COMPLETED"
+                        ? "success"
+                        : report.status === "FAILED"
+                          ? "error"
+                          : "warning"
+                    }
+                  />
                 </Stack>
               </Stack>
             </Grid>
@@ -82,7 +88,9 @@ const OverviewListItem: FunctionComponent<OverviewListItemProps> = (
               alignItems="center"
               gap={2}
             >
-
+              <Typography variant="caption">
+                {new Date(report.createdAt).toLocaleString()}
+              </Typography>
               <Box sx={{ display: { xs: "none", md: "block" } }}>
                 <IoStatsChart size={38} />
               </Box>
@@ -90,12 +98,6 @@ const OverviewListItem: FunctionComponent<OverviewListItemProps> = (
           </Grid>
         </Stack>
       </Card>
-
-      <Tooltip title="Open in a new tab">
-        <Card component={Button} color="primary">
-          <IoOpenOutline size={18} />
-        </Card>
-      </Tooltip>
     </Stack>
   );
 };

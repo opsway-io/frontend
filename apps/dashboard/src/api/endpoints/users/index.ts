@@ -6,6 +6,7 @@ export interface IGetUserResponse {
   displayName?: string;
   name: string;
   avatarUrl?: string;
+  phoneNumber?: string;
   teams: IGetUserTeamResponse[];
   createdAt: Date;
   updatedAt: Date;
@@ -33,6 +34,7 @@ export interface IPutUserRequest {
   email: string;
   displayName: string;
   name: string;
+  phoneNumber?: string;
 }
 
 export async function updateUser(

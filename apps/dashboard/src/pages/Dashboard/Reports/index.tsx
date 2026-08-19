@@ -13,15 +13,26 @@ import {
 } from "@mui/material";
 import { useReports } from "../../../hooks/reports.query";
 import ReportPageOverviewList from "./components/OverviewList";
-
+import GenerateReportDialog from "./components/GenerateReportDialog";
+import { useState } from "react";
+import { IPostReportRequest } from "../../../api/endpoints/reports";
 
 const ReportsView: FunctionComponent = () => {
-    // Get reports
-      const {
-        data: teamReports,
-        error: reportsError,
-        isLoading: reportsAreLoading,
-      } = useReports();
+  // Get reports
+  const {
+    data: teamReports,
+    error: reportsError,
+    isLoading: reportsAreLoading,
+  } = useReports();
+
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [dialogReportType, setDialogReportType] =
+    useState<IPostReportRequest["reportType"]>("UPTIME");
+
+  const handleOpenDialog = (type: IPostReportRequest["reportType"]) => {
+    setDialogReportType(type);
+    setDialogOpen(true);
+  };
   return (
     <>
       <Helmet>
@@ -31,7 +42,11 @@ const ReportsView: FunctionComponent = () => {
       <Container header="Reports">
         <Grid container spacing={2}>
           <Grid item xs={12 / 2} md={12 / 4} lg={12 / 5}>
-            <Card component={Button} variant="outlined">
+            <Card
+              component={Button}
+              variant="outlined"
+              onClick={() => handleOpenDialog("UPTIME")}
+            >
               <CardContent>
                 <Typography variant="body2" color="text.primary">
                   Uptime overview
@@ -44,7 +59,11 @@ const ReportsView: FunctionComponent = () => {
           </Grid>
 
           <Grid item xs={12 / 2} md={12 / 4} lg={12 / 5}>
-            <Card component={Button} variant="outlined">
+            <Card
+              component={Button}
+              variant="outlined"
+              onClick={() => handleOpenDialog("PERFORMANCE")}
+            >
               <CardContent>
                 <Typography variant="body2" color="text.primary">
                   Performance overview
@@ -57,7 +76,11 @@ const ReportsView: FunctionComponent = () => {
           </Grid>
 
           <Grid item xs={12 / 2} md={12 / 4} lg={12 / 5}>
-            <Card component={Button} variant="outlined">
+            <Card
+              component={Button}
+              variant="outlined"
+              onClick={() => handleOpenDialog("INCIDENT")}
+            >
               <CardContent>
                 <Typography variant="body2" color="text.primary">
                   Incident Overview
@@ -70,7 +93,11 @@ const ReportsView: FunctionComponent = () => {
           </Grid>
 
           <Grid item xs={12 / 2} md={12 / 4} lg={12 / 5}>
-            <Card component={Button} variant="outlined">
+            <Card
+              component={Button}
+              variant="outlined"
+              onClick={() => handleOpenDialog("ALL")}
+            >
               <CardContent>
                 <Typography variant="body2" color="text.primary">
                   All in!
@@ -83,7 +110,11 @@ const ReportsView: FunctionComponent = () => {
           </Grid>
 
           <Grid item xs={12 / 2} md={12 / 4} lg={12 / 5}>
-            <Card component={Button} variant="outlined">
+            <Card
+              component={Button}
+              variant="outlined"
+              onClick={() => handleOpenDialog("CUSTOM")}
+            >
               <CardContent>
                 <Typography variant="body2" color="text.primary">
                   Custom report
@@ -107,10 +138,18 @@ const ReportsView: FunctionComponent = () => {
           </Typography>
         </Stack>
 
-        {reportsAreLoading ? (<Placeholder />) :
-             ( <ReportPageOverviewList reports={teamReports?.reports} />)
-        }
+        {reportsAreLoading ? (
+          <Placeholder />
+        ) : (
+          <ReportPageOverviewList reports={teamReports?.reports} />
+        )}
       </Container>
+
+      <GenerateReportDialog
+        open={dialogOpen}
+        onClose={() => setDialogOpen(false)}
+        defaultReportType={dialogReportType}
+      />
     </>
   );
 };

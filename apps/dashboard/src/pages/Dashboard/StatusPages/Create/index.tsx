@@ -27,11 +27,52 @@ import Container from "../../../../components/Container";
 import Placeholder from "../../../../components/Placeholder";
 import { RadioCardGroup, RadioCard } from "../../../../components/RadioCard";
 
-interface StatusPagesDetailViewProps {}
+import { useCreateStatusPage } from "../../../../hooks/statuspages.query";
+import { useForm, Controller } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
+import UpgradePromptModal from "../../../../components/UpgradePromptModal";
+import { isAxiosError } from "axios";
+import { useState } from "react";
 
-const StatusPagesDetailView: FunctionComponent<
-  StatusPagesDetailViewProps
+interface StatusPagesCreateViewProps {}
+
+interface FormValues {
+  name: string;
+  domain: string;
+}
+
+const StatusPagesCreateView: FunctionComponent<
+  StatusPagesCreateViewProps
 > = () => {
+  const navigate = useNavigate();
+  const { mutateAsync: createStatusPage, isLoading } = useCreateStatusPage();
+  const [openUpgradeModal, setOpenUpgradeModal] = useState(false);
+
+  const { control, handleSubmit, watch } = useForm<FormValues>({
+    defaultValues: {
+      name: "",
+      domain: "",
+    },
+  });
+
+  const domain = watch("domain");
+
+  const onSubmit = async (data: FormValues) => {
+    try {
+      const sp = await createStatusPage(data);
+      enqueueSnackbar("Status page created successfully", {
+        variant: "success",
+      });
+      navigate(`/status-pages/${sp.id}`);
+    } catch (err) {
+      if (isAxiosError(err) && err.response?.status === 402) {
+        setOpenUpgradeModal(true);
+      } else {
+        enqueueSnackbar("Failed to create status page", { variant: "error" });
+      }
+    }
+  };
+
   const copyDNSCNAMEToClipboard = () => {
     navigator.clipboard.writeText("status.opsway.io");
 
@@ -42,6 +83,11 @@ const StatusPagesDetailView: FunctionComponent<
 
   return (
     <>
+      <UpgradePromptModal 
+        open={openUpgradeModal} 
+        onClose={() => setOpenUpgradeModal(false)} 
+        featureName="Status Pages" 
+      />
       <Helmet>
         <title>Status pages</title>
       </Helmet>
@@ -59,80 +105,14 @@ const StatusPagesDetailView: FunctionComponent<
                 title="Meta"
                 description="Meta about the status page only visible to your team not on the page itself."
               >
-                <TextField label="Name" fullWidth value="status.tranberg.tk" />
-              </CategoryListItem>
-            </CategoryList>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent>
-            <CategoryList>
-              <CategoryListItem
-                title="Monitors"
-                description="The monitors displayed on the status page."
-              >
-                <Placeholder />
-              </CategoryListItem>
-            </CategoryList>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent>
-            <CategoryList>
-              <CategoryListItem
-                title="Look and feel"
-                description="The visual style and components of the status page."
-              >
-                <Typography variant="subtitle1">Header</Typography>
-                <Typography variant="body2" color="text.secondary">
-                  The header is the top part of the status page which contains
-                  the logo and title.
-                </Typography>
-
-                <TextField
-                  label="Logo URL"
-                  fullWidth
-                  value="https://status.opsway.io/logo.png"
+                <Controller
+                  name="name"
+                  control={control}
+                  rules={{ required: true }}
+                  render={({ field }) => (
+                    <TextField {...field} label="Name" fullWidth />
+                  )}
                 />
-                <TextField
-                  label="Logo link"
-                  fullWidth
-                  value="https://status.opsway.io"
-                />
-                <TextField
-                  label="Favicon URL"
-                  fullWidth
-                  value="https://status.opsway.io/favicon.ico"
-                />
-                <TextField label="Title" fullWidth value="status.tranberg.tk" />
-
-                <Divider />
-
-                <Typography variant="subtitle1">Body</Typography>
-                <Typography variant="body2" color="text.secondary">
-                  The body is the main part of the status page which contains
-                  the status of the monitored services.
-                </Typography>
-
-                <RadioCardGroup defaultValue="STATS">
-                  <RadioCard
-                    label="All the stats!"
-                    value="STATS"
-                    description="This will show all the stats on the status page available."
-                  />
-                  <RadioCard
-                    label="Compact"
-                    value="COMPACT"
-                    description="This will show only the most important stats on the status page in a compact way."
-                  />
-                  <RadioCard
-                    label="Simple"
-                    value="SIMPLE"
-                    description="This will show only the name and operational status in a simple way."
-                  />
-                </RadioCardGroup>
               </CategoryListItem>
             </CategoryList>
           </CardContent>
@@ -145,10 +125,13 @@ const StatusPagesDetailView: FunctionComponent<
                 title="Custom domain"
                 description="You can use a custom domain to host your status page instead of the default one."
               >
-                <TextField
-                  label="Domain"
-                  fullWidth
-                  value="status.tranberg.tk"
+                <Controller
+                  name="domain"
+                  control={control}
+                  rules={{ required: true }}
+                  render={({ field }) => (
+                    <TextField {...field} label="Domain" fullWidth />
+                  )}
                 />
 
                 <Card elevation={4}>
@@ -198,9 +181,7 @@ const StatusPagesDetailView: FunctionComponent<
                       <TableBody>
                         <TableRow>
                           <TableCell>
-                            {
-                              "status" // TODO: Replace with actual domain
-                            }
+                            {domain ? domain.split(".")[0] : "status"}
                           </TableCell>
                           <TableCell>CNAME</TableCell>
                           <TableCell>status.opsway.io</TableCell>
@@ -244,7 +225,12 @@ const StatusPagesDetailView: FunctionComponent<
           </CardContent>
         </Card>
 
-        <Button variant="contained" color="success">
+        <Button
+          variant="contained"
+          color="success"
+          onClick={handleSubmit(onSubmit)}
+          disabled={isLoading}
+        >
           Create status page
         </Button>
       </Container>
@@ -252,4 +238,4 @@ const StatusPagesDetailView: FunctionComponent<
   );
 };
 
-export default StatusPagesDetailView;
+export default StatusPagesCreateView;

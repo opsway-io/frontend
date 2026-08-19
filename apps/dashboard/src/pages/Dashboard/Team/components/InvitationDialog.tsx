@@ -20,6 +20,9 @@ import {
   DialogActions,
   DialogContent,
 } from "../../../../components/Dialog";
+import UpgradePromptModal from "../../../../components/UpgradePromptModal";
+import { isAxiosError } from "axios";
+
 interface InvitationDialogProps {
   open: boolean;
   onClose?: () => void;
@@ -29,6 +32,7 @@ const InvitationDialog: FunctionComponent<InvitationDialogProps> = (props) => {
   const { data: team } = useCurrentTeam();
 
   const [loading, setLoading] = useState(false);
+  const [openUpgradeModal, setOpenUpgradeModal] = useState(false);
 
   const {
     register,
@@ -67,6 +71,12 @@ const InvitationDialog: FunctionComponent<InvitationDialogProps> = (props) => {
 
       reset();
     } catch (error: any) {
+      if (isAxiosError(error) && error.response?.status === 402) {
+        props.onClose?.();
+        setOpenUpgradeModal(true);
+        return;
+      }
+
       if (error?.response?.status === 409) {
         enqueueSnackbar(`User ${email} is already a member of this team`, {
           variant: "info",
@@ -83,8 +93,14 @@ const InvitationDialog: FunctionComponent<InvitationDialogProps> = (props) => {
   };
 
   return (
-    <Dialog open={props.open} onClose={onClose} title="Invite a member">
-      <DialogContent sx={{ minWidth: 400 }}>
+    <>
+      <UpgradePromptModal 
+        open={openUpgradeModal} 
+        onClose={() => setOpenUpgradeModal(false)} 
+        featureName="Team Members" 
+      />
+      <Dialog open={props.open} onClose={onClose} title="Invite a member">
+        <DialogContent sx={{ minWidth: 400 }}>
         <Stack spacing={2}>
           <TextField
             placeholder="foo@bar.com"
@@ -131,6 +147,7 @@ const InvitationDialog: FunctionComponent<InvitationDialogProps> = (props) => {
         </LoadingButton>
       </DialogActions>
     </Dialog>
+    </>
   );
 };
 

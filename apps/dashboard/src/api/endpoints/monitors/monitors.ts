@@ -6,7 +6,7 @@ import client from "../../client";
 
 export interface Monitor {
   id: number;
-  state: "ACTIVE" | "INACTIVE";
+  state: "ACTIVE" | "INACTIVE" | "MAINTENANCE";
   name: string;
   settings: MonitorSettings;
   assertions: MonitorAssertion[];

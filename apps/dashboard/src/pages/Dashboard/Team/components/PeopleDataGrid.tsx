@@ -98,7 +98,7 @@ const PeopleDataGrid: FunctionComponent<PeopleDataGridProps> = (props) => {
       columns={columns}
       rows={props.users || []}
       disableCursorOnHover={true}
-      disableSelectionOnClick={true}
+      disableRowSelectionOnClick={true}
     />
   );
 };

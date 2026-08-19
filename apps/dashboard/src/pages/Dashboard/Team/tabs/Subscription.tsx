@@ -19,8 +19,33 @@ import { BsCheckLg } from "react-icons/bs";
 import {
   useCurrentTeam,
   usePostCustomerPortal,
-  useGetProducts,
+  usePostCreateCheckoutSession,
 } from "../../../../hooks/team.query";
+import { enqueueSnackbar } from "notistack";
+
+const PLANS = [
+  {
+    plan: "FREE",
+    title: "Free",
+    description: "For small hobby projects",
+    price: "$0",
+    features: ["3 Team Members", "5 Monitors", "1 Status Page"],
+  },
+  {
+    plan: "TEAM",
+    title: "Team",
+    description: "For small teams",
+    price: "$29",
+    features: ["5 Team Members", "50 Monitors", "5 Status Pages", "Slack Integrations"],
+  },
+  {
+    plan: "ENTERPRISE",
+    title: "Enterprise",
+    description: "For large organizations",
+    price: "$99",
+    features: ["Unlimited Team Members", "Unlimited Monitors", "Unlimited Status Pages", "SSO (SAML)"],
+  },
+];
 
 declare global {
   namespace JSX {
@@ -35,72 +60,69 @@ declare global {
 
 const TeamPlanTabView: FunctionComponent = () => {
   const { data: team, isLoading: isLoadingTeam } = useCurrentTeam();
-  const { data: customerPortal, isLoading: isLoadingPortal } =
-    usePostCustomerPortal();
-    const { data: products, isLoading: isLoadingProduct } =
-    useGetProducts();
+  const { data: customerPortal } = usePostCustomerPortal();
+  
+  const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
+
+  const handleSelectPlan = async (plan: string) => {
+    if (!team) return;
+    setLoadingPlan(plan);
+    try {
+      const { postCreateCheckoutSession } = await import("../../../../api/endpoints/teams");
+      await postCreateCheckoutSession(team.id, plan);
+      // It redirects to stripe checkout, or cancels and succeeds silently
+      if (plan === "FREE" && team.paymentPlan !== "FREE") {
+        enqueueSnackbar("Successfully cancelled subscription", { variant: "success" });
+        window.location.reload();
+      }
+    } catch (e: any) {
+      enqueueSnackbar(e.message || "Failed to process plan change", { variant: "error" });
+    } finally {
+      setLoadingPlan(null);
+    }
+  };
 
   return (
     <>
-    {isLoadingTeam ? (
-      <Placeholder />
-    ) : (
-      <>
-      {team?.paymentPlan ? (
-        <Card>
-        <CardContent>
-          {isLoadingProduct ? (
-            <Placeholder />
-          ) : (
-            <Grid container spacing={2} justifyContent="center">
-              {products?.products.map((product) => (
-              <Grid item>
-                <PricingCard
-                  key={product.id}
-                  title={product.name}
-                  description="For small teams"
-                  price={product.currency + " " + product.price.toString()} 
-                  features={product.marketing_features ? product.marketing_features : []}
-                  selected={team?.paymentPlan.toLocaleLowerCase() === product.name.toLocaleLowerCase()}
-                  />
-              </Grid>
-                ))}
-            </Grid>
-          )}
-        </CardContent>
-        <Button
-            variant="contained"
-            color="success"
-            fullWidth
-            sx={{
-              marginTop: "auto",
-            }}
-            component="a"
-            href={customerPortal?.url}
-          >
-            Manage Subscriptions
-          </Button>
-      </Card>
+      {isLoadingTeam ? (
+        <Placeholder />
       ) : (
         <Card>
-          <CardHeader align="center" title="Choose a Subscription"/>
+          <CardHeader align="center" title="Choose a Subscription" />
           <CardContent>
-          <stripe-pricing-table
-              pricing-table-id="prctbl_1PzENqAAd26uMXu2gnpkNNGV"
-              publishable-key="pk_test_51NjhPuAAd26uMXu2mDsC5CrJzCokmFCMDEiyZFGanTQAy2exlztxyuLDpg2TXC26LK8j9wqnACLAAwEyWS0AJ4r500U1rDn672"
-              client-reference-id={team?.id}
-              // customer-session-client-secret={teamSubscription?.sessionId}
-            ></stripe-pricing-table>
+            <Grid container spacing={2} justifyContent="center" alignItems="stretch">
+              {PLANS.map((p) => (
+                <Grid item key={p.plan}>
+                  <PricingCard
+                    title={p.title}
+                    description={p.description}
+                    price={p.price}
+                    features={p.features}
+                    selected={team?.paymentPlan === p.plan}
+                    isLoading={loadingPlan === p.plan}
+                    onSelect={() => handleSelectPlan(p.plan)}
+                  />
+                </Grid>
+              ))}
+            </Grid>
           </CardContent>
+          {team?.paymentPlan && team.paymentPlan !== "FREE" && (
+            <Button
+              variant="contained"
+              color="success"
+              fullWidth
+              sx={{ marginTop: "auto" }}
+              component="a"
+              href={customerPortal?.url}
+            >
+              Manage Subscriptions (Billing Portal)
+            </Button>
+          )}
         </Card>
       )}
-      </>
-    )}
-      
     </>
   );
 };
-
 
 export default TeamPlanTabView;
 
@@ -110,6 +132,8 @@ interface PricingCardProps {
   price: string;
   features: string[];
   selected: boolean;
+  isLoading: boolean;
+  onSelect: () => void;
 }
 
 const PricingCard: FunctionComponent<PricingCardProps> = ({
@@ -118,6 +142,8 @@ const PricingCard: FunctionComponent<PricingCardProps> = ({
   price,
   features,
   selected,
+  isLoading,
+  onSelect,
 }) => {
   const theme = useTheme();
 
@@ -139,7 +165,7 @@ const PricingCard: FunctionComponent<PricingCardProps> = ({
         }}
       >
         <Typography variant="h4" color="text.primary">
-          {selected ?  title + " (Current Plan)" : title}
+          {selected ? title + " (Current Plan)" : title}
         </Typography>
 
         <Typography variant="body1" color="text.secondary">
@@ -194,6 +220,17 @@ const PricingCard: FunctionComponent<PricingCardProps> = ({
             </ListItem>
           ))}
         </List>
+        <Box sx={{ mt: "auto", p: 2, pb: 0 }}>
+          <Button
+            variant="contained"
+            color={selected ? "success" : "primary"}
+            fullWidth
+            onClick={onSelect}
+            disabled={selected || isLoading}
+          >
+            {isLoading ? "Loading..." : selected ? "Current Plan" : "Select Plan"}
+          </Button>
+        </Box>
       </CardContent>
     </Card>
   );

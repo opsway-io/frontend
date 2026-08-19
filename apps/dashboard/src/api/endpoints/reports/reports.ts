@@ -7,7 +7,9 @@ import client from "../../client";
 export interface Report {
   id: string;
   teamId: number;
-  report: string;
+  type: string;
+  status: "PENDING" | "COMPLETED" | "FAILED";
+  createdAt: string;
 }
 
 /*
@@ -23,8 +25,63 @@ export async function getReports(
   offset?: number,
   limit?: number,
 ): Promise<GetReportsResponse> {
-  const response = await client.get(`/v1/teams/${teamId}/reports`,
-  );
+  const response = await client.get(`/v1/teams/${teamId}/reports`);
 
   return response?.data;
+}
+
+export interface MonitorUptime {
+  monitorId: number;
+  url: string;
+  uptimePercentage: number;
+  date: string;
+}
+
+export interface MonitorPerformance {
+  monitorId: number;
+  averageResponseTime: number;
+  p99: number;
+  p95: number;
+}
+
+export interface MonitorIncident {
+  monitorId: number;
+  count: number;
+}
+
+export interface ReportData {
+  uptime?: MonitorUptime[];
+  performance?: MonitorPerformance[];
+  incident?: MonitorIncident[];
+  all?: string;
+  custom?: string;
+}
+
+export interface ReportDetail extends Report {
+  data: ReportData;
+}
+
+export async function getReport(
+  teamId: number,
+  reportId: number,
+): Promise<ReportDetail> {
+  const response = await client.get(`/v1/teams/${teamId}/reports/${reportId}`);
+  return response?.data;
+}
+
+/*
+  Create Team Report
+*/
+
+export interface IPostReportRequest {
+  reportType: "UPTIME" | "PERFORMANCE" | "INCIDENT" | "ALL" | "CUSTOM";
+  start: string;
+  end: string;
+}
+
+export async function createReport(
+  teamId: number,
+  payload: IPostReportRequest,
+): Promise<void> {
+  await client.post(`/v1/teams/${teamId}/reports`, payload);
 }

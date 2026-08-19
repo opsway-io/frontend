@@ -2,7 +2,7 @@ import { Stack, Typography } from "@mui/material";
 import { DataGridProps, GridColDef, GridRowsProp } from "@mui/x-data-grid";
 import { FunctionComponent } from "react";
 import { AiOutlinePause } from "react-icons/ai";
-import { IoCheckmark } from "react-icons/io5";
+import { IoCheckmark, IoConstruct } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
 import { MonitorWithStats } from "../../../../api/endpoints/monitors";
 import Avatar from "../../../../components/Avatar";
@@ -35,14 +35,21 @@ const MonitorsDataGrid: FunctionComponent<MonitorsDataGridProps> = (props) => {
       renderCell: (p) => (
         <Avatar
           sx={{
-            backgroundColor: (t) =>
-              p.row.state === "ACTIVE"
-                ? t.palette.success.main
-                : t.palette.grey[500],
+            backgroundColor: (t) => {
+              if (p.row.state === "ACTIVE") return t.palette.success.main;
+              if (p.row.state === "MAINTENANCE") return t.palette.warning.main;
+              return t.palette.grey[500];
+            },
             color: (t) => t.palette.success.contrastText,
           }}
         >
-          {(p.row.state === "ACTIVE" && <IoCheckmark />) || <AiOutlinePause />}
+          {p.row.state === "ACTIVE" ? (
+            <IoCheckmark />
+          ) : p.row.state === "MAINTENANCE" ? (
+            <IoConstruct />
+          ) : (
+            <AiOutlinePause />
+          )}
         </Avatar>
       ),
     },
@@ -75,8 +82,8 @@ const MonitorsDataGrid: FunctionComponent<MonitorsDataGridProps> = (props) => {
       renderCell: (col) => (
         <ResultThumbGraph
           stats={
-            col.row.stats.averageResponseTimes
-              ? col.row.stats.averageResponseTimes
+            col.row.stats.averageResponseTime
+              ? [col.row.stats.averageResponseTime]
               : []
           }
           onClick={() => {
@@ -91,7 +98,7 @@ const MonitorsDataGrid: FunctionComponent<MonitorsDataGridProps> = (props) => {
       align: "right",
       headerAlign: "right",
       sortable: false,
-      valueGetter: () => "100%",
+      valueGetter: (col) => `${col.row.stats?.uptimePercentage?.toFixed(2) || 0}%`,
     },
     {
       field: "p99",

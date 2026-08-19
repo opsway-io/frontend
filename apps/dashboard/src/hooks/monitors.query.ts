@@ -93,6 +93,17 @@ export const useMonitor = (monitorId: number) => {
   });
 };
 
+export const useMonitors = (offset = 0, limit = 100) => {
+  const teamId = useAuthenticationStore((state) => state.currentTeamId);
+
+  return useQuery(["teams", teamId, "monitors", { offset, limit }], () => {
+    if (!teamId) {
+      return Promise.resolve(null);
+    }
+    return MonitorsAPI.getMonitors(teamId, offset, limit);
+  });
+};
+
 export const useMonitorChecks = (monitorId?: number, offset = 0, limit = 5) => {
   const teamId = useAuthenticationStore((state) => state.currentTeamId);
 
@@ -121,7 +132,12 @@ export const useMonitorChecks = (monitorId?: number, offset = 0, limit = 5) => {
   );
 };
 
-export const useFailedMonitorChecks = (monitorId: number, assertionId: number, offset = 0, limit = 5) => {
+export const useFailedMonitorChecks = (
+  monitorId: number,
+  assertionId: number,
+  offset = 0,
+  limit = 5,
+) => {
   const teamId = useAuthenticationStore((state) => state.currentTeamId);
 
   return useQuery(
@@ -143,7 +159,13 @@ export const useFailedMonitorChecks = (monitorId: number, assertionId: number, o
         return Promise.resolve(null);
       }
 
-      return MonitorsAPI.getFailedMonitorChecks(teamId, monitorId, assertionId, offset, limit);
+      return MonitorsAPI.getFailedMonitorChecks(
+        teamId,
+        monitorId,
+        assertionId,
+        offset,
+        limit,
+      );
     },
     {
       keepPreviousData: true,
@@ -154,15 +176,20 @@ export const useFailedMonitorChecks = (monitorId: number, assertionId: number, o
 export const useMonitorsIncidents = () => {
   const teamId = useAuthenticationStore((state) => state.currentTeamId);
 
-  return useQuery(["teams", teamId, "monitors", "incidents"], () => {
-    if (!teamId) {
-      return Promise.resolve(null);
-    }
+  return useQuery(
+    ["teams", teamId, "monitors", "incidents"],
+    () => {
+      if (!teamId) {
+        return Promise.resolve(null);
+      }
 
-    return MonitorsAPI.getMonitorsIncidents(teamId);
-  });
-}
-
+      return MonitorsAPI.getMonitorsIncidents(teamId);
+    },
+    {
+      refetchInterval: 10000,
+    },
+  );
+};
 
 export const useLatestMonitorCheck = (monitorId?: number) => {
   const teamId = useAuthenticationStore((state) => state.currentTeamId);

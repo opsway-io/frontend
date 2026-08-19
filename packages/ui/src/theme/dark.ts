@@ -20,6 +20,7 @@ declare module "@mui/material/styles/createPalette" {
   }
 }
 
+import "@mui/material/Button";
 declare module "@mui/material/Button" {
   interface ButtonPropsVariantOverrides {
     gradiant1: true;

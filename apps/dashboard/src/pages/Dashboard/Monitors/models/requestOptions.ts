@@ -44,6 +44,13 @@ const requestMethods = [
   "PATCH",
   "HEAD",
   "OPTIONS",
+  "TCP",
+  "ICMP",
+  "DNS",
+  "POSTGRES",
+  "MYSQL",
+  "REDIS",
+  "BROWSER",
 ];
 
 const requestMethodOptions = requestMethods.map((method) => {

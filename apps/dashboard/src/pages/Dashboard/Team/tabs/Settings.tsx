@@ -24,11 +24,21 @@ const TeamSettingsTabView: FunctionComponent = () => {
   const { mutate } = useMutateCurrentTeam();
 
   const [displayName, setDisplayName] = useState<string>("");
+  const [slackWebhookUrl, setSlackWebhookUrl] = useState<string>("");
+  const [discordWebhookUrl, setDiscordWebhookUrl] = useState<string>("");
+  const [telegramChatId, setTelegramChatId] = useState<string>("");
+  const [datadogWebhookUrl, setDatadogWebhookUrl] = useState<string>("");
+  const [newRelicWebhookUrl, setNewRelicWebhookUrl] = useState<string>("");
 
   const [showDeleteDialog, setShowDeleteDialog] = useState<boolean>(false);
 
   useEffect(() => {
     setDisplayName(team?.displayName ?? "");
+    setSlackWebhookUrl(team?.slackWebhookUrl ?? "");
+    setDiscordWebhookUrl(team?.discordWebhookUrl ?? "");
+    setTelegramChatId(team?.telegramChatId ?? "");
+    setDatadogWebhookUrl(team?.datadogWebhookUrl ?? "");
+    setNewRelicWebhookUrl(team?.newRelicWebhookUrl ?? "");
   }, [team]);
 
   const handleSave = () => {
@@ -38,6 +48,11 @@ const TeamSettingsTabView: FunctionComponent = () => {
 
     mutate({
       displayName: displayName,
+      slackWebhookUrl: slackWebhookUrl || undefined,
+      discordWebhookUrl: discordWebhookUrl || undefined,
+      telegramChatId: telegramChatId || undefined,
+      datadogWebhookUrl: datadogWebhookUrl || undefined,
+      newRelicWebhookUrl: newRelicWebhookUrl || undefined,
     });
   };
 
@@ -58,6 +73,66 @@ const TeamSettingsTabView: FunctionComponent = () => {
                 disabled={isLoading}
                 onSave={handleSave}
                 onChange={(e) => setDisplayName(e.target.value)}
+              />
+            </CategoryListItem>
+            <CategoryListItem
+              title="Slack Notifications"
+              description="Configure an incoming Slack Webhook URL to receive instant alerts when a monitor or heartbeat goes down."
+            >
+              <EditableInput
+                label="Slack Webhook URL"
+                value={slackWebhookUrl}
+                disabled={isLoading}
+                onSave={handleSave}
+                onChange={(e) => setSlackWebhookUrl(e.target.value)}
+              />
+            </CategoryListItem>
+            <CategoryListItem
+              title="Discord Notifications"
+              description="Configure an incoming Discord Webhook URL to receive instant alerts when a monitor or heartbeat goes down."
+            >
+              <EditableInput
+                label="Discord Webhook URL"
+                value={discordWebhookUrl}
+                disabled={isLoading}
+                onSave={handleSave}
+                onChange={(e) => setDiscordWebhookUrl(e.target.value)}
+              />
+            </CategoryListItem>
+            <CategoryListItem
+              title="Telegram Notifications"
+              description="Configure a Telegram Chat ID to receive instant alerts when a monitor or heartbeat goes down."
+            >
+              <EditableInput
+                label="Telegram Chat ID"
+                value={telegramChatId}
+                disabled={isLoading}
+                onSave={handleSave}
+                onChange={(e) => setTelegramChatId(e.target.value)}
+              />
+            </CategoryListItem>
+            <CategoryListItem
+              title="Datadog Notifications"
+              description="Configure an incoming Datadog Webhook URL to receive instant alerts when a monitor or heartbeat goes down."
+            >
+              <EditableInput
+                label="Datadog Webhook URL"
+                value={datadogWebhookUrl}
+                disabled={isLoading}
+                onSave={handleSave}
+                onChange={(e) => setDatadogWebhookUrl(e.target.value)}
+              />
+            </CategoryListItem>
+            <CategoryListItem
+              title="New Relic Notifications"
+              description="Configure an incoming New Relic Webhook URL to receive instant alerts when a monitor or heartbeat goes down."
+            >
+              <EditableInput
+                label="New Relic Webhook URL"
+                value={newRelicWebhookUrl}
+                disabled={isLoading}
+                onSave={handleSave}
+                onChange={(e) => setNewRelicWebhookUrl(e.target.value)}
               />
             </CategoryListItem>
           </CategoryList>

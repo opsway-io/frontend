@@ -8,14 +8,10 @@ import Cookies from "js-cookie";
 const OAuthLoginView: FunctionComponent = () => {
   const navigate = useNavigate();
   const [
-    setAccessToken,
-    setRefreshToken,
     setCurrentUserID,
     setCurrentTeamID,
     logOut,
   ] = useAuthenticationStore((state) => [
-    state.setAccessToken,
-    state.setRefreshToken,
     state.setCurrentUserID,
     state.setCurrentTeamID,
     state.logOut,
@@ -51,8 +47,6 @@ const OAuthLoginView: FunctionComponent = () => {
       const userId = parseInt(accessJWT.sub);
 
       setCurrentUserID(userId);
-      setAccessToken(accessToken);
-      setRefreshToken(refreshToken);
 
       Cookies.remove("team_id");
       Cookies.remove("access_token");

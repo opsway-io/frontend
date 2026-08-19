@@ -14,22 +14,44 @@ import { useNavigate } from "react-router-dom";
 
 interface StatusPageOverviewListProps {}
 
+import { useStatusPages } from "../../../../hooks/statuspages.query";
+import { StatusPage } from "../../../../api/endpoints/statuspages";
+
+interface StatusPageOverviewListProps {}
+
 const StatusPageOverviewList: FunctionComponent<
   StatusPageOverviewListProps
 > = () => {
+  const { data: statusPages, isLoading, error } = useStatusPages();
+
+  if (isLoading) {
+    return <Typography>Loading...</Typography>;
+  }
+
+  if (error || !statusPages) {
+    return <Typography color="error">Error loading status pages</Typography>;
+  }
+
+  if (statusPages.statusPages.length === 0) {
+    return <Typography>No status pages found</Typography>;
+  }
+
   return (
     <Stack spacing={2}>
-      <OverviewListItem />
-      <OverviewListItem />
-      <OverviewListItem />
-      <OverviewListItem />
+      {statusPages.statusPages.map((sp) => (
+        <OverviewListItem key={sp.id} statusPage={sp} />
+      ))}
     </Stack>
   );
 };
 
-interface OverviewListItemProps {}
+interface OverviewListItemProps {
+  statusPage: StatusPage;
+}
 
-const OverviewListItem: FunctionComponent<OverviewListItemProps> = () => {
+const OverviewListItem: FunctionComponent<OverviewListItemProps> = ({
+  statusPage,
+}) => {
   const navigate = useNavigate();
 
   return (
@@ -51,18 +73,17 @@ const OverviewListItem: FunctionComponent<OverviewListItemProps> = () => {
             columns={{ xs: 1, md: 2 }}
             justifyContent="space-between"
             gap={{ xs: 2, md: 4 }}
-            onClick={() => navigate("/status-pages/1")}
+            onClick={() => navigate(`/status-pages/${statusPage.id}`)}
           >
             <Grid item>
               <Stack spacing={1}>
-                <Typography variant="body2">status.opsway.io</Typography>
+                <Typography variant="body2">
+                  {statusPage.name} - {statusPage.domain}
+                </Typography>
 
                 <Stack direction="row" spacing={1}>
+                  {/* Monitors can be fetched and displayed here later */}
                   <Chip size="small" label="api" color="info" />
-                  <Chip size="small" label="login" color="info" />
-                  <Chip size="small" label="monitors" color="info" />
-                  <Chip size="small" label="foo" color="info" />
-                  <Chip size="small" label="bar" color="info" />
                 </Stack>
               </Stack>
             </Grid>

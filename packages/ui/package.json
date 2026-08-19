@@ -8,6 +8,7 @@
     "@mui/material": "^5.14.12"
   },
   "devDependencies": {
-    "tsup": "^8.0.1"
+    "tsup": "^8.0.1",
+    "vitest": "^0.34.6"
   }
 }

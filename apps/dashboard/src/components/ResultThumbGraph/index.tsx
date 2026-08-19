@@ -35,7 +35,7 @@ interface ResultThumbGraphProps {
 }
 
 const ResultThumbGraph: FunctionComponent<ResultThumbGraphProps> = (props) => {
-  let ratio = Math.max.apply(Math, props.stats) / 100;
+  const ratio = Math.max(...props.stats) / 100;
   for (let i = 0; i < props.stats.length; i++) {
     props.stats[i] = Math.round(props.stats[i] / ratio);
   }

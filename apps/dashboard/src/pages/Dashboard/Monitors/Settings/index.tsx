@@ -25,7 +25,7 @@ import TLSVerificationSettings from "../components/TLSVerificationSettings";
 import { SettingsFormData } from "../models/settingsFormData";
 
 const MonitorSettingsView: FunctionComponent = () => {
-  let params = useParams();
+  const params = useParams();
   const monitorId = (params.id as number | undefined) || 0;
   const { data, isLoading } = useMonitor(monitorId);
 
@@ -55,11 +55,11 @@ const MonitorSettingsView: FunctionComponent = () => {
       return;
     }
 
-    const data = formMethods.getValues();
+    const formData = formMethods.getValues();
 
-    mutate(data, {
+    mutate({ ...data, state: data?.state || "ACTIVE", ...formData } as any, {
       onSuccess: () => {
-        enqueueSnackbar(`Monitor '${data.name}' settings updated.`, {
+        enqueueSnackbar(`Monitor '${formData.name}' settings updated.`, {
           variant: "success",
         });
       },
@@ -134,7 +134,9 @@ const MonitorSettingsView: FunctionComponent = () => {
             <Tab value="request" label="Request" />
             <Tab value="assertions" label="Response assertions" />
             <Tab value="frequencyAndLocation" label="Frequency & Location" />
-            <Tab value="tlsVerification" label="SSL/TLS" />
+            {!["TCP", "ICMP", "DNS", "POSTGRES", "MYSQL", "REDIS"].includes(formMethods.watch("settings.method")) && (
+              <Tab value="tlsVerification" label="SSL/TLS" />
+            )}
           </Tabs>
 
           <Box sx={{ display: selectedTab === "request" ? "block" : "none" }}>

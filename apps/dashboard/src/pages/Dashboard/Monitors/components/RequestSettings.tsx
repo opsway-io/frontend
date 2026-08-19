@@ -60,94 +60,142 @@ const RequestSettings: FunctionComponent = () => {
             control={control}
             rules={{
               required: true,
-              pattern: {
-                value: /^https?:\/\/.+/,
-                message: "URL must start with http:// or https://",
+              validate: (value) => {
+                const method = control._formValues.settings?.method || "GET";
+                if (["TCP", "ICMP", "DNS", "POSTGRES", "MYSQL", "REDIS", "BROWSER"].includes(method)) {
+                  return true;
+                }
+                return /^https?:\/\/.+/.test(value) || "URL must start with http:// or https://";
               },
             }}
-            render={({ field, fieldState }) => (
-              <TextField
-                {...field}
-                size="small"
-                placeholder="https://api.example.com/pets"
-              />
-            )}
+            render={({ field, fieldState }) => {
+              const method = control._formValues.settings?.method || "GET";
+              let placeholder = "https://api.example.com/pets";
+              if (method === "TCP") placeholder = "example.com:8080";
+              if (method === "POSTGRES") placeholder = "postgres://user:password@localhost:5432/dbname";
+              if (method === "MYSQL") placeholder = "mysql://user:password@localhost:3306/dbname";
+              if (method === "REDIS") placeholder = "redis://user:password@localhost:6379/0";
+              if (method === "ICMP") placeholder = "8.8.8.8";
+              if (method === "DNS") placeholder = "example.com?type=MX";
+
+              return (
+                <TextField
+                  {...field}
+                  size="small"
+                  placeholder={placeholder}
+                  error={!!fieldState.error}
+                  helperText={fieldState.error?.message}
+                />
+              );
+            }}
           />
         </Stack>
       </Stack>
 
-      <Divider />
+      <Conditional value={!["TCP", "ICMP", "DNS", "POSTGRES", "MYSQL", "REDIS", "BROWSER"].includes(control._formValues.settings?.method || "GET")}>
+        <Divider />
 
-      <Stack>
-        <Typography variant="subtitle1">Headers</Typography>
-        <Typography variant="body1" color="textSecondary">
-          Add any headers you want to send with your request.
-        </Typography>
-      </Stack>
+        <Stack>
+          <Typography variant="subtitle1">Headers</Typography>
+          <Typography variant="body1" color="textSecondary">
+            Add any headers you want to send with your request.
+          </Typography>
+        </Stack>
 
-      <HeaderSettings />
+        <HeaderSettings />
 
-      <Divider />
+        <Divider />
 
-      <Stack>
-        <Typography variant="subtitle1">Body</Typography>
-        <Typography variant="body1" color="textSecondary">
-          You can optionally send a body with your request up to 1MB in size.
-        </Typography>
-      </Stack>
+        <Stack>
+          <Typography variant="subtitle1">Body</Typography>
+          <Typography variant="body1" color="textSecondary">
+            You can optionally send a body with your request up to 1MB in size.
+          </Typography>
+        </Stack>
 
-      <Controller
-        name="settings.body.type"
-        control={control}
-        render={(bodyTypeProps) => (
-          <>
-            <ToggleButtonGroup
-              exclusive
-              fullWidth
-              value={bodyTypeProps.field.value}
-              onChange={(_, value) => {
-                bodyTypeProps.field.onChange(value);
+        <Controller
+          name="settings.body.type"
+          control={control}
+          render={(bodyTypeProps) => (
+            <>
+              <ToggleButtonGroup
+                exclusive
+                fullWidth
+                value={bodyTypeProps.field.value}
+                onChange={(_, value) => {
+                  bodyTypeProps.field.onChange(value);
 
-                if (value === "NONE") {
-                  setValue("settings.body.content", null);
-                  trigger("settings.body.content");
+                  if (value === "NONE") {
+                    setValue("settings.body.content", null);
+                    trigger("settings.body.content");
+                  }
+                }}
+                size="small"
+              >
+                {requestBodyTypeOptions.map((option) => (
+                  <ToggleButton key={option.value} value={option.value}>
+                    {option.label}
+                  </ToggleButton>
+                ))}
+              </ToggleButtonGroup>
+
+              <Conditional
+                value={
+                  bodyTypeProps.field.value &&
+                  bodyTypeProps.field.value !== "NONE"
                 }
-              }}
-              size="small"
-            >
-              {requestBodyTypeOptions.map((option) => (
-                <ToggleButton key={option.value} value={option.value}>
-                  {option.label}
-                </ToggleButton>
-              ))}
-            </ToggleButtonGroup>
+              >
+                <Controller
+                  name="settings.body.content"
+                  control={control}
+                  render={(bodyProps) => (
+                    <Editor
+                      defaultLanguage={bodyTypeToEditorLanguage(
+                        bodyTypeProps.field.value,
+                      )}
+                      language={bodyTypeToEditorLanguage(
+                        bodyTypeProps.field.value,
+                      )}
+                      value={bodyProps.field.value || ""}
+                      onChange={bodyProps.field.onChange}
+                    />
+                  )}
+                />
+              </Conditional>
+            </>
+          )}
+        />
+      </Conditional>
 
-            <Conditional
-              value={
-                bodyTypeProps.field.value &&
-                bodyTypeProps.field.value !== "NONE"
-              }
-            >
-              <Controller
-                name="settings.body.content"
-                control={control}
-                render={(bodyProps) => (
-                  <Editor
-                    defaultLanguage={bodyTypeToEditorLanguage(
-                      bodyTypeProps.field.value,
-                    )}
-                    language={bodyTypeToEditorLanguage(
-                      bodyTypeProps.field.value,
-                    )}
-                    value={bodyProps.field.value || ""}
-                    onChange={bodyProps.field.onChange}
-                  />
-                )}
+      <Conditional value={control._formValues.settings?.method === "BROWSER"}>
+        <Divider />
+
+        <Stack>
+          <Typography variant="subtitle1">Browser Script (JSON)</Typography>
+          <Typography variant="body1" color="textSecondary">
+            Define the actions for the headless browser to execute as a JSON array (e.g. {`[{"action":"wait", "selector":".loaded"}]`}).
+          </Typography>
+        </Stack>
+
+        <Controller
+          name="settings.body.content"
+          control={control}
+          render={(bodyProps) => {
+            // Ensure type is JSON for BROWSER method behind the scenes
+            if (control._formValues.settings?.body?.type !== "JSON") {
+              setValue("settings.body.type", "JSON");
+            }
+            return (
+              <Editor
+                defaultLanguage="json"
+                language="json"
+                value={bodyProps.field.value || ""}
+                onChange={bodyProps.field.onChange}
               />
-            </Conditional>
-          </>
-        )}
-      />
+            );
+          }}
+        />
+      </Conditional>
     </Stack>
   );
 };

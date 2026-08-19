@@ -10,6 +10,8 @@ export interface Incident {
   monitorId: number;
   title: string;
   description: string;
+  acknowledged?: boolean;
+  rootCauseAnalysis?: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -27,18 +29,40 @@ export async function getIncidents(
   offset?: number,
   limit?: number,
 ): Promise<GetIncidentsResponse> {
-  const response = await client.get(`/v1/teams/${teamId}/incidents`,
-    {
-        params: {
-          offset,
-          limit,
-        },
-      },
-  );
+  const response = await client.get(`/v1/teams/${teamId}/incidents`, {
+    params: {
+      offset,
+      limit,
+    },
+  });
 
   return response?.data;
 }
 
+export interface GetIncidentResponse {
+  id: number;
+  teamId: number;
+  monitorId: number;
+  title: string;
+  description: string;
+  resolved: boolean;
+  acknowledged: boolean;
+  acknowledgedAt?: string;
+  rootCauseAnalysis?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export async function getIncident(
+  teamId: number,
+  incidentId: number,
+): Promise<GetIncidentResponse> {
+  const response = await client.get(
+    `/v1/teams/${teamId}/incidents/${incidentId}`,
+  );
+
+  return response?.data;
+}
 
 export interface MonitorIncident {
   id: number;
@@ -61,20 +85,20 @@ export interface GetMonitorIncidentsResponse {
   incidents: MonitorIncident[];
 }
 
-
 export async function getMonitorIncidents(
   teamId: number,
   monitorId: number,
   offset?: number,
   limit?: number,
 ): Promise<GetMonitorIncidentsResponse> {
-  const response = await client.get(`/v1/teams/${teamId}/incidents/monitor/${monitorId}`,
+  const response = await client.get(
+    `/v1/teams/${teamId}/incidents/monitor/${monitorId}`,
     {
-        params: {
-          offset,
-          limit,
-        },
+      params: {
+        offset,
+        limit,
       },
+    },
   );
 
   return response?.data;
@@ -89,8 +113,20 @@ export async function patchSolveMonitorIncident(
   incidentId: number,
   data: PatchSolveMonitorIncidentRequest,
 ): Promise<void> {
-  const response = await client.patch(`/v1/teams/${teamId}/incidents/${incidentId}/resolved`,
+  const response = await client.patch(
+    `/v1/teams/${teamId}/incidents/${incidentId}/resolved`,
     data,
+  );
+
+  return response?.data;
+}
+
+export async function patchAcknowledgeMonitorIncident(
+  teamId: number,
+  incidentId: number,
+): Promise<void> {
+  const response = await client.patch(
+    `/v1/teams/${teamId}/incidents/${incidentId}/acknowledge`,
   );
 
   return response?.data;

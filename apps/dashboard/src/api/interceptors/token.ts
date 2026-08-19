@@ -1,49 +1,33 @@
 import { AxiosInstance } from "axios";
 import useAuthenticationStore, {
   AuthenticationState,
+  AuthenticationActions,
 } from "../../hooks/authentication.store";
 
-// Middleware for refreshing access token when it expires
-// The middleware will check if the access token has expired before making a request
-// If the access token has expired, it will refresh the access token and retry the request
-// If the refresh token has expired, it will log the user out.
-//
-// Any concurrent requests will be queued until the access token has been refreshed
-
 export function TokenInterceptor(inst: AxiosInstance) {
-  inst.interceptors.request.use(
-    async (request) => {
-      let authStore = useAuthenticationStore.getState();
+  inst.interceptors.response.use(
+    (response) => response,
+    async (error) => {
+      const originalRequest = error.config;
+      const authStore = useAuthenticationStore.getState();
 
-      // Skip authorization middleware if the request is to the auth endpoint
-      const orgAuth = request.headers?.Authorization;
-      if (orgAuth !== undefined && orgAuth === "") {
-        return request;
-      }
+      // If the error is 401 and it's not already a retry, and not an auth endpoint
+      if (
+        error.response?.status === 401 &&
+        !originalRequest._retry &&
+        !originalRequest.url?.includes("/auth/")
+      ) {
+        originalRequest._retry = true;
 
-      // Check if the refresh token has expired
-      if (authStore.isRefreshTokenExpired()) {
-        authStore.logOut();
-
-        return request;
-      }
-
-      // If the access token has expired, refresh the access token
-      if (authStore.isAccessTokenExpired()) {
         try {
           await refreshTokens(inst, authStore);
-          authStore = useAuthenticationStore.getState();
-        } catch (error) {
-          Promise.reject(error);
+          return inst(originalRequest);
+        } catch (refreshError) {
+          return Promise.reject(refreshError);
         }
       }
 
-      request.headers!.Authorization = `Bearer ${authStore.accessToken}`;
-
-      return request;
-    },
-    (error) => {
-      Promise.reject(error);
+      return Promise.reject(error);
     },
   );
 }
@@ -53,7 +37,7 @@ let refreshSubscribers: ((failure?: boolean) => void)[] = [];
 
 async function refreshTokens(
   axiosInst: AxiosInstance,
-  authStore: AuthenticationState,
+  authStore: AuthenticationState & AuthenticationActions,
 ): Promise<void> {
   if (isRefreshing) {
     return new Promise((resolve, reject) => {
@@ -70,12 +54,13 @@ async function refreshTokens(
   } catch (error) {
     authStore.logOut();
     onTokenRefreshed(true);
+    throw error;
   } finally {
     isRefreshing = false;
   }
 }
 
-function subscribeTokenRefresh(cb: () => void) {
+function subscribeTokenRefresh(cb: (failure?: boolean) => void) {
   refreshSubscribers.push(cb);
 }
 

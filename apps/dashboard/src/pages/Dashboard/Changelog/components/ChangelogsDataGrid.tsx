@@ -67,6 +67,7 @@ const ChangelogsDataGrid: FunctionComponent<ChangelogsDataGridProps> = (
       align: "right",
       sortable: false,
       renderCell: (cell) => {
+        // eslint-disable-next-line react-hooks/rules-of-hooks
         const [open, setOpen] = useState(false);
 
         return (

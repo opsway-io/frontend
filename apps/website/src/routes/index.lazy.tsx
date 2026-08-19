@@ -25,7 +25,7 @@ export const Route = createLazyFileRoute("/")({
   component: Index,
 });
 
-function Index() {
+export function Index() {
   const t = useTheme();
 
   return (

@@ -3,7 +3,7 @@ import { GridColDef } from "@mui/x-data-grid";
 import { FunctionComponent, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import DataGrid from "../../../../../components/DataGrid";
-import { Check } from "../../../../../api/models/checks";
+import { Check } from "../../../../../api/endpoints/monitors/checks";
 import { IoLockClosed, IoWarning } from "react-icons/io5";
 import { AiOutlineLeft, AiOutlineRight } from "react-icons/ai";
 import { useMonitorChecks } from "../../../../../hooks/monitors.query";
@@ -183,7 +183,7 @@ const PhasesThumb: FunctionComponent<PhasesThumbProps> = (props) => {
         sx={{
           width: startTransferWidth,
           height: barHeight,
-          bgcolor: "#9b59b6", // TODO: use theme color
+          bgcolor: "secondary.main",
         }}
       />
       <Box

@@ -16,7 +16,7 @@ const UptimeCard: FunctionComponent<UptimeCardProps> = ({ monitorId }) => {
       return;
     }
 
-    setUptime(`${data.stats.uptimePercentage}%`);
+    setUptime(`${Number(data.stats.uptimePercentage).toFixed(2)}%`);
   }, [monitorId, data]);
 
   return (

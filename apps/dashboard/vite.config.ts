@@ -8,6 +8,8 @@ export default defineConfig({
     "process.env": process.env,
   },
   server: {
+    port: 5173,
+    strictPort: true,
     proxy: {
       "/v1": {
         target: "http://localhost:8001",

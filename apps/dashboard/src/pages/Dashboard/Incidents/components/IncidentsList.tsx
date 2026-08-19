@@ -11,17 +11,16 @@ import {
 import { FunctionComponent } from "react";
 import { IoCheckmark, IoStatsChart } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
-import { MonitorIncident, patchSolveMonitorIncident } from "../../../../../src/api/endpoints/incidents";
+import { MonitorIncident } from "../../../../../src/api/endpoints/incidents";
+import { useSolveIncident } from "../../../../hooks/incidents.query";
 
 interface MonitorIncidentPageIncidentsListProps {
-  incidents?: MonitorIncident[]; 
+  incidents?: MonitorIncident[];
 }
 
 const IncidentPageIncidentsList: FunctionComponent<
-MonitorIncidentPageIncidentsListProps
-> = ({
-    incidents
-}) => {
+  MonitorIncidentPageIncidentsListProps
+> = ({ incidents }) => {
   return (
     <Stack spacing={2}>
       {incidents?.map((incident) => (
@@ -35,12 +34,11 @@ interface IncidentsListItemProps {
   incident: MonitorIncident;
 }
 
-const IncidentsListItem: FunctionComponent<IncidentsListItemProps> = (
-  {
-    incident,
-  }
-) => {
+const IncidentsListItem: FunctionComponent<IncidentsListItemProps> = ({
+  incident,
+}) => {
   const navigate = useNavigate();
+  const solveIncident = useSolveIncident();
 
   return (
     <Stack direction="row" spacing={0.5}>
@@ -61,11 +59,14 @@ const IncidentsListItem: FunctionComponent<IncidentsListItemProps> = (
             columns={{ xs: 1, md: 2 }}
             justifyContent="space-between"
             gap={{ xs: 2, md: 4 }}
-            onClick={() => navigate(`/incidents/${incident.monitorId}/details`)} // Navigate to the incident page
+            onClick={() => navigate(`/incidents/incident/${incident.id}`)} // Navigate to the incident page
           >
             <Grid item>
               <Stack spacing={1}>
-                <Typography variant="body2">Assertion failed: {incident.title} {incident.operator} {incident.target}</Typography>
+                <Typography variant="body2">
+                  Assertion failed: {incident.title} {incident.operator}{" "}
+                  {incident.target}
+                </Typography>
 
                 <Stack direction="row" spacing={1}>
                   <Chip size="small" label="api" color="info" />
@@ -100,7 +101,14 @@ const IncidentsListItem: FunctionComponent<IncidentsListItemProps> = (
       </Card>
 
       <Tooltip title="Solve incident">
-        <Card component={Button} color="primary" onClick={() => patchSolveMonitorIncident(incident.teamId, incident.id, { resolved: true })}>
+        <Card
+          component={Button}
+          color="primary"
+          onClick={(e) => {
+            e.stopPropagation();
+            solveIncident.mutate({ incidentId: incident.id });
+          }}
+        >
           <IoCheckmark size={18} />
         </Card>
       </Tooltip>

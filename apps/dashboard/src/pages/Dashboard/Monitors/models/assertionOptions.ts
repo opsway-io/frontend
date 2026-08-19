@@ -61,7 +61,6 @@ const assertionRawBodyOperators = [
 
 // JSON Body
 
-// TODO: Add JSON Body operators
 const assertionJSONBodyOperators = [
   "EQUAL",
   "NOT_EQUAL",
@@ -71,6 +70,8 @@ const assertionJSONBodyOperators = [
   "LESS_THAN",
   "CONTAINS",
   "NOT_CONTAINS",
+  "HAS_KEY",
+  "NOT_HAS_KEY",
   "NULL",
   "NOT_NULL",
 ];

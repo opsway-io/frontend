@@ -94,6 +94,26 @@ const TeamView: FunctionComponent = () => {
           value="/team/settings"
         />,
       );
+
+      tabs.push(
+        <Tab
+          label="Escalation"
+          key="escalation"
+          component={Link}
+          to="/team/escalation"
+          value="/team/escalation"
+        />,
+      );
+
+      tabs.push(
+        <Tab
+          label="API Keys"
+          key="apikeys"
+          component={Link}
+          to="/team/apikeys"
+          value="/team/apikeys"
+        />,
+      );
     }
 
     if (Role.OWNER.equalOrHigher(currentRole)) {

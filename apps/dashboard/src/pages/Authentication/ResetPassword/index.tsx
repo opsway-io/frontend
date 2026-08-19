@@ -1,45 +1,61 @@
-import { Visibility, VisibilityOff } from "@mui/icons-material";
 import {
   Button,
   Card,
   CardContent,
-  CardHeader,
   Divider,
   Fade,
-  IconButton,
   Stack,
   TextField,
   Typography,
 } from "@mui/material";
 import { FunctionComponent, useEffect, useState } from "react";
+import { NavLink, useSearchParams } from "react-router-dom";
 import { Helmet } from "react-helmet";
-import PasswordStrength from "../../../components/PasswordStrength";
+import useAuthenticationStore from "../../../hooks/authentication.store";
+import { toast } from "react-hot-toast";
 
 const ResetPasswordView: FunctionComponent = () => {
+  const [searchParams] = useSearchParams();
+  const token = searchParams.get("token");
+  // token is extracted from the URL query params `?token=XYZ`
+  // The backend uses the token to find the user in Redis.
+
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-
   const [buttonDisabled, setButtonDisabled] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
+  const [success, setSuccess] = useState(false);
+
+  const resetPassword = useAuthenticationStore((state) => state.resetPassword);
 
   useEffect(() => {
-    if (password.length < 8) {
+    if (
+      !password ||
+      !confirmPassword ||
+      password !== confirmPassword ||
+      password.length < 8
+    ) {
       setButtonDisabled(true);
       return;
     }
-
-    if (password !== confirmPassword) {
-      setButtonDisabled(true);
-      return;
-    }
-
     setButtonDisabled(false);
   }, [password, confirmPassword]);
 
-  const submit = () => {
-    // TODO: Submit
+  const submit = async () => {
+    if (!token) {
+      toast.error("Invalid or missing reset token");
+      return;
+    }
+
+    setSubmitting(true);
+    try {
+      await resetPassword(token, password);
+      setSuccess(true);
+    } catch (err: any) {
+      toast.error(err.response?.data?.message || "Failed to reset password");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -56,62 +72,88 @@ const ResetPasswordView: FunctionComponent = () => {
             maxWidth: 500,
           }}
         >
-          <CardHeader
-            title="Reset password"
-            subheader="Please choose your new password"
-          />
-          <CardContent>
-            <Stack spacing={2}>
-              <Typography variant="body1">New password</Typography>
-              <TextField
-                label="Password"
-                autoFocus
-                type={showPassword ? "text" : "password"}
-                onChange={(e) => setPassword(e.target.value)}
-                InputProps={{
-                  endAdornment: (
-                    <IconButton
-                      aria-label="toggle password visibility"
-                      onClick={(_) => setShowPassword(!showPassword)}
-                      edge="end"
-                    >
-                      {showPassword ? <VisibilityOff /> : <Visibility />}
-                    </IconButton>
-                  ),
-                }}
-              />
-              <PasswordStrength value={password} />
+          <CardContent
+            component={Stack}
+            spacing={2}
+            sx={{
+              margin: 1,
+              marginTop: 2,
+            }}
+          >
+            <Typography
+              variant="h4"
+              textAlign="center"
+              sx={{
+                fontWeight: 700,
+              }}
+            >
+              Reset Password
+            </Typography>
 
-              <TextField
-                label="Confirm password"
-                type={showConfirmPassword ? "text" : "password"}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                InputProps={{
-                  endAdornment: (
-                    <IconButton
-                      aria-label="toggle password visibility"
-                      onClick={(_) =>
-                        setShowConfirmPassword(!showConfirmPassword)
-                      }
-                      edge="end"
-                    >
-                      {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
-                    </IconButton>
-                  ),
-                }}
-              />
+            {success ? (
+              <>
+                <Typography
+                  variant="body2"
+                  textAlign="center"
+                  sx={{
+                    color: "success.main",
+                    paddingBottom: 2,
+                  }}
+                >
+                  Your password has been successfully reset.
+                </Typography>
+                <Button
+                  variant="contained"
+                  component={NavLink}
+                  to="/login"
+                  size="large"
+                >
+                  Proceed to Login
+                </Button>
+              </>
+            ) : (
+              <>
+                <Typography
+                  variant="body2"
+                  textAlign="center"
+                  sx={{
+                    color: "text.secondary",
+                    paddingBottom: 2,
+                  }}
+                >
+                  Please enter your new password below.
+                </Typography>
 
-              <Divider />
+                <TextField
+                  placeholder="New password"
+                  type="password"
+                  variant="outlined"
+                  onChange={(e) => setPassword(e.target.value)}
+                  disabled={submitting}
+                  autoFocus
+                />
 
-              <Button
-                variant="contained"
-                color="success"
-                onSubmit={submit}
-                disabled={buttonDisabled}
-              >
-                Reset password
-              </Button>
-            </Stack>
+                <TextField
+                  placeholder="Confirm new password"
+                  type="password"
+                  variant="outlined"
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  disabled={submitting}
+                />
+
+                <Divider />
+
+                <Button
+                  variant="contained"
+                  color="success"
+                  disabled={buttonDisabled || submitting}
+                  onClick={submit}
+                  size="large"
+                >
+                  {submitting ? "Resetting..." : "Reset Password"}
+                </Button>
+              </>
+            )}
           </CardContent>
         </Card>
       </Fade>

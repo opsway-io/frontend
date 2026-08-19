@@ -7,9 +7,11 @@ import client from "../../client";
 export interface Check {
   id: string;
   statusCode: number;
+  location: string;
   timing: Timing;
   tls: TLS;
   createdAt: string;
+  anomaly?: boolean;
 }
 export interface Timing {
   dnsLookup: number;
@@ -84,7 +86,6 @@ export async function getFailedMonitorChecks(
   return response?.data;
 }
 
-
 export interface GetMonitorsIncidentsResponse {
   monitors: MonitorsWithIncidents[];
 }
@@ -105,13 +106,10 @@ export interface Incident {
   MonitorAssertionID: number;
 }
 
-
 export async function getMonitorsIncidents(
   teamId: number,
 ): Promise<GetMonitorsIncidentsResponse> {
-  const response = await client.get(
-    `/v1/teams/${teamId}/monitors/incidents`,
-  );
+  const response = await client.get(`/v1/teams/${teamId}/monitors/incidents`);
 
   return response?.data;
 }

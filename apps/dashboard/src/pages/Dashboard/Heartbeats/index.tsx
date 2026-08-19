@@ -1,12 +1,26 @@
 import { FunctionComponent } from "react";
+import {
+  Box,
+  Button,
+  Card,
+  CardContent,
+  Chip,
+  Stack,
+  Typography,
+} from "@mui/material";
 import { Helmet } from "react-helmet";
+import { IoAdd } from "react-icons/io5";
 import Container from "../../../components/Container";
 import Placeholder from "../../../components/Placeholder";
-import { Button, Card, Typography } from "@mui/material";
-import { IoAdd } from "react-icons/io5";
-import { NavLink } from "react-router-dom";
+import { NavLink, Link } from "react-router-dom";
+import { Restrict, Role } from "../../../components/Restrict";
+import { useHeartbeats } from "../../../hooks/heartbeats.query";
+import moment from "moment";
 
-const HeartbeatView: FunctionComponent = () => {
+const HeartbeatsView: FunctionComponent = () => {
+  const { data: heartbeats, isLoading } = useHeartbeats();
+  const list = heartbeats || [];
+
   return (
     <>
       <Helmet>
@@ -14,40 +28,93 @@ const HeartbeatView: FunctionComponent = () => {
       </Helmet>
 
       <Container
-        header="Heartbeat"
-        description="Heartbeats is a simple way to make sure that your scheduled jobs are running as expected and do not miss a beat."
+        header="Heartbeats"
+        description="Monitor cron jobs and background tasks with inbound pings."
         secondaryActions={[
-          <Button
-            startIcon={<IoAdd />}
-            color="secondary"
-            sx={{
-              span: {
-                color: (t) => t.palette.success.main,
-              },
-            }}
-            component={NavLink}
-            to="/heartbeats/create"
-          >
-            Create heartbeat
-          </Button>,
+          <Restrict min={Role.ADMIN} key="add">
+            <Button
+              startIcon={<IoAdd />}
+              color="secondary"
+              sx={{
+                span: {
+                  color: (t) => t.palette.success.main,
+                },
+              }}
+              component={NavLink}
+              to="/heartbeats/create"
+            >
+              Create Heartbeat
+            </Button>
+          </Restrict>,
         ]}
       >
-        <Card
-          sx={{
-            backgroundColor: (t) => t.palette.success.main,
-            color: (t) => t.palette.success.contrastText,
-            textAlign: "center",
-            padding: (t) => t.spacing(1),
-          }}
-        >
-          <Typography fontSize={16} fontWeight={500}>
-            All heartbeats are passing
-          </Typography>
+        <Card>
+          <CardContent>
+            {isLoading ? (
+              <Placeholder />
+            ) : list.length === 0 ? (
+              <Typography align="center" color="text.secondary">
+                No heartbeats found. Create one to start monitoring background
+                tasks.
+              </Typography>
+            ) : (
+              <Stack spacing={2}>
+                {list.map((hb) => (
+                  <Card
+                    key={hb.id}
+                    component={Link}
+                    to={`${hb.id}`}
+                    sx={{ textDecoration: "none" }}
+                    variant="outlined"
+                  >
+                    <CardContent>
+                      <Stack
+                        direction="row"
+                        justifyContent="space-between"
+                        alignItems="center"
+                      >
+                        <Box>
+                          <Typography variant="h6" color="text.primary">
+                            {hb.name}
+                          </Typography>
+                          <Typography variant="body2" color="text.secondary">
+                            Interval: {hb.interval}m | Grace: {hb.grace}m
+                          </Typography>
+                        </Box>
+                        <Stack alignItems="flex-end">
+                          <Chip
+                            label={hb.status}
+                            color={
+                              hb.status === "UP"
+                                ? "success"
+                                : hb.status === "DOWN"
+                                  ? "error"
+                                  : "default"
+                            }
+                            size="small"
+                          />
+                          <Typography
+                            variant="caption"
+                            color="text.secondary"
+                            sx={{ mt: 1 }}
+                          >
+                            Last ping:{" "}
+                            {hb.lastPing
+                              ? moment(hb.lastPing).fromNow()
+                              : "Never"}
+                          </Typography>
+                        </Stack>
+                      </Stack>
+                    </CardContent>
+                  </Card>
+                ))}
+              </Stack>
+            )}
+          </CardContent>
         </Card>
-        <Placeholder />
       </Container>
     </>
   );
 };
 
-export default HeartbeatView;
+export default HeartbeatsView;

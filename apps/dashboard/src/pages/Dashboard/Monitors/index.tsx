@@ -56,8 +56,11 @@ const MonitorsView: FunctionComponent = () => {
     },
     {
       keepPreviousData: true,
+      refetchInterval: 10000,
     },
   );
+
+  const isFailing = data?.monitors?.some((m) => m.stats?.uptimePercentage < 100) || false;
 
   return (
     <>
@@ -156,20 +159,25 @@ const MonitorsView: FunctionComponent = () => {
         <Conditional value={data?.monitors.length !== 0}>
           <Card
             sx={{
-              backgroundColor: (t) => t.palette.success.main,
-              color: (t) => t.palette.success.contrastText,
+              backgroundColor: (t) =>
+                isFailing ? t.palette.error.main : t.palette.success.main,
+              color: (t) =>
+                isFailing
+                  ? t.palette.error.contrastText
+                  : t.palette.success.contrastText,
               textAlign: "center",
               padding: (t) => t.spacing(1),
             }}
           >
             <Typography fontSize={16} fontWeight={500}>
-              All checks are passing
+              {isFailing ? "Some checks are failing" : "All checks are passing"}
             </Typography>
           </Card>
 
           <Stack direction="row" spacing={1}>
             <Paper
               component="form"
+              onSubmit={(e) => e.preventDefault()}
               sx={{
                 p: "0px 4px",
                 display: "flex",

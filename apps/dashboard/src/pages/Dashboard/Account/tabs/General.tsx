@@ -18,6 +18,7 @@ const AccountGeneralTabView: FunctionComponent = () => {
   const [name, setName] = useState(user?.name ?? "");
   const [displayName, setDisplayName] = useState(user?.displayName ?? "");
   const [email, setEmail] = useState(user?.email ?? "");
+  const [phoneNumber, setPhoneNumber] = useState(user?.phoneNumber ?? "");
 
   const handleSave = () => {
     if (!user) {
@@ -28,6 +29,7 @@ const AccountGeneralTabView: FunctionComponent = () => {
       name: name,
       email: email,
       displayName: displayName,
+      phoneNumber: phoneNumber || undefined,
     });
   };
 
@@ -73,6 +75,18 @@ const AccountGeneralTabView: FunctionComponent = () => {
                 onValidate={(value) => {
                   return validateEmail(value);
                 }}
+              />
+            </CategoryListItem>
+
+            <CategoryListItem
+              title="Phone number"
+              description="Your phone number used for SMS and Voice alerts."
+            >
+              <EditableInput
+                label="Phone number (e.g. +1234567890)"
+                onSave={handleSave}
+                value={phoneNumber}
+                onChange={(e) => setPhoneNumber(e.target.value)}
               />
             </CategoryListItem>
           </CategoryList>

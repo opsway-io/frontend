@@ -3,7 +3,7 @@ import { GridColDef } from "@mui/x-data-grid";
 import { FunctionComponent, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import DataGrid from "../../../../../components/DataGrid";
-import { Check } from "../../../../../api/models/checks";
+import { Check } from "../../../../../api/endpoints/monitors/checks";
 import { IoLockClosed, IoWarning } from "react-icons/io5";
 import { AiOutlineLeft, AiOutlineRight } from "react-icons/ai";
 import { useMonitorChecks } from "../../../../../hooks/monitors.query";
@@ -43,6 +43,14 @@ const ChecksDataGrid: FunctionComponent<MonitorChecksDataGridProps> = (
       renderCell: (row) => <Chip label={row.value} color="success" />,
     },
     {
+      field: "location",
+      headerName: "Location",
+      width: 100,
+      align: "left",
+      headerAlign: "left",
+      sortable: false,
+    },
+    {
       field: "tls",
       headerName: "TLS",
       width: 64,
@@ -55,6 +63,20 @@ const ChecksDataGrid: FunctionComponent<MonitorChecksDataGridProps> = (
         } else {
           return <Chip label={<IoWarning size={18} />} color="error" />;
         }
+      },
+    },
+    {
+      field: "anomaly",
+      headerName: "Anomaly",
+      width: 110,
+      align: "center",
+      headerAlign: "center",
+      sortable: false,
+      renderCell: (col) => {
+        if (col.row.anomaly) {
+          return <Chip label="Anomaly" color="error" size="small" variant="filled" />;
+        }
+        return <Chip label="Normal" color="success" size="small" variant="outlined" />;
       },
     },
     {
@@ -183,7 +205,7 @@ const PhasesThumb: FunctionComponent<PhasesThumbProps> = (props) => {
         sx={{
           width: startTransferWidth,
           height: barHeight,
-          bgcolor: "#9b59b6", // TODO: use theme color
+          bgcolor: "secondary.main",
         }}
       />
       <Box

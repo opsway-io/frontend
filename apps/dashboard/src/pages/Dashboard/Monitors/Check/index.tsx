@@ -18,7 +18,7 @@ import RequestTimeline from "../../../../components/RequestTimeline";
 import { useMonitor, useMonitorCheck } from "../../../../hooks/monitors.query";
 
 const MonitorCheckView: FunctionComponent = () => {
-  let params = useParams();
+  const params = useParams();
 
   const monitorId = (params.monitorId as number | undefined) || 0;
   const checkId = (params.checkId as number | undefined) || 0;

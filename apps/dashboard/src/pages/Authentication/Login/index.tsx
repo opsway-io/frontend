@@ -12,13 +12,15 @@ import {
 import { FunctionComponent } from "react";
 import { Helmet } from "react-helmet";
 
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 import Conditional from "../../../components/Conditional";
 import ENV from "../../../env";
 import LoginForm from "./form";
 import SocialLoginForm from "./social";
 
 const LoginView: FunctionComponent = () => {
+  const location = useLocation();
+
   return (
     <>
       <Helmet>
@@ -84,7 +86,7 @@ const LoginView: FunctionComponent = () => {
                   textDecoration: "underline !important",
                 }}
                 component={NavLink}
-                to="/login/register"
+                to={`/login/register${location.search}`}
               >
                 Create a new account
               </Link>

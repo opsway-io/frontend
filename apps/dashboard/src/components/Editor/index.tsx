@@ -71,7 +71,7 @@ const Editor: FunctionComponent<EditorProps> = (props) => {
               marginRight: "auto",
             }}
             onClick={() => {
-              editor?.getAction("editor.action.formatDocument").run();
+              editor?.getAction("editor.action.formatDocument")?.run();
             }}
           >
             Format Document

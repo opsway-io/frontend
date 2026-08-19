@@ -146,7 +146,7 @@ const RequestTimeline: FunctionComponent<RequestTimelineProps> = (props) => {
                 width: startTransferWidth,
                 marginLeft: startTransferOffset,
                 height: barHeight,
-                bgcolor: "#9b59b6", // TODO: use theme color
+                bgcolor: "secondary.main",
                 borderRadius: (t) => t.shape.borderRadius,
               }}
             />

@@ -2,6 +2,8 @@ name: Build website
 
 on:
   push:
+    branches:
+      - main
     paths:
       - "apps/website/**"
       - "packages/ui/**"
@@ -30,12 +32,17 @@ jobs:
           ts=$(date +%s)
           echo "BUILD_ID=${branch}-${sha}-${ts}" >> $GITHUB_OUTPUT
 
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
       - uses: pnpm/action-setup@v4
 
       - name: Build website application
         run: |
-          pnpm install
-          pnpm run build --filter website
+          pnpm install --frozen-lockfile
+          pnpm turbo run build --filter=website
 
       - name: Build and push Docker image for website
         uses: docker/build-push-action@v6

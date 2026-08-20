@@ -2,6 +2,8 @@ name: Build status page
 
 on:
   push:
+    branches:
+      - main
     paths:
       - "apps/status-page/**"
       - "packages/ui/**"
@@ -30,12 +32,17 @@ jobs:
           ts=$(date +%s)
           echo "BUILD_ID=${branch}-${sha}-${ts}" >> $GITHUB_OUTPUT
 
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
       - uses: pnpm/action-setup@v4
 
       - name: Build status page application
         run: |
-          pnpm install
-          pnpm run build --filter status-page
+          pnpm install --frozen-lockfile
+          pnpm turbo run build --filter=status-page
 
       - name: Build and push Docker image for status page
         uses: docker/build-push-action@v6

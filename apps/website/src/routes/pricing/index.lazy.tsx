@@ -32,7 +32,7 @@ function Index() {
   return (
     <>
       <Helmet>
-        <title>Pricing - opsway.io</title>
+        <title>Pricing - opsway.eu</title>
         <meta
           name="keywords"
           content="pricing, plans, free, team, enterprise"
@@ -249,7 +249,7 @@ const PricingCard: FunctionComponent<PricingCardProps> = ({
             marginTop: "auto",
           }}
           component="a"
-          href="https://my.opsway.io/account/general"
+          href="https://my.opsway.eu/account/general"
         >
           Get started
         </Button>

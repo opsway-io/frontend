@@ -26,7 +26,7 @@ const AuthenticationBaseView: FunctionComponent<ContainerProps> = (props) => {
         backgroundImage: "url(/img/particles.svg)",
       }}
     >
-      <a href="https://opsway.io">
+      <a href="https://opsway.eu">
         <Logo src={"/img/logo.svg"} alt="logo" />
       </a>
 

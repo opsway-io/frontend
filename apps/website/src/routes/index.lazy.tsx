@@ -32,7 +32,7 @@ export function Index() {
     <>
       <Helmet>
         <title>
-          opsway.io: Real-time Monitoring, Status Pages and Alerting for your
+          opsway.eu: Real-time Monitoring, Status Pages and Alerting for your
           websites and services 🚀
         </title>
       </Helmet>
@@ -92,7 +92,7 @@ export function Index() {
           <Button
             variant="outlined"
             color="success"
-            href="https://my.opsway.io/login"
+            href="https://my.opsway.eu/login"
             sx={{
               fontSize: 20,
               fontWeight: 500,
@@ -485,7 +485,7 @@ export function Index() {
           variant="outlined"
           size="large"
           color="success"
-          href="https://my.opsway.io/login/register"
+          href="https://my.opsway.eu/login/register"
           endIcon={<IoRocket />}
         >
           Register now, it's free!

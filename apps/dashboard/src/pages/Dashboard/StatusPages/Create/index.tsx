@@ -74,7 +74,7 @@ const StatusPagesCreateView: FunctionComponent<
   };
 
   const copyDNSCNAMEToClipboard = () => {
-    navigator.clipboard.writeText("status.opsway.io");
+    navigator.clipboard.writeText("status.opsway.eu");
 
     enqueueSnackbar("Copied DNS CNAME value to clipboard", {
       variant: "success",
@@ -161,7 +161,7 @@ const StatusPagesCreateView: FunctionComponent<
                       }}
                       onClick={copyDNSCNAMEToClipboard}
                     >
-                      <code>status.opsway.io</code>
+                      <code>status.opsway.eu</code>
                     </Typography>
 
                     <Typography sx={{ marginTop: 1 }}>
@@ -184,7 +184,7 @@ const StatusPagesCreateView: FunctionComponent<
                             {domain ? domain.split(".")[0] : "status"}
                           </TableCell>
                           <TableCell>CNAME</TableCell>
-                          <TableCell>status.opsway.io</TableCell>
+                          <TableCell>status.opsway.eu</TableCell>
                           <TableCell>Automatic</TableCell>
                         </TableRow>
                       </TableBody>

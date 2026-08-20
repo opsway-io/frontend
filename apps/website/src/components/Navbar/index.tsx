@@ -99,7 +99,7 @@ const BigDeviceNavbar: FunctionComponent = () => {
             }}
             variant="outlined"
             component={"a"}
-            href="https://my.opsway.io"
+            href="https://my.opsway.eu"
             color="success"
             endIcon={<IoIosArrowForward />}
             size="large"
@@ -182,7 +182,7 @@ const SmallDeviceNavbar: FunctionComponent = () => {
           <ListItem>
             <ListItemButton
               component={"a"}
-              href="https://my.opsway.io"
+              href="https://my.opsway.eu"
               color="success"
             >
               <ListItemText primary="Dashboard" />

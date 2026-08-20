@@ -10,7 +10,7 @@ function Index() {
   return (
     <>
       <Helmet>
-        <title>Contact - opsway.io</title>
+        <title>Contact - opsway.eu</title>
         <meta name="keywords" content="contact,support" />
       </Helmet>
 

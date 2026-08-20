@@ -51,7 +51,7 @@ describe("StatusPageOverviewList", () => {
           {
             id: 1,
             name: "My API Status",
-            domain: "status.opsway.io",
+            domain: "status.opsway.eu",
           },
         ],
       },
@@ -63,6 +63,6 @@ describe("StatusPageOverviewList", () => {
       </MemoryRouter>
     );
 
-    expect(screen.getByText("My API Status - status.opsway.io")).toBeInTheDocument();
+    expect(screen.getByText("My API Status - status.opsway.eu")).toBeInTheDocument();
   });
 });

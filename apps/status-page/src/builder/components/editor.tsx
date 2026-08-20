@@ -38,7 +38,7 @@ const Editor: FunctionComponent<EditorProps> = () => {
         }}
         ref={setNodeRef}
       >
-        {/* <iframe src="https://status.opsway.io" frameBorder="0"
+        {/* <iframe src="https://status.opsway.eu" frameBorder="0"
         
         style={{
           width: "100%",

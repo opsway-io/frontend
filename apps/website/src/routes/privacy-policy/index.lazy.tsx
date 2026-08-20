@@ -10,7 +10,7 @@ function Index() {
   return (
     <>
       <Helmet>
-        <title>Privacy Policy - opsway.io</title>
+        <title>Privacy Policy - opsway.eu</title>
         <meta
           name="keywords"
           content="opsway, privacy policy, privacy, policy"
@@ -125,11 +125,11 @@ function Index() {
               <p>
                 <strong>Website</strong> refers to opsway, accessible from{" "}
                 <a
-                  href="https://opsway.io"
+                  href="https://opsway.eu"
                   rel="external nofollow noopener"
                   target="_blank"
                 >
-                  https://opsway.io
+                  https://opsway.eu
                 </a>
               </p>
             </li>
@@ -570,17 +570,17 @@ function Index() {
           </p>
           <ul>
             <li>
-              <p>By email: hey@opsway.io</p>
+              <p>By email: hey@opsway.eu</p>
             </li>
             <li>
               <p>
                 By visiting this page on our website:{" "}
                 <a
-                  href="https://opsway.io/contact"
+                  href="https://opsway.eu/contact"
                   rel="external nofollow noopener"
                   target="_blank"
                 >
-                  https://opsway.io/contact
+                  https://opsway.eu/contact
                 </a>
               </p>
             </li>

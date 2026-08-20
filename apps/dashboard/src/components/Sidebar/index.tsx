@@ -104,7 +104,7 @@ const Sidebar: FunctionComponent = () => {
       <SidebarDivider />
 
       {/* <SidebarItem
-        link="https://opsway.io/docs"
+        link="https://opsway.eu/docs"
         text="Documentation"
         icon={<IoBookOutline />}
       /> */}

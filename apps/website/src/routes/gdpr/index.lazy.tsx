@@ -10,7 +10,7 @@ function Index() {
   return (
     <>
       <Helmet>
-        <title>GDPR - opsway.io</title>
+        <title>GDPR - opsway.eu</title>
         <meta name="keywords" content="gdpr, privacy, policy" />
       </Helmet>
 
@@ -19,10 +19,10 @@ function Index() {
           <h1>GDPR</h1>
           <p>Last updated: January 29, 2024</p>
           <p>
-            At opsway.io, accessible from https://opsway.io, one of our main
+            At opsway.eu, accessible from https://opsway.eu, one of our main
             priorities is the privacy of our visitors. This Privacy Policy
             document contains types of information that is collected and
-            recorded by opsway.io and how we use it.
+            recorded by opsway.eu and how we use it.
           </p>
           <p>
             If you have additional questions or require more information about
@@ -75,7 +75,7 @@ function Index() {
           </ul>
           <h2>Log Files</h2>
           <p>
-            opsway.io follows a standard procedure of using log files. These
+            opsway.eu follows a standard procedure of using log files. These
             files log visitors when they visit websites. All hosting companies
             do this and a part of hosting services' analytics. The information
             collected by log files include internet protocol (IP) addresses,
@@ -88,7 +88,7 @@ function Index() {
           </p>
           <h2>Cookies and Web Beacons</h2>
           <p>
-            Like any other website, opsway.io uses "cookies". These cookies are
+            Like any other website, opsway.eu uses "cookies". These cookies are
             used to store information including visitors' preferences, and the
             pages on the website that the visitor accessed or visited. The
             information is used to optimize the users' experience by customizing
@@ -98,12 +98,12 @@ function Index() {
           <h2>Privacy Policies</h2>
           <p>
             You may consult this list to find the Privacy Policy for each of the
-            advertising partners of opsway.io.
+            advertising partners of opsway.eu.
           </p>
           <p>
             Third-party ad servers or ad networks uses technologies like
             cookies, JavaScript, or Web Beacons that are used in their
-            respective advertisements and links that appear on opsway.io, which
+            respective advertisements and links that appear on opsway.eu, which
             are sent directly to users' browser. They automatically receive your
             IP address when this occurs. These technologies are used to measure
             the effectiveness of their advertising campaigns and/or to
@@ -111,12 +111,12 @@ function Index() {
             you visit.
           </p>
           <p>
-            Note that opsway.io has no access to or control over these cookies
+            Note that opsway.eu has no access to or control over these cookies
             that are used by third-party advertisers.
           </p>
           <h2>Third Party Privacy Policies</h2>
           <p>
-            opsway.io's Privacy Policy does not apply to other advertisers or
+            opsway.eu's Privacy Policy does not apply to other advertisers or
             websites. Thus, we are advising you to consult the respective
             Privacy Policies of these third-party ad servers for more detailed
             information. It may include their practices and instructions about
@@ -135,7 +135,7 @@ function Index() {
             participate in, and/or monitor and guide their online activity.
           </p>
           <p>
-            opsway.io does not knowingly collect any Personal Identifiable
+            opsway.eu does not knowingly collect any Personal Identifiable
             Information from children under the age of 13. If you think that
             your child provided this kind of information on our website, we
             strongly encourage you to contact us immediately and we will do our
@@ -145,7 +145,7 @@ function Index() {
           <p>
             Our Privacy Policy applies only to our online activities and is
             valid for visitors to our website with regards to the information
-            that they shared and/or collect in opsway.io. This policy is not
+            that they shared and/or collect in opsway.eu. This policy is not
             applicable to any information collected offline or via channels
             other than this website.
           </p>

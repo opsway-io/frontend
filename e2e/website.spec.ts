@@ -20,7 +20,7 @@ test.describe("Website Landing Pages", () => {
     // Verify "Get started" button
     const getStartedBtn = page.locator("a", { hasText: "Get started" });
     await expect(getStartedBtn).toBeVisible();
-    await expect(getStartedBtn).toHaveAttribute("href", "https://my.opsway.io/login");
+    await expect(getStartedBtn).toHaveAttribute("href", "https://my.opsway.eu/login");
   });
 
   test("has a GitHub button", async ({ page }) => {

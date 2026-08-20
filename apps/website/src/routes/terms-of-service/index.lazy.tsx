@@ -10,7 +10,7 @@ function Index() {
   return (
     <>
       <Helmet>
-        <title>Terms of Service - opsway.io</title>
+        <title>Terms of Service - opsway.eu</title>
         <meta name="keywords" content="terms, service, terms of service" />
       </Helmet>
 
@@ -22,7 +22,7 @@ function Index() {
           <h2>1. Terms</h2>
 
           <p>
-            By accessing this Website, accessible from https://opsway.io, you
+            By accessing this Website, accessible from https://opsway.eu, you
             are agreeing to be bound by these Terms of Service and agree that
             you are responsible for the agreement with any applicable local
             laws. If you disagree with any of these terms, you are prohibited

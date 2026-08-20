@@ -27,3 +27,7 @@ yarn-error.log*
 # editor
 .idea
 .vscode
+
+# test results
+test-results
+playwright-report

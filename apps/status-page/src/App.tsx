@@ -19,7 +19,7 @@ import ComponentStatus from "./components/ComponentStatus";
 import SubscribeModal from "./components/SubscribeModal";
 
 const currentDomain = window.location.hostname === "localhost"
-  ? "status.opsway.io"
+  ? "status.opsway.eu"
   : window.location.hostname;
 
 // Reusable glassmorphic styles
@@ -462,7 +462,7 @@ const App: FunctionComponent = () => {
         {data.showBranding !== false && (
           <Box sx={{ textAlign: "center", pt: 4 }}>
             <Link
-              href="https://opsway.io"
+              href="https://opsway.eu"
               target="_blank"
               rel="noopener noreferrer"
               sx={{ textDecoration: "none", transition: "opacity 0.2s", '&:hover': { opacity: 0.8 } }}
@@ -472,7 +472,7 @@ const App: FunctionComponent = () => {
                 color="text.secondary"
                 sx={{ opacity: 0.4, fontWeight: 500 }}
               >
-                powered by opsway.io
+                powered by opsway.eu
               </Typography>
             </Link>
           </Box>

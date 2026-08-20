@@ -96,7 +96,7 @@ const HeartbeatDetailView: FunctionComponent = () => {
       </Container>
     );
 
-  const curlCommand = `curl -X POST https://api.opsway.io/v1/teams/${teamId}/heartbeats/${id}/ping -H "Authorization: Bearer YOUR_TOKEN"`;
+  const curlCommand = `curl -X POST https://api.opsway.eu/v1/teams/${teamId}/heartbeats/${id}/ping -H "Authorization: Bearer YOUR_TOKEN"`;
 
   return (
     <>

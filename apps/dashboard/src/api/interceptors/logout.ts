@@ -30,7 +30,10 @@ export function LogOutInterceptor(inst: AxiosInstance) {
       return response;
     },
     async (error) => {
-      if (error.response?.status === 401) {
+      if (
+        error.response?.status === 401 &&
+        !error.config?.url?.includes("/auth/logout")
+      ) {
         useAuthenticationStore.getState().logOut();
       }
 

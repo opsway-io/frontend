@@ -8,7 +8,7 @@ const instance = axios.create({
   withCredentials: true,
 });
 
-LogOutInterceptor(instance);
 TokenInterceptor(instance);
+LogOutInterceptor(instance);
 
 export default instance;

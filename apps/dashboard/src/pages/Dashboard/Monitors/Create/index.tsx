@@ -9,6 +9,7 @@ import {
   Tabs,
   TextField,
 } from "@mui/material";
+import { LoadingButton } from "@mui/lab";
 import { useSnackbar } from "notistack";
 import { FunctionComponent, useMemo } from "react";
 import { Helmet } from "react-helmet";
@@ -31,7 +32,7 @@ import { useState } from "react";
 
 const MonitorCreateView: FunctionComponent = () => {
   const teamId = useAuthenticationStore((state) => state.currentTeamId);
-  const { mutate } = useCreateMonitor();
+  const { mutate, isLoading } = useCreateMonitor();
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
   const [openUpgradeModal, setOpenUpgradeModal] = useState(false);
@@ -140,20 +141,22 @@ const MonitorCreateView: FunctionComponent = () => {
               />
             </Stack>
 
-            <Button
+            <LoadingButton
               color="success"
               variant="contained"
               size="large"
               type="submit"
-              disabled={!formMethods.formState.isValid}
+              disabled={!formMethods.formState.isValid || isLoading}
+              loading={isLoading}
               onClick={createMonitor}
               sx={{
                 height: "38px",
               }}
+              loadingPosition="end"
               endIcon={<IoAdd />}
             >
               Create monitor
-            </Button>
+            </LoadingButton>
           </Stack>
 
           <Tabs value={selectedTab} onChange={(e, v) => setParams({ tab: v })}>

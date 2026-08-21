@@ -30,8 +30,7 @@ const MonitorSettingsView: FunctionComponent = () => {
   const { data, isLoading } = useMonitor(monitorId);
 
   const teamId = useAuthenticationStore((state) => state.currentTeamId);
-
-  const { mutate } = useUpdateMonitor(monitorId);
+  const { mutate, isLoading: isUpdating } = useUpdateMonitor(monitorId);
   const { enqueueSnackbar } = useSnackbar();
 
   const [searchParams, setSearchParams] = useSearchParams({
@@ -114,9 +113,9 @@ const MonitorSettingsView: FunctionComponent = () => {
               variant="contained"
               size="large"
               type="submit"
-              loading={formMethods.formState.isSubmitting}
+              loading={isUpdating}
               disabled={
-                !formMethods.formState.isValid || !formMethods.formState.isDirty
+                !formMethods.formState.isValid || !formMethods.formState.isDirty || isUpdating
               }
               onClick={updateMonitor}
               sx={{

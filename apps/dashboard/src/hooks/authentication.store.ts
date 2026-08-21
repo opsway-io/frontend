@@ -57,10 +57,21 @@ const useAuthenticationStore = create<
 
       logOut: () => {
         AuthenticationAPI.logout().catch(() => {});
-        queryClient.clear();
-        localStorage.clear();
+        try {
+          queryClient.clear();
+          localStorage.clear();
+        } catch (e) {
+          console.error("Error clearing local state during logout", e);
+        }
 
         set(initialState);
+
+        if (!window.location.pathname.startsWith("/login")) {
+          const returnTo = encodeURIComponent(
+            window.location.pathname + window.location.search
+          );
+          window.location.href = `/login?returnTo=${returnTo}`;
+        }
       },
 
       logIn: async (

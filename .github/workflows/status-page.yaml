@@ -32,12 +32,12 @@ jobs:
           ts=$(date +%s)
           echo "BUILD_ID=${branch}-${sha}-${ts}" >> $GITHUB_OUTPUT
 
+      - uses: pnpm/action-setup@v4
+
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: pnpm
-
-      - uses: pnpm/action-setup@v4
 
       - name: Build status page application
         run: |

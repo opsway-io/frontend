@@ -286,7 +286,7 @@ const Routes: FunctionComponent = () => {
             <Route
               path="subscription"
               element={
-                <RestrictedRoute minRole={Role.OWNER}>
+                <RestrictedRoute minRole={Role.ADMIN}>
                   <TeamSubscriptionTabView />
                 </RestrictedRoute>
               }

@@ -210,7 +210,10 @@ const IncidentDetailView: FunctionComponent = () => {
                 <>
                   <br />
                   <br />
-                  <strong>Acknowledged</strong> {incident.acknowledgedAt ? `on ${incident.acknowledgedAt}` : ''}
+                  <strong>Acknowledged</strong>{" "}
+                  {incident.acknowledgedAt
+                    ? `on ${incident.acknowledgedAt}`
+                    : ""}
                 </>
               )}
               {incident.rootCauseAnalysis && (
@@ -355,7 +358,9 @@ const IncidentDetailView: FunctionComponent = () => {
                 label="TLS"
               />
               <Chip
-                sx={{ backgroundColor: alpha(theme.palette.secondary.main, 0.5) }}
+                sx={{
+                  backgroundColor: alpha(theme.palette.secondary.main, 0.5),
+                }}
                 label="Processing"
               />
               <Chip

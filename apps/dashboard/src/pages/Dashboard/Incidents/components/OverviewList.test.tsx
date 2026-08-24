@@ -20,10 +20,12 @@ describe("IncidentPageOverviewList", () => {
     render(
       <BrowserRouter>
         <IncidentPageOverviewList monitors={[]} />
-      </BrowserRouter>
+      </BrowserRouter>,
     );
     expect(
-      screen.getByText("No active incidents right now. Everything is running smoothly!")
+      screen.getByText(
+        "No active incidents right now. Everything is running smoothly!",
+      ),
     ).toBeInTheDocument();
   });
 
@@ -31,7 +33,7 @@ describe("IncidentPageOverviewList", () => {
     render(
       <BrowserRouter>
         <IncidentPageOverviewList monitors={mockMonitors} />
-      </BrowserRouter>
+      </BrowserRouter>,
     );
     expect(screen.getByText("Production API")).toBeInTheDocument();
     expect(screen.getByText("2 active incidents")).toBeInTheDocument();

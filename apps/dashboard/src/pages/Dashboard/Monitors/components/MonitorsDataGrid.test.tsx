@@ -4,7 +4,6 @@ import { BrowserRouter } from "react-router-dom";
 import MonitorsDataGrid from "./MonitorsDataGrid";
 import { MonitorWithStats } from "../../../../api/endpoints/monitors";
 
-
 vi.mock("../../../../hooks/user.query", () => ({
   useCurrentUserRole: () => "ADMIN",
 }));
@@ -21,6 +20,7 @@ const mockMonitors: MonitorWithStats[] = [
     } as any,
     stats: {
       averageResponseTime: 120,
+      averageResponseTimes: [120, 130, 110],
       p99: 300,
       p95: 200,
     } as any,
@@ -32,7 +32,7 @@ describe("MonitorsDataGrid", () => {
     render(
       <BrowserRouter>
         <MonitorsDataGrid monitors={[]} />
-      </BrowserRouter>
+      </BrowserRouter>,
     );
     expect(screen.getByText("No monitors")).toBeInTheDocument();
   });
@@ -41,7 +41,7 @@ describe("MonitorsDataGrid", () => {
     render(
       <BrowserRouter>
         <MonitorsDataGrid monitors={mockMonitors} />
-      </BrowserRouter>
+      </BrowserRouter>,
     );
     expect(screen.getByText("Production API")).toBeInTheDocument();
     expect(screen.getByText("api.example.com")).toBeInTheDocument();

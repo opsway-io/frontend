@@ -84,7 +84,9 @@ const MaintenanceWindowDetailView: FunctionComponent<
         endAt: window.settings?.endAt
           ? new Date(window.settings.endAt).toISOString()
           : new Date(Date.now() + 3600000).toISOString(),
-        monitorIds: window.monitors ? window.monitors.map((m: any) => m.id) : [],
+        monitorIds: window.monitors
+          ? window.monitors.map((m: any) => m.id)
+          : [],
       });
     }
   }, [window, reset]);
@@ -129,15 +131,25 @@ const MaintenanceWindowDetailView: FunctionComponent<
         description: window.description || "",
         startAt: start.toISOString(),
         endAt: end.toISOString(),
-        monitorIds: window.monitors ? window.monitors.map((m: any) => m.id) : [],
+        monitorIds: window.monitors
+          ? window.monitors.map((m: any) => m.id)
+          : [],
       };
 
       await updateMaintenance(data);
-      enqueueSnackbar("Maintenance window completed. Monitors will resume within 1 minute.", { variant: "success", autoHideDuration: 6000 });
+      enqueueSnackbar(
+        "Maintenance window completed. Monitors will resume within 1 minute.",
+        { variant: "success", autoHideDuration: 6000 },
+      );
       navigate("/maintenance");
     } catch (err: any) {
       console.error("Complete early error:", err);
-      enqueueSnackbar(err?.response?.data?.message || err.message || "Failed to complete early", { variant: "error" });
+      enqueueSnackbar(
+        err?.response?.data?.message ||
+          err.message ||
+          "Failed to complete early",
+        { variant: "error" },
+      );
     } finally {
       setOpenComplete(false);
     }
@@ -259,7 +271,7 @@ const MaintenanceWindowDetailView: FunctionComponent<
               <Controller
                 name="endAt"
                 control={control}
-                rules={{ 
+                rules={{
                   required: "End time is required",
                   validate: (value) => {
                     const start = getValues("startAt");
@@ -267,7 +279,7 @@ const MaintenanceWindowDetailView: FunctionComponent<
                       return "End time must be after the start time";
                     }
                     return true;
-                  }
+                  },
                 }}
                 render={({ field, fieldState: { error } }) => (
                   <Flatpickr
@@ -297,12 +309,14 @@ const MaintenanceWindowDetailView: FunctionComponent<
                     options={monitorsList}
                     getOptionLabel={(option) => option.name}
                     value={monitorsList.filter((m: any) =>
-                      field.value.includes(m.id)
+                      field.value.includes(m.id),
                     )}
                     onChange={(_, newValue) =>
                       field.onChange(newValue.map((v) => v.id))
                     }
-                    isOptionEqualToValue={(option, value) => option.id === value.id}
+                    isOptionEqualToValue={(option, value) =>
+                      option.id === value.id
+                    }
                     renderInput={(params) => (
                       <TextField
                         {...params}
@@ -343,13 +357,17 @@ const MaintenanceWindowDetailView: FunctionComponent<
         <DialogTitle>Complete Maintenance Early?</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Are you sure you want to end this maintenance window right now?
-            All associated monitors will resume checks.
+            Are you sure you want to end this maintenance window right now? All
+            associated monitors will resume checks.
           </DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setOpenComplete(false)}>Cancel</Button>
-          <Button color="warning" onClick={handleCompleteEarly} disabled={isUpdating}>
+          <Button
+            color="warning"
+            onClick={handleCompleteEarly}
+            disabled={isUpdating}
+          >
             Complete Early
           </Button>
         </DialogActions>

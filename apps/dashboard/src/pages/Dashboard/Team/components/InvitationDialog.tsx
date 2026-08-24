@@ -94,59 +94,59 @@ const InvitationDialog: FunctionComponent<InvitationDialogProps> = (props) => {
 
   return (
     <>
-      <UpgradePromptModal 
-        open={openUpgradeModal} 
-        onClose={() => setOpenUpgradeModal(false)} 
-        featureName="Team Members" 
+      <UpgradePromptModal
+        open={openUpgradeModal}
+        onClose={() => setOpenUpgradeModal(false)}
+        featureName="Team Members"
       />
       <Dialog open={props.open} onClose={onClose} title="Invite a member">
         <DialogContent sx={{ minWidth: 400 }}>
-        <Stack spacing={2}>
-          <TextField
-            placeholder="foo@bar.com"
-            fullWidth
-            disabled={loading}
-            label="Email"
-            {...register("email", {
-              required: true,
-              validate: (value) => {
-                return validateEmail(value);
-              },
-            })}
-          />
+          <Stack spacing={2}>
+            <TextField
+              placeholder="foo@bar.com"
+              fullWidth
+              disabled={loading}
+              label="Email"
+              {...register("email", {
+                required: true,
+                validate: (value) => {
+                  return validateEmail(value);
+                },
+              })}
+            />
 
-          <Controller
-            name="role"
-            control={control}
-            rules={{ required: true }}
-            render={({ field }) => (
-              <TextField select label="Role" {...field}>
-                <MenuItem value="ADMIN">Admin</MenuItem>
-                <MenuItem value="MEMBER">Member</MenuItem>
-              </TextField>
-            )}
-          />
+            <Controller
+              name="role"
+              control={control}
+              rules={{ required: true }}
+              render={({ field }) => (
+                <TextField select label="Role" {...field}>
+                  <MenuItem value="ADMIN">Admin</MenuItem>
+                  <MenuItem value="MEMBER">Member</MenuItem>
+                </TextField>
+              )}
+            />
 
-          <Typography variant="body2" color="textSecondary">
-            Members can see everything in this team, but can't edit or create
-            anything. Admins can do everything except manage billing and delete
-            the team.
-          </Typography>
-        </Stack>
-      </DialogContent>
+            <Typography variant="body2" color="textSecondary">
+              Members can see everything in this team, but can't edit or create
+              anything. Admins can do everything except manage billing and
+              delete the team.
+            </Typography>
+          </Stack>
+        </DialogContent>
 
-      <DialogActions>
-        <LoadingButton
-          variant="contained"
-          color="success"
-          disabled={!isValid}
-          onClick={onSubmit}
-          loading={loading}
-        >
-          Send invite
-        </LoadingButton>
-      </DialogActions>
-    </Dialog>
+        <DialogActions>
+          <LoadingButton
+            variant="contained"
+            color="success"
+            disabled={!isValid}
+            onClick={onSubmit}
+            loading={loading}
+          >
+            Send invite
+          </LoadingButton>
+        </DialogActions>
+      </Dialog>
     </>
   );
 };

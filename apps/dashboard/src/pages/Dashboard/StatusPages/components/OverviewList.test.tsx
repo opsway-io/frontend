@@ -60,9 +60,11 @@ describe("StatusPageOverviewList", () => {
     render(
       <MemoryRouter>
         <StatusPageOverviewList />
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
-    expect(screen.getByText("My API Status - status.opsway.eu")).toBeInTheDocument();
+    expect(
+      screen.getByText("My API Status - status.opsway.eu"),
+    ).toBeInTheDocument();
   });
 });

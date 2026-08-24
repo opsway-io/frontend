@@ -265,7 +265,9 @@ export interface IGetApiKeysResponse {
 export async function getApiKeys(
   teamId: string | number,
 ): Promise<IGetApiKeysResponse> {
-  const response = await client.get<IGetApiKeysResponse>(`/v1/teams/${teamId}/apikeys`);
+  const response = await client.get<IGetApiKeysResponse>(
+    `/v1/teams/${teamId}/apikeys`,
+  );
   return response.data;
 }
 
@@ -306,11 +308,16 @@ export interface EscalationPolicy {
   rotations: OnCallRotation[];
 }
 
-export async function getEscalationPolicy(teamId: number): Promise<EscalationPolicy> {
+export async function getEscalationPolicy(
+  teamId: number,
+): Promise<EscalationPolicy> {
   const response = await client.get(`/v1/teams/${teamId}/escalation`);
   return response?.data;
 }
 
-export async function putEscalationPolicy(teamId: number, policy: EscalationPolicy): Promise<void> {
+export async function putEscalationPolicy(
+  teamId: number,
+  policy: EscalationPolicy,
+): Promise<void> {
   await client.put(`/v1/teams/${teamId}/escalation`, policy);
 }

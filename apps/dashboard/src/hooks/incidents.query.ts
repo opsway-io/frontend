@@ -68,7 +68,7 @@ export const useMonitorIncidents = (
     },
     {
       refetchInterval: 10000,
-    }
+    },
   );
 };
 
@@ -103,7 +103,10 @@ export const useAcknowledgeIncident = () => {
       if (!teamId) {
         return Promise.reject(new Error("Team not found"));
       }
-      return IncidentsAPI.patchAcknowledgeMonitorIncident(teamId, data.incidentId);
+      return IncidentsAPI.patchAcknowledgeMonitorIncident(
+        teamId,
+        data.incidentId,
+      );
     },
     {
       onSuccess: () => {

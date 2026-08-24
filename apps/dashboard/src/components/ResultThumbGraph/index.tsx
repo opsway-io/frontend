@@ -36,14 +36,13 @@ interface ResultThumbGraphProps {
 
 const ResultThumbGraph: FunctionComponent<ResultThumbGraphProps> = (props) => {
   const ratio = Math.max(...props.stats) / 100;
-  for (let i = 0; i < props.stats.length; i++) {
-    props.stats[i] = Math.round(props.stats[i] / ratio);
-  }
+  const computedStats = props.stats.map(val => Math.round(val / ratio));
+  
   return (
     <Container>
       {new Array(24).fill(1).map((_, i) => (
         <LineContainer key={i}>
-          <Line value={props.stats[i]} onClick={() => props.onClick?.(i)} />
+          <Line value={computedStats[i] || 0} onClick={() => props.onClick?.(i)} />
         </LineContainer>
       ))}
     </Container>

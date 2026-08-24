@@ -50,8 +50,9 @@ export interface MonitorStats {
   totalCount: number;
   uptimePercentage: number;
   averageResponseTime: number;
-  p99: number;
-  p95: number;
+  averageResponseTimes?: number[];
+  p99?: number;
+  p95?: number;
 }
 
 /*

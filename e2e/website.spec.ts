@@ -11,16 +11,23 @@ test.describe("Website Landing Pages", () => {
 
     // Ensure the main heading is visible
     await expect(page.locator("text=Open Source Operations")).toBeVisible();
-    await expect(page.locator("text=If something breaks, we'll let you know.")).toBeVisible();
+    await expect(
+      page.locator("text=If something breaks, we'll let you know."),
+    ).toBeVisible();
   });
 
-  test("has a Get Started button that links to the login app", async ({ page }) => {
+  test("has a Get Started button that links to the login app", async ({
+    page,
+  }) => {
     await page.goto(WEBSITE_URL);
 
     // Verify "Get started" button
     const getStartedBtn = page.locator("a", { hasText: "Get started" });
     await expect(getStartedBtn).toBeVisible();
-    await expect(getStartedBtn).toHaveAttribute("href", "https://my.opsway.eu/login");
+    await expect(getStartedBtn).toHaveAttribute(
+      "href",
+      "https://my.opsway.eu/login",
+    );
   });
 
   test("has a GitHub button", async ({ page }) => {
@@ -29,6 +36,9 @@ test.describe("Website Landing Pages", () => {
     // Verify "GitHub" button
     const githubBtn = page.locator("a", { hasText: "GitHub" });
     await expect(githubBtn).toBeVisible();
-    await expect(githubBtn).toHaveAttribute("href", "https://github.com/opsway-io");
+    await expect(githubBtn).toHaveAttribute(
+      "href",
+      "https://github.com/opsway-io",
+    );
   });
 });

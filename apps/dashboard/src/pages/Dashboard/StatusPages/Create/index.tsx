@@ -83,10 +83,10 @@ const StatusPagesCreateView: FunctionComponent<
 
   return (
     <>
-      <UpgradePromptModal 
-        open={openUpgradeModal} 
-        onClose={() => setOpenUpgradeModal(false)} 
-        featureName="Status Pages" 
+      <UpgradePromptModal
+        open={openUpgradeModal}
+        onClose={() => setOpenUpgradeModal(false)}
+        featureName="Status Pages"
       />
       <Helmet>
         <title>Status pages</title>

@@ -10,7 +10,9 @@ vi.mock("./api", () => ({
 
 describe("StatusPage App", () => {
   it("renders loading state initially", () => {
-    (api.getPublicStatusPage as any).mockImplementation(() => new Promise(() => {}));
+    (api.getPublicStatusPage as any).mockImplementation(
+      () => new Promise(() => {}),
+    );
     render(<App />);
     expect(screen.getByText("Loading status page...")).toBeInTheDocument();
   });
@@ -18,14 +20,12 @@ describe("StatusPage App", () => {
   it("renders status page with data", async () => {
     (api.getPublicStatusPage as any).mockResolvedValue({
       name: "Opsway Status",
-      monitors: [
-        { id: 1, name: "Production API", status: "OPERATIONAL" }
-      ],
-      showBranding: true
+      monitors: [{ id: 1, name: "Production API", status: "OPERATIONAL" }],
+      showBranding: true,
     });
-    
+
     render(<App />);
-    
+
     await waitFor(() => {
       expect(screen.getByText("Opsway Status")).toBeInTheDocument();
     });

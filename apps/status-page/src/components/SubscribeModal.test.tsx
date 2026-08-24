@@ -15,7 +15,9 @@ describe("SubscribeModal", () => {
   });
 
   it("renders correctly when open", () => {
-    render(<SubscribeModal open={true} onClose={mockOnClose} domain="test.com" />);
+    render(
+      <SubscribeModal open={true} onClose={mockOnClose} domain="test.com" />,
+    );
     expect(screen.getByText("Subscribe to Updates")).toBeInTheDocument();
     expect(screen.getByLabelText(/Email Address/i)).toBeInTheDocument();
   });
@@ -23,7 +25,9 @@ describe("SubscribeModal", () => {
   it("calls subscribe API and shows success message on valid submission", async () => {
     vi.mocked(api.subscribeToStatusPage).mockResolvedValue(undefined);
 
-    render(<SubscribeModal open={true} onClose={mockOnClose} domain="test.com" />);
+    render(
+      <SubscribeModal open={true} onClose={mockOnClose} domain="test.com" />,
+    );
 
     const emailInput = screen.getByLabelText(/Email Address/i);
     const subscribeButton = screen.getByRole("button", { name: /Subscribe/i });
@@ -32,15 +36,24 @@ describe("SubscribeModal", () => {
     fireEvent.click(subscribeButton);
 
     await waitFor(() => {
-      expect(api.subscribeToStatusPage).toHaveBeenCalledWith("test.com", "test@example.com");
-      expect(screen.getByText(/Subscription request sent!/i)).toBeInTheDocument();
+      expect(api.subscribeToStatusPage).toHaveBeenCalledWith(
+        "test.com",
+        "test@example.com",
+      );
+      expect(
+        screen.getByText(/Subscription request sent!/i),
+      ).toBeInTheDocument();
     });
   });
 
   it("shows error message on API failure", async () => {
-    vi.mocked(api.subscribeToStatusPage).mockRejectedValue(new Error("Network Error"));
+    vi.mocked(api.subscribeToStatusPage).mockRejectedValue(
+      new Error("Network Error"),
+    );
 
-    render(<SubscribeModal open={true} onClose={mockOnClose} domain="test.com" />);
+    render(
+      <SubscribeModal open={true} onClose={mockOnClose} domain="test.com" />,
+    );
 
     const emailInput = screen.getByLabelText(/Email Address/i);
     const subscribeButton = screen.getByRole("button", { name: /Subscribe/i });

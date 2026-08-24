@@ -81,11 +81,7 @@ const MonitorsDataGrid: FunctionComponent<MonitorsDataGridProps> = (props) => {
       sortable: false,
       renderCell: (col) => (
         <ResultThumbGraph
-          stats={
-            col.row.stats.averageResponseTime
-              ? [col.row.stats.averageResponseTime]
-              : []
-          }
+          stats={col.row.stats.averageResponseTimes || []}
           onClick={() => {
             navigate(`/monitors/1/checks/1`);
           }}
@@ -98,7 +94,8 @@ const MonitorsDataGrid: FunctionComponent<MonitorsDataGridProps> = (props) => {
       align: "right",
       headerAlign: "right",
       sortable: false,
-      valueGetter: (col) => `${col.row.stats?.uptimePercentage?.toFixed(2) || 0}%`,
+      valueGetter: (col) =>
+        `${col.row.stats?.uptimePercentage?.toFixed(2) || 0}%`,
     },
     {
       field: "p99",

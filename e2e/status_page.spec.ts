@@ -12,12 +12,12 @@ test.describe("Status Page Flows", () => {
     // Look for a list or create button
     const createButton = page.locator('button:has-text("Create")');
     if (await createButton.isVisible()) {
-        await createButton.click();
-        await expect(page).toHaveURL(/\/status-pages\/create/);
-        
-        // Verify creation fields
-        await expect(page.locator('input[name="name"]')).toBeVisible();
-        await expect(page.locator('input[name="domain"]')).toBeVisible();
+      await createButton.click();
+      await expect(page).toHaveURL(/\/status-pages\/create/);
+
+      // Verify creation fields
+      await expect(page.locator('input[name="name"]')).toBeVisible();
+      await expect(page.locator('input[name="domain"]')).toBeVisible();
     }
   });
 });

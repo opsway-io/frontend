@@ -47,7 +47,7 @@ vi.mock("../../../../hooks/incidents.query", () => ({
 }));
 
 vi.mock("react-router-dom", async () => {
-  const actual = await vi.importActual("react-router-dom") as any;
+  const actual = (await vi.importActual("react-router-dom")) as any;
   return {
     ...actual,
     useParams: () => ({ id: "1" }),
@@ -55,22 +55,32 @@ vi.mock("react-router-dom", async () => {
 });
 
 // Mock complex sub-components
-vi.mock("./components/AverageResponseTimeCard", () => ({ default: () => <div>Avg Response</div> }));
-vi.mock("./components/ChecksDataGrid", () => ({ ChecksDataGrid: () => <div>Checks Grid</div> }));
-vi.mock("./components/LastCheckCard", () => ({ default: () => <div>Last Check</div> }));
-vi.mock("./components/ResponseTimesGraph", () => ({ default: () => <div>Response Graph</div> }));
+vi.mock("./components/AverageResponseTimeCard", () => ({
+  default: () => <div>Avg Response</div>,
+}));
+vi.mock("./components/ChecksDataGrid", () => ({
+  ChecksDataGrid: () => <div>Checks Grid</div>,
+}));
+vi.mock("./components/LastCheckCard", () => ({
+  default: () => <div>Last Check</div>,
+}));
+vi.mock("./components/ResponseTimesGraph", () => ({
+  default: () => <div>Response Graph</div>,
+}));
 vi.mock("./components/TLSCard", () => ({ default: () => <div>TLS Card</div> }));
-vi.mock("./components/UptimeCard", () => ({ default: () => <div>Uptime Card</div> }));
+vi.mock("./components/UptimeCard", () => ({
+  default: () => <div>Uptime Card</div>,
+}));
 
 describe("IncidentMonitorDetailsView", () => {
   it("renders incident triggers correctly", () => {
     render(
       <BrowserRouter>
         <IncidentMonitorDetailsView />
-      </BrowserRouter>
+      </BrowserRouter>,
     );
     expect(screen.getByText("API Monitor")).toBeInTheDocument();
-    
+
     // Verify the incident details render correctly
     expect(screen.getByText(/status/)).toBeInTheDocument();
     expect(screen.getByText("==")).toBeInTheDocument();

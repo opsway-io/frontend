@@ -51,16 +51,19 @@ const AccountSecurityTabView: FunctionComponent = () => {
               title="Change password"
               description="Set a new password for your account. The new password must be at least 8 characters long."
             >
-              <TextField
-                label="Old password"
-                type="password"
-                {...register("oldPassword", {
-                  required: true,
-                })}
-              />
-
-              <Divider />
-
+              {user?.hasPassword && (
+                <>
+                  <TextField
+                    label="Old password"
+                    type="password"
+                    {...register("oldPassword", {
+                      required: true,
+                    })}
+                  />
+                  <Divider />
+                </>
+              )}
+              
               <TextField
                 label="New password"
                 type="password"

@@ -10,11 +10,11 @@ test.describe("Authentication Flows", () => {
 
     // Expect "Welcome back" to be visible
     await expect(page.locator("text=Welcome back")).toBeVisible();
-    
+
     // Expect login form to be visible (email and password inputs)
     await expect(page.locator('input[type="email"]')).toBeVisible();
     await expect(page.locator('input[type="password"]')).toBeVisible();
-    
+
     // Expect "Sign In" button to exist
     await expect(page.locator('button:has-text("Sign in")')).toBeVisible();
   });
@@ -28,8 +28,10 @@ test.describe("Authentication Flows", () => {
 
     // We should be on the registration page
     await expect(page).toHaveURL(/\/login\/register/);
-    
+
     // Check for registration specific elements
-    await expect(page.locator("text=Create a new account").first()).toBeVisible();
+    await expect(
+      page.locator("text=Create a new account").first(),
+    ).toBeVisible();
   });
 });

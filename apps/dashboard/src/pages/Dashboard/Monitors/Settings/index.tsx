@@ -115,7 +115,9 @@ const MonitorSettingsView: FunctionComponent = () => {
               type="submit"
               loading={isUpdating}
               disabled={
-                !formMethods.formState.isValid || !formMethods.formState.isDirty || isUpdating
+                !formMethods.formState.isValid ||
+                !formMethods.formState.isDirty ||
+                isUpdating
               }
               onClick={updateMonitor}
               sx={{
@@ -133,9 +135,9 @@ const MonitorSettingsView: FunctionComponent = () => {
             <Tab value="request" label="Request" />
             <Tab value="assertions" label="Response assertions" />
             <Tab value="frequencyAndLocation" label="Frequency & Location" />
-            {!["TCP", "ICMP", "DNS", "POSTGRES", "MYSQL", "REDIS"].includes(formMethods.watch("settings.method")) && (
-              <Tab value="tlsVerification" label="SSL/TLS" />
-            )}
+            {!["TCP", "ICMP", "DNS", "POSTGRES", "MYSQL", "REDIS"].includes(
+              formMethods.watch("settings.method"),
+            ) && <Tab value="tlsVerification" label="SSL/TLS" />}
           </Tabs>
 
           <Box sx={{ display: selectedTab === "request" ? "block" : "none" }}>

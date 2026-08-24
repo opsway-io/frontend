@@ -17,7 +17,11 @@ interface Props {
   domain: string;
 }
 
-const SubscribeModal: FunctionComponent<Props> = ({ open, onClose, domain }) => {
+const SubscribeModal: FunctionComponent<Props> = ({
+  open,
+  onClose,
+  domain,
+}) => {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -53,13 +57,19 @@ const SubscribeModal: FunctionComponent<Props> = ({ open, onClose, domain }) => 
       <form onSubmit={handleSubmit}>
         <DialogContent>
           <DialogContentText mb={2}>
-            Get notified via email whenever opsway creates, updates, or resolves an incident.
+            Get notified via email whenever opsway creates, updates, or resolves
+            an incident.
           </DialogContentText>
-          
-          {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
+
+          {error && (
+            <Alert severity="error" sx={{ mb: 2 }}>
+              {error}
+            </Alert>
+          )}
           {success ? (
             <Alert severity="success">
-              Subscription request sent! Please check your email to verify your subscription.
+              Subscription request sent! Please check your email to verify your
+              subscription.
             </Alert>
           ) : (
             <TextField
@@ -82,7 +92,12 @@ const SubscribeModal: FunctionComponent<Props> = ({ open, onClose, domain }) => 
             {success ? "Close" : "Cancel"}
           </Button>
           {!success && (
-            <Button type="submit" variant="contained" color="primary" disabled={loading || !email}>
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              disabled={loading || !email}
+            >
               Subscribe
             </Button>
           )}

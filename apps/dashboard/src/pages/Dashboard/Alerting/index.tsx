@@ -93,27 +93,42 @@ const AlertingView: FunctionComponent = () => {
                         alignItems="center"
                       >
                         <Box>
-                          <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 1 }}>
+                          <Stack
+                            direction="row"
+                            alignItems="center"
+                            spacing={1}
+                            sx={{ mb: 1 }}
+                          >
                             <Typography variant="h6" color="text.primary">
                               {rule.name}
                             </Typography>
                           </Stack>
-                          <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 2 }}>
+                          <Stack
+                            direction="row"
+                            alignItems="center"
+                            spacing={1}
+                            sx={{ mb: 2 }}
+                          >
                             {rule.condition === "monitor_down" ? (
                               <MdOutlineMonitor size={18} color="gray" />
                             ) : (
                               <MdWarning size={18} color="gray" />
                             )}
-                            <Typography
-                              variant="body2"
-                              color="text.secondary"
-                            >
+                            <Typography variant="body2" color="text.secondary">
                               Condition: <strong>{rule.condition}</strong>
                             </Typography>
                           </Stack>
-                          <Stack direction="row" alignItems="center" spacing={1}>
+                          <Stack
+                            direction="row"
+                            alignItems="center"
+                            spacing={1}
+                          >
                             <MdNotificationsActive size={18} color="gray" />
-                            <Typography variant="caption" color="text.secondary" sx={{ mr: 1 }}>
+                            <Typography
+                              variant="caption"
+                              color="text.secondary"
+                              sx={{ mr: 1 }}
+                            >
                               Channels:
                             </Typography>
                             {parseChannels(rule.channels).map((channel, i) => (

@@ -17,7 +17,15 @@ import { useForm, Controller } from "react-hook-form";
 import { enqueueSnackbar } from "notistack";
 import Container from "../../../../components/Container";
 
-const CHANNEL_OPTIONS = ["email", "discord", "telegram", "sms", "voice", "datadog", "new_relic"];
+const CHANNEL_OPTIONS = [
+  "email",
+  "discord",
+  "telegram",
+  "sms",
+  "voice",
+  "datadog",
+  "new_relic",
+];
 const CONDITION_OPTIONS = ["monitor_down", "*", "ssl_expiry"];
 
 interface IFormInput {
@@ -101,14 +109,19 @@ const AlertRuleCreateView: FunctionComponent = () => {
                     options={CONDITION_OPTIONS}
                     value={field.value}
                     onChange={(_, newValue) => field.onChange(newValue || "")}
-                    onInputChange={(_, newInputValue) => field.onChange(newInputValue)}
+                    onInputChange={(_, newInputValue) =>
+                      field.onChange(newInputValue)
+                    }
                     renderInput={(params) => (
                       <TextField
                         {...params}
                         label="Trigger Condition"
                         fullWidth
                         error={!!error}
-                        helperText={error?.message || "Select a default or type a custom match string"}
+                        helperText={
+                          error?.message ||
+                          "Select a default or type a custom match string"
+                        }
                       />
                     )}
                   />
@@ -166,7 +179,12 @@ const AlertRuleCreateView: FunctionComponent = () => {
           </Paper>
 
           <Box>
-            <Button type="submit" variant="contained" disabled={isLoading} size="large">
+            <Button
+              type="submit"
+              variant="contained"
+              disabled={isLoading}
+              size="large"
+            >
               {isLoading ? "Creating..." : "Create Rule"}
             </Button>
           </Box>

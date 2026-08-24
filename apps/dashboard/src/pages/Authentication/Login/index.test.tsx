@@ -9,7 +9,9 @@ vi.mock("./form", () => ({
 }));
 
 vi.mock("./social", () => ({
-  default: () => <div data-testid="social-login-form">Social Login Form Mock</div>,
+  default: () => (
+    <div data-testid="social-login-form">Social Login Form Mock</div>
+  ),
 }));
 
 describe("LoginView", () => {
@@ -17,7 +19,7 @@ describe("LoginView", () => {
     render(
       <MemoryRouter>
         <LoginView />
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     expect(screen.getByText("Welcome back")).toBeInTheDocument();

@@ -99,15 +99,26 @@ const MonitorDetailView: FunctionComponent = () => {
     }
 
     return [
-      <div key="resume" style={{ display: 'inline-block' }} title={isMaintenance ? "Cannot resume while an active maintenance window is ongoing" : undefined}>
+      <div
+        key="resume"
+        style={{ display: "inline-block" }}
+        title={
+          isMaintenance
+            ? "Cannot resume while an active maintenance window is ongoing"
+            : undefined
+        }
+      >
         <LoadingButton
           startIcon={isActive ? <IoPause /> : <IoPlay />}
           color="secondary"
           sx={{
             span: {
               color: (t) =>
-                isActive && !isMaintenance ? t.palette.info.main :
-                !isMaintenance ? t.palette.success.main : t.palette.grey[500],
+                isActive && !isMaintenance
+                  ? t.palette.info.main
+                  : !isMaintenance
+                    ? t.palette.success.main
+                    : t.palette.grey[500],
             },
           }}
           loading={isUpdatingState}
@@ -279,7 +290,9 @@ const MonitorDetailView: FunctionComponent = () => {
                 label="TLS"
               />
               <Chip
-                sx={{ backgroundColor: alpha(theme.palette.secondary.main, 0.5) }}
+                sx={{
+                  backgroundColor: alpha(theme.palette.secondary.main, 0.5),
+                }}
                 label="Processing"
               />
               <Chip

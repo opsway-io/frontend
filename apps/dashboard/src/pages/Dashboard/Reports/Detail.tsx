@@ -45,7 +45,11 @@ const ReportDetailView: FunctionComponent = () => {
       <Container
         header={
           <Stack direction="row" alignItems="center" spacing={2}>
-            <Button component={Link} to="/reports" startIcon={<IoChevronBack />}>
+            <Button
+              component={Link}
+              to="/reports"
+              startIcon={<IoChevronBack />}
+            >
               Back
             </Button>
             <Typography variant="h4">Loading Report...</Typography>
@@ -62,7 +66,11 @@ const ReportDetailView: FunctionComponent = () => {
       <Container
         header={
           <Stack direction="row" alignItems="center" spacing={2}>
-            <Button component={Link} to="/reports" startIcon={<IoChevronBack />}>
+            <Button
+              component={Link}
+              to="/reports"
+              startIcon={<IoChevronBack />}
+            >
               Back
             </Button>
             <Typography variant="h4">Report Not Found</Typography>
@@ -82,14 +90,21 @@ const ReportDetailView: FunctionComponent = () => {
 
       <Container
         header={
-          <Stack direction="row" alignItems="center" justifyContent="space-between" width="100%">
+          <Stack
+            direction="row"
+            alignItems="center"
+            justifyContent="space-between"
+            width="100%"
+          >
             <Stack direction="row" alignItems="center" spacing={2}>
-              <Button component={Link} to="/reports" startIcon={<IoChevronBack />}>
+              <Button
+                component={Link}
+                to="/reports"
+                startIcon={<IoChevronBack />}
+              >
                 Back
               </Button>
-              <Typography variant="h4">
-                Report #{report.id}
-              </Typography>
+              <Typography variant="h4">Report #{report.id}</Typography>
               <Chip size="small" label={report.type} color="info" />
               <Chip
                 size="small"
@@ -137,7 +152,9 @@ const ReportDetailView: FunctionComponent = () => {
                     {report.data.uptime.map((row: any, i: number) => (
                       <TableRow
                         key={i}
-                        sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                        sx={{
+                          "&:last-child td, &:last-child th": { border: 0 },
+                        }}
                       >
                         <TableCell component="th" scope="row">
                           {row.MonitorID}
@@ -154,9 +171,12 @@ const ReportDetailView: FunctionComponent = () => {
               </TableContainer>
             </Card>
           )}
-          
+
           {report.status === "COMPLETED" && !report.data?.uptime && (
-             <Typography color="text.secondary">Report data for this type is not yet visualized in the dashboard. Please use the Download JSON button.</Typography>
+            <Typography color="text.secondary">
+              Report data for this type is not yet visualized in the dashboard.
+              Please use the Download JSON button.
+            </Typography>
           )}
         </Stack>
       </Container>

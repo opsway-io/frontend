@@ -17,7 +17,12 @@ import Avatar from "../Avatar";
 import useSidebarStore from "../../hooks/sidebar.store";
 import useAuthenticationStore from "../../hooks/authentication.store";
 import { useUserTeams } from "../../hooks/user.query";
-import { IoAdd, IoSettingsOutline, IoLogOutOutline, IoCheckmark } from "react-icons/io5";
+import {
+  IoAdd,
+  IoSettingsOutline,
+  IoLogOutOutline,
+  IoCheckmark,
+} from "react-icons/io5";
 
 interface SidebarHeaderProps {
   name?: string;
@@ -30,16 +35,16 @@ const SidebarHeader: FunctionComponent<SidebarHeaderProps> = (props) => {
   const { collapsed } = useSidebarStore();
   const navigate = useNavigate();
   const authentication = useAuthenticationStore();
-  
+
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
-  
+
   const { data: userTeams } = useUserTeams(authentication.currentUserId);
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
-  
+
   const handleClose = () => {
     setAnchorEl(null);
   };
@@ -81,7 +86,7 @@ const SidebarHeader: FunctionComponent<SidebarHeaderProps> = (props) => {
           {collapsed && <Avatar src={props.picture} name={props.name} />}
 
           {!collapsed && (
-            <Stack spacing={0} alignContent="center" sx={{ textAlign: 'left' }}>
+            <Stack spacing={0} alignContent="center" sx={{ textAlign: "left" }}>
               {props.loading && (
                 <>
                   <Skeleton
@@ -126,31 +131,36 @@ const SidebarHeader: FunctionComponent<SidebarHeaderProps> = (props) => {
         open={open}
         onClose={handleClose}
         PaperProps={{
-          sx: { width: 250, maxWidth: '100%' },
+          sx: { width: 250, maxWidth: "100%" },
         }}
-        transformOrigin={{ horizontal: 'left', vertical: 'top' }}
-        anchorOrigin={{ horizontal: 'left', vertical: 'bottom' }}
+        transformOrigin={{ horizontal: "left", vertical: "top" }}
+        anchorOrigin={{ horizontal: "left", vertical: "bottom" }}
       >
         <MenuItem disabled>
           <Typography variant="overline">Switch Team</Typography>
         </MenuItem>
-        
+
         {userTeams?.teams?.map((team) => (
-          <MenuItem 
-            key={team.id} 
+          <MenuItem
+            key={team.id}
             onClick={() => handleSwitchTeam(team.id)}
             selected={team.id === authentication.currentTeamId}
           >
             <ListItemText primary={team.displayName || team.name} />
             {team.id === authentication.currentTeamId && (
-              <ListItemIcon sx={{ minWidth: 'auto', ml: 1 }}>
+              <ListItemIcon sx={{ minWidth: "auto", ml: 1 }}>
                 <IoCheckmark />
               </ListItemIcon>
             )}
           </MenuItem>
         ))}
-        
-        <MenuItem onClick={() => { handleClose(); navigate("/login/team/register"); }}>
+
+        <MenuItem
+          onClick={() => {
+            handleClose();
+            navigate("/login/team/register");
+          }}
+        >
           <ListItemIcon>
             <IoAdd />
           </ListItemIcon>
@@ -158,14 +168,19 @@ const SidebarHeader: FunctionComponent<SidebarHeaderProps> = (props) => {
         </MenuItem>
 
         <Divider />
-        
-        <MenuItem onClick={() => { handleClose(); navigate("/account"); }}>
+
+        <MenuItem
+          onClick={() => {
+            handleClose();
+            navigate("/account");
+          }}
+        >
           <ListItemIcon>
             <IoSettingsOutline />
           </ListItemIcon>
           <ListItemText primary="Account Settings" />
         </MenuItem>
-        
+
         <MenuItem onClick={handleLogout}>
           <ListItemIcon>
             <IoLogOutOutline />

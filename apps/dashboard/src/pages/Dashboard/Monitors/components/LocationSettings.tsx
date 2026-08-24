@@ -32,7 +32,9 @@ const LocationSettings: FunctionComponent = () => {
               if (isSelected) {
                 // If it's the last one, prevent unselecting
                 if (currentValues.length > 1) {
-                  field.onChange(currentValues.filter((l: string) => l !== loc));
+                  field.onChange(
+                    currentValues.filter((l: string) => l !== loc),
+                  );
                 }
               } else {
                 field.onChange([...currentValues, loc]);

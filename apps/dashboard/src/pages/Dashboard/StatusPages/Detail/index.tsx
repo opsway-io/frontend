@@ -296,8 +296,13 @@ const StatusPagesDetailView: FunctionComponent<
                 <Divider sx={{ my: 3 }} />
 
                 <Typography variant="subtitle1">Branding & CSS</Typography>
-                <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                  Customize the branding and inject custom HTML/CSS styles on your status page.
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  sx={{ mb: 2 }}
+                >
+                  Customize the branding and inject custom HTML/CSS styles on
+                  your status page.
                 </Typography>
 
                 <Controller

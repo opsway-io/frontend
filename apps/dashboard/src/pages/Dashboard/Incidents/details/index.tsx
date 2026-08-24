@@ -172,18 +172,38 @@ const IncidentMonitorDetailsView: FunctionComponent = () => {
                   </Button>
                 }
               >
-                <AlertTitle sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 1 }}>
+                <AlertTitle
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    flexWrap: "wrap",
+                    gap: 1,
+                  }}
+                >
                   <span>Active Incident:</span>
                 </AlertTitle>
-                
+
                 <Stack spacing={1} mt={1}>
                   <Typography variant="body1">
-                    Assertion failed: The <strong>{incident.property || "Unknown"}</strong> property was checked.
+                    Assertion failed: The{" "}
+                    <strong>{incident.property || "Unknown"}</strong> property
+                    was checked.
                   </Typography>
                   <Stack direction="row" spacing={1} alignItems="center">
-                    <Typography variant="body2" color="text.secondary">Trigger condition:</Typography>
-                    <Chip size="small" color="error" label={incident.operator || "N/A"} />
-                    <Chip size="small" variant="outlined" color="error" label={incident.target || "N/A"} />
+                    <Typography variant="body2" color="text.secondary">
+                      Trigger condition:
+                    </Typography>
+                    <Chip
+                      size="small"
+                      color="error"
+                      label={incident.operator || "N/A"}
+                    />
+                    <Chip
+                      size="small"
+                      variant="outlined"
+                      color="error"
+                      label={incident.target || "N/A"}
+                    />
                   </Stack>
                   <Stack direction="row" spacing={4} mt={1}>
                     <Typography variant="body2">
@@ -312,7 +332,9 @@ const IncidentMonitorDetailsView: FunctionComponent = () => {
                 label="TLS"
               />
               <Chip
-                sx={{ backgroundColor: alpha(theme.palette.secondary.main, 0.5) }}
+                sx={{
+                  backgroundColor: alpha(theme.palette.secondary.main, 0.5),
+                }}
                 label="Processing"
               />
               <Chip

@@ -28,7 +28,15 @@ import Container from "../../../../components/Container";
 import Placeholder from "../../../../components/Placeholder";
 import { Restrict, Role } from "../../../../components/Restrict";
 
-const CHANNEL_OPTIONS = ["email", "discord", "telegram", "sms", "voice", "datadog", "new_relic"];
+const CHANNEL_OPTIONS = [
+  "email",
+  "discord",
+  "telegram",
+  "sms",
+  "voice",
+  "datadog",
+  "new_relic",
+];
 const CONDITION_OPTIONS = ["monitor_down", "*", "ssl_expiry"];
 
 interface IFormInput {
@@ -69,7 +77,10 @@ const AlertRuleDetailView: FunctionComponent = () => {
           channelsArr = parsed;
         }
       } catch (e) {
-        channelsArr = rule.channels.split(",").map((c: string) => c.trim()).filter((c: string) => c);
+        channelsArr = rule.channels
+          .split(",")
+          .map((c: string) => c.trim())
+          .filter((c: string) => c);
       }
       reset({
         name: rule.name,
@@ -171,15 +182,22 @@ const AlertRuleDetailView: FunctionComponent = () => {
                         freeSolo
                         options={CONDITION_OPTIONS}
                         value={field.value}
-                        onChange={(_, newValue) => field.onChange(newValue || "")}
-                        onInputChange={(_, newInputValue) => field.onChange(newInputValue)}
+                        onChange={(_, newValue) =>
+                          field.onChange(newValue || "")
+                        }
+                        onInputChange={(_, newInputValue) =>
+                          field.onChange(newInputValue)
+                        }
                         renderInput={(params) => (
                           <TextField
                             {...params}
                             label="Trigger Condition"
                             fullWidth
                             error={!!error}
-                            helperText={error?.message || "Select a default or type a custom match string"}
+                            helperText={
+                              error?.message ||
+                              "Select a default or type a custom match string"
+                            }
                           />
                         )}
                       />
@@ -237,7 +255,12 @@ const AlertRuleDetailView: FunctionComponent = () => {
               </Paper>
 
               <Box>
-                <Button type="submit" variant="contained" disabled={isUpdating} size="large">
+                <Button
+                  type="submit"
+                  variant="contained"
+                  disabled={isUpdating}
+                  size="large"
+                >
                   {isUpdating ? "Saving..." : "Save Changes"}
                 </Button>
               </Box>

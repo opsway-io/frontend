@@ -7,15 +7,9 @@ import Cookies from "js-cookie";
 
 const OAuthLoginView: FunctionComponent = () => {
   const navigate = useNavigate();
-  const [
-    setCurrentUserID,
-    setCurrentTeamID,
-    logOut,
-  ] = useAuthenticationStore((state) => [
-    state.setCurrentUserID,
-    state.setCurrentTeamID,
-    state.logOut,
-  ]);
+  const [setCurrentUserID, setCurrentTeamID, logOut] = useAuthenticationStore(
+    (state) => [state.setCurrentUserID, state.setCurrentTeamID, state.logOut],
+  );
 
   useEffect(() => {
     try {

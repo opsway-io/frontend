@@ -74,9 +74,18 @@ const ChecksDataGrid: FunctionComponent<MonitorChecksDataGridProps> = (
       sortable: false,
       renderCell: (col) => {
         if (col.row.anomaly) {
-          return <Chip label="Anomaly" color="error" size="small" variant="filled" />;
+          return (
+            <Chip label="Anomaly" color="error" size="small" variant="filled" />
+          );
         }
-        return <Chip label="Normal" color="success" size="small" variant="outlined" />;
+        return (
+          <Chip
+            label="Normal"
+            color="success"
+            size="small"
+            variant="outlined"
+          />
+        );
       },
     },
     {

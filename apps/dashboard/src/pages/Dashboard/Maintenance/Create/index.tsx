@@ -120,7 +120,7 @@ const MaintenanceWindowCreateView: FunctionComponent<
           <Controller
             name="endAt"
             control={control}
-            rules={{ 
+            rules={{
               required: "End time is required",
               validate: (value) => {
                 const start = getValues("startAt");
@@ -128,7 +128,7 @@ const MaintenanceWindowCreateView: FunctionComponent<
                   return "End time must be after the start time";
                 }
                 return true;
-              }
+              },
             }}
             render={({ field, fieldState: { error } }) => (
               <Flatpickr
@@ -157,8 +157,12 @@ const MaintenanceWindowCreateView: FunctionComponent<
                 multiple
                 options={monitorsList}
                 getOptionLabel={(option) => option.name}
-                value={monitorsList.filter((m: any) => field.value.includes(m.id))}
-                onChange={(_, newValue) => field.onChange(newValue.map((v) => v.id))}
+                value={monitorsList.filter((m: any) =>
+                  field.value.includes(m.id),
+                )}
+                onChange={(_, newValue) =>
+                  field.onChange(newValue.map((v) => v.id))
+                }
                 isOptionEqualToValue={(option, value) => option.id === value.id}
                 renderInput={(params) => (
                   <TextField

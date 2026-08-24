@@ -13,7 +13,7 @@ vi.mock("../../../hooks/maintenance.query", () => ({
 // Mock Restrict component to just render children
 vi.mock("../../../components/Restrict", () => ({
   Restrict: ({ children }: any) => <>{children}</>,
-  Role: { ADMIN: "ADMIN", USER: "USER", VIEWER: "VIEWER" }
+  Role: { ADMIN: "ADMIN", USER: "USER", VIEWER: "VIEWER" },
 }));
 
 const mockTheme = createTheme();
@@ -22,7 +22,7 @@ const renderWithProviders = (component: React.ReactNode) => {
   return render(
     <ThemeProvider theme={mockTheme}>
       <BrowserRouter>{component}</BrowserRouter>
-    </ThemeProvider>
+    </ThemeProvider>,
   );
 };
 
@@ -44,7 +44,9 @@ describe("MaintenanceView", () => {
     } as any);
 
     renderWithProviders(<MaintenanceView />);
-    expect(screen.getByText("No active maintenance windows")).toBeInTheDocument();
+    expect(
+      screen.getByText("No active maintenance windows"),
+    ).toBeInTheDocument();
   });
 
   it("renders maintenance windows", () => {

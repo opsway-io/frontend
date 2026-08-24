@@ -160,7 +160,12 @@ const AccountRegistrationForm: FunctionComponent<
           Create account
         </Button>
 
-        <Button variant="outlined" component={NavLink} to={`/login${location.search}`} size="large">
+        <Button
+          variant="outlined"
+          component={NavLink}
+          to={`/login${location.search}`}
+          size="large"
+        >
           I already have an account, go to login
         </Button>
       </Stack>

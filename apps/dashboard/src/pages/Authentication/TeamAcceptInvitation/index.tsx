@@ -51,7 +51,10 @@ const TeamAcceptInvitationView: FunctionComponent = () => {
     let claims: any;
     try {
       // Handle Vite CommonJS/ESM interop
-      const decode = typeof jwt_decode === 'function' ? jwt_decode : (jwt_decode as any).default;
+      const decode =
+        typeof jwt_decode === "function"
+          ? jwt_decode
+          : (jwt_decode as any).default;
       claims = decode(token);
     } catch (e) {
       console.error("Failed to decode JWT token:", e);

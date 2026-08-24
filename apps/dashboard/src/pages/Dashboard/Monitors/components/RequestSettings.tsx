@@ -62,19 +62,35 @@ const RequestSettings: FunctionComponent = () => {
               required: true,
               validate: (value) => {
                 const method = control._formValues.settings?.method || "GET";
-                if (["TCP", "ICMP", "DNS", "POSTGRES", "MYSQL", "REDIS", "BROWSER"].includes(method)) {
+                if (
+                  [
+                    "TCP",
+                    "ICMP",
+                    "DNS",
+                    "POSTGRES",
+                    "MYSQL",
+                    "REDIS",
+                    "BROWSER",
+                  ].includes(method)
+                ) {
                   return true;
                 }
-                return /^https?:\/\/.+/.test(value) || "URL must start with http:// or https://";
+                return (
+                  /^https?:\/\/.+/.test(value) ||
+                  "URL must start with http:// or https://"
+                );
               },
             }}
             render={({ field, fieldState }) => {
               const method = control._formValues.settings?.method || "GET";
               let placeholder = "https://api.example.com/pets";
               if (method === "TCP") placeholder = "example.com:8080";
-              if (method === "POSTGRES") placeholder = "postgres://user:password@localhost:5432/dbname";
-              if (method === "MYSQL") placeholder = "mysql://user:password@localhost:3306/dbname";
-              if (method === "REDIS") placeholder = "redis://user:password@localhost:6379/0";
+              if (method === "POSTGRES")
+                placeholder = "postgres://user:password@localhost:5432/dbname";
+              if (method === "MYSQL")
+                placeholder = "mysql://user:password@localhost:3306/dbname";
+              if (method === "REDIS")
+                placeholder = "redis://user:password@localhost:6379/0";
               if (method === "ICMP") placeholder = "8.8.8.8";
               if (method === "DNS") placeholder = "example.com?type=MX";
 
@@ -92,7 +108,19 @@ const RequestSettings: FunctionComponent = () => {
         </Stack>
       </Stack>
 
-      <Conditional value={!["TCP", "ICMP", "DNS", "POSTGRES", "MYSQL", "REDIS", "BROWSER"].includes(control._formValues.settings?.method || "GET")}>
+      <Conditional
+        value={
+          ![
+            "TCP",
+            "ICMP",
+            "DNS",
+            "POSTGRES",
+            "MYSQL",
+            "REDIS",
+            "BROWSER",
+          ].includes(control._formValues.settings?.method || "GET")
+        }
+      >
         <Divider />
 
         <Stack>
@@ -173,7 +201,8 @@ const RequestSettings: FunctionComponent = () => {
         <Stack>
           <Typography variant="subtitle1">Browser Script (JSON)</Typography>
           <Typography variant="body1" color="textSecondary">
-            Define the actions for the headless browser to execute as a JSON array (e.g. {`[{"action":"wait", "selector":".loaded"}]`}).
+            Define the actions for the headless browser to execute as a JSON
+            array (e.g. {`[{"action":"wait", "selector":".loaded"}]`}).
           </Typography>
         </Stack>
 

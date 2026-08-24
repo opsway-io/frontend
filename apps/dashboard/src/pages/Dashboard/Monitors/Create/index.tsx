@@ -11,7 +11,7 @@ import {
 } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
 import { useSnackbar } from "notistack";
-import { FunctionComponent, useMemo } from "react";
+import { FunctionComponent, useMemo, useRef } from "react";
 import { Helmet } from "react-helmet";
 import { Controller, FormProvider, useForm } from "react-hook-form";
 import { IoAdd } from "react-icons/io5";
@@ -75,11 +75,14 @@ const MonitorCreateView: FunctionComponent = () => {
     mode: "onChange",
   });
 
+  const isSubmitting = useRef(false);
+
   const createMonitor = () => {
-    if (!teamId) {
+    if (!teamId || isSubmitting.current) {
       return;
     }
 
+    isSubmitting.current = true;
     const data = formMethods.getValues();
 
     mutate(data, {
@@ -97,15 +100,18 @@ const MonitorCreateView: FunctionComponent = () => {
           enqueueSnackbar("Failed to create monitor", { variant: "error" });
         }
       },
+      onSettled: () => {
+        isSubmitting.current = false;
+      },
     });
   };
 
   return (
     <>
-      <UpgradePromptModal 
-        open={openUpgradeModal} 
-        onClose={() => setOpenUpgradeModal(false)} 
-        featureName="Monitors" 
+      <UpgradePromptModal
+        open={openUpgradeModal}
+        onClose={() => setOpenUpgradeModal(false)}
+        featureName="Monitors"
       />
       <DevTool control={formMethods.control} />
 
@@ -163,9 +169,9 @@ const MonitorCreateView: FunctionComponent = () => {
             <Tab value="request" label="Request" />
             <Tab value="assertions" label="Response assertions" />
             <Tab value="frequencyAndLocation" label="Frequency & Location" />
-            {!["TCP", "ICMP", "DNS", "POSTGRES", "MYSQL", "REDIS"].includes(formMethods.watch("settings.method")) && (
-              <Tab value="tlsVerification" label="SSL/TLS" />
-            )}
+            {!["TCP", "ICMP", "DNS", "POSTGRES", "MYSQL", "REDIS"].includes(
+              formMethods.watch("settings.method"),
+            ) && <Tab value="tlsVerification" label="SSL/TLS" />}
           </Tabs>
 
           <Box sx={{ display: selectedTab === "request" ? "block" : "none" }}>

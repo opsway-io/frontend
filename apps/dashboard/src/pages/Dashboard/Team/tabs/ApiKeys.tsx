@@ -19,10 +19,14 @@ import {
   DialogContent,
   DialogActions,
   TextField,
-  IconButton
+  IconButton,
 } from "@mui/material";
 import { IoTrashOutline, IoCopyOutline } from "react-icons/io5";
-import { getApiKeys, createApiKey, deleteApiKey } from "../../../../api/endpoints/teams";
+import {
+  getApiKeys,
+  createApiKey,
+  deleteApiKey,
+} from "../../../../api/endpoints/teams";
 import { useCurrentTeam } from "../../../../hooks/team.query";
 import { enqueueSnackbar } from "notistack";
 
@@ -36,7 +40,7 @@ const ApiKeysTabView: FunctionComponent = () => {
   const { data, isLoading } = useQuery(
     ["team-apikeys", team?.id],
     () => getApiKeys(team!.id),
-    { enabled: !!team }
+    { enabled: !!team },
   );
 
   const createMutation = useMutation(
@@ -48,8 +52,8 @@ const ApiKeysTabView: FunctionComponent = () => {
       },
       onError: () => {
         enqueueSnackbar("Failed to create API key", { variant: "error" });
-      }
-    }
+      },
+    },
   );
 
   const deleteMutation = useMutation(
@@ -61,8 +65,8 @@ const ApiKeysTabView: FunctionComponent = () => {
       },
       onError: () => {
         enqueueSnackbar("Failed to revoke API key", { variant: "error" });
-      }
-    }
+      },
+    },
   );
 
   const handleCreate = () => {
@@ -85,11 +89,17 @@ const ApiKeysTabView: FunctionComponent = () => {
     <>
       <Card>
         <CardContent>
-          <Stack direction="row" justifyContent="space-between" alignItems="center" mb={2}>
+          <Stack
+            direction="row"
+            justifyContent="space-between"
+            alignItems="center"
+            mb={2}
+          >
             <Box>
               <Typography variant="h6">API Keys</Typography>
               <Typography variant="body2" color="text.secondary">
-                Manage API keys to access Opsway programmatically or to scrape metrics using Prometheus.
+                Manage API keys to access Opsway programmatically or to scrape
+                metrics using Prometheus.
               </Typography>
             </Box>
             <Button variant="contained" onClick={() => setOpenCreate(true)}>
@@ -109,20 +119,29 @@ const ApiKeysTabView: FunctionComponent = () => {
               <TableBody>
                 {isLoading && (
                   <TableRow>
-                    <TableCell colSpan={3} align="center">Loading...</TableCell>
+                    <TableCell colSpan={3} align="center">
+                      Loading...
+                    </TableCell>
                   </TableRow>
                 )}
                 {!isLoading && data?.apiKeys.length === 0 && (
                   <TableRow>
-                    <TableCell colSpan={3} align="center">No API keys generated yet.</TableCell>
+                    <TableCell colSpan={3} align="center">
+                      No API keys generated yet.
+                    </TableCell>
                   </TableRow>
                 )}
                 {data?.apiKeys.map((key) => (
                   <TableRow key={key.id}>
                     <TableCell>{key.name}</TableCell>
-                    <TableCell>{new Date(key.createdAt).toLocaleDateString()}</TableCell>
+                    <TableCell>
+                      {new Date(key.createdAt).toLocaleDateString()}
+                    </TableCell>
                     <TableCell align="right">
-                      <IconButton color="error" onClick={() => deleteMutation.mutate(key.id)}>
+                      <IconButton
+                        color="error"
+                        onClick={() => deleteMutation.mutate(key.id)}
+                      >
                         <IoTrashOutline />
                       </IconButton>
                     </TableCell>
@@ -134,7 +153,12 @@ const ApiKeysTabView: FunctionComponent = () => {
         </CardContent>
       </Card>
 
-      <Dialog open={openCreate} onClose={generatedKey ? undefined : handleCloseCreate} maxWidth="sm" fullWidth>
+      <Dialog
+        open={openCreate}
+        onClose={generatedKey ? undefined : handleCloseCreate}
+        maxWidth="sm"
+        fullWidth
+      >
         <DialogTitle>
           {generatedKey ? "Save your new API key" : "Create a new API key"}
         </DialogTitle>
@@ -142,10 +166,27 @@ const ApiKeysTabView: FunctionComponent = () => {
           {generatedKey ? (
             <Stack spacing={2} sx={{ mt: 1 }}>
               <Typography variant="body2" color="error">
-                Please copy your API key and save it securely. You won't be able to see it again!
+                Please copy your API key and save it securely. You won't be able
+                to see it again!
               </Typography>
-              <Box sx={{ p: 2, bgcolor: "background.default", borderRadius: 1, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                <Typography variant="body1" sx={{ fontFamily: "monospace", wordBreak: "break-all", pr: 2 }}>
+              <Box
+                sx={{
+                  p: 2,
+                  bgcolor: "background.default",
+                  borderRadius: 1,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                }}
+              >
+                <Typography
+                  variant="body1"
+                  sx={{
+                    fontFamily: "monospace",
+                    wordBreak: "break-all",
+                    pr: 2,
+                  }}
+                >
                   {generatedKey}
                 </Typography>
                 <IconButton onClick={() => handleCopy(generatedKey)}>
@@ -153,7 +194,10 @@ const ApiKeysTabView: FunctionComponent = () => {
                 </IconButton>
               </Box>
               <Typography variant="body2" color="text.secondary">
-                To use this for Prometheus metrics scraping, use the URL <code>/v1/teams/{team?.id}/metrics/prometheus</code> and set this API key as the Bearer token in your Prometheus scraper config.
+                To use this for Prometheus metrics scraping, use the URL{" "}
+                <code>/v1/teams/{team?.id}/metrics/prometheus</code> and set
+                this API key as the Bearer token in your Prometheus scraper
+                config.
               </Typography>
             </Stack>
           ) : (
@@ -180,7 +224,11 @@ const ApiKeysTabView: FunctionComponent = () => {
           ) : (
             <>
               <Button onClick={handleCloseCreate}>Cancel</Button>
-              <Button onClick={handleCreate} variant="contained" disabled={!newKeyName.trim() || createMutation.isLoading}>
+              <Button
+                onClick={handleCreate}
+                variant="contained"
+                disabled={!newKeyName.trim() || createMutation.isLoading}
+              >
                 Generate
               </Button>
             </>

@@ -36,14 +36,24 @@ const PLANS = [
     title: "Team",
     description: "For small teams",
     price: "$29",
-    features: ["5 Team Members", "50 Monitors", "5 Status Pages", "Slack Integrations"],
+    features: [
+      "5 Team Members",
+      "50 Monitors",
+      "5 Status Pages",
+      "Slack Integrations",
+    ],
   },
   {
     plan: "ENTERPRISE",
     title: "Enterprise",
     description: "For large organizations",
     price: "$99",
-    features: ["Unlimited Team Members", "Unlimited Monitors", "Unlimited Status Pages", "SSO (SAML)"],
+    features: [
+      "Unlimited Team Members",
+      "Unlimited Monitors",
+      "Unlimited Status Pages",
+      "SSO (SAML)",
+    ],
   },
 ];
 
@@ -61,22 +71,28 @@ declare global {
 const TeamPlanTabView: FunctionComponent = () => {
   const { data: team, isLoading: isLoadingTeam } = useCurrentTeam();
   const { data: customerPortal } = usePostCustomerPortal();
-  
+
   const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
 
   const handleSelectPlan = async (plan: string) => {
     if (!team) return;
     setLoadingPlan(plan);
     try {
-      const { postCreateCheckoutSession } = await import("../../../../api/endpoints/teams");
+      const { postCreateCheckoutSession } = await import(
+        "../../../../api/endpoints/teams"
+      );
       await postCreateCheckoutSession(team.id, plan);
       // It redirects to stripe checkout, or cancels and succeeds silently
       if (plan === "FREE" && team.paymentPlan !== "FREE") {
-        enqueueSnackbar("Successfully cancelled subscription", { variant: "success" });
+        enqueueSnackbar("Successfully cancelled subscription", {
+          variant: "success",
+        });
         window.location.reload();
       }
     } catch (e: any) {
-      enqueueSnackbar(e.message || "Failed to process plan change", { variant: "error" });
+      enqueueSnackbar(e.message || "Failed to process plan change", {
+        variant: "error",
+      });
     } finally {
       setLoadingPlan(null);
     }
@@ -90,7 +106,12 @@ const TeamPlanTabView: FunctionComponent = () => {
         <Card>
           <CardHeader align="center" title="Choose a Subscription" />
           <CardContent>
-            <Grid container spacing={2} justifyContent="center" alignItems="stretch">
+            <Grid
+              container
+              spacing={2}
+              justifyContent="center"
+              alignItems="stretch"
+            >
               {PLANS.map((p) => (
                 <Grid item key={p.plan}>
                   <PricingCard
@@ -228,7 +249,11 @@ const PricingCard: FunctionComponent<PricingCardProps> = ({
             onClick={onSelect}
             disabled={selected || isLoading}
           >
-            {isLoading ? "Loading..." : selected ? "Current Plan" : "Select Plan"}
+            {isLoading
+              ? "Loading..."
+              : selected
+                ? "Current Plan"
+                : "Select Plan"}
           </Button>
         </Box>
       </CardContent>

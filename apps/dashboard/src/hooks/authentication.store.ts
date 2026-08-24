@@ -68,7 +68,7 @@ const useAuthenticationStore = create<
 
         if (!window.location.pathname.startsWith("/login")) {
           const returnTo = encodeURIComponent(
-            window.location.pathname + window.location.search
+            window.location.pathname + window.location.search,
           );
           window.location.href = `/login?returnTo=${returnTo}`;
         }

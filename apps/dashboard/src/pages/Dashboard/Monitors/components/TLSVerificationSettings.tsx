@@ -29,7 +29,7 @@ const TLSVerificationSettings: FunctionComponent = () => {
           render={({ field }) => (
             <FormControlLabel
               control={
-              <Switch
+                <Switch
                   {...field}
                   checked={field.value || false}
                   onChange={(e) => field.onChange(e.target.checked)}
@@ -56,7 +56,7 @@ const TLSVerificationSettings: FunctionComponent = () => {
           render={({ field }) => (
             <FormControlLabel
               control={
-              <Switch
+                <Switch
                   {...field}
                   checked={field.value || false}
                   onChange={(e) => field.onChange(e.target.checked)}

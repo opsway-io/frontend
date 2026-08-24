@@ -27,7 +27,8 @@ interface FormInputs {
 
 const Escalation: FunctionComponent = () => {
   const { data: policy, isLoading: isPolicyLoading } = useEscalationPolicy();
-  const { mutate: updatePolicy, isLoading: isUpdating } = useUpdateEscalationPolicy();
+  const { mutate: updatePolicy, isLoading: isUpdating } =
+    useUpdateEscalationPolicy();
   const { data: usersData, isLoading: isUsersLoading } = useTeamUsers();
 
   const { register, handleSubmit, reset, control } = useForm<FormInputs>({
@@ -80,23 +81,35 @@ const Escalation: FunctionComponent = () => {
               fullWidth
               type="number"
               label="Escalation Timeout (minutes)"
-              {...register("escalationTimeoutMinutes", { required: true, min: 1 })}
+              {...register("escalationTimeoutMinutes", {
+                required: true,
+                min: 1,
+              })}
             />
 
             <Typography variant="h6">On-Call Rotations</Typography>
             <Typography variant="body2" color="textSecondary">
-              Assign users to escalation tiers. Tier 1 is alerted immediately, Tier 2 after the timeout.
+              Assign users to escalation tiers. Tier 1 is alerted immediately,
+              Tier 2 after the timeout.
             </Typography>
 
             <Stack spacing={2}>
               {fields.map((field, index) => (
-                <Stack direction="row" spacing={2} key={field.id} alignItems="center">
+                <Stack
+                  direction="row"
+                  spacing={2}
+                  key={field.id}
+                  alignItems="center"
+                >
                   <TextField
                     select
                     fullWidth
                     label="Team Member"
                     defaultValue={field.userId || ""}
-                    {...register(`rotations.${index}.userId`, { required: true, valueAsNumber: true })}
+                    {...register(`rotations.${index}.userId`, {
+                      required: true,
+                      valueAsNumber: true,
+                    })}
                   >
                     {users.map((user) => (
                       <MenuItem key={user.id} value={user.id}>
@@ -109,7 +122,10 @@ const Escalation: FunctionComponent = () => {
                     label="Tier"
                     defaultValue={field.tier || 1}
                     sx={{ width: 100 }}
-                    {...register(`rotations.${index}.tier`, { required: true, valueAsNumber: true })}
+                    {...register(`rotations.${index}.tier`, {
+                      required: true,
+                      valueAsNumber: true,
+                    })}
                   >
                     {[1, 2, 3, 4, 5].map((tier) => (
                       <MenuItem key={tier} value={tier}>
@@ -122,7 +138,15 @@ const Escalation: FunctionComponent = () => {
                   </Button>
                 </Stack>
               ))}
-              <Button variant="outlined" onClick={() => append({ userId: users.length > 0 ? users[0].id : 0, tier: 1 })}>
+              <Button
+                variant="outlined"
+                onClick={() =>
+                  append({
+                    userId: users.length > 0 ? users[0].id : 0,
+                    tier: 1,
+                  })
+                }
+              >
                 Add Rotation
               </Button>
             </Stack>

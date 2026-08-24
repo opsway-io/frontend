@@ -15,12 +15,16 @@ export const removeTeamUser = async (
 
 export const useTeamUsers = () => {
   const teamId = useAuthenticationStore((state) => state.currentTeamId);
-  return useQuery(["teams", teamId, "users", "all"], () => {
-    if (!teamId) return Promise.resolve(null);
-    return TeamsAPI.getUsers(teamId, 0, 1000);
-  }, {
-    enabled: !!teamId,
-  });
+  return useQuery(
+    ["teams", teamId, "users", "all"],
+    () => {
+      if (!teamId) return Promise.resolve(null);
+      return TeamsAPI.getUsers(teamId, 0, 1000);
+    },
+    {
+      enabled: !!teamId,
+    },
+  );
 };
 
 export const useCurrentTeam = () => {
@@ -98,22 +102,14 @@ export const useAcceptTeamInvite = () => {
   );
 };
 
-export const usePostCreateCheckoutSession = (
-  teamId: number,
-  plan: string,
-) => {
+export const usePostCreateCheckoutSession = (teamId: number, plan: string) => {
   return useMutation(
     () => {
       return TeamsAPI.postCreateCheckoutSession(teamId, plan);
     },
     {
       onSuccess: () => {
-        queryClient.invalidateQueries([
-          "teams",
-          teamId,
-          "plan",
-          plan,
-        ]);
+        queryClient.invalidateQueries(["teams", teamId, "plan", plan]);
       },
     },
   );

@@ -12,7 +12,6 @@ const ComponentStatus: FunctionComponent<ComponentStatusProps> = ({
   status,
   layout,
 }) => {
-
   const isOperational = status === "OPERATIONAL";
   const statusColor = isOperational ? "#10b981" : "#f43f5e";
   const statusText = isOperational ? "Operational" : "Outage";
@@ -33,22 +32,26 @@ const ComponentStatus: FunctionComponent<ComponentStatusProps> = ({
           <Typography variant="body2" color={statusColor} fontWeight={600}>
             {statusText}
           </Typography>
-          <Box 
-            sx={{ 
-              width: 10, 
-              height: 10, 
-              borderRadius: "50%", 
+          <Box
+            sx={{
+              width: 10,
+              height: 10,
+              borderRadius: "50%",
               backgroundColor: statusColor,
               boxShadow: `0 0 10px ${statusColor}`,
               animation: !isOperational ? "pulse 2s infinite" : "none",
-            }} 
+            }}
           />
         </Stack>
       </Stack>
 
       {layout !== "COMPACT" && (
         <Stack direction="column" spacing={1}>
-          <Stack direction="row" spacing={0.5} sx={{ width: "100%", overflow: "hidden" }}>
+          <Stack
+            direction="row"
+            spacing={0.5}
+            sx={{ width: "100%", overflow: "hidden" }}
+          >
             {new Array(90).fill(0).map((_, index) => (
               <Box
                 key={index}
@@ -58,22 +61,34 @@ const ComponentStatus: FunctionComponent<ComponentStatusProps> = ({
                   backgroundColor: getColor(status),
                   borderRadius: 0.5,
                   transition: "all 0.2s ease",
-                  '&:hover': {
+                  "&:hover": {
                     opacity: 0.7,
-                    transform: "scaleY(1.2)"
-                  }
+                    transform: "scaleY(1.2)",
+                  },
                 }}
               />
             ))}
           </Stack>
           <Stack direction="row" justifyContent="space-between">
-            <Typography variant="caption" color="text.secondary" sx={{ opacity: 0.6 }}>
+            <Typography
+              variant="caption"
+              color="text.secondary"
+              sx={{ opacity: 0.6 }}
+            >
               90 days ago
             </Typography>
-            <Typography variant="caption" color="text.secondary" sx={{ opacity: 0.6 }}>
+            <Typography
+              variant="caption"
+              color="text.secondary"
+              sx={{ opacity: 0.6 }}
+            >
               99.99% uptime
             </Typography>
-            <Typography variant="caption" color="text.secondary" sx={{ opacity: 0.6 }}>
+            <Typography
+              variant="caption"
+              color="text.secondary"
+              sx={{ opacity: 0.6 }}
+            >
               Today
             </Typography>
           </Stack>

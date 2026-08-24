@@ -36,7 +36,17 @@ const TeamPeopleTabView: FunctionComponent = () => {
   }, [query, roleFilter]);
 
   const { data, isLoading, error } = useQuery(
-    ["teams", teamId, "users", "offset", offset, "query", debouncedQuery, "role", roleFilter],
+    [
+      "teams",
+      teamId,
+      "users",
+      "offset",
+      offset,
+      "query",
+      debouncedQuery,
+      "role",
+      roleFilter,
+    ],
     () => {
       if (!teamId) {
         return Promise.resolve(null);
@@ -87,7 +97,15 @@ const TeamPeopleTabView: FunctionComponent = () => {
             </IconButton>
           </Paper>
 
-          <Paper variant="outlined" sx={{ minWidth: 150, p: "4px 8px", display: "flex", alignItems: "center" }}>
+          <Paper
+            variant="outlined"
+            sx={{
+              minWidth: 150,
+              p: "4px 8px",
+              display: "flex",
+              alignItems: "center",
+            }}
+          >
             <select
               value={roleFilter}
               onChange={(e) => setRoleFilter(e.target.value)}

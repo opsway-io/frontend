@@ -12,15 +12,20 @@ import {
 } from "@mui/material";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { FunctionComponent, useEffect, useState } from "react";
-import { getPublicStatusPage, GetPublicStatusPageResponse, verifySubscriber } from "./api";
+import {
+  getPublicStatusPage,
+  GetPublicStatusPageResponse,
+  verifySubscriber,
+} from "./api";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import Calendar from "./components/Calendar";
 import ComponentStatus from "./components/ComponentStatus";
 import SubscribeModal from "./components/SubscribeModal";
 
-const currentDomain = window.location.hostname === "localhost"
-  ? "status.opsway.eu"
-  : window.location.hostname;
+const currentDomain =
+  window.location.hostname === "localhost"
+    ? "status.opsway.eu"
+    : window.location.hostname;
 
 // Reusable glassmorphic styles
 export const glassCardStyle = {
@@ -33,12 +38,14 @@ export const glassCardStyle = {
 };
 
 const VerificationView: FunctionComponent = () => {
-  const [status, setStatus] = useState<"loading" | "success" | "error">("loading");
-  
+  const [status, setStatus] = useState<"loading" | "success" | "error">(
+    "loading",
+  );
+
   useEffect(() => {
-    const parts = window.location.pathname.split('/');
+    const parts = window.location.pathname.split("/");
     const token = parts[parts.length - 1];
-    
+
     verifySubscriber(currentDomain, token)
       .then(() => setStatus("success"))
       .catch(() => setStatus("error"));
@@ -46,20 +53,78 @@ const VerificationView: FunctionComponent = () => {
 
   return (
     <Container component={Stack} spacing={2} marginTop={8} alignItems="center">
-      <Card sx={{ ...glassCardStyle, padding: 6, textAlign: "center", maxWidth: 500, width: "100%" }}>
-        {status === "loading" && <Typography color="text.secondary">Verifying your subscription...</Typography>}
+      <Card
+        sx={{
+          ...glassCardStyle,
+          padding: 6,
+          textAlign: "center",
+          maxWidth: 500,
+          width: "100%",
+        }}
+      >
+        {status === "loading" && (
+          <Typography color="text.secondary">
+            Verifying your subscription...
+          </Typography>
+        )}
         {status === "success" && (
           <Box sx={{ animation: "fadeIn 0.5s ease-out" }}>
-            <Typography variant="h5" color="#10b981" gutterBottom fontWeight="bold">Subscription Verified!</Typography>
-            <Typography mb={4} color="text.secondary">You will now receive updates about incidents and maintenance.</Typography>
-            <Button variant="contained" onClick={() => window.location.href = "/"} sx={{ backgroundColor: "#10b981", '&:hover': { backgroundColor: "#059669" }, borderRadius: 2, textTransform: "none", px: 4 }}>Return to Status Page</Button>
+            <Typography
+              variant="h5"
+              color="#10b981"
+              gutterBottom
+              fontWeight="bold"
+            >
+              Subscription Verified!
+            </Typography>
+            <Typography mb={4} color="text.secondary">
+              You will now receive updates about incidents and maintenance.
+            </Typography>
+            <Button
+              variant="contained"
+              onClick={() => (window.location.href = "/")}
+              sx={{
+                backgroundColor: "#10b981",
+                "&:hover": { backgroundColor: "#059669" },
+                borderRadius: 2,
+                textTransform: "none",
+                px: 4,
+              }}
+            >
+              Return to Status Page
+            </Button>
           </Box>
         )}
         {status === "error" && (
           <Box sx={{ animation: "fadeIn 0.5s ease-out" }}>
-            <Typography variant="h5" color="#f43f5e" gutterBottom fontWeight="bold">Verification Failed</Typography>
-            <Typography mb={4} color="text.secondary">The verification link may be invalid or expired.</Typography>
-            <Button variant="outlined" onClick={() => window.location.href = "/"} sx={{ borderColor: "rgba(255,255,255,0.2)", color: "white", '&:hover': { borderColor: "rgba(255,255,255,0.4)", backgroundColor: "rgba(255,255,255,0.05)" }, borderRadius: 2, textTransform: "none", px: 4 }}>Return to Status Page</Button>
+            <Typography
+              variant="h5"
+              color="#f43f5e"
+              gutterBottom
+              fontWeight="bold"
+            >
+              Verification Failed
+            </Typography>
+            <Typography mb={4} color="text.secondary">
+              The verification link may be invalid or expired.
+            </Typography>
+            <Button
+              variant="outlined"
+              onClick={() => (window.location.href = "/")}
+              sx={{
+                borderColor: "rgba(255,255,255,0.2)",
+                color: "white",
+                "&:hover": {
+                  borderColor: "rgba(255,255,255,0.4)",
+                  backgroundColor: "rgba(255,255,255,0.05)",
+                },
+                borderRadius: 2,
+                textTransform: "none",
+                px: 4,
+              }}
+            >
+              Return to Status Page
+            </Button>
           </Box>
         )}
       </Card>
@@ -76,12 +141,14 @@ const App: FunctionComponent = () => {
   const [loginError, setLoginError] = useState("");
   const [isSubscribeOpen, setIsSubscribeOpen] = useState(false);
 
-  const isVerificationRoute = window.location.pathname.startsWith('/subscribe/verify/');
+  const isVerificationRoute =
+    window.location.pathname.startsWith("/subscribe/verify/");
 
   useEffect(() => {
     if (isVerificationRoute) return;
 
-    const savedPassword = localStorage.getItem(`status_page_password_${currentDomain}`) || "";
+    const savedPassword =
+      localStorage.getItem(`status_page_password_${currentDomain}`) || "";
 
     getPublicStatusPage(currentDomain, savedPassword)
       .then((res) => {
@@ -129,7 +196,10 @@ const App: FunctionComponent = () => {
 
     getPublicStatusPage(currentDomain, passwordInput)
       .then((res) => {
-        localStorage.setItem(`status_page_password_${currentDomain}`, passwordInput);
+        localStorage.setItem(
+          `status_page_password_${currentDomain}`,
+          passwordInput,
+        );
         setData(res);
         setUnauthorized(false);
         document.title = res.name;
@@ -155,8 +225,15 @@ const App: FunctionComponent = () => {
 
   if (loading) {
     return (
-      <Box p={8} textAlign="center" color="text.secondary" sx={{ animation: "pulse 2s infinite" }}>
-        <Typography variant="h6" fontWeight="300">Loading status page...</Typography>
+      <Box
+        p={8}
+        textAlign="center"
+        color="text.secondary"
+        sx={{ animation: "pulse 2s infinite" }}
+      >
+        <Typography variant="h6" fontWeight="300">
+          Loading status page...
+        </Typography>
       </Box>
     );
   }
@@ -164,7 +241,9 @@ const App: FunctionComponent = () => {
   if (error || !data) {
     return (
       <Box p={8} textAlign="center" color="#f43f5e">
-        <Typography variant="h6" fontWeight="bold">Failed to load status page.</Typography>
+        <Typography variant="h6" fontWeight="bold">
+          Failed to load status page.
+        </Typography>
       </Box>
     );
   }
@@ -205,11 +284,15 @@ const App: FunctionComponent = () => {
               ></path>
             </svg>
           </Box>
-          <Typography variant="h5" sx={{ mb: 1, color: "#fff", fontWeight: 700 }}>
+          <Typography
+            variant="h5"
+            sx={{ mb: 1, color: "#fff", fontWeight: 700 }}
+          >
             Private Status Page
           </Typography>
           <Typography variant="body2" sx={{ color: "text.secondary", mb: 4 }}>
-            This status page is password protected. Please enter the password to view.
+            This status page is password protected. Please enter the password to
+            view.
           </Typography>
           <form onSubmit={handleLogin}>
             <TextField
@@ -220,15 +303,15 @@ const App: FunctionComponent = () => {
               autoFocus
               value={passwordInput}
               onChange={(e) => setPasswordInput(e.target.value)}
-              sx={{ 
+              sx={{
                 mb: 3,
-                '& .MuiOutlinedInput-root': {
+                "& .MuiOutlinedInput-root": {
                   borderRadius: 2,
                   backgroundColor: "rgba(0,0,0,0.2)",
-                  '& fieldset': { borderColor: 'rgba(255,255,255,0.1)' },
-                  '&:hover fieldset': { borderColor: 'rgba(255,255,255,0.2)' },
-                  '&.Mui-focused fieldset': { borderColor: '#10b981' },
-                }
+                  "& fieldset": { borderColor: "rgba(255,255,255,0.1)" },
+                  "&:hover fieldset": { borderColor: "rgba(255,255,255,0.2)" },
+                  "&.Mui-focused fieldset": { borderColor: "#10b981" },
+                },
               }}
               error={!!loginError}
               helperText={loginError}
@@ -237,16 +320,16 @@ const App: FunctionComponent = () => {
               type="submit"
               variant="contained"
               fullWidth
-              sx={{ 
-                py: 1.5, 
+              sx={{
+                py: 1.5,
                 fontWeight: 600,
                 borderRadius: 2,
                 backgroundColor: "#10b981",
                 textTransform: "none",
                 fontSize: "1rem",
-                '&:hover': {
-                  backgroundColor: "#059669"
-                }
+                "&:hover": {
+                  backgroundColor: "#059669",
+                },
               }}
             >
               Unlock
@@ -258,20 +341,24 @@ const App: FunctionComponent = () => {
   }
 
   const hasIncidents = data.activeIncidents && data.activeIncidents.length > 0;
-  const hasMaintenance = data.activeMaintenance && data.activeMaintenance.length > 0;
-  
-  let statusBannerBg = "linear-gradient(135deg, rgba(16, 185, 129, 0.25) 0%, rgba(16, 185, 129, 0.1) 100%)";
+  const hasMaintenance =
+    data.activeMaintenance && data.activeMaintenance.length > 0;
+
+  let statusBannerBg =
+    "linear-gradient(135deg, rgba(16, 185, 129, 0.25) 0%, rgba(16, 185, 129, 0.1) 100%)";
   let statusBannerBorder = "rgba(16, 185, 129, 0.4)";
   let statusBannerColor = "#10b981"; // Emerald
   let statusText = "All Systems Operational";
 
   if (hasIncidents) {
-    statusBannerBg = "linear-gradient(135deg, rgba(244, 63, 94, 0.25) 0%, rgba(244, 63, 94, 0.1) 100%)";
+    statusBannerBg =
+      "linear-gradient(135deg, rgba(244, 63, 94, 0.25) 0%, rgba(244, 63, 94, 0.1) 100%)";
     statusBannerBorder = "rgba(244, 63, 94, 0.4)";
     statusBannerColor = "#f43f5e"; // Rose
     statusText = "Some systems are experiencing issues";
   } else if (hasMaintenance) {
-    statusBannerBg = "linear-gradient(135deg, rgba(59, 130, 246, 0.25) 0%, rgba(59, 130, 246, 0.1) 100%)";
+    statusBannerBg =
+      "linear-gradient(135deg, rgba(59, 130, 246, 0.25) 0%, rgba(59, 130, 246, 0.1) 100%)";
     statusBannerBorder = "rgba(59, 130, 246, 0.4)";
     statusBannerColor = "#3b82f6"; // Blue
     statusText = "Active Maintenance";
@@ -282,11 +369,17 @@ const App: FunctionComponent = () => {
       {data.headerHtml && (
         <div dangerouslySetInnerHTML={{ __html: data.headerHtml }} />
       )}
-      <Container component={Stack} spacing={4} sx={{ pt: 6, pb: 8, maxWidth: "800px !important" }}>
+      <Container
+        component={Stack}
+        spacing={4}
+        sx={{ pt: 6, pb: 8, maxWidth: "800px !important" }}
+      >
         {data.customComponentsHtml && (
-          <div dangerouslySetInnerHTML={{ __html: data.customComponentsHtml }} />
+          <div
+            dangerouslySetInnerHTML={{ __html: data.customComponentsHtml }}
+          />
         )}
-        
+
         {/* Header Section */}
         <Stack
           direction={{ xs: "column", sm: "row" }}
@@ -310,31 +403,31 @@ const App: FunctionComponent = () => {
           </Stack>
 
           <Stack direction="row" spacing={2}>
-            <Button 
-              sx={{ 
-                color: "text.secondary", 
-                textTransform: "none", 
+            <Button
+              sx={{
+                color: "text.secondary",
+                textTransform: "none",
                 fontWeight: 500,
-                '&:hover': { backgroundColor: "rgba(255,255,255,0.05)" }
+                "&:hover": { backgroundColor: "rgba(255,255,255,0.05)" },
               }}
             >
               Report a problem
             </Button>
-            <Button 
-              variant="contained" 
+            <Button
+              variant="contained"
               onClick={() => setIsSubscribeOpen(true)}
-              sx={{ 
-                textTransform: "none", 
-                fontWeight: 600, 
+              sx={{
+                textTransform: "none",
+                fontWeight: 600,
                 borderRadius: 2,
                 backgroundColor: "rgba(255,255,255,0.1)",
                 color: "#fff",
                 boxShadow: "none",
                 border: "1px solid rgba(255,255,255,0.1)",
-                '&:hover': {
+                "&:hover": {
                   backgroundColor: "rgba(255,255,255,0.15)",
                   boxShadow: "none",
-                }
+                },
               }}
             >
               Subscribe to updates
@@ -342,10 +435,10 @@ const App: FunctionComponent = () => {
           </Stack>
         </Stack>
 
-        <SubscribeModal 
-          open={isSubscribeOpen} 
-          onClose={() => setIsSubscribeOpen(false)} 
-          domain={currentDomain} 
+        <SubscribeModal
+          open={isSubscribeOpen}
+          onClose={() => setIsSubscribeOpen(false)}
+          domain={currentDomain}
         />
 
         {/* Global Status Banner */}
@@ -363,30 +456,57 @@ const App: FunctionComponent = () => {
           <Typography variant="h5" fontWeight="700" color={statusBannerColor}>
             {statusText}
           </Typography>
-          <Box 
-            sx={{ 
-              width: 12, 
-              height: 12, 
-              borderRadius: "50%", 
+          <Box
+            sx={{
+              width: 12,
+              height: 12,
+              borderRadius: "50%",
               backgroundColor: statusBannerColor,
               boxShadow: `0 0 12px ${statusBannerColor}`,
-              animation: hasIncidents ? "pulse 2s infinite" : "none"
-            }} 
+              animation: hasIncidents ? "pulse 2s infinite" : "none",
+            }}
           />
         </Card>
 
         {/* Active Incidents */}
         {data.activeIncidents?.map((incident) => (
-          <Card key={`incident-${incident.id}`} sx={{ ...glassCardStyle, borderColor: "rgba(244, 63, 94, 0.3)", overflow: "hidden" }}>
-            <Box sx={{ backgroundColor: "rgba(244, 63, 94, 0.15)", px: 3, py: 2, borderBottom: "1px solid rgba(244, 63, 94, 0.2)" }}>
-              <Typography variant="subtitle2" color="#f43f5e" fontWeight="700" textTransform="uppercase" letterSpacing="0.05em">
+          <Card
+            key={`incident-${incident.id}`}
+            sx={{
+              ...glassCardStyle,
+              borderColor: "rgba(244, 63, 94, 0.3)",
+              overflow: "hidden",
+            }}
+          >
+            <Box
+              sx={{
+                backgroundColor: "rgba(244, 63, 94, 0.15)",
+                px: 3,
+                py: 2,
+                borderBottom: "1px solid rgba(244, 63, 94, 0.2)",
+              }}
+            >
+              <Typography
+                variant="subtitle2"
+                color="#f43f5e"
+                fontWeight="700"
+                textTransform="uppercase"
+                letterSpacing="0.05em"
+              >
                 Active Incident
               </Typography>
             </Box>
             <CardContent sx={{ p: 3 }}>
-              <Typography variant="h6" fontWeight="600" gutterBottom>{incident.title}</Typography>
-              <Typography variant="body1" color="text.secondary" sx={{ whiteSpace: "pre-wrap" }}>
-                {incident.description || "We are currently investigating this issue."}
+              <Typography variant="h6" fontWeight="600" gutterBottom>
+                {incident.title}
+              </Typography>
+              <Typography
+                variant="body1"
+                color="text.secondary"
+                sx={{ whiteSpace: "pre-wrap" }}
+              >
+                {incident.description ||
+                  "We are currently investigating this issue."}
               </Typography>
             </CardContent>
           </Card>
@@ -394,15 +514,41 @@ const App: FunctionComponent = () => {
 
         {/* Active Maintenance */}
         {data.activeMaintenance?.map((maintenance) => (
-          <Card key={`maintenance-${maintenance.id}`} sx={{ ...glassCardStyle, borderColor: "rgba(59, 130, 246, 0.3)", overflow: "hidden" }}>
-            <Box sx={{ backgroundColor: "rgba(59, 130, 246, 0.15)", px: 3, py: 2, borderBottom: "1px solid rgba(59, 130, 246, 0.2)" }}>
-              <Typography variant="subtitle2" color="#3b82f6" fontWeight="700" textTransform="uppercase" letterSpacing="0.05em">
+          <Card
+            key={`maintenance-${maintenance.id}`}
+            sx={{
+              ...glassCardStyle,
+              borderColor: "rgba(59, 130, 246, 0.3)",
+              overflow: "hidden",
+            }}
+          >
+            <Box
+              sx={{
+                backgroundColor: "rgba(59, 130, 246, 0.15)",
+                px: 3,
+                py: 2,
+                borderBottom: "1px solid rgba(59, 130, 246, 0.2)",
+              }}
+            >
+              <Typography
+                variant="subtitle2"
+                color="#3b82f6"
+                fontWeight="700"
+                textTransform="uppercase"
+                letterSpacing="0.05em"
+              >
                 Scheduled Maintenance
               </Typography>
             </Box>
             <CardContent sx={{ p: 3 }}>
-              <Typography variant="h6" fontWeight="600" gutterBottom>{maintenance.title}</Typography>
-              <Typography variant="body1" color="text.secondary" sx={{ whiteSpace: "pre-wrap" }}>
+              <Typography variant="h6" fontWeight="600" gutterBottom>
+                {maintenance.title}
+              </Typography>
+              <Typography
+                variant="body1"
+                color="text.secondary"
+                sx={{ whiteSpace: "pre-wrap" }}
+              >
                 {maintenance.description || "Ongoing maintenance window."}
               </Typography>
             </CardContent>
@@ -412,7 +558,13 @@ const App: FunctionComponent = () => {
         {/* Components List */}
         {data.layout !== "SIMPLE" && (
           <Card sx={{ ...glassCardStyle, overflow: "hidden" }}>
-            <Box sx={{ px: 3, py: 2.5, borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
+            <Box
+              sx={{
+                px: 3,
+                py: 2.5,
+                borderBottom: "1px solid rgba(255,255,255,0.08)",
+              }}
+            >
               <Typography variant="subtitle1" fontWeight="600">
                 Platform Components
               </Typography>
@@ -420,20 +572,26 @@ const App: FunctionComponent = () => {
 
             <Box sx={{ px: 1, py: 1 }}>
               {data.monitors.map((m, idx) => (
-                <Box 
-                  key={m.id} 
-                  sx={{ 
-                    px: 2, 
+                <Box
+                  key={m.id}
+                  sx={{
+                    px: 2,
                     py: 1.5,
                     borderRadius: 2,
                     transition: "background-color 0.2s ease",
-                    '&:hover': {
-                      backgroundColor: "rgba(255,255,255,0.03)"
-                    }
+                    "&:hover": {
+                      backgroundColor: "rgba(255,255,255,0.03)",
+                    },
                   }}
                 >
-                  <ComponentStatus name={m.name} status={m.status} layout={data.layout} />
-                  {idx < data.monitors.length - 1 && <Divider sx={{ mt: 1.5, mb: 0, opacity: 0.5 }} />}
+                  <ComponentStatus
+                    name={m.name}
+                    status={m.status}
+                    layout={data.layout}
+                  />
+                  {idx < data.monitors.length - 1 && (
+                    <Divider sx={{ mt: 1.5, mb: 0, opacity: 0.5 }} />
+                  )}
                 </Box>
               ))}
             </Box>
@@ -443,7 +601,13 @@ const App: FunctionComponent = () => {
         {/* Calendar */}
         {data.layout !== "SIMPLE" && (
           <Card sx={{ ...glassCardStyle, overflow: "hidden" }}>
-            <Box sx={{ px: 3, py: 2.5, borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
+            <Box
+              sx={{
+                px: 3,
+                py: 2.5,
+                borderBottom: "1px solid rgba(255,255,255,0.08)",
+              }}
+            >
               <Typography variant="subtitle1" fontWeight="600">
                 Maintenance Calendar
               </Typography>
@@ -465,7 +629,11 @@ const App: FunctionComponent = () => {
               href="https://opsway.eu"
               target="_blank"
               rel="noopener noreferrer"
-              sx={{ textDecoration: "none", transition: "opacity 0.2s", '&:hover': { opacity: 0.8 } }}
+              sx={{
+                textDecoration: "none",
+                transition: "opacity 0.2s",
+                "&:hover": { opacity: 0.8 },
+              }}
             >
               <Typography
                 variant="body2"

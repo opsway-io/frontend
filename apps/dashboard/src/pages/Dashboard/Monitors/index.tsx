@@ -60,7 +60,8 @@ const MonitorsView: FunctionComponent = () => {
     },
   );
 
-  const isFailing = data?.monitors?.some((m) => m.stats?.uptimePercentage < 100) || false;
+  const isFailing =
+    data?.monitors?.some((m) => m.stats?.uptimePercentage < 100) || false;
 
   return (
     <>

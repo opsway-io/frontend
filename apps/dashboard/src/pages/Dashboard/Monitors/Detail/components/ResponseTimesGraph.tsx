@@ -1,5 +1,12 @@
 import { FunctionComponent, useMemo, useState } from "react";
-import { Box, useTheme, ToggleButton, ToggleButtonGroup, Stack, Typography } from "@mui/material";
+import {
+  Box,
+  useTheme,
+  ToggleButton,
+  ToggleButtonGroup,
+  Stack,
+  Typography,
+} from "@mui/material";
 import Chart from "react-apexcharts";
 import { ApexOptions } from "apexcharts";
 import { useMonitorMetrics } from "../../../../../hooks/monitors.query";
@@ -14,7 +21,9 @@ const ResponseTimesGraph: FunctionComponent<ResponseTimesGraphProps> = (
   props,
 ) => {
   const theme = useTheme();
-  const [chartMode, setChartMode] = useState<"breakdown" | "anomaly">("breakdown");
+  const [chartMode, setChartMode] = useState<"breakdown" | "anomaly">(
+    "breakdown",
+  );
 
   const { data, isLoading } = useMonitorMetrics(props.monitorId);
 
@@ -55,11 +64,11 @@ const ResponseTimesGraph: FunctionComponent<ResponseTimesGraphProps> = (
       },
       colors: isAnomalyMode
         ? [
-            theme.palette.primary.main,   // Actual: Blue
-            theme.palette.success.main,   // Expected: Green
+            theme.palette.primary.main, // Actual: Blue
+            theme.palette.success.main, // Expected: Green
             theme.palette.text.secondary, // Upper Limit: Grey
             theme.palette.text.secondary, // Lower Limit: Grey
-            theme.palette.error.main,     // Anomaly: Red
+            theme.palette.error.main, // Anomaly: Red
           ]
         : [
             theme.palette.info.main,
@@ -134,7 +143,9 @@ const ResponseTimesGraph: FunctionComponent<ResponseTimesGraphProps> = (
     if (chartMode === "breakdown") {
       // Show first 5 series (standard timing phases breakdown)
       return data.metrics
-        .filter((m) => ["DNS", "TCP", "TLS", "Processing", "Transfer"].includes(m.name))
+        .filter((m) =>
+          ["DNS", "TCP", "TLS", "Processing", "Transfer"].includes(m.name),
+        )
         .map((metric) => ({
           name: metric.name,
           type: "area" as const,
@@ -148,13 +159,19 @@ const ResponseTimesGraph: FunctionComponent<ResponseTimesGraphProps> = (
       const dns = data.metrics.find((m) => m.name === "DNS")?.timing || [];
       const tcp = data.metrics.find((m) => m.name === "TCP")?.timing || [];
       const tls = data.metrics.find((m) => m.name === "TLS")?.timing || [];
-      const processing = data.metrics.find((m) => m.name === "Processing")?.timing || [];
-      const transfer = data.metrics.find((m) => m.name === "Transfer")?.timing || [];
+      const processing =
+        data.metrics.find((m) => m.name === "Processing")?.timing || [];
+      const transfer =
+        data.metrics.find((m) => m.name === "Transfer")?.timing || [];
 
-      const expected = data.metrics.find((m) => m.name === "Expected")?.timing || [];
-      const upper = data.metrics.find((m) => m.name === "Upper Limit")?.timing || [];
-      const lower = data.metrics.find((m) => m.name === "Lower Limit")?.timing || [];
-      const anomaly = data.metrics.find((m) => m.name === "Anomaly")?.timing || [];
+      const expected =
+        data.metrics.find((m) => m.name === "Expected")?.timing || [];
+      const upper =
+        data.metrics.find((m) => m.name === "Upper Limit")?.timing || [];
+      const lower =
+        data.metrics.find((m) => m.name === "Lower Limit")?.timing || [];
+      const anomaly =
+        data.metrics.find((m) => m.name === "Anomaly")?.timing || [];
 
       // Actual response time is the sum of all phases
       const actualData = dns.map((t, idx) => {
@@ -193,18 +210,43 @@ const ResponseTimesGraph: FunctionComponent<ResponseTimesGraphProps> = (
       });
 
       return [
-        { name: "Actual Response Time", type: "line" as const, data: actualData },
-        { name: "Expected Time (Profile)", type: "line" as const, data: expectedData },
-        { name: "Confidence Upper Bound", type: "line" as const, data: upperData },
-        { name: "Confidence Lower Bound", type: "line" as const, data: lowerData },
-        { name: "Anomaly Detected", type: "scatter" as const, data: anomalyData },
+        {
+          name: "Actual Response Time",
+          type: "line" as const,
+          data: actualData,
+        },
+        {
+          name: "Expected Time (Profile)",
+          type: "line" as const,
+          data: expectedData,
+        },
+        {
+          name: "Confidence Upper Bound",
+          type: "line" as const,
+          data: upperData,
+        },
+        {
+          name: "Confidence Lower Bound",
+          type: "line" as const,
+          data: lowerData,
+        },
+        {
+          name: "Anomaly Detected",
+          type: "scatter" as const,
+          data: anomalyData,
+        },
       ];
     }
   }, [data, chartMode]);
 
   return (
     <Box>
-      <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
+      <Stack
+        direction="row"
+        justifyContent="space-between"
+        alignItems="center"
+        sx={{ mb: 2 }}
+      >
         <Typography variant="subtitle1" fontWeight="bold">
           Performance Graph
         </Typography>
@@ -215,7 +257,10 @@ const ResponseTimesGraph: FunctionComponent<ResponseTimesGraphProps> = (
           size="small"
         >
           <ToggleButton value="breakdown">Timing Breakdown</ToggleButton>
-          <ToggleButton value="anomaly" disabled={!hasAnomalyData && !isLoading}>
+          <ToggleButton
+            value="anomaly"
+            disabled={!hasAnomalyData && !isLoading}
+          >
             Anomaly & Forecast
           </ToggleButton>
         </ToggleButtonGroup>
@@ -226,4 +271,3 @@ const ResponseTimesGraph: FunctionComponent<ResponseTimesGraphProps> = (
 };
 
 export default ResponseTimesGraph;
-

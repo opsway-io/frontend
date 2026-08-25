@@ -61,7 +61,7 @@ const MonitorsView: FunctionComponent = () => {
   );
 
   const isFailing =
-    data?.monitors?.some((m) => m.stats?.uptimePercentage < 100) || false;
+    data?.monitors?.some((m) => (m.stats?.totalCount || 0) > 0 && m.stats?.uptimePercentage < 100) || false;
 
   return (
     <>

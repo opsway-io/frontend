@@ -269,7 +269,7 @@ const ResponseTimesGraph: FunctionComponent<ResponseTimesGraphProps> = (
         },
         {
           name: "Anomaly Detected",
-          type: "scatter" as const,
+          type: "line" as const,
           data: anomalyData,
         },
       ];
@@ -302,7 +302,7 @@ const ResponseTimesGraph: FunctionComponent<ResponseTimesGraphProps> = (
           </ToggleButton>
         </ToggleButtonGroup>
       </Stack>
-      <Chart key={chartMode} options={options} series={metrics} height={400} type="line" />
+      <Chart key={chartMode} options={options} series={metrics} height={400} type={chartMode === "breakdown" ? "area" : "line"} />
     </Box>
   );
 };

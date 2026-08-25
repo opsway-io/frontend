@@ -302,7 +302,7 @@ const ResponseTimesGraph: FunctionComponent<ResponseTimesGraphProps> = (
           </ToggleButton>
         </ToggleButtonGroup>
       </Stack>
-      <Chart key={chartMode} options={options} series={metrics} height={400} type={chartMode === "breakdown" ? "area" : "line"} />
+      <Chart key={chartMode} options={options} series={metrics} height={400} type="line" />
     </Box>
   );
 };

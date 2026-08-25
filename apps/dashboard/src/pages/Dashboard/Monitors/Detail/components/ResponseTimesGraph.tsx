@@ -145,8 +145,15 @@ const ResponseTimesGraph: FunctionComponent<ResponseTimesGraphProps> = (
         shared: true,
         intersect: false,
         y: {
-          formatter: (value) => {
+          formatter: (value: any) => {
             if (value == null) return "N/A";
+            if (Array.isArray(value)) {
+              return value
+                .map((v) =>
+                  v >= 1000 ? `${(v / 1000).toFixed(2)} s` : `${Math.round(v)} ms`
+                )
+                .join(" - ");
+            }
             if (value >= 1000) return `${(value / 1000).toFixed(2)} s`;
             return `${Math.round(value)} ms`;
           }
@@ -295,7 +302,7 @@ const ResponseTimesGraph: FunctionComponent<ResponseTimesGraphProps> = (
           </ToggleButton>
         </ToggleButtonGroup>
       </Stack>
-      <Chart options={options} series={metrics} height={400} type="line" />
+      <Chart key={chartMode} options={options} series={metrics} height={400} type="line" />
     </Box>
   );
 };

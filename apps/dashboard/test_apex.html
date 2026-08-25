@@ -1,7 +1,4 @@
-const puppeteer = require('puppeteer');
-const fs = require('fs');
 
-const html = `
 <!DOCTYPE html>
 <html>
 <head>
@@ -37,22 +34,3 @@ const html = `
   </script>
 </body>
 </html>
-`;
-fs.writeFileSync('test_apex.html', html);
-
-(async () => {
-  const browser = await puppeteer.launch({ args: ['--no-sandbox'] });
-  const page = await browser.newPage();
-  await page.goto('file://' + __dirname + '/test_apex.html');
-  await page.waitForSelector('.apexcharts-canvas');
-  const rect = await page.evaluate(() => {
-    const el = document.querySelector('.apexcharts-canvas');
-    const {x, y, width, height} = el.getBoundingClientRect();
-    return {x, y, width, height};
-  });
-  await page.mouse.move(rect.x + rect.width * 0.3, rect.y + rect.height * 0.5);
-  await new Promise(r => setTimeout(r, 500));
-  const tooltipContent = await page.evaluate(() => document.querySelector('.apexcharts-tooltip').innerText);
-  console.log("TOOLTIP:", tooltipContent);
-  await browser.close();
-})();

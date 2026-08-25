@@ -36,7 +36,7 @@ const ResponseTimesGraph: FunctionComponent<ResponseTimesGraphProps> = (
     const isAnomalyMode = chartMode === "anomaly";
     return {
       markers: {
-        size: isAnomalyMode ? [0, 0, 0, 6] : 0,
+        size: isAnomalyMode ? [0, 0, 0, 0, 6] : 0,
         hover: {
           size: 4,
         },
@@ -55,12 +55,12 @@ const ResponseTimesGraph: FunctionComponent<ResponseTimesGraphProps> = (
       },
       stroke: {
         curve: "smooth",
-        width: isAnomalyMode ? [3, 2, 0, 0] : 2,
-        dashArray: isAnomalyMode ? [0, 5, 0, 0] : 0,
+        width: isAnomalyMode ? [3, 2, 1, 1, 0] : 2,
+        dashArray: isAnomalyMode ? [0, 5, 5, 5, 0] : 0,
       },
       fill: {
         type: isAnomalyMode ? "solid" : "gradient",
-        opacity: isAnomalyMode ? [1, 1, 0.2, 1] : 0.8,
+        opacity: isAnomalyMode ? [1, 1, 1, 1, 1] : 0.8,
         gradient: isAnomalyMode ? undefined : {
           shadeIntensity: 1,
           opacityFrom: 0.7,
@@ -72,7 +72,8 @@ const ResponseTimesGraph: FunctionComponent<ResponseTimesGraphProps> = (
         ? [
             theme.palette.primary.main, // Actual: Blue
             theme.palette.success.main, // Expected: Green
-            "rgba(100,100,100,0.2)", // Confidence Bounds (RangeArea)
+            theme.palette.text.disabled, // Confidence Upper Bound
+            theme.palette.text.disabled, // Confidence Lower Bound
             theme.palette.error.main, // Anomaly: Red
           ]
         : [
@@ -147,13 +148,6 @@ const ResponseTimesGraph: FunctionComponent<ResponseTimesGraphProps> = (
         y: {
           formatter: (value: any) => {
             if (value == null) return "N/A";
-            if (Array.isArray(value)) {
-              return value
-                .map((v) =>
-                  v >= 1000 ? `${(v / 1000).toFixed(2)} s` : `${Math.round(v)} ms`
-                )
-                .join(" - ");
-            }
             if (value >= 1000) return `${(value / 1000).toFixed(2)} s`;
             return `${Math.round(value)} ms`;
           }
@@ -242,15 +236,6 @@ const ResponseTimesGraph: FunctionComponent<ResponseTimesGraphProps> = (
         };
       });
 
-      // Group upper and lower bounds into a rangeArea series
-      const rangeBounds = upperData.map((u, i) => {
-        const l = lowerData[i]?.y || 0;
-        return {
-          x: u.x,
-          y: [l, u.y]
-        };
-      });
-
       return [
         {
           name: "Actual Response Time",
@@ -263,9 +248,14 @@ const ResponseTimesGraph: FunctionComponent<ResponseTimesGraphProps> = (
           data: expectedData,
         },
         {
-          name: "Confidence Bounds",
-          type: "rangeArea" as const,
-          data: rangeBounds,
+          name: "Confidence Upper Bound",
+          type: "line" as const,
+          data: upperData,
+        },
+        {
+          name: "Confidence Lower Bound",
+          type: "line" as const,
+          data: lowerData,
         },
         {
           name: "Anomaly Detected",

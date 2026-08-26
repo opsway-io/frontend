@@ -221,7 +221,7 @@ const ResponseTimesGraph: FunctionComponent<ResponseTimesGraphProps> = (
       const expectedData = expected.map((e) => ({
         x: moment(e.start).valueOf(),
         y: e.timing,
-      })).filter((d) => d.y !== null);
+      }));
 
       const actualData = expected.map((e, idx) => {
         const d = dns[idx];
@@ -239,19 +239,19 @@ const ResponseTimesGraph: FunctionComponent<ResponseTimesGraphProps> = (
         }
         return {
           x: moment(e.start).valueOf(),
-          y: null as number | null,
+          y: null,
         };
-      }).filter((d) => d.y !== null);
+      });
 
       const upperData = expected.map((e, idx) => ({
         x: moment(e.start).valueOf(),
         y: upper[idx] ? upper[idx].timing : null,
-      })).filter((d) => d.y !== null);
+      }));
 
       const lowerData = expected.map((e, idx) => ({
         x: moment(e.start).valueOf(),
         y: lower[idx] ? lower[idx].timing : null,
-      })).filter((d) => d.y !== null);
+      }));
 
       const anomalyData = expected.map((e, idx) => {
         const a = anomaly[idx];
@@ -263,9 +263,9 @@ const ResponseTimesGraph: FunctionComponent<ResponseTimesGraphProps> = (
         }
         return {
           x: moment(e.start).valueOf(),
-          y: null as number | null,
+          y: null,
         };
-      }).filter((d) => d.y !== null);
+      });
 
       return [
         {

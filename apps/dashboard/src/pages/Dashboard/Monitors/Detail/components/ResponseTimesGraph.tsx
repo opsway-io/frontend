@@ -177,7 +177,7 @@ const ResponseTimesGraph: FunctionComponent<ResponseTimesGraphProps> = (
           name: metric.name,
           type: "area" as const,
           data: metric.timing.map((t) => ({
-            x: new Date(t.start).getTime(),
+            x: moment.utc(t.start).valueOf(),
             y: t.timing,
           })),
         }));
@@ -200,11 +200,11 @@ const ResponseTimesGraph: FunctionComponent<ResponseTimesGraphProps> = (
       const anomaly =
         data.metrics.find((m) => m.name === "Anomaly")?.timing || [];
 
-      // Use moment to parse dates to avoid Safari returning NaN for "YYYY-MM-DD HH:MM:SS"
+      // Parse dates as UTC to avoid timezone jumping between historical and forecast data
       // Map over `expected` for ALL arrays to guarantee perfectly identical x values
 
       const expectedData = expected.map((e) => ({
-        x: moment(e.start).valueOf(),
+        x: moment.utc(e.start).valueOf(),
         y: e.timing,
       }));
 
@@ -218,23 +218,23 @@ const ResponseTimesGraph: FunctionComponent<ResponseTimesGraphProps> = (
             (processing[idx]?.timing || 0) +
             (transfer[idx]?.timing || 0);
           return {
-            x: moment(e.start).valueOf(),
+            x: moment.utc(e.start).valueOf(),
             y: val,
           };
         }
         return {
-          x: moment(e.start).valueOf(),
+          x: moment.utc(e.start).valueOf(),
           y: null,
         };
       });
 
       const upperData = expected.map((e, idx) => ({
-        x: moment(e.start).valueOf(),
+        x: moment.utc(e.start).valueOf(),
         y: upper[idx] ? upper[idx].timing : null,
       }));
 
       const lowerData = expected.map((e, idx) => ({
-        x: moment(e.start).valueOf(),
+        x: moment.utc(e.start).valueOf(),
         y: lower[idx] ? lower[idx].timing : null,
       }));
 
@@ -242,22 +242,15 @@ const ResponseTimesGraph: FunctionComponent<ResponseTimesGraphProps> = (
         const a = anomaly[idx];
         if (a) {
           return {
-            x: moment(e.start).valueOf(),
+            x: moment.utc(e.start).valueOf(),
             y: a.timing > 0 ? a.timing : null,
           };
         }
         return {
-          x: moment(e.start).valueOf(),
+          x: moment.utc(e.start).valueOf(),
           y: null,
         };
       });
-
-      const sortByX = (a: any, b: any) => a.x - b.x;
-      actualData.sort(sortByX);
-      expectedData.sort(sortByX);
-      upperData.sort(sortByX);
-      lowerData.sort(sortByX);
-      anomalyData.sort(sortByX);
 
       return [
         {

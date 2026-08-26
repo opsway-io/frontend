@@ -11,6 +11,8 @@ export interface IGetTeamResponse {
   telegramChatId?: string;
   datadogWebhookUrl?: string;
   newRelicWebhookUrl?: string;
+  microsoftTeamsWebhookUrl?: string;
+  webhookUrl?: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -29,6 +31,8 @@ export interface IPutTeamRequest {
   telegramChatId?: string;
   datadogWebhookUrl?: string;
   newRelicWebhookUrl?: string;
+  microsoftTeamsWebhookUrl?: string;
+  webhookUrl?: string;
 }
 
 export async function putTeam(

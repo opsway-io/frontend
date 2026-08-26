@@ -29,6 +29,8 @@ const TeamSettingsTabView: FunctionComponent = () => {
   const [telegramChatId, setTelegramChatId] = useState<string>("");
   const [datadogWebhookUrl, setDatadogWebhookUrl] = useState<string>("");
   const [newRelicWebhookUrl, setNewRelicWebhookUrl] = useState<string>("");
+  const [microsoftTeamsWebhookUrl, setMicrosoftTeamsWebhookUrl] = useState<string>("");
+  const [webhookUrl, setWebhookUrl] = useState<string>("");
 
   const [showDeleteDialog, setShowDeleteDialog] = useState<boolean>(false);
 
@@ -39,6 +41,8 @@ const TeamSettingsTabView: FunctionComponent = () => {
     setTelegramChatId(team?.telegramChatId ?? "");
     setDatadogWebhookUrl(team?.datadogWebhookUrl ?? "");
     setNewRelicWebhookUrl(team?.newRelicWebhookUrl ?? "");
+    setMicrosoftTeamsWebhookUrl(team?.microsoftTeamsWebhookUrl ?? "");
+    setWebhookUrl(team?.webhookUrl ?? "");
   }, [team]);
 
   const handleSave = () => {
@@ -53,6 +57,8 @@ const TeamSettingsTabView: FunctionComponent = () => {
       telegramChatId: telegramChatId || undefined,
       datadogWebhookUrl: datadogWebhookUrl || undefined,
       newRelicWebhookUrl: newRelicWebhookUrl || undefined,
+      microsoftTeamsWebhookUrl: microsoftTeamsWebhookUrl || undefined,
+      webhookUrl: webhookUrl || undefined,
     });
   };
 
@@ -133,6 +139,30 @@ const TeamSettingsTabView: FunctionComponent = () => {
                 disabled={isLoading}
                 onSave={handleSave}
                 onChange={(e) => setNewRelicWebhookUrl(e.target.value)}
+              />
+            </CategoryListItem>
+            <CategoryListItem
+              title="Microsoft Teams Notifications"
+              description="Configure an incoming Microsoft Teams Webhook URL to receive instant alerts when a monitor or heartbeat goes down."
+            >
+              <EditableInput
+                label="Microsoft Teams Webhook URL"
+                value={microsoftTeamsWebhookUrl}
+                disabled={isLoading}
+                onSave={handleSave}
+                onChange={(e) => setMicrosoftTeamsWebhookUrl(e.target.value)}
+              />
+            </CategoryListItem>
+            <CategoryListItem
+              title="Generic Webhook Notifications"
+              description="Configure a generic Webhook URL to receive instant JSON payloads when a monitor or heartbeat goes down."
+            >
+              <EditableInput
+                label="Webhook URL"
+                value={webhookUrl}
+                disabled={isLoading}
+                onSave={handleSave}
+                onChange={(e) => setWebhookUrl(e.target.value)}
               />
             </CategoryListItem>
           </CategoryList>

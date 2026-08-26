@@ -30,6 +30,9 @@ import { Restrict, Role } from "../../../../components/Restrict";
 
 const CHANNEL_OPTIONS = [
   "email",
+  "slack",
+  "microsoft_teams",
+  "webhook",
   "discord",
   "telegram",
   "sms",

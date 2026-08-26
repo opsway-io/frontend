@@ -36,7 +36,7 @@ const ResponseTimesGraph: FunctionComponent<ResponseTimesGraphProps> = (
     const isAnomalyMode = chartMode === "anomaly";
     return {
       markers: {
-        size: isAnomalyMode ? [0, 0, 0, 0, 6] : 0,
+        size: 0,
         hover: {
           size: 4,
         },
@@ -290,7 +290,7 @@ const ResponseTimesGraph: FunctionComponent<ResponseTimesGraphProps> = (
         },
         {
           name: "Anomaly Detected",
-          type: "line" as const,
+          type: "scatter" as const,
           data: anomalyData,
         },
       ];

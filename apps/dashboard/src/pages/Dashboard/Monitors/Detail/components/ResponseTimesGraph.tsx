@@ -200,17 +200,24 @@ const ResponseTimesGraph: FunctionComponent<ResponseTimesGraphProps> = (
       const anomaly =
         data.metrics.find((m) => m.name === "Anomaly")?.timing || [];
 
-      // Actual response time is the sum of all phases
-      const actualData = dns.map((t, idx) => {
-        const val =
-          t.timing +
-          (tcp[idx]?.timing || 0) +
-          (tls[idx]?.timing || 0) +
-          (processing[idx]?.timing || 0) +
-          (transfer[idx]?.timing || 0);
+      // Actual response time is the sum of all phases, padded to expectedData length
+      const actualData = expected.map((e, idx) => {
+        const d = dns[idx];
+        if (d) {
+          const val =
+            d.timing +
+            (tcp[idx]?.timing || 0) +
+            (tls[idx]?.timing || 0) +
+            (processing[idx]?.timing || 0) +
+            (transfer[idx]?.timing || 0);
+          return {
+            x: new Date(e.start).getTime(),
+            y: val,
+          };
+        }
         return {
-          x: new Date(t.start).getTime(),
-          y: val,
+          x: new Date(e.start).getTime(),
+          y: null,
         };
       });
 
@@ -229,10 +236,17 @@ const ResponseTimesGraph: FunctionComponent<ResponseTimesGraphProps> = (
         y: t.timing,
       }));
 
-      const anomalyData = anomaly.map((t) => {
+      const anomalyData = expected.map((e, idx) => {
+        const a = anomaly[idx];
+        if (a) {
+          return {
+            x: new Date(e.start).getTime(),
+            y: a.timing > 0 ? a.timing : null, // null hides non-anomaly data points
+          };
+        }
         return {
-          x: new Date(t.start).getTime(),
-          y: t.timing > 0 ? t.timing : null, // null hides non-anomaly data points
+          x: new Date(e.start).getTime(),
+          y: null,
         };
       });
 

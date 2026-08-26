@@ -250,6 +250,13 @@ const ResponseTimesGraph: FunctionComponent<ResponseTimesGraphProps> = (
         };
       });
 
+      const sortByX = (a: any, b: any) => a.x - b.x;
+      actualData.sort(sortByX);
+      expectedData.sort(sortByX);
+      upperData.sort(sortByX);
+      lowerData.sort(sortByX);
+      anomalyData.sort(sortByX);
+
       return [
         {
           name: "Actual Response Time",

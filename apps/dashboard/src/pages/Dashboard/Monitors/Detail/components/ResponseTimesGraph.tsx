@@ -200,7 +200,14 @@ const ResponseTimesGraph: FunctionComponent<ResponseTimesGraphProps> = (
       const anomaly =
         data.metrics.find((m) => m.name === "Anomaly")?.timing || [];
 
-      // Actual response time is the sum of all phases, padded to expectedData length
+      // Use moment to parse dates to avoid Safari returning NaN for "YYYY-MM-DD HH:MM:SS"
+      // Map over `expected` for ALL arrays to guarantee perfectly identical x values
+
+      const expectedData = expected.map((e) => ({
+        x: moment(e.start).valueOf(),
+        y: e.timing,
+      }));
+
       const actualData = expected.map((e, idx) => {
         const d = dns[idx];
         if (d) {
@@ -211,41 +218,36 @@ const ResponseTimesGraph: FunctionComponent<ResponseTimesGraphProps> = (
             (processing[idx]?.timing || 0) +
             (transfer[idx]?.timing || 0);
           return {
-            x: new Date(e.start).getTime(),
+            x: moment(e.start).valueOf(),
             y: val,
           };
         }
         return {
-          x: new Date(e.start).getTime(),
+          x: moment(e.start).valueOf(),
           y: null,
         };
       });
 
-      const expectedData = expected.map((t) => ({
-        x: new Date(t.start).getTime(),
-        y: t.timing,
+      const upperData = expected.map((e, idx) => ({
+        x: moment(e.start).valueOf(),
+        y: upper[idx] ? upper[idx].timing : null,
       }));
 
-      const upperData = upper.map((t) => ({
-        x: new Date(t.start).getTime(),
-        y: t.timing,
-      }));
-
-      const lowerData = lower.map((t) => ({
-        x: new Date(t.start).getTime(),
-        y: t.timing,
+      const lowerData = expected.map((e, idx) => ({
+        x: moment(e.start).valueOf(),
+        y: lower[idx] ? lower[idx].timing : null,
       }));
 
       const anomalyData = expected.map((e, idx) => {
         const a = anomaly[idx];
         if (a) {
           return {
-            x: new Date(e.start).getTime(),
-            y: a.timing > 0 ? a.timing : null, // null hides non-anomaly data points
+            x: moment(e.start).valueOf(),
+            y: a.timing > 0 ? a.timing : null,
           };
         }
         return {
-          x: new Date(e.start).getTime(),
+          x: moment(e.start).valueOf(),
           y: null,
         };
       });

@@ -192,7 +192,7 @@ const ResponseTimesGraph: FunctionComponent<ResponseTimesGraphProps> = (
           name: metric.name,
           type: "area" as const,
           data: metric.timing.map((t) => ({
-            x: moment.utc(t.start).valueOf(),
+            x: moment(t.start).valueOf(),
             y: t.timing,
           })),
         }));
@@ -215,11 +215,11 @@ const ResponseTimesGraph: FunctionComponent<ResponseTimesGraphProps> = (
       const anomaly =
         data.metrics.find((m) => m.name === "Anomaly")?.timing || [];
 
-      // Parse dates as UTC to avoid timezone jumping between historical and forecast data
+      // Parse dates using local timezone context to properly align ClickHouse local dates with Go's UTC forecast dates
       // Map over `expected` for ALL arrays to guarantee perfectly identical x values
 
       const expectedData = expected.map((e) => ({
-        x: moment.utc(e.start).valueOf(),
+        x: moment(e.start).valueOf(),
         y: e.timing,
       }));
 
@@ -233,23 +233,23 @@ const ResponseTimesGraph: FunctionComponent<ResponseTimesGraphProps> = (
             (processing[idx]?.timing || 0) +
             (transfer[idx]?.timing || 0);
           return {
-            x: moment.utc(e.start).valueOf(),
+            x: moment(e.start).valueOf(),
             y: val,
           };
         }
         return {
-          x: moment.utc(e.start).valueOf(),
+          x: moment(e.start).valueOf(),
           y: null,
         };
       });
 
       const upperData = expected.map((e, idx) => ({
-        x: moment.utc(e.start).valueOf(),
+        x: moment(e.start).valueOf(),
         y: upper[idx] ? upper[idx].timing : null,
       }));
 
       const lowerData = expected.map((e, idx) => ({
-        x: moment.utc(e.start).valueOf(),
+        x: moment(e.start).valueOf(),
         y: lower[idx] ? lower[idx].timing : null,
       }));
 
@@ -257,12 +257,12 @@ const ResponseTimesGraph: FunctionComponent<ResponseTimesGraphProps> = (
         const a = anomaly[idx];
         if (a) {
           return {
-            x: moment.utc(e.start).valueOf(),
+            x: moment(e.start).valueOf(),
             y: a.timing > 0 ? a.timing : null,
           };
         }
         return {
-          x: moment.utc(e.start).valueOf(),
+          x: moment(e.start).valueOf(),
           y: null,
         };
       });

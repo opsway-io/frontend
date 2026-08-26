@@ -40,6 +40,21 @@ const ResponseTimesGraph: FunctionComponent<ResponseTimesGraphProps> = (
         hover: {
           size: 4,
         },
+        colors: isAnomalyMode
+        ? [
+            theme.palette.text.secondary,
+            theme.palette.primary.main,
+            theme.palette.text.disabled,
+            theme.palette.text.disabled,
+            theme.palette.error.main,
+          ]
+        : [
+            theme.palette.primary.main,
+            theme.palette.secondary.main,
+            theme.palette.success.main,
+            theme.palette.warning.main,
+            theme.palette.info.main,
+          ],
       },
       chart: {
         toolbar: {
@@ -55,8 +70,8 @@ const ResponseTimesGraph: FunctionComponent<ResponseTimesGraphProps> = (
       },
       stroke: {
         curve: "smooth",
-        width: isAnomalyMode ? [3, 2, 1, 1, 0] : 2,
-        dashArray: isAnomalyMode ? [0, 5, 5, 5, 0] : 0,
+        width: isAnomalyMode ? [2, 3, 1, 1, 0] : 2,
+        dashArray: isAnomalyMode ? [5, 0, 5, 5, 0] : 0,
       },
       fill: {
         type: isAnomalyMode ? "solid" : "gradient",
@@ -70,8 +85,8 @@ const ResponseTimesGraph: FunctionComponent<ResponseTimesGraphProps> = (
       },
       colors: isAnomalyMode
         ? [
+            theme.palette.text.secondary, // Expected: Gray
             theme.palette.primary.main, // Actual: Blue
-            theme.palette.success.main, // Expected: Green
             theme.palette.text.disabled, // Confidence Upper Bound
             theme.palette.text.disabled, // Confidence Lower Bound
             theme.palette.error.main, // Anomaly: Red
@@ -254,14 +269,14 @@ const ResponseTimesGraph: FunctionComponent<ResponseTimesGraphProps> = (
 
       return [
         {
-          name: "Actual Response Time",
-          type: "line" as const,
-          data: actualData,
-        },
-        {
           name: "Expected Time (Profile)",
           type: "line" as const,
           data: expectedData,
+        },
+        {
+          name: "Actual Response Time",
+          type: "line" as const,
+          data: actualData,
         },
         {
           name: "Confidence Upper Bound",

@@ -1,20 +1,32 @@
 import { Box, Stack, Typography } from "@mui/material";
 import { FunctionComponent } from "react";
+import dayjs from "dayjs";
 
 interface ComponentStatusProps {
   name: string;
   status: string;
   layout: string;
+  createdAt?: string;
 }
 
 const ComponentStatus: FunctionComponent<ComponentStatusProps> = ({
   name,
   status,
   layout,
+  createdAt,
 }) => {
   const isOperational = status === "OPERATIONAL";
   const statusColor = isOperational ? "#10b981" : "#f43f5e";
   const statusText = isOperational ? "Operational" : "Outage";
+
+  let displayDays = 90;
+  if (createdAt) {
+    const createdDate = dayjs(createdAt);
+    const now = dayjs();
+    let daysDiff = now.diff(createdDate, "day");
+    if (isNaN(daysDiff) || daysDiff < 1) daysDiff = 1;
+    displayDays = Math.min(daysDiff, 90);
+  }
 
   return (
     <Stack direction="column" spacing={2} sx={{ width: "100%" }}>
@@ -52,7 +64,7 @@ const ComponentStatus: FunctionComponent<ComponentStatusProps> = ({
             spacing={0.5}
             sx={{ width: "100%", overflow: "hidden" }}
           >
-            {new Array(90).fill(0).map((_, index) => (
+            {new Array(displayDays).fill(0).map((_, index) => (
               <Box
                 key={index}
                 sx={{
@@ -75,7 +87,7 @@ const ComponentStatus: FunctionComponent<ComponentStatusProps> = ({
               color="text.secondary"
               sx={{ opacity: 0.6 }}
             >
-              90 days ago
+              {displayDays} {displayDays === 1 ? "day" : "days"} ago
             </Typography>
             <Typography
               variant="caption"

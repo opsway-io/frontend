@@ -2,6 +2,7 @@ export interface PublicMonitor {
   id: number;
   name: string;
   status: string; // "OPERATIONAL" | "OUTAGE"
+  createdAt: string;
 }
 
 export interface PublicIncident {

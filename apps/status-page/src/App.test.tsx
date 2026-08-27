@@ -11,7 +11,7 @@ vi.mock("./api", () => ({
 describe("StatusPage App", () => {
   it("renders loading state initially", () => {
     (api.getPublicStatusPage as any).mockImplementation(
-      () => new Promise(() => {}),
+      () => new Promise(() => undefined),
     );
     render(<App />);
     expect(screen.getByText("Loading status page...")).toBeInTheDocument();
@@ -30,6 +30,6 @@ describe("StatusPage App", () => {
       expect(screen.getByText("Opsway Status")).toBeInTheDocument();
     });
     expect(screen.getByText("Production API")).toBeInTheDocument();
-    expect(screen.getByText("Everything is operational")).toBeInTheDocument();
+    expect(screen.getByText("All Systems Operational")).toBeInTheDocument();
   });
 });

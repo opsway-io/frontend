@@ -63,3 +63,32 @@ export async function deleteAlertRule(
 ): Promise<void> {
   await client.delete(`/v1/teams/${teamId}/alerting/${ruleId}`);
 }
+
+export interface IAlertRuleTrigger {
+  id: number;
+  incidentId?: number;
+  channels: string;
+  createdAt: string;
+}
+
+export interface GetAlertRuleTriggersResponse {
+  triggers: IAlertRuleTrigger[];
+}
+
+export async function getAlertRuleTriggers(
+  teamId: number,
+  ruleId: number,
+  offset?: number,
+  limit?: number,
+): Promise<GetAlertRuleTriggersResponse> {
+  const response = await client.get(
+    `/v1/teams/${teamId}/alerting/${ruleId}/triggers`,
+    {
+      params: {
+        offset,
+        limit,
+      },
+    },
+  );
+  return response?.data;
+}

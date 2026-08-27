@@ -5,7 +5,7 @@ import { getQueryClient } from "./client.query";
 
 const globalQueryClient = getQueryClient();
 
-export const useIncidents = (offset = 0, limit = 5) => {
+export const useIncidents = (resolved?: boolean, offset = 0, limit = 5) => {
   const teamId = useAuthenticationStore((state) => state.currentTeamId);
 
   return useQuery(
@@ -14,6 +14,7 @@ export const useIncidents = (offset = 0, limit = 5) => {
       teamId,
       "incidents",
       {
+        resolved,
         offset,
         limit,
       },
@@ -23,7 +24,7 @@ export const useIncidents = (offset = 0, limit = 5) => {
         return Promise.resolve(null);
       }
 
-      return IncidentsAPI.getIncidents(teamId, offset, limit);
+      return IncidentsAPI.getIncidents(teamId, resolved, offset, limit);
     },
   );
 };
@@ -113,6 +114,35 @@ export const useAcknowledgeIncident = () => {
         queryClient.invalidateQueries(["team", teamId]);
         queryClient.invalidateQueries(["teams", teamId]);
       },
+    },
+  );
+};
+
+export const useIncidentAlerts = (
+  incidentId: number,
+  offset = 0,
+  limit = 50,
+) => {
+  const teamId = useAuthenticationStore((state) => state.currentTeamId);
+
+  return useQuery(
+    [
+      "team",
+      teamId,
+      "incident",
+      incidentId,
+      "alerts",
+      {
+        offset,
+        limit,
+      },
+    ],
+    () => {
+      if (!teamId || !incidentId) {
+        return Promise.resolve(null);
+      }
+
+      return IncidentsAPI.getIncidentAlerts(teamId, incidentId, offset, limit);
     },
   );
 };

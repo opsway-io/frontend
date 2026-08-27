@@ -26,11 +26,13 @@ export interface GetIncidentsResponse {
 
 export async function getIncidents(
   teamId: number,
+  resolved?: boolean,
   offset?: number,
   limit?: number,
 ): Promise<GetIncidentsResponse> {
   const response = await client.get(`/v1/teams/${teamId}/incidents`, {
     params: {
+      resolved,
       offset,
       limit,
     },
@@ -129,5 +131,34 @@ export async function patchAcknowledgeMonitorIncident(
     `/v1/teams/${teamId}/incidents/${incidentId}/acknowledge`,
   );
 
+  return response?.data;
+}
+
+export interface IIncidentAlert {
+  id: number;
+  alertRuleId: number;
+  channels: string;
+  createdAt: string;
+}
+
+export interface GetIncidentAlertsResponse {
+  alerts: IIncidentAlert[];
+}
+
+export async function getIncidentAlerts(
+  teamId: number,
+  incidentId: number,
+  offset?: number,
+  limit?: number,
+): Promise<GetIncidentAlertsResponse> {
+  const response = await client.get(
+    `/v1/teams/${teamId}/incidents/${incidentId}/alerts`,
+    {
+      params: {
+        offset,
+        limit,
+      },
+    },
+  );
   return response?.data;
 }

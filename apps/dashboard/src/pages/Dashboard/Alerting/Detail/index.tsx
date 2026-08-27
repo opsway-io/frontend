@@ -27,6 +27,7 @@ import { enqueueSnackbar } from "notistack";
 import Container from "../../../../components/Container";
 import Placeholder from "../../../../components/Placeholder";
 import { Restrict, Role } from "../../../../components/Restrict";
+import TriggerHistoryCard from "./components/TriggerHistoryCard";
 
 const CHANNEL_OPTIONS = [
   "email",
@@ -294,6 +295,8 @@ const AlertRuleDetailView: FunctionComponent = () => {
               </Box>
             </Stack>
           </form>
+
+          <TriggerHistoryCard ruleId={id} />
         </Stack>
       </Container>
 

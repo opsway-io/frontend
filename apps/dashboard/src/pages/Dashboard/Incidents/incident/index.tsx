@@ -43,6 +43,7 @@ import LastCheckCard from "../../Monitors/Detail/components/LastCheckCard";
 import ResponseTimeGraph from "../../Monitors/Detail/components/ResponseTimesGraph";
 import TLSCard from "../../Monitors/Detail/components/TLSCard";
 import UptimeCard from "../../Monitors/Detail/components/UptimeCard";
+import AlertHistoryCard from "./components/AlertHistoryCard";
 
 const IncidentDetailView: FunctionComponent = () => {
   const params = useParams();
@@ -373,6 +374,8 @@ const IncidentDetailView: FunctionComponent = () => {
             <ChecksDataGrid teamId={teamId} monitorId={monitorId} />
           </CardContent>
         </Card>
+
+        <AlertHistoryCard incidentId={incidentId} />
       </Container>
     </>
   );

@@ -65,9 +65,21 @@ export const useDeleteAlertRule = () => {
       return AlertingAPI.deleteAlertRule(teamId, ruleId);
     },
     {
-      onSuccess: () => {
-        queryClient.invalidateQueries(["teams", teamId, "alerting"]);
-      },
-    },
+	  onSuccess: () => {
+		queryClient.invalidateQueries(["teams", teamId, "alerting"]);
+	  },
+	},
+  );
+};
+
+export const useAlertRuleTriggers = (ruleId: number, offset = 0, limit = 50) => {
+  const teamId = useAuthenticationStore((state) => state.currentTeamId);
+
+  return useQuery(
+	["teams", teamId, "alerting", ruleId, "triggers", { offset, limit }],
+	() => {
+	  if (!teamId) return Promise.resolve(null);
+	  return AlertingAPI.getAlertRuleTriggers(teamId, ruleId, offset, limit);
+	},
   );
 };

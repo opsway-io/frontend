@@ -1,17 +1,24 @@
-import { FunctionComponent } from "react";
+import { FunctionComponent, useState } from "react";
 import { Helmet } from "react-helmet";
+import { Box, Tab, Tabs } from "@mui/material";
 import Container from "../../../components/Container";
 import Placeholder from "../../../components/Placeholder";
 import IncidentOverviewList from "./components/OverviewList";
+import HistoryList from "./components/HistoryList";
 import { useMonitorsIncidents } from "../../../hooks/monitors.query";
 
 const IncidentsView: FunctionComponent = () => {
-  // Get incidents
+  const [tabIndex, setTabIndex] = useState(0);
+
+  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+    setTabIndex(newValue);
+  };
+
   const {
     data: monitorsIncidents,
-    error: incidentsError,
     isLoading: incidentsAreLoading,
   } = useMonitorsIncidents();
+
   return (
     <>
       <Helmet>
@@ -20,12 +27,29 @@ const IncidentsView: FunctionComponent = () => {
 
       <Container
         header="Incidents"
-        description="An overview active and resolved incidents across your infrastructure."
+        description="An overview of active and resolved incidents across your infrastructure."
       >
-        {incidentsAreLoading ? (
-          <Placeholder />
-        ) : (
-          <IncidentOverviewList monitors={monitorsIncidents?.monitors} />
+        <Box sx={{ borderBottom: 1, borderColor: "divider", mb: 3 }}>
+          <Tabs value={tabIndex} onChange={handleTabChange} aria-label="incidents tabs">
+            <Tab label="Active" />
+            <Tab label="History" />
+          </Tabs>
+        </Box>
+
+        {tabIndex === 0 && (
+          <Box>
+            {incidentsAreLoading ? (
+              <Placeholder />
+            ) : (
+              <IncidentOverviewList monitors={monitorsIncidents?.monitors} />
+            )}
+          </Box>
+        )}
+
+        {tabIndex === 1 && (
+          <Box>
+            <HistoryList />
+          </Box>
         )}
       </Container>
     </>

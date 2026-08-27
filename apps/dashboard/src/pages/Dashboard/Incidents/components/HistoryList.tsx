@@ -6,7 +6,7 @@ import Placeholder from "../../../../components/Placeholder";
 import { useIncidents } from "../../../../hooks/incidents.query";
 
 const HistoryList: FunctionComponent = () => {
-  const { data, isLoading } = useIncidents();
+  const { data, isLoading } = useIncidents(true, 0, 50);
 
   if (isLoading) {
     return <Placeholder />;

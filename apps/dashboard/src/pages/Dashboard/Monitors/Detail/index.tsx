@@ -18,7 +18,7 @@ import {
 import { enqueueSnackbar } from "notistack";
 import { FunctionComponent, useMemo, useState } from "react";
 import { Helmet } from "react-helmet";
-import { IoCheckmark, IoPause, IoPlay, IoSettings, IoSearch } from "react-icons/io5";
+import { IoCheckmark, IoPause, IoPlay, IoSettings, IoSearch, IoOpenOutline } from "react-icons/io5";
 import { Link, NavLink, useParams, useSearchParams, useNavigate, useLocation } from "react-router-dom";
 import Conditional from "../../../../components/Conditional";
 import Container from "../../../../components/Container";
@@ -214,6 +214,14 @@ const MonitorDetailView: FunctionComponent = () => {
                       }}
                     >
                       Focus Graph
+                    </Button>
+                    <Button
+                      color="inherit"
+                      size="small"
+                      startIcon={<IoOpenOutline />}
+                      onClick={() => navigate(`/incidents/incident/${incident.id}`)}
+                    >
+                      View Details
                     </Button>
                     <Button
                       color="inherit"

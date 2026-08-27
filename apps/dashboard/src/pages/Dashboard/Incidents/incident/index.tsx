@@ -37,12 +37,12 @@ import {
 import { useCurrentUserRole } from "../../../../hooks/user.query";
 import { secondsHumanize } from "../../../../utilities/time";
 import { stripProtocolAndPath } from "../../../../utilities/url";
-import AverageResponseTimeCard from "../details/components/AverageResponseTimeCard";
-import { ChecksDataGrid } from "../details/components/ChecksDataGrid";
-import LastCheckCard from "../details/components/LastCheckCard";
-import ResponseTimeGraph from "../details/components/ResponseTimesGraph";
-import TLSCard from "../details/components/TLSCard";
-import UptimeCard from "../details/components/UptimeCard";
+import AverageResponseTimeCard from "../../Monitors/Detail/components/AverageResponseTimeCard";
+import { ChecksDataGrid } from "../../Monitors/Detail/components/ChecksDataGrid";
+import LastCheckCard from "../../Monitors/Detail/components/LastCheckCard";
+import ResponseTimeGraph from "../../Monitors/Detail/components/ResponseTimesGraph";
+import TLSCard from "../../Monitors/Detail/components/TLSCard";
+import UptimeCard from "../../Monitors/Detail/components/UptimeCard";
 
 const IncidentDetailView: FunctionComponent = () => {
   const params = useParams();

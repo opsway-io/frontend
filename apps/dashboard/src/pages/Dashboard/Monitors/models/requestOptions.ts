@@ -51,6 +51,8 @@ const requestMethods = [
   "MYSQL",
   "REDIS",
   "BROWSER",
+  "WEBSOCKET",
+  "UDP",
 ];
 
 const requestMethodOptions = requestMethods.map((method) => {

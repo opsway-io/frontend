@@ -8,20 +8,39 @@ const html = `
   <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 </head>
 <body>
-  <div id="chart"></div>
+  <div id="chart" style="width: 800px; height: 400px; background: white;"></div>
   <script>
+    const expectedData = [];
+    const actualData = [];
+    const upperData = [];
+    const lowerData = [];
+    const anomalyData = [];
+    
+    for (let i = 0; i < 96; i++) {
+      const ts = i * 1000;
+      expectedData.push({ x: ts, y: 150 });
+      actualData.push({ x: ts, y: i < 72 ? 160 : null });
+      upperData.push({ x: ts, y: 180 });
+      lowerData.push({ x: ts, y: 120 });
+      anomalyData.push({ x: ts, y: i === 36 ? 300 : null });
+    }
+    
     var options = {
       series: [
-        { name: 'Actual', type: 'line', data: [{x: 1000, y: 150}, {x: 2000, y: 160}] },
-        { name: 'Anomaly', type: 'line', data: [{x: 1000, y: null}, {x: 2000, y: null}] },
+        { name: "Expected", type: "line", data: expectedData },
+        { name: "Actual", type: "line", data: actualData },
+        { name: "Upper", type: "line", data: upperData },
+        { name: "Lower", type: "line", data: lowerData },
+        { name: "Anomaly", type: "scatter", data: anomalyData }
       ],
-      chart: { type: 'line', height: 350 },
-      stroke: { curve: 'smooth', width: [3, 2] },
-      xaxis: { type: 'datetime' },
-      tooltip: {
-        shared: true,
-        intersect: false,
-      }
+      chart: { type: 'line', height: 400, animations: { enabled: false } },
+      xaxis: { type: "datetime" },
+      markers: {
+        size: 0,
+        hover: { size: 4 },
+        colors: ["#666", "#00f", "#999", "#999", "#f00"]
+      },
+      tooltip: { shared: true, intersect: false }
     };
     var chart = new ApexCharts(document.querySelector("#chart"), options);
     chart.render();
@@ -36,20 +55,7 @@ fs.writeFileSync('test_apex.html', html);
   const page = await browser.newPage();
   await page.goto('file://' + __dirname + '/test_apex.html');
   await page.waitForSelector('.apexcharts-canvas');
-  const rect = await page.evaluate(() => {
-    const el = document.querySelector('.apexcharts-canvas');
-    const {x, y, width, height} = el.getBoundingClientRect();
-    return {x, y, width, height};
-  });
-  
-  // Try to hover
-  await page.mouse.move(rect.x + rect.width * 0.5, rect.y + rect.height * 0.5);
-  await new Promise(r => setTimeout(r, 500));
-  const t2 = await page.evaluate(() => {
-    const tooltip = document.querySelector('.apexcharts-tooltip');
-    return tooltip ? tooltip.innerText : "NULL";
-  });
-  console.log("TOOLTIP:", t2);
-  
+  await new Promise(r => setTimeout(r, 1000));
+  await page.screenshot({ path: 'chart.png' });
   await browser.close();
 })();

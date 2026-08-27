@@ -55,20 +55,20 @@ vi.mock("react-router-dom", async () => {
 });
 
 // Mock complex sub-components
-vi.mock("./components/AverageResponseTimeCard", () => ({
+vi.mock("../../Monitors/Detail/components/AverageResponseTimeCard", () => ({
   default: () => <div>Avg Response</div>,
 }));
-vi.mock("./components/ChecksDataGrid", () => ({
+vi.mock("../../Monitors/Detail/components/ChecksDataGrid", () => ({
   ChecksDataGrid: () => <div>Checks Grid</div>,
 }));
-vi.mock("./components/LastCheckCard", () => ({
+vi.mock("../../Monitors/Detail/components/LastCheckCard", () => ({
   default: () => <div>Last Check</div>,
 }));
-vi.mock("./components/ResponseTimesGraph", () => ({
+vi.mock("../../Monitors/Detail/components/ResponseTimesGraph", () => ({
   default: () => <div>Response Graph</div>,
 }));
-vi.mock("./components/TLSCard", () => ({ default: () => <div>TLS Card</div> }));
-vi.mock("./components/UptimeCard", () => ({
+vi.mock("../../Monitors/Detail/components/TLSCard", () => ({ default: () => <div>TLS Card</div> }));
+vi.mock("../../Monitors/Detail/components/UptimeCard", () => ({
   default: () => <div>Uptime Card</div>,
 }));
 

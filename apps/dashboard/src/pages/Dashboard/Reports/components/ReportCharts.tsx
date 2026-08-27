@@ -36,7 +36,7 @@ export const PerformanceChart = ({ data, monitorsMap }: ReportChartsProps) => {
       xaxis: {
         categories:
           data.performance?.map(
-            (p) => monitorsMap[p.monitorId] || `Monitor ${p.monitorId}`
+            (p) => monitorsMap[p.MonitorID] || `Monitor ${p.MonitorID}`
           ) || [],
         labels: {
           style: {
@@ -87,15 +87,15 @@ export const PerformanceChart = ({ data, monitorsMap }: ReportChartsProps) => {
     return [
       {
         name: "Average",
-        data: data.performance.map((p) => p.averageResponseTime),
+        data: data.performance.map((p) => p.AverageResponseTime),
       },
       {
         name: "P95",
-        data: data.performance.map((p) => p.p95),
+        data: data.performance.map((p) => p.P95),
       },
       {
         name: "P99",
-        data: data.performance.map((p) => p.p99),
+        data: data.performance.map((p) => p.P99),
       },
     ];
   }, [data]);

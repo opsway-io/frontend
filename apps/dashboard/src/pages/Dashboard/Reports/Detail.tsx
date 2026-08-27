@@ -66,12 +66,12 @@ const ReportDetailView: FunctionComponent = () => {
     let totalIncidents = 0;
 
     if (report.data.uptime?.length) {
-      const sum = report.data.uptime.reduce((a, b) => a + b.uptimePercentage, 0);
+      const sum = report.data.uptime.reduce((a, b) => a + b.UptimePercentage, 0);
       avgUptime = sum / report.data.uptime.length;
     }
     if (report.data.performance?.length) {
       const sum = report.data.performance.reduce(
-        (a, b) => a + b.averageResponseTime,
+        (a, b) => a + b.AverageResponseTime,
         0
       );
       avgResponseTime = sum / report.data.performance.length;
@@ -240,17 +240,17 @@ const ReportDetailView: FunctionComponent = () => {
                           <TableCell component="th" scope="row">
                             <Stack>
                               <Typography variant="body2" fontWeight="bold">
-                                {getMonitorName(row.monitorId)}
+                                {getMonitorName(row.MonitorID)}
                               </Typography>
                               <Typography variant="caption" color="text.secondary">
-                                ID: {row.monitorId}
+                                ID: {row.MonitorID}
                               </Typography>
                             </Stack>
                           </TableCell>
-                          <TableCell>{row.url}</TableCell>
-                          <TableCell>{row.date}</TableCell>
+                          <TableCell>{row.Url}</TableCell>
+                          <TableCell>{row.Date}</TableCell>
                           <TableCell align="right" sx={{ fontWeight: 'medium' }}>
-                            {row.uptimePercentage.toFixed(2)}%
+                            {row.UptimePercentage.toFixed(2)}%
                           </TableCell>
                         </TableRow>
                       ))}
@@ -291,16 +291,16 @@ const ReportDetailView: FunctionComponent = () => {
                           <TableCell component="th" scope="row">
                             <Stack>
                               <Typography variant="body2" fontWeight="bold">
-                                {getMonitorName(row.monitorId)}
+                                {getMonitorName(row.MonitorID)}
                               </Typography>
                               <Typography variant="caption" color="text.secondary">
-                                ID: {row.monitorId}
+                                ID: {row.MonitorID}
                               </Typography>
                             </Stack>
                           </TableCell>
-                          <TableCell align="right">{row.averageResponseTime.toFixed(0)} ms</TableCell>
-                          <TableCell align="right">{row.p95.toFixed(0)} ms</TableCell>
-                          <TableCell align="right">{row.p99.toFixed(0)} ms</TableCell>
+                          <TableCell align="right">{row.AverageResponseTime.toFixed(0)} ms</TableCell>
+                          <TableCell align="right">{row.P95.toFixed(0)} ms</TableCell>
+                          <TableCell align="right">{row.P99.toFixed(0)} ms</TableCell>
                         </TableRow>
                       ))}
                     </TableBody>

@@ -31,17 +31,17 @@ export async function getReports(
 }
 
 export interface MonitorUptime {
-  monitorId: number;
-  url: string;
-  uptimePercentage: number;
-  date: string;
+  MonitorID: number;
+  Url: string;
+  UptimePercentage: number;
+  Date: string;
 }
 
 export interface MonitorPerformance {
-  monitorId: number;
-  averageResponseTime: number;
-  p99: number;
-  p95: number;
+  MonitorID: number;
+  AverageResponseTime: number;
+  P99: number;
+  P95: number;
 }
 
 export interface MonitorIncident {

@@ -226,26 +226,35 @@ const MonitorDetailView: FunctionComponent = () => {
 
                 <Stack spacing={1} mt={1}>
                   <Typography variant="body1">
-                    Assertion failed: The{" "}
-                    <strong>{incident.property || "Unknown"}</strong> property
-                    was checked.
+                    {incident.title || "An error occurred with this monitor."}
                   </Typography>
-                  <Stack direction="row" spacing={1} alignItems="center">
-                    <Typography variant="body2" color="text.secondary">
-                      Trigger condition:
-                    </Typography>
-                    <Chip
-                      size="small"
-                      color="error"
-                      label={incident.operator || "N/A"}
-                    />
-                    <Chip
-                      size="small"
-                      variant="outlined"
-                      color="error"
-                      label={incident.target || "N/A"}
-                    />
-                  </Stack>
+                  {(incident.operator || incident.target || incident.property) && (
+                    <Stack direction="row" spacing={1} alignItems="center">
+                      {incident.property && (
+                        <Typography variant="body2" color="text.secondary" sx={{ mr: 1 }}>
+                          Property: {incident.property}
+                        </Typography>
+                      )}
+                      <Typography variant="body2" color="text.secondary">
+                        Trigger condition:
+                      </Typography>
+                      {incident.operator && (
+                        <Chip
+                          size="small"
+                          color="error"
+                          label={incident.operator}
+                        />
+                      )}
+                      {incident.target && (
+                        <Chip
+                          size="small"
+                          variant="outlined"
+                          color="error"
+                          label={incident.target}
+                        />
+                      )}
+                    </Stack>
+                  )}
                   <Stack direction="row" spacing={4} mt={1}>
                     <Typography variant="body2">
                       <strong>First occurrence:</strong> {incident.createdAt}

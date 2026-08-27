@@ -49,7 +49,7 @@ const TriggerHistoryCard: FunctionComponent<TriggerHistoryCardProps> = ({ ruleId
                     <Stack spacing={1}>
                       <Typography variant="subtitle2">
                         {trigger.incidentId ? (
-                          <Link to={`/incidents/${trigger.incidentId}`}>View Incident #{trigger.incidentId}</Link>
+                          <Link to={`/incidents/incident/${trigger.incidentId}`}>View Incident #{trigger.incidentId}</Link>
                         ) : (
                           "Triggered without incident"
                         )}

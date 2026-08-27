@@ -32,7 +32,7 @@ const HistoryList: FunctionComponent = () => {
         <Card
           key={incident.id}
           component={Link}
-          to={`/incidents/${incident.id}`}
+          to={`/incidents/incident/${incident.id}`}
           sx={{ textDecoration: "none", display: "block" }}
           variant="outlined"
         >

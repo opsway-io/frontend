@@ -18,11 +18,12 @@ import {
 import { enqueueSnackbar } from "notistack";
 import { FunctionComponent, useMemo, useState } from "react";
 import { Helmet } from "react-helmet";
-import { IoCheckmark, IoPause, IoPlay, IoSettings } from "react-icons/io5";
+import { IoCheckmark, IoPause, IoPlay, IoSettings, IoSearch } from "react-icons/io5";
 import { Link, NavLink, useParams, useSearchParams, useNavigate, useLocation } from "react-router-dom";
 import Conditional from "../../../../components/Conditional";
 import Container from "../../../../components/Container";
 import PulseDot from "../../../../components/PulseDot";
+import moment from "moment";
 import { Role } from "../../../../components/Restrict";
 import useAuthenticationStore from "../../../../hooks/authentication.store";
 import {
@@ -201,16 +202,30 @@ const MonitorDetailView: FunctionComponent = () => {
                 key={incident.id}
                 severity="error"
                 action={
-                  <Button
-                    color="inherit"
-                    size="small"
-                    startIcon={<IoCheckmark />}
-                    onClick={() =>
-                      solveIncident.mutate({ incidentId: incident.id })
-                    }
-                  >
-                    Mark Resolved
-                  </Button>
+                  <Stack direction="row" spacing={1}>
+                    <Button
+                      color="inherit"
+                      size="small"
+                      startIcon={<IoSearch />}
+                      onClick={() => {
+                        const start = moment(incident.createdAt).subtract(1, 'hour').toISOString();
+                        const end = moment(incident.updatedAt).add(1, 'hour').toISOString();
+                        navigate(`/monitors/${monitorId}?start=${encodeURIComponent(start)}&end=${encodeURIComponent(end)}`);
+                      }}
+                    >
+                      Focus Graph
+                    </Button>
+                    <Button
+                      color="inherit"
+                      size="small"
+                      startIcon={<IoCheckmark />}
+                      onClick={() =>
+                        solveIncident.mutate({ incidentId: incident.id })
+                      }
+                    >
+                      Mark Resolved
+                    </Button>
+                  </Stack>
                 }
               >
                 <AlertTitle

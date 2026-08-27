@@ -40,7 +40,17 @@ const CHANNEL_OPTIONS = [
   "datadog",
   "new_relic",
 ];
-const CONDITION_OPTIONS = ["monitor_down", "*", "ssl_expiry"];
+const CONDITION_OPTIONS = [
+  { label: "Any Incident (*)", value: "*" },
+  { label: "Status Code Failure", value: "STATUS_CODE" },
+  { label: "Response Time Degradation", value: "RESPONSE_TIME" },
+  { label: "Raw Body Mismatch", value: "RAW_BODY" },
+  { label: "JSON Body Mismatch", value: "JSON_BODY" },
+  { label: "Header Mismatch", value: "HEADERS" },
+  { label: "TLS Error", value: "TLS" },
+  { label: "SSL Certificate Expiry", value: "SSL/TLS Cert Expiry" },
+  { label: "Anomaly Detected", value: "Anomaly Detected" },
+];
 
 interface IFormInput {
   name: string;
@@ -184,10 +194,25 @@ const AlertRuleDetailView: FunctionComponent = () => {
                       <Autocomplete
                         freeSolo
                         options={CONDITION_OPTIONS}
-                        value={field.value}
-                        onChange={(_, newValue) =>
-                          field.onChange(newValue || "")
+                        getOptionLabel={(option) => {
+                          if (typeof option === "string") {
+                            const found = CONDITION_OPTIONS.find(o => o.value === option);
+                            return found ? found.label : option;
+                          }
+                          return option.label;
+                        }}
+                        value={
+                          CONDITION_OPTIONS.find((c) => c.value === field.value) || field.value
                         }
+                        onChange={(_, newValue) => {
+                          if (typeof newValue === "string") {
+                            field.onChange(newValue);
+                          } else if (newValue && newValue.value) {
+                            field.onChange(newValue.value);
+                          } else {
+                            field.onChange("");
+                          }
+                        }}
                         onInputChange={(_, newInputValue) =>
                           field.onChange(newInputValue)
                         }

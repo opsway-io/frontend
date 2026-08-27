@@ -15,6 +15,8 @@ import moment from "moment";
 interface ResponseTimesGraphProps {
   monitorId: number;
   interval: number;
+  start?: string;
+  end?: string;
 }
 
 const ResponseTimesGraph: FunctionComponent<ResponseTimesGraphProps> = (
@@ -25,7 +27,11 @@ const ResponseTimesGraph: FunctionComponent<ResponseTimesGraphProps> = (
     "breakdown",
   );
 
-  const { data, isLoading } = useMonitorMetrics(props.monitorId);
+  const { data, isLoading } = useMonitorMetrics(props.monitorId, props.start, props.end);
+
+  const startMs = props.start ? moment(props.start).valueOf() : undefined;
+  const endMs = props.end ? moment(props.end).valueOf() : undefined;
+  const isCustomRange = startMs != null && endMs != null;
 
   // Check if anomalies/predictions are present in data
   const hasAnomalyData = useMemo(() => {
@@ -123,7 +129,9 @@ const ResponseTimesGraph: FunctionComponent<ResponseTimesGraphProps> = (
           show: true,
           color: theme.palette.divider,
         },
-        range: isAnomalyMode ? props.interval + 86400000 : props.interval,
+        range: isCustomRange ? undefined : (isAnomalyMode ? props.interval + 86400000 : props.interval),
+        min: startMs,
+        max: endMs,
         type: "datetime",
         tickAmount: 10,
         labels: {
@@ -177,7 +185,7 @@ const ResponseTimesGraph: FunctionComponent<ResponseTimesGraphProps> = (
         },
       },
     };
-  }, [theme, props.interval, chartMode]);
+  }, [theme, props.interval, chartMode, isCustomRange, startMs, endMs]);
 
   const metrics = useMemo(() => {
     if (!data || !data.metrics) return [];

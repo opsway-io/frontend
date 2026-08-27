@@ -103,9 +103,6 @@ const IncidentsView = lazy(() => import("../pages/Dashboard/Incidents"));
 const IncidentsMontiorView = lazy(
   () => import("../pages/Dashboard/Incidents/monitors"),
 );
-const IncidentMonitorDetailsView = lazy(
-  () => import("../pages/Dashboard/Incidents/details"),
-);
 
 const ChangelogView = lazy(() => import("../pages/Dashboard/Changelog"));
 const ChangelogEntriesCreateView = lazy(
@@ -191,10 +188,6 @@ const Routes: FunctionComponent = () => {
           <Route path="incidents">
             <Route index path="" element={<IncidentsView />} />
             <Route path=":id/monitor" element={<IncidentsMontiorView />} />
-            <Route
-              path=":id/details"
-              element={<IncidentMonitorDetailsView />}
-            />
             <Route
               path="incident/:incidentId"
               element={<IncidentDetailView />}

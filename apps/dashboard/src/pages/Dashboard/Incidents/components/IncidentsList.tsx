@@ -13,6 +13,7 @@ import { IoCheckmark, IoStatsChart } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
 import { MonitorIncident } from "../../../../../src/api/endpoints/incidents";
 import { useSolveIncident } from "../../../../hooks/incidents.query";
+import moment from "moment";
 
 interface MonitorIncidentPageIncidentsListProps {
   incidents?: MonitorIncident[];
@@ -59,7 +60,11 @@ const IncidentsListItem: FunctionComponent<IncidentsListItemProps> = ({
             columns={{ xs: 1, md: 2 }}
             justifyContent="space-between"
             gap={{ xs: 2, md: 4 }}
-            onClick={() => navigate(`/incidents/incident/${incident.id}`)} // Navigate to the incident page
+            onClick={() => {
+              const start = moment(incident.createdAt).subtract(1, 'hour').toISOString();
+              const end = moment(incident.updatedAt).add(1, 'hour').toISOString();
+              navigate(`/monitors/${incident.monitorId}?start=${encodeURIComponent(start)}&end=${encodeURIComponent(end)}`);
+            }} // Navigate to the monitor page with incident timeframe
           >
             <Grid item>
               <Stack spacing={1}>

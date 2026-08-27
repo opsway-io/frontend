@@ -1,6 +1,7 @@
 import { LoadingButton } from "@mui/lab";
 import {
   Alert,
+  AlertTitle,
   Button,
   Card,
   CardContent,
@@ -17,8 +18,8 @@ import {
 import { enqueueSnackbar } from "notistack";
 import { FunctionComponent, useMemo, useState } from "react";
 import { Helmet } from "react-helmet";
-import { IoPause, IoPlay, IoSettings } from "react-icons/io5";
-import { Link, NavLink, useParams } from "react-router-dom";
+import { IoCheckmark, IoPause, IoPlay, IoSettings } from "react-icons/io5";
+import { Link, NavLink, useParams, useSearchParams, useNavigate, useLocation } from "react-router-dom";
 import Conditional from "../../../../components/Conditional";
 import Container from "../../../../components/Container";
 import PulseDot from "../../../../components/PulseDot";
@@ -30,6 +31,10 @@ import {
 } from "../../../../hooks/monitors.query";
 import { useCurrentUserRole } from "../../../../hooks/user.query";
 import { useMaintenanceWindows } from "../../../../hooks/maintenance.query";
+import {
+  useMonitorIncidents,
+  useSolveIncident,
+} from "../../../../hooks/incidents.query";
 import moment from "moment";
 import { secondsHumanize } from "../../../../utilities/time";
 import { stripProtocolAndPath } from "../../../../utilities/url";
@@ -46,6 +51,14 @@ const MonitorDetailView: FunctionComponent = () => {
 
   const theme = useTheme();
 
+  const [searchParams] = useSearchParams();
+  const startParam = searchParams.get("start") || undefined;
+  const endParam = searchParams.get("end") || undefined;
+  const isCustomRange = !!startParam && !!endParam;
+
+  const navigate = useNavigate();
+  const location = useLocation();
+
   const [timeInterval, setTimeInterval] = useState(604800000);
 
   const teamId = useAuthenticationStore((state) => state.currentTeamId);
@@ -56,6 +69,10 @@ const MonitorDetailView: FunctionComponent = () => {
     useUpdateMonitorState(monitorId);
 
   const isActive = useMemo(() => data?.state === "ACTIVE", [data?.state]);
+
+  const { data: monitorIncidents } = useMonitorIncidents(monitorId);
+  const solveIncident = useSolveIncident();
+  const activeIncidents = monitorIncidents?.incidents || [];
 
   const { data: maintenances } = useMaintenanceWindows();
   const now = moment();
@@ -177,6 +194,72 @@ const MonitorDetailView: FunctionComponent = () => {
           </>
         }
       >
+        {activeIncidents.length > 0 && (
+          <Stack spacing={2} mb={2}>
+            {activeIncidents.map((incident) => (
+              <Alert
+                key={incident.id}
+                severity="error"
+                action={
+                  <Button
+                    color="inherit"
+                    size="small"
+                    startIcon={<IoCheckmark />}
+                    onClick={() =>
+                      solveIncident.mutate({ incidentId: incident.id })
+                    }
+                  >
+                    Mark Resolved
+                  </Button>
+                }
+              >
+                <AlertTitle
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    flexWrap: "wrap",
+                    gap: 1,
+                  }}
+                >
+                  <span>Active Incident:</span>
+                </AlertTitle>
+
+                <Stack spacing={1} mt={1}>
+                  <Typography variant="body1">
+                    Assertion failed: The{" "}
+                    <strong>{incident.property || "Unknown"}</strong> property
+                    was checked.
+                  </Typography>
+                  <Stack direction="row" spacing={1} alignItems="center">
+                    <Typography variant="body2" color="text.secondary">
+                      Trigger condition:
+                    </Typography>
+                    <Chip
+                      size="small"
+                      color="error"
+                      label={incident.operator || "N/A"}
+                    />
+                    <Chip
+                      size="small"
+                      variant="outlined"
+                      color="error"
+                      label={incident.target || "N/A"}
+                    />
+                  </Stack>
+                  <Stack direction="row" spacing={4} mt={1}>
+                    <Typography variant="body2">
+                      <strong>First occurrence:</strong> {incident.createdAt}
+                    </Typography>
+                    <Typography variant="body2">
+                      <strong>Latest occurrence:</strong> {incident.updatedAt}
+                    </Typography>
+                  </Stack>
+                </Stack>
+              </Alert>
+            ))}
+          </Stack>
+        )}
+
         <Stack direction="row" spacing={2} alignItems={"center"}>
           <PulseDot
             color={
@@ -216,7 +299,7 @@ const MonitorDetailView: FunctionComponent = () => {
 
           <Stack direction="row" alignItems="right" spacing={2}>
             <ToggleButtonGroup
-              value={timeInterval}
+              value={isCustomRange ? null : timeInterval}
               exclusive
               sx={{
                 maxHeight: 32,
@@ -224,6 +307,9 @@ const MonitorDetailView: FunctionComponent = () => {
               onChange={(_, value) => {
                 if (value != null) {
                   setTimeInterval(value);
+                  if (isCustomRange) {
+                    navigate(location.pathname);
+                  }
                 }
               }}
             >
@@ -259,7 +345,12 @@ const MonitorDetailView: FunctionComponent = () => {
             />
           </Stack>
           <CardContent>
-            <ResponseTimeGraph monitorId={monitorId} interval={timeInterval} />
+            <ResponseTimeGraph 
+              monitorId={monitorId} 
+              interval={timeInterval} 
+              start={startParam}
+              end={endParam}
+            />
           </CardContent>
         </Card>
 

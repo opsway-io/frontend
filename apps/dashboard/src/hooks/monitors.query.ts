@@ -236,13 +236,13 @@ export const useMonitorCheck = (monitorId: number, checkId: number) => {
   );
 };
 
-export const useMonitorMetrics = (monitorId: number) => {
+export const useMonitorMetrics = (monitorId: number, start?: string, end?: string) => {
   const teamId = useAuthenticationStore((state) => state.currentTeamId);
 
-  return useQuery(["teams", teamId, "monitors", monitorId, "metrics"], () => {
+  return useQuery(["teams", teamId, "monitors", monitorId, "metrics", start, end], () => {
     if (!teamId) {
       return Promise.resolve(null);
     }
-    return MonitorsAPI.getMonitorMetrics(teamId, monitorId);
+    return MonitorsAPI.getMonitorMetrics(teamId, monitorId, start, end);
   });
 };

@@ -14,6 +14,7 @@ export interface Incident {
   rootCauseAnalysis?: string;
   createdAt: string;
   updatedAt: string;
+  resolved?: boolean;
 }
 
 /*

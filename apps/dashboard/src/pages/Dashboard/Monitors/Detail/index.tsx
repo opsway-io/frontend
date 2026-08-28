@@ -14,16 +14,18 @@ import {
   Typography,
   alpha,
   useTheme,
+  Drawer,
+  Box,
+  IconButton
 } from "@mui/material";
 import { enqueueSnackbar } from "notistack";
 import { FunctionComponent, useMemo, useState } from "react";
 import { Helmet } from "react-helmet";
-import { IoCheckmark, IoPause, IoPlay, IoSettings, IoSearch, IoOpenOutline } from "react-icons/io5";
+import { IoCheckmark, IoPause, IoPlay, IoSettings, IoSearch, IoOpenOutline, IoClose } from "react-icons/io5";
 import { Link, NavLink, useParams, useSearchParams, useNavigate, useLocation } from "react-router-dom";
 import Conditional from "../../../../components/Conditional";
 import Container from "../../../../components/Container";
 import PulseDot from "../../../../components/PulseDot";
-import moment from "moment";
 import { Role } from "../../../../components/Restrict";
 import useAuthenticationStore from "../../../../hooks/authentication.store";
 import {
@@ -45,6 +47,8 @@ import LastCheckCard from "./components/LastCheckCard";
 import ResponseTimeGraph from "./components/ResponseTimesGraph";
 import TLSCard from "./components/TLSCard";
 import UptimeCard from "./components/UptimeCard";
+import IncidentsDataGrid from "../../Incidents/components/IncidentsDataGrid";
+import IncidentDetailsContent from "../../Incidents/incident/components/IncidentDetailsContent";
 
 const MonitorDetailView: FunctionComponent = () => {
   const params = useParams();
@@ -61,6 +65,7 @@ const MonitorDetailView: FunctionComponent = () => {
   const location = useLocation();
 
   const [timeInterval, setTimeInterval] = useState(604800000);
+  const [sidebarIncidentId, setSidebarIncidentId] = useState<number | null>(null);
 
   const teamId = useAuthenticationStore((state) => state.currentTeamId);
   const currentRole = useCurrentUserRole();
@@ -71,9 +76,11 @@ const MonitorDetailView: FunctionComponent = () => {
 
   const isActive = useMemo(() => data?.state === "ACTIVE", [data?.state]);
 
-  const { data: monitorIncidents } = useMonitorIncidents(monitorId);
+  // Pass 0, 100 to get a list instead of just active incidents (useMonitorIncidents fetches both active and resolved based on arguments, but wait, useMonitorIncidents signature is monitorId, offset, limit)
+  const { data: monitorIncidents } = useMonitorIncidents(monitorId, 0, 100);
   const solveIncident = useSolveIncident();
-  const activeIncidents = monitorIncidents?.incidents || [];
+  const activeIncidents = monitorIncidents?.incidents?.filter(i => !i.resolved) || [];
+  const pastIncidents = monitorIncidents?.incidents?.filter(i => i.resolved) || [];
 
   const { data: maintenances } = useMaintenanceWindows();
   const now = moment();
@@ -147,6 +154,7 @@ const MonitorDetailView: FunctionComponent = () => {
         </LoadingButton>
       </div>,
       <Button
+        key="settings"
         startIcon={<IoSettings />}
         color="secondary"
         sx={{
@@ -160,7 +168,7 @@ const MonitorDetailView: FunctionComponent = () => {
         Settings
       </Button>,
     ];
-  }, [currentRole, data, params, isUpdatingState]);
+  }, [currentRole, data, params, isUpdatingState, isMaintenance, isActive]);
 
   return (
     <>
@@ -170,11 +178,11 @@ const MonitorDetailView: FunctionComponent = () => {
 
       <Container
         breadcrumbs={[
-          <Link to="/monitors">Monitors</Link>,
+          <Link key="monitors-link" to="/monitors">Monitors</Link>,
           isLoading ? (
-            <Skeleton variant="text" width={150} />
+            <Skeleton key="skeleton" variant="text" width={150} />
           ) : (
-            <span>{data?.name}</span>
+            <span key="name">{data?.name}</span>
           ),
         ]}
         loading={isLoading}
@@ -219,7 +227,7 @@ const MonitorDetailView: FunctionComponent = () => {
                       color="inherit"
                       size="small"
                       startIcon={<IoOpenOutline />}
-                      onClick={() => navigate(`/incidents/incident/${incident.id}`)}
+                      onClick={() => setSidebarIncidentId(Number(incident.id))}
                     >
                       View Details
                     </Button>
@@ -228,7 +236,7 @@ const MonitorDetailView: FunctionComponent = () => {
                       size="small"
                       startIcon={<IoCheckmark />}
                       onClick={() =>
-                        solveIncident.mutate({ incidentId: incident.id })
+                        solveIncident.mutate({ incidentId: incident.id as any })
                       }
                     >
                       Mark Resolved
@@ -428,7 +436,46 @@ const MonitorDetailView: FunctionComponent = () => {
             <ChecksDataGrid teamId={teamId} monitorId={monitorId} />
           </CardContent>
         </Card>
+
+        {pastIncidents.length > 0 && (
+          <Card>
+            <CardHeader
+              title="Past Incidents"
+              subheader="Resolved incidents for this monitor"
+            />
+            <CardContent>
+              <IncidentsDataGrid 
+                incidents={pastIncidents} 
+                onViewClick={(id) => setSidebarIncidentId(id)}
+              />
+            </CardContent>
+          </Card>
+        )}
       </Container>
+
+      <Drawer
+        anchor="right"
+        open={sidebarIncidentId !== null}
+        onClose={() => setSidebarIncidentId(null)}
+        PaperProps={{
+          sx: {
+            width: { xs: "100%", sm: 500, md: 600 },
+            p: 3,
+          },
+        }}
+      >
+        <Stack direction="row" alignItems="center" justifyContent="space-between" mb={3}>
+          <Typography variant="h6">Incident Details</Typography>
+          <IconButton onClick={() => setSidebarIncidentId(null)}>
+            <IoClose />
+          </IconButton>
+        </Stack>
+        {sidebarIncidentId && (
+          <Box sx={{ flex: 1, overflowY: "auto" }}>
+            <IncidentDetailsContent incidentId={sidebarIncidentId} />
+          </Box>
+        )}
+      </Drawer>
     </>
   );
 };

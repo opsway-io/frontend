@@ -4,11 +4,14 @@ import { Box, Tab, Tabs } from "@mui/material";
 import Container from "../../../components/Container";
 import Placeholder from "../../../components/Placeholder";
 import IncidentOverviewList from "./components/OverviewList";
-import HistoryList from "./components/HistoryList";
+import IncidentsDataGrid from "./components/IncidentsDataGrid";
 import { useMonitorsIncidents } from "../../../hooks/monitors.query";
+import { useIncidents } from "../../../hooks/incidents.query";
 
 const IncidentsView: FunctionComponent = () => {
   const [tabIndex, setTabIndex] = useState(0);
+
+  const { data: historyIncidentsData } = useIncidents(true, 0, 100);
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     setTabIndex(newValue);
@@ -48,7 +51,7 @@ const IncidentsView: FunctionComponent = () => {
 
         {tabIndex === 1 && (
           <Box>
-            <HistoryList />
+            <IncidentsDataGrid incidents={historyIncidentsData?.incidents} />
           </Box>
         )}
       </Container>

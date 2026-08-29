@@ -37,10 +37,14 @@ const AlertHistoryCard: FunctionComponent<AlertHistoryCardProps> = ({ incidentId
 
   const alerts = alertsData?.alerts || [];
   const rules = rulesData || [];
+  const totalOccurrences = alertsData?.totalCount || alerts.length;
 
   return (
     <Card>
-      <CardHeader title="Alert History" subheader="Triggered alerts for this incident" />
+      <CardHeader 
+        title="Alert History" 
+        subheader={`Triggered alerts for this incident (${totalOccurrences} occurrence${totalOccurrences === 1 ? '' : 's'})`} 
+      />
       <CardContent>
         {alerts.length === 0 ? (
           <Typography variant="body2" color="text.secondary" align="center" py={2}>

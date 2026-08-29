@@ -24,10 +24,14 @@ const TriggerHistoryCard: FunctionComponent<TriggerHistoryCardProps> = ({ ruleId
   }
 
   const triggers = triggersData?.triggers || [];
+  const totalOccurrences = triggersData?.totalCount || triggers.length;
 
   return (
     <Card variant="outlined">
-      <CardHeader title="Trigger History" subheader="Recent times this rule sent alerts" />
+      <CardHeader 
+        title="Trigger History" 
+        subheader={`Recent times this rule sent alerts (${totalOccurrences} occurrence${totalOccurrences === 1 ? '' : 's'})`} 
+      />
       <CardContent>
         {triggers.length === 0 ? (
           <Typography variant="body2" color="text.secondary" align="center">

@@ -72,6 +72,7 @@ export interface IAlertRuleTrigger {
 }
 
 export interface GetAlertRuleTriggersResponse {
+  totalCount: number;
   triggers: IAlertRuleTrigger[];
 }
 

@@ -143,6 +143,7 @@ export interface IIncidentAlert {
 }
 
 export interface GetIncidentAlertsResponse {
+  totalCount: number;
   alerts: IIncidentAlert[];
 }
 

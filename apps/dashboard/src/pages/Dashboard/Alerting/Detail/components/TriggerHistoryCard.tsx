@@ -1,4 +1,12 @@
-import { Box, Card, CardContent, CardHeader, Chip, Stack, Typography } from "@mui/material";
+import {
+  Box,
+  Card,
+  CardContent,
+  CardHeader,
+  Chip,
+  Stack,
+  Typography,
+} from "@mui/material";
 import { FunctionComponent } from "react";
 import moment from "moment";
 import { Link } from "react-router-dom";
@@ -9,13 +17,18 @@ interface TriggerHistoryCardProps {
   ruleId: number;
 }
 
-const TriggerHistoryCard: FunctionComponent<TriggerHistoryCardProps> = ({ ruleId }) => {
+const TriggerHistoryCard: FunctionComponent<TriggerHistoryCardProps> = ({
+  ruleId,
+}) => {
   const { data: triggersData, isLoading } = useAlertRuleTriggers(ruleId);
 
   if (isLoading) {
     return (
       <Card variant="outlined">
-        <CardHeader title="Trigger History" subheader="Recent times this rule sent alerts" />
+        <CardHeader
+          title="Trigger History"
+          subheader="Recent times this rule sent alerts"
+        />
         <CardContent>
           <Placeholder />
         </CardContent>
@@ -28,9 +41,9 @@ const TriggerHistoryCard: FunctionComponent<TriggerHistoryCardProps> = ({ ruleId
 
   return (
     <Card variant="outlined">
-      <CardHeader 
-        title="Trigger History" 
-        subheader={`Recent times this rule sent alerts (${totalOccurrences} occurrence${totalOccurrences === 1 ? '' : 's'})`} 
+      <CardHeader
+        title="Trigger History"
+        subheader={`Recent times this rule sent alerts (${totalOccurrences} occurrence${totalOccurrences === 1 ? "" : "s"})`}
       />
       <CardContent>
         {triggers.length === 0 ? (
@@ -48,23 +61,47 @@ const TriggerHistoryCard: FunctionComponent<TriggerHistoryCardProps> = ({ ruleId
               }
 
               return (
-                <Box key={trigger.id} sx={{ p: 2, border: 1, borderColor: 'divider', borderRadius: 1 }}>
-                  <Stack direction="row" justifyContent="space-between" alignItems="center">
+                <Box
+                  key={trigger.id}
+                  sx={{
+                    p: 2,
+                    border: 1,
+                    borderColor: "divider",
+                    borderRadius: 1,
+                  }}
+                >
+                  <Stack
+                    direction="row"
+                    justifyContent="space-between"
+                    alignItems="center"
+                  >
                     <Stack spacing={1}>
                       <Typography variant="subtitle2">
                         {trigger.incidentId ? (
-                          <Link to={`/incidents/incident/${trigger.incidentId}`}>View Incident #{trigger.incidentId}</Link>
+                          <Link
+                            to={`/incidents/incident/${trigger.incidentId}`}
+                          >
+                            View Incident #{trigger.incidentId}
+                          </Link>
                         ) : (
                           "Triggered without incident"
                         )}
                       </Typography>
                       <Typography variant="body2" color="text.secondary">
-                        Triggered on {moment(trigger.createdAt).format("MMMM Do YYYY, h:mm:ss a")}
+                        Triggered on{" "}
+                        {moment(trigger.createdAt).format(
+                          "MMMM Do YYYY, h:mm:ss a",
+                        )}
                       </Typography>
                     </Stack>
                     <Stack direction="row" spacing={1}>
                       {channels.map((channel: string) => (
-                        <Chip key={channel} label={channel} size="small" variant="outlined" />
+                        <Chip
+                          key={channel}
+                          label={channel}
+                          size="small"
+                          variant="outlined"
+                        />
                       ))}
                     </Stack>
                   </Stack>

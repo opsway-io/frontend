@@ -197,13 +197,17 @@ const AlertRuleDetailView: FunctionComponent = () => {
                         options={CONDITION_OPTIONS}
                         getOptionLabel={(option) => {
                           if (typeof option === "string") {
-                            const found = CONDITION_OPTIONS.find(o => o.value === option);
+                            const found = CONDITION_OPTIONS.find(
+                              (o) => o.value === option,
+                            );
                             return found ? found.label : option;
                           }
                           return option.label;
                         }}
                         value={
-                          CONDITION_OPTIONS.find((c) => c.value === field.value) || field.value
+                          CONDITION_OPTIONS.find(
+                            (c) => c.value === field.value,
+                          ) || field.value
                         }
                         onChange={(_, newValue) => {
                           if (typeof newValue === "string") {
@@ -214,9 +218,14 @@ const AlertRuleDetailView: FunctionComponent = () => {
                             field.onChange("");
                           }
                         }}
-                        onInputChange={(_, newInputValue) =>
-                          field.onChange(newInputValue)
-                        }
+                        onInputChange={(_, newInputValue) => {
+                          const found = CONDITION_OPTIONS.find(c => c.label === newInputValue);
+                          if (found) {
+                            field.onChange(found.value);
+                          } else {
+                            field.onChange(newInputValue);
+                          }
+                        }}
                         renderInput={(params) => (
                           <TextField
                             {...params}

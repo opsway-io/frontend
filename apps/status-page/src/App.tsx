@@ -497,6 +497,11 @@ const App: FunctionComponent = () => {
               </Typography>
             </Box>
             <CardContent sx={{ p: 3 }}>
+              {incident.monitorId && (
+                <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 1, textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 600 }}>
+                  Affected System: {data.monitors.find(m => m.id === incident.monitorId)?.name || 'Unknown Monitor'}
+                </Typography>
+              )}
               <Typography variant="h6" fontWeight="600" gutterBottom>
                 {incident.title}
               </Typography>

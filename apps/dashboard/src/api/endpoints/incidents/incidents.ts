@@ -80,6 +80,7 @@ export interface MonitorIncident {
   property: string;
   target: string;
   operator: string;
+  rootCauseAnalysis?: string;
 }
 
 /*

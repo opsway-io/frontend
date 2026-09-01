@@ -81,7 +81,16 @@ const IncidentsListItem: FunctionComponent<IncidentsListItemProps> = ({
                       {incident.target}
                     </>
                   ) : (
-                    incident.description || incident.title
+                    <>
+                      {incident.description || incident.title}
+                      {incident.rootCauseAnalysis && (
+                        <>
+                          <br />
+                          <strong>AI Insight:</strong>{" "}
+                          {incident.rootCauseAnalysis}
+                        </>
+                      )}
+                    </>
                   )}
                 </Typography>
 

@@ -155,6 +155,12 @@ const ResponseTimesGraph: FunctionComponent<ResponseTimesGraphProps> = (
             colors: theme.palette.text.secondary,
           },
         },
+        tooltip: {
+          enabled: true,
+          formatter: (value: string) => {
+            return moment(value).format("DD MMM YYYY, HH:mm:ss");
+          },
+        },
       },
       yaxis: {
         type: "numeric",
@@ -281,7 +287,7 @@ const ResponseTimesGraph: FunctionComponent<ResponseTimesGraphProps> = (
         if (a) {
           return {
             x: moment(e.start).valueOf(),
-            y: a.timing > 0 ? a.timing : null,
+            y: a.timing !== -1 ? a.timing : null,
           };
         }
         return {

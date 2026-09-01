@@ -179,7 +179,9 @@ const ResponseTimesGraph: FunctionComponent<ResponseTimesGraphProps> = (
         shared: true,
         intersect: false,
         x: {
-          format: "dd MMM yyyy, HH:mm:ss",
+          formatter: (value: number) => {
+            return moment(value).format("DD MMM YYYY, HH:mm:ss");
+          },
         },
         y: {
           formatter: (value: any) => {

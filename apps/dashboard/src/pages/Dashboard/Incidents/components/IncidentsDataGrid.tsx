@@ -7,7 +7,8 @@ import DataGrid from "../../../../components/DataGrid";
 import { Incident } from "../../../../api/endpoints/incidents";
 import { useMonitors } from "../../../../hooks/monitors.query";
 
-interface IncidentsDataGridProps extends Omit<DataGridProps, "columns" | "rows"> {
+interface IncidentsDataGridProps
+  extends Omit<DataGridProps, "columns" | "rows"> {
   incidents?: Incident[];
   onViewClick?: (incidentId: number) => void;
 }
@@ -28,7 +29,7 @@ const IncidentsDataGrid: FunctionComponent<IncidentsDataGridProps> = ({
       flex: 1,
       renderCell: (params) => {
         const monitorId = params.row.monitorId;
-        const monitor = monitors.find(m => m.id === monitorId);
+        const monitor = monitors.find((m) => m.id === monitorId);
         return monitor ? monitor.name : "Unknown Monitor";
       },
     },
@@ -52,7 +53,7 @@ const IncidentsDataGrid: FunctionComponent<IncidentsDataGridProps> = ({
             variant="outlined"
           />
         );
-      }
+      },
     },
     {
       field: "createdAt",
@@ -71,7 +72,7 @@ const IncidentsDataGrid: FunctionComponent<IncidentsDataGridProps> = ({
         const start = moment(params.row.createdAt);
         const end = moment(params.row.updatedAt); // assuming updatedAt is roughly resolved time if resolved
         return moment.duration(end.diff(start)).humanize();
-      }
+      },
     },
     {
       field: "actions",
@@ -86,9 +87,13 @@ const IncidentsDataGrid: FunctionComponent<IncidentsDataGridProps> = ({
             </Button>
           );
         }
-        
+
         return (
-          <Button size="small" component={Link} to={`/incidents/incident/${params.row.id}`}>
+          <Button
+            size="small"
+            component={Link}
+            to={`/incidents/incident/${params.row.id}`}
+          >
             View Details
           </Button>
         );
@@ -114,7 +119,7 @@ const IncidentsDataGrid: FunctionComponent<IncidentsDataGridProps> = ({
       disableRowSelectionOnClick
       initialState={{
         sorting: {
-          sortModel: [{ field: 'createdAt', sort: 'desc' }],
+          sortModel: [{ field: "createdAt", sort: "desc" }],
         },
       }}
       {...rest}

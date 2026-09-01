@@ -2,15 +2,22 @@ import { FunctionComponent } from "react";
 import { Alert, AlertTitle, Button, Stack, Typography } from "@mui/material";
 import { IoCheckmark } from "react-icons/io5";
 import moment from "moment";
-import { useIncident, useSolveIncident, useAcknowledgeIncident } from "../../../../../hooks/incidents.query";
+import {
+  useIncident,
+  useSolveIncident,
+  useAcknowledgeIncident,
+} from "../../../../../hooks/incidents.query";
 import Placeholder from "../../../../../components/Placeholder";
 import AlertHistoryCard from "./AlertHistoryCard";
+import TriggerHistoryCard from "./TriggerHistoryCard";
 
 interface IncidentDetailsContentProps {
   incidentId: number;
 }
 
-const IncidentDetailsContent: FunctionComponent<IncidentDetailsContentProps> = ({ incidentId }) => {
+const IncidentDetailsContent: FunctionComponent<
+  IncidentDetailsContentProps
+> = ({ incidentId }) => {
   const { data: incidentData, isLoading, error } = useIncident(incidentId);
   const solveIncident = useSolveIncident();
   const acknowledgeIncident = useAcknowledgeIncident();
@@ -20,7 +27,9 @@ const IncidentDetailsContent: FunctionComponent<IncidentDetailsContentProps> = (
   }
 
   if (error || !incidentData) {
-    return <Typography color="error">Failed to load incident details.</Typography>;
+    return (
+      <Typography color="error">Failed to load incident details.</Typography>
+    );
   }
 
   const incident = incidentData;
@@ -37,7 +46,9 @@ const IncidentDetailsContent: FunctionComponent<IncidentDetailsContentProps> = (
                   color="inherit"
                   size="small"
                   startIcon={<IoCheckmark />}
-                  onClick={() => acknowledgeIncident.mutate({ incidentId: incident.id })}
+                  onClick={() =>
+                    acknowledgeIncident.mutate({ incidentId: incident.id })
+                  }
                 >
                   Acknowledge
                 </Button>
@@ -46,7 +57,9 @@ const IncidentDetailsContent: FunctionComponent<IncidentDetailsContentProps> = (
                 color="inherit"
                 size="small"
                 startIcon={<IoCheckmark />}
-                onClick={() => solveIncident.mutate({ incidentId: incident.id })}
+                onClick={() =>
+                  solveIncident.mutate({ incidentId: incident.id })
+                }
               >
                 Mark Resolved
               </Button>
@@ -56,12 +69,23 @@ const IncidentDetailsContent: FunctionComponent<IncidentDetailsContentProps> = (
           <AlertTitle>Active Incident: {incident.title}</AlertTitle>
           {incident.description}
           <br />
-          This incident was triggered on {moment(incident.createdAt).format("LLL")}.
+          This incident was triggered on{" "}
+          {moment(incident.createdAt).format("LLL")}.
+          {incident.occurrences > 1 && (
+            <>
+              <br />
+              <br />
+              <strong>Occurrences:</strong> {incident.occurrences}
+            </>
+          )}
           {incident.acknowledged && (
             <>
               <br />
               <br />
-              <strong>Acknowledged</strong> {incident.acknowledgedAt ? `on ${moment(incident.acknowledgedAt).format("LLL")}` : ""}
+              <strong>Acknowledged</strong>{" "}
+              {incident.acknowledgedAt
+                ? `on ${moment(incident.acknowledgedAt).format("LLL")}`
+                : ""}
             </>
           )}
           {incident.rootCauseAnalysis && (
@@ -79,11 +103,15 @@ const IncidentDetailsContent: FunctionComponent<IncidentDetailsContentProps> = (
           <AlertTitle>Resolved Incident: {incident.title}</AlertTitle>
           {incident.description}
           <br />
-          This incident occurred on {moment(incident.createdAt).format("LLL")} and is now resolved.
+          This incident occurred on {moment(incident.createdAt).format(
+            "LLL",
+          )}{" "}
+          and is now resolved.
         </Alert>
       )}
 
       <AlertHistoryCard incidentId={incident.id} />
+      <TriggerHistoryCard incidentId={incident.id} />
     </Stack>
   );
 };

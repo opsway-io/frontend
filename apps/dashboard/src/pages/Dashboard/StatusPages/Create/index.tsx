@@ -132,16 +132,21 @@ const StatusPagesCreateView: FunctionComponent<
                     required: true,
                     pattern: {
                       value: /^[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-                      message: "Must be a valid fully-qualified domain name (e.g. status.example.com)"
-                    }
+                      message:
+                        "Must be a valid fully-qualified domain name (e.g. status.example.com)",
+                    },
                   }}
                   render={({ field, fieldState }) => (
-                    <TextField 
-                      {...field} 
-                      label="Domain" 
-                      fullWidth 
+                    <TextField
+                      {...field}
+                      label="Domain"
+                      fullWidth
                       error={!!fieldState.error}
-                      helperText={fieldState.error ? fieldState.error.message : "Enter your fully-qualified domain name (e.g. status.example.com). Do not enter just the subdomain."}
+                      helperText={
+                        fieldState.error
+                          ? fieldState.error.message
+                          : "Enter your fully-qualified domain name (e.g. status.example.com). Do not enter just the subdomain."
+                      }
                     />
                   )}
                 />

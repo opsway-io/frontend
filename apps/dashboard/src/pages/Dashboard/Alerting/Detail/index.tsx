@@ -51,6 +51,7 @@ const CONDITION_OPTIONS = [
   { label: "TLS Error", value: "TLS" },
   { label: "SSL Certificate Expiry", value: "SSL/TLS Cert Expiry" },
   { label: "Anomaly Detected", value: "Anomaly Detected" },
+  { label: "Target Down", value: "Target Down" },
 ];
 
 interface IFormInput {

@@ -16,13 +16,28 @@ import {
   useTheme,
   Drawer,
   Box,
-  IconButton
+  IconButton,
 } from "@mui/material";
 import { enqueueSnackbar } from "notistack";
 import { FunctionComponent, useMemo, useState } from "react";
 import { Helmet } from "react-helmet";
-import { IoCheckmark, IoPause, IoPlay, IoSettings, IoSearch, IoOpenOutline, IoClose } from "react-icons/io5";
-import { Link, NavLink, useParams, useSearchParams, useNavigate, useLocation } from "react-router-dom";
+import {
+  IoCheckmark,
+  IoPause,
+  IoPlay,
+  IoSettings,
+  IoSearch,
+  IoOpenOutline,
+  IoClose,
+} from "react-icons/io5";
+import {
+  Link,
+  NavLink,
+  useParams,
+  useSearchParams,
+  useNavigate,
+  useLocation,
+} from "react-router-dom";
 import Conditional from "../../../../components/Conditional";
 import Container from "../../../../components/Container";
 import PulseDot from "../../../../components/PulseDot";
@@ -65,7 +80,9 @@ const MonitorDetailView: FunctionComponent = () => {
   const location = useLocation();
 
   const [timeInterval, setTimeInterval] = useState(604800000);
-  const [sidebarIncidentId, setSidebarIncidentId] = useState<number | null>(null);
+  const [sidebarIncidentId, setSidebarIncidentId] = useState<number | null>(
+    null,
+  );
 
   const teamId = useAuthenticationStore((state) => state.currentTeamId);
   const currentRole = useCurrentUserRole();
@@ -79,8 +96,10 @@ const MonitorDetailView: FunctionComponent = () => {
   // Pass 0, 100 to get a list instead of just active incidents (useMonitorIncidents fetches both active and resolved based on arguments, but wait, useMonitorIncidents signature is monitorId, offset, limit)
   const { data: monitorIncidents } = useMonitorIncidents(monitorId, 0, 100);
   const solveIncident = useSolveIncident();
-  const activeIncidents = monitorIncidents?.incidents?.filter(i => !i.resolved) || [];
-  const pastIncidents = monitorIncidents?.incidents?.filter(i => i.resolved) || [];
+  const activeIncidents =
+    monitorIncidents?.incidents?.filter((i) => !i.resolved) || [];
+  const pastIncidents =
+    monitorIncidents?.incidents?.filter((i) => i.resolved) || [];
 
   const { data: maintenances } = useMaintenanceWindows();
   const now = moment();
@@ -178,7 +197,9 @@ const MonitorDetailView: FunctionComponent = () => {
 
       <Container
         breadcrumbs={[
-          <Link key="monitors-link" to="/monitors">Monitors</Link>,
+          <Link key="monitors-link" to="/monitors">
+            Monitors
+          </Link>,
           isLoading ? (
             <Skeleton key="skeleton" variant="text" width={150} />
           ) : (
@@ -216,9 +237,15 @@ const MonitorDetailView: FunctionComponent = () => {
                       size="small"
                       startIcon={<IoSearch />}
                       onClick={() => {
-                        const start = moment(incident.createdAt).subtract(1, 'hour').toISOString();
-                        const end = moment(incident.updatedAt).add(1, 'hour').toISOString();
-                        navigate(`/monitors/${monitorId}?start=${encodeURIComponent(start)}&end=${encodeURIComponent(end)}`);
+                        const start = moment(incident.createdAt)
+                          .subtract(1, "hour")
+                          .toISOString();
+                        const end = moment(incident.updatedAt)
+                          .add(1, "hour")
+                          .toISOString();
+                        navigate(
+                          `/monitors/${monitorId}?start=${encodeURIComponent(start)}&end=${encodeURIComponent(end)}`,
+                        );
                       }}
                     >
                       Focus Graph
@@ -259,10 +286,16 @@ const MonitorDetailView: FunctionComponent = () => {
                   <Typography variant="body1">
                     {incident.title || "An error occurred with this monitor."}
                   </Typography>
-                  {(incident.operator || incident.target || incident.property) && (
+                  {(incident.operator ||
+                    incident.target ||
+                    incident.property) && (
                     <Stack direction="row" spacing={1} alignItems="center">
                       {incident.property && (
-                        <Typography variant="body2" color="text.secondary" sx={{ mr: 1 }}>
+                        <Typography
+                          variant="body2"
+                          color="text.secondary"
+                          sx={{ mr: 1 }}
+                        >
                           Property: {incident.property}
                         </Typography>
                       )}
@@ -385,9 +418,9 @@ const MonitorDetailView: FunctionComponent = () => {
             />
           </Stack>
           <CardContent>
-            <ResponseTimeGraph 
-              monitorId={monitorId} 
-              interval={timeInterval} 
+            <ResponseTimeGraph
+              monitorId={monitorId}
+              interval={timeInterval}
               start={startParam}
               end={endParam}
             />
@@ -444,8 +477,8 @@ const MonitorDetailView: FunctionComponent = () => {
               subheader="Resolved incidents for this monitor"
             />
             <CardContent>
-              <IncidentsDataGrid 
-                incidents={pastIncidents} 
+              <IncidentsDataGrid
+                incidents={pastIncidents}
                 onViewClick={(id) => setSidebarIncidentId(id)}
               />
             </CardContent>
@@ -464,7 +497,12 @@ const MonitorDetailView: FunctionComponent = () => {
           },
         }}
       >
-        <Stack direction="row" alignItems="center" justifyContent="space-between" mb={3}>
+        <Stack
+          direction="row"
+          alignItems="center"
+          justifyContent="space-between"
+          mb={3}
+        >
           <Typography variant="h6">Incident Details</Typography>
           <IconButton onClick={() => setSidebarIncidentId(null)}>
             <IoClose />

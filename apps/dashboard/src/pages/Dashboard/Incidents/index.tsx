@@ -17,10 +17,8 @@ const IncidentsView: FunctionComponent = () => {
     setTabIndex(newValue);
   };
 
-  const {
-    data: monitorsIncidents,
-    isLoading: incidentsAreLoading,
-  } = useMonitorsIncidents();
+  const { data: monitorsIncidents, isLoading: incidentsAreLoading } =
+    useMonitorsIncidents();
 
   return (
     <>
@@ -33,7 +31,11 @@ const IncidentsView: FunctionComponent = () => {
         description="An overview of active and resolved incidents across your infrastructure."
       >
         <Box sx={{ borderBottom: 1, borderColor: "divider", mb: 3 }}>
-          <Tabs value={tabIndex} onChange={handleTabChange} aria-label="incidents tabs">
+          <Tabs
+            value={tabIndex}
+            onChange={handleTabChange}
+            aria-label="incidents tabs"
+          >
             <Tab label="Active" />
             <Tab label="History" />
           </Tabs>

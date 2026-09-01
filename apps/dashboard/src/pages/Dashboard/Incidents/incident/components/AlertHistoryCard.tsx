@@ -1,13 +1,20 @@
-import { Card, CardContent, CardHeader, Stack, Typography, Chip } from "@mui/material";
-import { 
-  Timeline, 
-  TimelineItem, 
-  TimelineSeparator, 
-  TimelineConnector, 
-  TimelineContent, 
-  TimelineDot, 
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  Stack,
+  Typography,
+  Chip,
+} from "@mui/material";
+import {
+  Timeline,
+  TimelineItem,
+  TimelineSeparator,
+  TimelineConnector,
+  TimelineContent,
+  TimelineDot,
   TimelineOppositeContent,
-  timelineOppositeContentClasses 
+  timelineOppositeContentClasses,
 } from "@mui/lab";
 import { IoNotificationsOutline } from "react-icons/io5";
 import { FunctionComponent } from "react";
@@ -20,14 +27,20 @@ interface AlertHistoryCardProps {
   incidentId: number;
 }
 
-const AlertHistoryCard: FunctionComponent<AlertHistoryCardProps> = ({ incidentId }) => {
-  const { data: alertsData, isLoading: alertsLoading } = useIncidentAlerts(incidentId);
+const AlertHistoryCard: FunctionComponent<AlertHistoryCardProps> = ({
+  incidentId,
+}) => {
+  const { data: alertsData, isLoading: alertsLoading } =
+    useIncidentAlerts(incidentId);
   const { data: rulesData, isLoading: rulesLoading } = useAlertRules();
 
   if (alertsLoading || rulesLoading) {
     return (
       <Card>
-        <CardHeader title="Alert History" subheader="Triggered alerts for this incident" />
+        <CardHeader
+          title="Alert History"
+          subheader="Triggered alerts for this incident"
+        />
         <CardContent>
           <Placeholder />
         </CardContent>
@@ -41,13 +54,18 @@ const AlertHistoryCard: FunctionComponent<AlertHistoryCardProps> = ({ incidentId
 
   return (
     <Card>
-      <CardHeader 
-        title="Alert History" 
-        subheader={`Triggered alerts for this incident (${totalOccurrences} occurrence${totalOccurrences === 1 ? '' : 's'})`} 
+      <CardHeader
+        title="Alert History"
+        subheader={`Triggered alerts for this incident (${totalOccurrences} occurrence${totalOccurrences === 1 ? "" : "s"})`}
       />
       <CardContent>
         {alerts.length === 0 ? (
-          <Typography variant="body2" color="text.secondary" align="center" py={2}>
+          <Typography
+            variant="body2"
+            color="text.secondary"
+            align="center"
+            py={2}
+          >
             No alerts triggered.
           </Typography>
         ) : (
@@ -70,7 +88,10 @@ const AlertHistoryCard: FunctionComponent<AlertHistoryCardProps> = ({ incidentId
 
               return (
                 <TimelineItem key={alert.id}>
-                  <TimelineOppositeContent color="textSecondary" sx={{ pt: 1.5 }}>
+                  <TimelineOppositeContent
+                    color="textSecondary"
+                    sx={{ pt: 1.5 }}
+                  >
                     {moment(alert.createdAt).format("MMM D, HH:mm:ss")}
                   </TimelineOppositeContent>
                   <TimelineSeparator>
@@ -79,7 +100,7 @@ const AlertHistoryCard: FunctionComponent<AlertHistoryCardProps> = ({ incidentId
                     </TimelineDot>
                     {index < alerts.length - 1 && <TimelineConnector />}
                   </TimelineSeparator>
-                  <TimelineContent sx={{ py: '12px', px: 2 }}>
+                  <TimelineContent sx={{ py: "12px", px: 2 }}>
                     <Stack spacing={1}>
                       <Typography variant="subtitle2" component="span">
                         Rule: {rule ? rule.name : `Rule #${alert.alertRuleId}`}
@@ -87,7 +108,12 @@ const AlertHistoryCard: FunctionComponent<AlertHistoryCardProps> = ({ incidentId
                       {channels.length > 0 && (
                         <Stack direction="row" spacing={1} flexWrap="wrap">
                           {channels.map((channel: string) => (
-                            <Chip key={channel} label={channel} size="small" variant="outlined" />
+                            <Chip
+                              key={channel}
+                              label={channel}
+                              size="small"
+                              variant="outlined"
+                            />
                           ))}
                         </Stack>
                       )}

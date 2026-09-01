@@ -12,9 +12,10 @@ export interface Incident {
   description: string;
   acknowledged?: boolean;
   rootCauseAnalysis?: string;
-  createdAt: string;
-  updatedAt: string;
-  resolved?: boolean;
+	createdAt: string;
+	updatedAt: string;
+	resolved?: boolean;
+	occurrences?: number;
 }
 
 /*
@@ -51,9 +52,10 @@ export interface GetIncidentResponse {
   resolved: boolean;
   acknowledged: boolean;
   acknowledgedAt?: string;
-  rootCauseAnalysis?: string;
-  createdAt: string;
-  updatedAt: string;
+	rootCauseAnalysis?: string;
+	createdAt: string;
+	updatedAt: string;
+	occurrences: number;
 }
 
 export async function getIncident(
@@ -162,5 +164,33 @@ export async function getIncidentAlerts(
       },
     },
   );
+  return response?.data;
+}
+
+export interface IncidentOccurrenceResponse {
+  id: number;
+  createdAt: string;
+}
+
+export interface GetIncidentOccurrencesResponse {
+  occurrences: IncidentOccurrenceResponse[];
+}
+
+export async function getIncidentOccurrences(
+  teamId: number,
+  incidentId: number,
+  offset?: number,
+  limit?: number,
+): Promise<GetIncidentOccurrencesResponse> {
+  const response = await client.get(
+    `/v1/teams/${teamId}/incidents/${incidentId}/occurrences`,
+    {
+      params: {
+        offset,
+        limit,
+      },
+    },
+  );
+
   return response?.data;
 }

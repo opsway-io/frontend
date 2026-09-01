@@ -10,11 +10,7 @@ const IncidentDetailView: FunctionComponent = () => {
   const params = useParams();
   const incidentId = (params.incidentId as number | undefined) || 0;
 
-  const {
-    data: incident,
-    error,
-    isLoading,
-  } = useIncident(incidentId);
+  const { data: incident, error, isLoading } = useIncident(incidentId);
 
   return (
     <>
@@ -26,7 +22,9 @@ const IncidentDetailView: FunctionComponent = () => {
 
       <Container
         breadcrumbs={[
-          <Link key="incidents-link" to="/incidents">Incidents</Link>,
+          <Link key="incidents-link" to="/incidents">
+            Incidents
+          </Link>,
           isLoading ? (
             <Skeleton key="skeleton" variant="text" width={150} />
           ) : (
@@ -38,16 +36,18 @@ const IncidentDetailView: FunctionComponent = () => {
           error ? "Failed to load incident, try to reload the page." : undefined
         }
         primaryActions={
-          incident?.monitorId ? [
-            <Button
-              key="view-monitor"
-              component={Link}
-              to={`/monitors/${incident.monitorId}`}
-              variant="outlined"
-            >
-              View Monitor
-            </Button>
-          ] : []
+          incident?.monitorId
+            ? [
+                <Button
+                  key="view-monitor"
+                  component={Link}
+                  to={`/monitors/${incident.monitorId}`}
+                  variant="outlined"
+                >
+                  View Monitor
+                </Button>,
+              ]
+            : []
         }
       >
         <IncidentDetailsContent incidentId={incidentId} />

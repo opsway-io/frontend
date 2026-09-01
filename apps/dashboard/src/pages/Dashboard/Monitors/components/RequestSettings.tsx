@@ -95,7 +95,8 @@ const RequestSettings: FunctionComponent = () => {
                 placeholder = "redis://user:password@localhost:6379/0";
               if (method === "ICMP") placeholder = "8.8.8.8";
               if (method === "DNS") placeholder = "example.com?type=MX";
-              if (method === "WEBSOCKET") placeholder = "wss://echo.websocket.org";
+              if (method === "WEBSOCKET")
+                placeholder = "wss://echo.websocket.org";
               if (method === "UDP") placeholder = "8.8.8.8:53";
 
               return (

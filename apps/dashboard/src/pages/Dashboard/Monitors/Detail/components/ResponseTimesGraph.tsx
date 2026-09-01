@@ -27,7 +27,11 @@ const ResponseTimesGraph: FunctionComponent<ResponseTimesGraphProps> = (
     "breakdown",
   );
 
-  const { data, isLoading } = useMonitorMetrics(props.monitorId, props.start, props.end);
+  const { data, isLoading } = useMonitorMetrics(
+    props.monitorId,
+    props.start,
+    props.end,
+  );
 
   const startMs = props.start ? moment(props.start).valueOf() : undefined;
   const endMs = props.end ? moment(props.end).valueOf() : undefined;
@@ -47,20 +51,20 @@ const ResponseTimesGraph: FunctionComponent<ResponseTimesGraphProps> = (
           size: 4,
         },
         colors: isAnomalyMode
-        ? [
-            theme.palette.text.secondary,
-            theme.palette.primary.main,
-            theme.palette.text.disabled,
-            theme.palette.text.disabled,
-            theme.palette.error.main,
-          ]
-        : [
-            theme.palette.primary.main,
-            theme.palette.secondary.main,
-            theme.palette.success.main,
-            theme.palette.warning.main,
-            theme.palette.info.main,
-          ],
+          ? [
+              theme.palette.text.secondary,
+              theme.palette.primary.main,
+              theme.palette.text.disabled,
+              theme.palette.text.disabled,
+              theme.palette.error.main,
+            ]
+          : [
+              theme.palette.primary.main,
+              theme.palette.secondary.main,
+              theme.palette.success.main,
+              theme.palette.warning.main,
+              theme.palette.info.main,
+            ],
       },
       chart: {
         toolbar: {
@@ -82,12 +86,14 @@ const ResponseTimesGraph: FunctionComponent<ResponseTimesGraphProps> = (
       fill: {
         type: isAnomalyMode ? "solid" : "gradient",
         opacity: isAnomalyMode ? [1, 1, 1, 1, 1] : 0.8,
-        gradient: isAnomalyMode ? undefined : {
-          shadeIntensity: 1,
-          opacityFrom: 0.7,
-          opacityTo: 0.3,
-          stops: [0, 90, 100],
-        },
+        gradient: isAnomalyMode
+          ? undefined
+          : {
+              shadeIntensity: 1,
+              opacityFrom: 0.7,
+              opacityTo: 0.3,
+              stops: [0, 90, 100],
+            },
       },
       colors: isAnomalyMode
         ? [
@@ -121,7 +127,7 @@ const ResponseTimesGraph: FunctionComponent<ResponseTimesGraphProps> = (
           top: 0,
           right: 0,
           bottom: 0,
-          left: 10
+          left: 10,
         },
       },
       xaxis: {
@@ -129,7 +135,11 @@ const ResponseTimesGraph: FunctionComponent<ResponseTimesGraphProps> = (
           show: true,
           color: theme.palette.divider,
         },
-        range: isCustomRange ? undefined : (isAnomalyMode ? props.interval + 86400000 : props.interval),
+        range: isCustomRange
+          ? undefined
+          : isAnomalyMode
+            ? props.interval + 86400000
+            : props.interval,
         min: startMs,
         max: endMs,
         type: "datetime",
@@ -173,8 +183,8 @@ const ResponseTimesGraph: FunctionComponent<ResponseTimesGraphProps> = (
             if (value == null) return "N/A";
             if (value >= 1000) return `${(value / 1000).toFixed(2)} s`;
             return `${Math.round(value)} ms`;
-          }
-        }
+          },
+        },
       },
       legend: {
         labels: {
@@ -331,7 +341,13 @@ const ResponseTimesGraph: FunctionComponent<ResponseTimesGraphProps> = (
           </ToggleButton>
         </ToggleButtonGroup>
       </Stack>
-      <Chart key={chartMode} options={options} series={metrics} height={400} type="line" />
+      <Chart
+        key={chartMode}
+        options={options}
+        series={metrics}
+        height={400}
+        type="line"
+      />
     </Box>
   );
 };

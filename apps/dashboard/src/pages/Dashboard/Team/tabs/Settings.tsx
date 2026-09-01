@@ -29,7 +29,8 @@ const TeamSettingsTabView: FunctionComponent = () => {
   const [telegramChatId, setTelegramChatId] = useState<string>("");
   const [datadogWebhookUrl, setDatadogWebhookUrl] = useState<string>("");
   const [newRelicWebhookUrl, setNewRelicWebhookUrl] = useState<string>("");
-  const [microsoftTeamsWebhookUrl, setMicrosoftTeamsWebhookUrl] = useState<string>("");
+  const [microsoftTeamsWebhookUrl, setMicrosoftTeamsWebhookUrl] =
+    useState<string>("");
   const [webhookUrl, setWebhookUrl] = useState<string>("");
 
   const [showDeleteDialog, setShowDeleteDialog] = useState<boolean>(false);

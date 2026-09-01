@@ -36,7 +36,7 @@ export const PerformanceChart = ({ data, monitorsMap }: ReportChartsProps) => {
       xaxis: {
         categories:
           data.performance?.map(
-            (p) => monitorsMap[p.MonitorID] || `Monitor ${p.MonitorID}`
+            (p) => monitorsMap[p.MonitorID] || `Monitor ${p.MonitorID}`,
           ) || [],
         labels: {
           style: {
@@ -79,7 +79,7 @@ export const PerformanceChart = ({ data, monitorsMap }: ReportChartsProps) => {
         },
       },
     }),
-    [theme, data, monitorsMap]
+    [theme, data, monitorsMap],
   );
 
   const series = useMemo(() => {
@@ -127,7 +127,7 @@ export const IncidentChart = ({ data, monitorsMap }: ReportChartsProps) => {
       xaxis: {
         categories:
           data.incident?.map(
-            (i) => monitorsMap[i.monitorId] || `Monitor ${i.monitorId}`
+            (i) => monitorsMap[i.monitorId] || `Monitor ${i.monitorId}`,
           ) || [],
         labels: {
           style: {
@@ -147,7 +147,7 @@ export const IncidentChart = ({ data, monitorsMap }: ReportChartsProps) => {
         theme: "dark",
       },
     }),
-    [theme, data, monitorsMap]
+    [theme, data, monitorsMap],
   );
 
   const series = useMemo(() => {

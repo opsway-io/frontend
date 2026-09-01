@@ -1,4 +1,12 @@
-import { Box, Button, Card, CardContent, Chip, Stack, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  Card,
+  CardContent,
+  Chip,
+  Stack,
+  Typography,
+} from "@mui/material";
 import { FunctionComponent } from "react";
 import { Link } from "react-router-dom";
 import moment from "moment";
@@ -37,7 +45,11 @@ const HistoryList: FunctionComponent = () => {
           variant="outlined"
         >
           <CardContent>
-            <Stack direction="row" justifyContent="space-between" alignItems="center">
+            <Stack
+              direction="row"
+              justifyContent="space-between"
+              alignItems="center"
+            >
               <Stack spacing={1}>
                 <Typography variant="subtitle1" color="text.primary">
                   {incident.title}

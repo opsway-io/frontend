@@ -1,4 +1,4 @@
-import { Stack, Typography } from "@mui/material";
+import { Stack, Typography, Chip } from "@mui/material";
 import { DataGridProps, GridColDef, GridRowsProp } from "@mui/x-data-grid";
 import { FunctionComponent } from "react";
 import { AiOutlinePause } from "react-icons/ai";
@@ -12,6 +12,7 @@ import ResultThumbGraph from "../../../../components/ResultThumbGraph";
 import { useCurrentUserRole } from "../../../../hooks/user.query";
 import { secondsHumanize } from "../../../../utilities/time";
 import { stripProtocolAndPath } from "../../../../utilities/url";
+import { useMonitorsIncidents } from "../../../../hooks/monitors.query";
 import ItemMenu from "./ItemMenu";
 
 interface MonitorsDataGridProps
@@ -22,6 +23,7 @@ interface MonitorsDataGridProps
 const MonitorsDataGrid: FunctionComponent<MonitorsDataGridProps> = (props) => {
   const navigate = useNavigate();
   const currentRole = useCurrentUserRole();
+  const { data: monitorsIncidents } = useMonitorsIncidents();
 
   const rows: GridRowsProp = props.monitors || [];
 
@@ -58,21 +60,37 @@ const MonitorsDataGrid: FunctionComponent<MonitorsDataGridProps> = (props) => {
       headerName: "Name",
       flex: 1,
       sortable: false,
-      renderCell: (col) => (
-        <Stack>
-          <Typography
-            variant="subtitle1"
-            sx={{
-              lineHeight: 1,
-            }}
-          >
-            {col.row.name}
-          </Typography>
-          <Typography variant="caption" color="text.secondary">
-            {stripProtocolAndPath(col.row.settings.url)}
-          </Typography>
-        </Stack>
-      ),
+      renderCell: (col) => {
+        const hasIncident = monitorsIncidents?.monitors?.some(
+          (m) => m.id === col.row.id && m.incidents?.length > 0,
+        );
+
+        return (
+          <Stack direction="row" spacing={1} alignItems="center">
+            <Stack>
+              <Typography
+                variant="subtitle1"
+                sx={{
+                  lineHeight: 1,
+                }}
+              >
+                {col.row.name}
+              </Typography>
+              <Typography variant="caption" color="text.secondary">
+                {stripProtocolAndPath(col.row.settings.url)}
+              </Typography>
+            </Stack>
+            {hasIncident && (
+              <Chip
+                size="small"
+                color="error"
+                label="Incident"
+                sx={{ height: 20, fontSize: "0.7rem" }}
+              />
+            )}
+          </Stack>
+        );
+      },
     },
     {
       field: "stats",
@@ -83,7 +101,7 @@ const MonitorsDataGrid: FunctionComponent<MonitorsDataGridProps> = (props) => {
         <ResultThumbGraph
           stats={col.row.stats.averageResponseTimes || []}
           onClick={() => {
-            navigate(`/monitors/1/checks/1`);
+            navigate(`/monitors/${col.row.id}`);
           }}
         />
       ),

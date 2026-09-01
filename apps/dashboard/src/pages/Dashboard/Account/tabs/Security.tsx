@@ -63,7 +63,7 @@ const AccountSecurityTabView: FunctionComponent = () => {
                   <Divider />
                 </>
               )}
-              
+
               <TextField
                 label="New password"
                 type="password"

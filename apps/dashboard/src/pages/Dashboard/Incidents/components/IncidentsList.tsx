@@ -61,9 +61,15 @@ const IncidentsListItem: FunctionComponent<IncidentsListItemProps> = ({
             justifyContent="space-between"
             gap={{ xs: 2, md: 4 }}
             onClick={() => {
-              const start = moment(incident.createdAt).subtract(1, 'hour').toISOString();
-              const end = moment(incident.updatedAt).add(1, 'hour').toISOString();
-              navigate(`/monitors/${incident.monitorId}?start=${encodeURIComponent(start)}&end=${encodeURIComponent(end)}`);
+              const start = moment(incident.createdAt)
+                .subtract(1, "hour")
+                .toISOString();
+              const end = moment(incident.updatedAt)
+                .add(1, "hour")
+                .toISOString();
+              navigate(
+                `/monitors/${incident.monitorId}?start=${encodeURIComponent(start)}&end=${encodeURIComponent(end)}`,
+              );
             }} // Navigate to the monitor page with incident timeframe
           >
             <Grid item>

@@ -146,3 +146,30 @@ export const useIncidentAlerts = (
     },
   );
 };
+
+export const useIncidentOccurrences = (
+  incidentId: number,
+  offset?: number,
+  limit?: number,
+) => {
+  const teamId = useAuthenticationStore((state) => state.currentTeamId);
+
+  return useQuery(
+    ["teams", teamId, "incidents", incidentId, "occurrences", offset, limit],
+    () => {
+      if (!teamId) {
+        return Promise.resolve(null);
+      }
+
+      return IncidentsAPI.getIncidentOccurrences(
+        teamId,
+        incidentId,
+        offset,
+        limit,
+      );
+    },
+    {
+      enabled: !!teamId,
+    },
+  );
+};

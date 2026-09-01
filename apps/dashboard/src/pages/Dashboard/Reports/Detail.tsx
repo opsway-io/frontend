@@ -28,7 +28,10 @@ import { PerformanceChart, IncidentChart } from "./components/ReportCharts";
 const ReportDetailView: FunctionComponent = () => {
   const { id } = useParams<{ id: string }>();
   const { data: report, isLoading: reportLoading } = useReport(Number(id));
-  const { data: monitorsData, isLoading: monitorsLoading } = useMonitors(0, 1000);
+  const { data: monitorsData, isLoading: monitorsLoading } = useMonitors(
+    0,
+    1000,
+  );
 
   const monitorsMap = useMemo(() => {
     const map: Record<number, string> = {};
@@ -66,13 +69,16 @@ const ReportDetailView: FunctionComponent = () => {
     let totalIncidents = 0;
 
     if (report.data.uptime?.length) {
-      const sum = report.data.uptime.reduce((a, b) => a + b.UptimePercentage, 0);
+      const sum = report.data.uptime.reduce(
+        (a, b) => a + b.UptimePercentage,
+        0,
+      );
       avgUptime = sum / report.data.uptime.length;
     }
     if (report.data.performance?.length) {
       const sum = report.data.performance.reduce(
         (a, b) => a + b.AverageResponseTime,
-        0
+        0,
       );
       avgResponseTime = sum / report.data.performance.length;
     }
@@ -87,7 +93,11 @@ const ReportDetailView: FunctionComponent = () => {
       <Container
         header={
           <Stack direction="row" alignItems="center" spacing={2}>
-            <Button component={Link} to="/reports" startIcon={<IoChevronBack />}>
+            <Button
+              component={Link}
+              to="/reports"
+              startIcon={<IoChevronBack />}
+            >
               Back
             </Button>
             <Typography variant="h4">Loading Report...</Typography>
@@ -104,7 +114,11 @@ const ReportDetailView: FunctionComponent = () => {
       <Container
         header={
           <Stack direction="row" alignItems="center" spacing={2}>
-            <Button component={Link} to="/reports" startIcon={<IoChevronBack />}>
+            <Button
+              component={Link}
+              to="/reports"
+              startIcon={<IoChevronBack />}
+            >
               Back
             </Button>
             <Typography variant="h4">Report Not Found</Typography>
@@ -131,7 +145,11 @@ const ReportDetailView: FunctionComponent = () => {
             width="100%"
           >
             <Stack direction="row" alignItems="center" spacing={2}>
-              <Button component={Link} to="/reports" startIcon={<IoChevronBack />}>
+              <Button
+                component={Link}
+                to="/reports"
+                startIcon={<IoChevronBack />}
+              >
                 Back
               </Button>
               <Typography variant="h4">Report #{report.id}</Typography>
@@ -143,8 +161,8 @@ const ReportDetailView: FunctionComponent = () => {
                   report.status === "COMPLETED"
                     ? "success"
                     : report.status === "FAILED"
-                    ? "error"
-                    : "warning"
+                      ? "error"
+                      : "warning"
                 }
               />
             </Stack>
@@ -168,48 +186,57 @@ const ReportDetailView: FunctionComponent = () => {
 
           {report.status === "COMPLETED" && report.data && summary && (
             <Grid container spacing={2}>
-              {(report.type === "UPTIME" || report.type === "ALL" || report.type === "CUSTOM") && report.data.uptime && (
-                <Grid item xs={12} md={4}>
-                  <Card variant="outlined">
-                    <CardContent>
-                      <Typography color="text.secondary" gutterBottom>
-                        Average Uptime
-                      </Typography>
-                      <Typography variant="h4" color="success.main">
-                        {summary.avgUptime.toFixed(2)}%
-                      </Typography>
-                    </CardContent>
-                  </Card>
-                </Grid>
-              )}
-              {(report.type === "PERFORMANCE" || report.type === "ALL" || report.type === "CUSTOM") && report.data.performance && (
-                <Grid item xs={12} md={4}>
-                  <Card variant="outlined">
-                    <CardContent>
-                      <Typography color="text.secondary" gutterBottom>
-                        Average Response Time
-                      </Typography>
-                      <Typography variant="h4" color="info.main">
-                        {summary.avgResponseTime.toFixed(0)} ms
-                      </Typography>
-                    </CardContent>
-                  </Card>
-                </Grid>
-              )}
-              {(report.type === "INCIDENT" || report.type === "ALL" || report.type === "CUSTOM") && report.data.incident && (
-                <Grid item xs={12} md={4}>
-                  <Card variant="outlined">
-                    <CardContent>
-                      <Typography color="text.secondary" gutterBottom>
-                        Total Incidents
-                      </Typography>
-                      <Typography variant="h4" color="error.main">
-                        {summary.totalIncidents}
-                      </Typography>
-                    </CardContent>
-                  </Card>
-                </Grid>
-              )}
+              {(report.type === "UPTIME" ||
+                report.type === "ALL" ||
+                report.type === "CUSTOM") &&
+                report.data.uptime && (
+                  <Grid item xs={12} md={4}>
+                    <Card variant="outlined">
+                      <CardContent>
+                        <Typography color="text.secondary" gutterBottom>
+                          Average Uptime
+                        </Typography>
+                        <Typography variant="h4" color="success.main">
+                          {summary.avgUptime.toFixed(2)}%
+                        </Typography>
+                      </CardContent>
+                    </Card>
+                  </Grid>
+                )}
+              {(report.type === "PERFORMANCE" ||
+                report.type === "ALL" ||
+                report.type === "CUSTOM") &&
+                report.data.performance && (
+                  <Grid item xs={12} md={4}>
+                    <Card variant="outlined">
+                      <CardContent>
+                        <Typography color="text.secondary" gutterBottom>
+                          Average Response Time
+                        </Typography>
+                        <Typography variant="h4" color="info.main">
+                          {summary.avgResponseTime.toFixed(0)} ms
+                        </Typography>
+                      </CardContent>
+                    </Card>
+                  </Grid>
+                )}
+              {(report.type === "INCIDENT" ||
+                report.type === "ALL" ||
+                report.type === "CUSTOM") &&
+                report.data.incident && (
+                  <Grid item xs={12} md={4}>
+                    <Card variant="outlined">
+                      <CardContent>
+                        <Typography color="text.secondary" gutterBottom>
+                          Total Incidents
+                        </Typography>
+                        <Typography variant="h4" color="error.main">
+                          {summary.totalIncidents}
+                        </Typography>
+                      </CardContent>
+                    </Card>
+                  </Grid>
+                )}
             </Grid>
           )}
 
@@ -242,14 +269,20 @@ const ReportDetailView: FunctionComponent = () => {
                               <Typography variant="body2" fontWeight="bold">
                                 {getMonitorName(row.MonitorID)}
                               </Typography>
-                              <Typography variant="caption" color="text.secondary">
+                              <Typography
+                                variant="caption"
+                                color="text.secondary"
+                              >
                                 ID: {row.MonitorID}
                               </Typography>
                             </Stack>
                           </TableCell>
                           <TableCell>{row.Url}</TableCell>
                           <TableCell>{row.Date}</TableCell>
-                          <TableCell align="right" sx={{ fontWeight: 'medium' }}>
+                          <TableCell
+                            align="right"
+                            sx={{ fontWeight: "medium" }}
+                          >
                             {row.UptimePercentage.toFixed(2)}%
                           </TableCell>
                         </TableRow>
@@ -267,7 +300,10 @@ const ReportDetailView: FunctionComponent = () => {
                 Performance Report
               </Typography>
               <Card variant="outlined" sx={{ mb: 2, p: 2 }}>
-                <PerformanceChart data={report.data} monitorsMap={monitorsMap} />
+                <PerformanceChart
+                  data={report.data}
+                  monitorsMap={monitorsMap}
+                />
               </Card>
               <Card variant="outlined">
                 <TableContainer component={Paper} elevation={0}>
@@ -293,14 +329,23 @@ const ReportDetailView: FunctionComponent = () => {
                               <Typography variant="body2" fontWeight="bold">
                                 {getMonitorName(row.MonitorID)}
                               </Typography>
-                              <Typography variant="caption" color="text.secondary">
+                              <Typography
+                                variant="caption"
+                                color="text.secondary"
+                              >
                                 ID: {row.MonitorID}
                               </Typography>
                             </Stack>
                           </TableCell>
-                          <TableCell align="right">{row.AverageResponseTime.toFixed(0)} ms</TableCell>
-                          <TableCell align="right">{row.P95.toFixed(0)} ms</TableCell>
-                          <TableCell align="right">{row.P99.toFixed(0)} ms</TableCell>
+                          <TableCell align="right">
+                            {row.AverageResponseTime.toFixed(0)} ms
+                          </TableCell>
+                          <TableCell align="right">
+                            {row.P95.toFixed(0)} ms
+                          </TableCell>
+                          <TableCell align="right">
+                            {row.P99.toFixed(0)} ms
+                          </TableCell>
                         </TableRow>
                       ))}
                     </TableBody>
@@ -340,7 +385,10 @@ const ReportDetailView: FunctionComponent = () => {
                               <Typography variant="body2" fontWeight="bold">
                                 {getMonitorName(row.monitorId)}
                               </Typography>
-                              <Typography variant="caption" color="text.secondary">
+                              <Typography
+                                variant="caption"
+                                color="text.secondary"
+                              >
                                 ID: {row.monitorId}
                               </Typography>
                             </Stack>

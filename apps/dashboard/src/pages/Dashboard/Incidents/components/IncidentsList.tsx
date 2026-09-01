@@ -75,8 +75,14 @@ const IncidentsListItem: FunctionComponent<IncidentsListItemProps> = ({
             <Grid item>
               <Stack spacing={1}>
                 <Typography variant="body2">
-                  Assertion failed: {incident.title} {incident.operator}{" "}
-                  {incident.target}
+                  {incident.operator ? (
+                    <>
+                      Assertion failed: {incident.title} {incident.operator}{" "}
+                      {incident.target}
+                    </>
+                  ) : (
+                    incident.description || incident.title
+                  )}
                 </Typography>
 
                 <Stack direction="row" spacing={1}>

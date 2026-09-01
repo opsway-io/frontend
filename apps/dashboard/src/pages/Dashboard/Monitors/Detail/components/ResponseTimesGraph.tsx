@@ -178,6 +178,9 @@ const ResponseTimesGraph: FunctionComponent<ResponseTimesGraphProps> = (
         theme: "dark",
         shared: true,
         intersect: false,
+        x: {
+          format: "dd MMM yyyy, HH:mm:ss",
+        },
         y: {
           formatter: (value: any) => {
             if (value == null) return "N/A";

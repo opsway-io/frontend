@@ -16,6 +16,7 @@ export interface Incident {
   updatedAt: string;
   resolved?: boolean;
   occurrences?: number;
+  isStatusPageVisible?: boolean;
 }
 
 /*
@@ -56,6 +57,7 @@ export interface GetIncidentResponse {
   createdAt: string;
   updatedAt: string;
   occurrences: number;
+  isStatusPageVisible: boolean;
 }
 
 export async function getIncident(
@@ -81,6 +83,7 @@ export interface MonitorIncident {
   target: string;
   operator: string;
   rootCauseAnalysis?: string;
+  isStatusPageVisible: boolean;
 }
 
 /*
@@ -133,6 +136,23 @@ export async function patchAcknowledgeMonitorIncident(
 ): Promise<void> {
   const response = await client.patch(
     `/v1/teams/${teamId}/incidents/${incidentId}/acknowledge`,
+  );
+
+  return response?.data;
+}
+
+export interface PatchIncidentVisibilityRequest {
+  isStatusPageVisible: boolean;
+}
+
+export async function patchIncidentVisibility(
+  teamId: number,
+  incidentId: number,
+  data: PatchIncidentVisibilityRequest,
+): Promise<void> {
+  const response = await client.patch(
+    `/v1/teams/${teamId}/incidents/${incidentId}/visibility`,
+    data,
   );
 
   return response?.data;

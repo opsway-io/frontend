@@ -1,11 +1,20 @@
 import { FunctionComponent } from "react";
-import { Alert, AlertTitle, Button, Stack, Typography } from "@mui/material";
-import { IoCheckmark } from "react-icons/io5";
+import {
+  Alert,
+  AlertTitle,
+  Button,
+  Stack,
+  Typography,
+  FormControlLabel,
+  Switch,
+} from "@mui/material";
+import { IoCheckmark, IoGlobeOutline } from "react-icons/io5";
 import moment from "moment";
 import {
   useIncident,
   useSolveIncident,
   useAcknowledgeIncident,
+  useUpdateIncidentVisibility,
 } from "../../../../../hooks/incidents.query";
 import Placeholder from "../../../../../components/Placeholder";
 import AlertHistoryCard from "./AlertHistoryCard";
@@ -21,6 +30,7 @@ const IncidentDetailsContent: FunctionComponent<
   const { data: incidentData, isLoading, error } = useIncident(incidentId);
   const solveIncident = useSolveIncident();
   const acknowledgeIncident = useAcknowledgeIncident();
+  const updateVisibility = useUpdateIncidentVisibility();
 
   if (isLoading) {
     return <Placeholder />;
@@ -36,6 +46,30 @@ const IncidentDetailsContent: FunctionComponent<
 
   return (
     <Stack spacing={3}>
+      <Stack direction="row" justifyContent="space-between" alignItems="center">
+        <Typography variant="h6">Incident Details</Typography>
+        <FormControlLabel
+          control={
+            <Switch
+              checked={incident.isStatusPageVisible}
+              onChange={(e) =>
+                updateVisibility.mutate({
+                  incidentId: incident.id,
+                  isStatusPageVisible: e.target.checked,
+                })
+              }
+              color="primary"
+            />
+          }
+          label={
+            <Stack direction="row" alignItems="center" spacing={1}>
+              <IoGlobeOutline />
+              <Typography variant="body2">Visible on Status Page</Typography>
+            </Stack>
+          }
+        />
+      </Stack>
+
       {!incident.resolved ? (
         <Alert
           severity="error"

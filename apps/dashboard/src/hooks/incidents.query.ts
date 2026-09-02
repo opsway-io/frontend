@@ -173,3 +173,25 @@ export const useIncidentOccurrences = (
     },
   );
 };
+
+export const useUpdateIncidentVisibility = () => {
+  const teamId = useAuthenticationStore((state) => state.currentTeamId);
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    (data: { incidentId: number; isStatusPageVisible: boolean }) => {
+      if (!teamId) {
+        return Promise.reject(new Error("Team not found"));
+      }
+      return IncidentsAPI.patchIncidentVisibility(teamId, data.incidentId, {
+        isStatusPageVisible: data.isStatusPageVisible,
+      });
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries(["team", teamId]);
+        queryClient.invalidateQueries(["teams", teamId]);
+      },
+    },
+  );
+};

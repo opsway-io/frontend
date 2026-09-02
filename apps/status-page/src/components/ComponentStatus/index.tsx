@@ -32,12 +32,6 @@ const ComponentStatus: FunctionComponent<ComponentStatusProps> = ({
     displayDays = Math.min(daysDiff, 90);
   }
 
-  const uptimeText =
-    uptimePercentage !== undefined
-      ? `${uptimePercentage.toFixed(2)}% uptime`
-      : "100.00% uptime";
-
-  // Reverse daily uptimes so index 0 is oldest, up to displayDays
   const chartDays = new Array(displayDays).fill(0).map((_, index) => {
     // Determine how many days ago this box represents (0 = today)
     const daysAgo = displayDays - 1 - index;
@@ -56,11 +50,28 @@ const ComponentStatus: FunctionComponent<ComponentStatusProps> = ({
     }
 
     let color = "#10b981"; // Emerald
-    if (uptime < 90) color = "#f59e0b"; // Amber
-    if (uptime < 50) color = "#f43f5e"; // Rose
+    let title = `${uptime.toFixed(1)}% uptime`;
 
-    return { color, title: `${uptime.toFixed(1)}% uptime` };
+    if (uptime === -1) {
+      color = "#9ca3af"; // Gray for no data
+      title = "No data";
+    } else if (uptime < 90) {
+      color = "#f59e0b"; // Amber
+    } else if (uptime < 50) {
+      color = "#f43f5e"; // Rose
+    }
+
+    return { color, title, uptime };
   });
+
+  let calculatedUptime = 100;
+  const daysWithData = chartDays.filter((day) => day.uptime !== -1);
+  if (daysWithData.length > 0) {
+    const sum = daysWithData.reduce((acc, curr) => acc + curr.uptime, 0);
+    calculatedUptime = sum / daysWithData.length;
+  }
+
+  const uptimeText = `${calculatedUptime.toFixed(2)}% uptime`;
 
   return (
     <Stack direction="column" spacing={2} sx={{ width: "100%" }}>

@@ -220,7 +220,9 @@ const AlertRuleDetailView: FunctionComponent = () => {
                           }
                         }}
                         onInputChange={(_, newInputValue) => {
-                          const found = CONDITION_OPTIONS.find(c => c.label === newInputValue);
+                          const found = CONDITION_OPTIONS.find(
+                            (c) => c.label === newInputValue,
+                          );
                           if (found) {
                             field.onChange(found.value);
                           } else {

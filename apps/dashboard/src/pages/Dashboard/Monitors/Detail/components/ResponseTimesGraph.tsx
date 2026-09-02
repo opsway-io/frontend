@@ -187,9 +187,7 @@ const ResponseTimesGraph: FunctionComponent<ResponseTimesGraphProps> = (
         shared: true,
         intersect: false,
         x: {
-          formatter: (value: number) => {
-            return moment(value).format("DD MMM YYYY, HH:mm:ss");
-          },
+          format: "dd MMM yyyy, HH:mm:ss",
         },
         y: {
           formatter: (value: any) => {
@@ -248,8 +246,7 @@ const ResponseTimesGraph: FunctionComponent<ResponseTimesGraphProps> = (
       const anomaly =
         data.metrics.find((m) => m.name === "Anomaly")?.timing || [];
 
-      const total =
-        data.metrics.find((m) => m.name === "Total")?.timing || [];
+      const total = data.metrics.find((m) => m.name === "Total")?.timing || [];
 
       // Parse dates using local timezone context to properly align ClickHouse local dates with Go's UTC forecast dates
       // Map over `expected` for ALL arrays to guarantee perfectly identical x values

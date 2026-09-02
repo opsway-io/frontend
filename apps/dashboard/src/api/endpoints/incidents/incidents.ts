@@ -12,10 +12,10 @@ export interface Incident {
   description: string;
   acknowledged?: boolean;
   rootCauseAnalysis?: string;
-	createdAt: string;
-	updatedAt: string;
-	resolved?: boolean;
-	occurrences?: number;
+  createdAt: string;
+  updatedAt: string;
+  resolved?: boolean;
+  occurrences?: number;
 }
 
 /*
@@ -52,10 +52,10 @@ export interface GetIncidentResponse {
   resolved: boolean;
   acknowledged: boolean;
   acknowledgedAt?: string;
-	rootCauseAnalysis?: string;
-	createdAt: string;
-	updatedAt: string;
-	occurrences: number;
+  rootCauseAnalysis?: string;
+  createdAt: string;
+  updatedAt: string;
+  occurrences: number;
 }
 
 export async function getIncident(

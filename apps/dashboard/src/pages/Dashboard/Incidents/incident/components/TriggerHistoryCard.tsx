@@ -1,9 +1,4 @@
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  Typography,
-} from "@mui/material";
+import { Card, CardContent, CardHeader, Typography } from "@mui/material";
 import {
   Timeline,
   TimelineItem,
@@ -53,7 +48,11 @@ const TriggerHistoryCard: FunctionComponent<TriggerHistoryCardProps> = ({
       />
       <CardContent>
         {occurrences.length === 0 ? (
-          <Typography color="text.secondary" variant="body2" sx={{ textAlign: "center", py: 2 }}>
+          <Typography
+            color="text.secondary"
+            variant="body2"
+            sx={{ textAlign: "center", py: 2 }}
+          >
             No recent triggers found.
           </Typography>
         ) : (

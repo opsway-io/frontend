@@ -4,6 +4,7 @@ export interface PublicMonitor {
   status: "OPERATIONAL" | "OUTAGE";
   createdAt: string;
   uptimePercentage?: number;
+  dailyUptimes?: number[];
 }
 
 export interface PublicIncident {

@@ -8,6 +8,7 @@ interface ComponentStatusProps {
   layout: string;
   createdAt?: string;
   uptimePercentage?: number;
+  dailyUptimes?: number[];
 }
 
 const ComponentStatus: FunctionComponent<ComponentStatusProps> = ({
@@ -16,6 +17,7 @@ const ComponentStatus: FunctionComponent<ComponentStatusProps> = ({
   layout,
   createdAt,
   uptimePercentage,
+  dailyUptimes,
 }) => {
   const isOperational = status === "OPERATIONAL";
   const statusColor = isOperational ? "#10b981" : "#f43f5e";
@@ -34,6 +36,31 @@ const ComponentStatus: FunctionComponent<ComponentStatusProps> = ({
     uptimePercentage !== undefined
       ? `${uptimePercentage.toFixed(2)}% uptime`
       : "100.00% uptime";
+
+  // Reverse daily uptimes so index 0 is oldest, up to displayDays
+  const chartDays = new Array(displayDays).fill(0).map((_, index) => {
+    // Determine how many days ago this box represents (0 = today)
+    const daysAgo = displayDays - 1 - index;
+    // Get the uptime from the backend array, or default to 100
+    // Backend array is ordered ASC (oldest first). So the last element is today.
+    let uptime = 100;
+    if (dailyUptimes && dailyUptimes.length > 0) {
+      // Find the element from the end
+      const arrIndex = dailyUptimes.length - 1 - daysAgo;
+      if (arrIndex >= 0 && arrIndex < dailyUptimes.length) {
+        uptime = dailyUptimes[arrIndex];
+      }
+    } else {
+      // If no data, use current status color
+      uptime = isOperational ? 100 : 0;
+    }
+
+    let color = "#10b981"; // Emerald
+    if (uptime < 90) color = "#f59e0b"; // Amber
+    if (uptime < 50) color = "#f43f5e"; // Rose
+
+    return { color, title: `${uptime.toFixed(1)}% uptime` };
+  });
 
   return (
     <Stack direction="column" spacing={2} sx={{ width: "100%" }}>
@@ -71,13 +98,14 @@ const ComponentStatus: FunctionComponent<ComponentStatusProps> = ({
             spacing={0.5}
             sx={{ width: "100%", overflow: "hidden" }}
           >
-            {new Array(displayDays).fill(0).map((_, index) => (
+            {chartDays.map((dayData, index) => (
               <Box
                 key={index}
+                title={dayData.title}
                 sx={{
                   flex: 1,
                   height: "2rem",
-                  backgroundColor: statusColor,
+                  backgroundColor: dayData.color,
                   borderRadius: 0.5,
                   transition: "all 0.2s ease",
                   "&:hover": {

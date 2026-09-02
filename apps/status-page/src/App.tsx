@@ -607,6 +607,7 @@ const App: FunctionComponent = () => {
                     layout={data.layout}
                     createdAt={m.createdAt}
                     uptimePercentage={m.uptimePercentage}
+                    dailyUptimes={m.dailyUptimes}
                   />
                   {idx < data.monitors.length - 1 && (
                     <Divider sx={{ mt: 1.5, mb: 0, opacity: 0.5 }} />

@@ -64,14 +64,10 @@ const ComponentStatus: FunctionComponent<ComponentStatusProps> = ({
     return { color, title, uptime };
   });
 
-  let calculatedUptime = 100;
-  const daysWithData = chartDays.filter((day) => day.uptime !== -1);
-  if (daysWithData.length > 0) {
-    const sum = daysWithData.reduce((acc, curr) => acc + curr.uptime, 0);
-    calculatedUptime = sum / daysWithData.length;
-  }
-
-  const uptimeText = `${calculatedUptime.toFixed(2)}% uptime`;
+  const uptimeText =
+    uptimePercentage !== undefined
+      ? `${uptimePercentage.toFixed(2)}% uptime`
+      : "100.00% uptime";
 
   return (
     <Stack direction="column" spacing={2} sx={{ width: "100%" }}>

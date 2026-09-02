@@ -244,6 +244,9 @@ const ResponseTimesGraph: FunctionComponent<ResponseTimesGraphProps> = (
       const anomaly =
         data.metrics.find((m) => m.name === "Anomaly")?.timing || [];
 
+      const total =
+        data.metrics.find((m) => m.name === "Total")?.timing || [];
+
       // Parse dates using local timezone context to properly align ClickHouse local dates with Go's UTC forecast dates
       // Map over `expected` for ALL arrays to guarantee perfectly identical x values
 
@@ -253,17 +256,11 @@ const ResponseTimesGraph: FunctionComponent<ResponseTimesGraphProps> = (
       }));
 
       const actualData = expected.map((e, idx) => {
-        const d = dns[idx];
-        if (d) {
-          const val =
-            d.timing +
-            (tcp[idx]?.timing || 0) +
-            (tls[idx]?.timing || 0) +
-            (processing[idx]?.timing || 0) +
-            (transfer[idx]?.timing || 0);
+        const t = total[idx];
+        if (t) {
           return {
             x: moment(e.start).valueOf(),
-            y: val,
+            y: t.timing,
           };
         }
         return {

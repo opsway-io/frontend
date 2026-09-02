@@ -9,7 +9,7 @@ describe("ComponentStatus", () => {
     );
 
     expect(screen.getByText("API Server")).toBeInTheDocument();
-    expect(screen.getByText("99.99% uptime")).toBeInTheDocument();
+    expect(screen.getByText("100.00% uptime")).toBeInTheDocument();
   });
 
   it("renders correctly with error status", () => {
@@ -22,6 +22,6 @@ describe("ComponentStatus", () => {
     );
 
     expect(screen.getByText("Background Workers")).toBeInTheDocument();
-    expect(screen.getByText("99.99% uptime")).toBeInTheDocument();
+    expect(screen.getByText("100.00% uptime")).toBeInTheDocument();
   });
 });

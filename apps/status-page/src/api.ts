@@ -1,8 +1,9 @@
 export interface PublicMonitor {
   id: number;
   name: string;
-  status: string; // "OPERATIONAL" | "OUTAGE"
+  status: "OPERATIONAL" | "OUTAGE";
   createdAt: string;
+  uptimePercentage?: number;
 }
 
 export interface PublicIncident {

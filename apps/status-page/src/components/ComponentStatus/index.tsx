@@ -7,6 +7,7 @@ interface ComponentStatusProps {
   status: string;
   layout: string;
   createdAt?: string;
+  uptimePercentage?: number;
 }
 
 const ComponentStatus: FunctionComponent<ComponentStatusProps> = ({
@@ -14,6 +15,7 @@ const ComponentStatus: FunctionComponent<ComponentStatusProps> = ({
   status,
   layout,
   createdAt,
+  uptimePercentage,
 }) => {
   const isOperational = status === "OPERATIONAL";
   const statusColor = isOperational ? "#10b981" : "#f43f5e";
@@ -27,6 +29,11 @@ const ComponentStatus: FunctionComponent<ComponentStatusProps> = ({
     if (isNaN(daysDiff) || daysDiff < 1) daysDiff = 1;
     displayDays = Math.min(daysDiff, 90);
   }
+
+  const uptimeText =
+    uptimePercentage !== undefined
+      ? `${uptimePercentage.toFixed(2)}% uptime`
+      : "100.00% uptime";
 
   return (
     <Stack direction="column" spacing={2} sx={{ width: "100%" }}>
@@ -70,7 +77,7 @@ const ComponentStatus: FunctionComponent<ComponentStatusProps> = ({
                 sx={{
                   flex: 1,
                   height: "2rem",
-                  backgroundColor: getColor(status),
+                  backgroundColor: statusColor,
                   borderRadius: 0.5,
                   transition: "all 0.2s ease",
                   "&:hover": {
@@ -94,7 +101,7 @@ const ComponentStatus: FunctionComponent<ComponentStatusProps> = ({
               color="text.secondary"
               sx={{ opacity: 0.6 }}
             >
-              99.99% uptime
+              {uptimeText}
             </Typography>
             <Typography
               variant="caption"

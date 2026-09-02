@@ -64,6 +64,7 @@ const ResponseTimesGraph: FunctionComponent<ResponseTimesGraphProps> = (
               theme.palette.success.main,
               theme.palette.warning.main,
               theme.palette.info.main,
+              theme.palette.text.secondary,
             ],
       },
       chart: {
@@ -109,6 +110,7 @@ const ResponseTimesGraph: FunctionComponent<ResponseTimesGraphProps> = (
             "#FEB019", // TLS - Yellow
             "#FF4560", // Processing - Red
             "#775DD0", // Transfer - Purple
+            "#546E7A", // Overhead - Blue Grey
           ],
       grid: {
         borderColor: theme.palette.divider,
@@ -212,10 +214,12 @@ const ResponseTimesGraph: FunctionComponent<ResponseTimesGraphProps> = (
     if (!data || !data.metrics) return [];
 
     if (chartMode === "breakdown") {
-      // Show first 5 series (standard timing phases breakdown)
+      // Show first 6 series (standard timing phases breakdown + overhead)
       return data.metrics
         .filter((m) =>
-          ["DNS", "TCP", "TLS", "Processing", "Transfer"].includes(m.name),
+          ["DNS", "TCP", "TLS", "Processing", "Transfer", "Overhead"].includes(
+            m.name,
+          ),
         )
         .map((metric) => ({
           name: metric.name,

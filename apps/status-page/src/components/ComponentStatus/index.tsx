@@ -57,9 +57,9 @@ const ComponentStatus: FunctionComponent<ComponentStatusProps> = ({
       color = "#9ca3af"; // Gray for no data
       title = `${date}: No data`;
     } else if (uptime < 90) {
-      color = "#f59e0b"; // Amber
-    } else if (uptime < 50) {
-      color = "#f43f5e"; // Rose
+      color = "#f43f5e"; // Rose for major outage
+    } else if (uptime < 99) {
+      color = "#f59e0b"; // Amber for minor outage/degraded
     }
 
     return { color, title, uptime };

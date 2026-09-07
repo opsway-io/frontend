@@ -283,6 +283,17 @@ const MonitorDetailView: FunctionComponent = () => {
                 </AlertTitle>
 
                 <Stack spacing={1} mt={1}>
+                  {incident.acknowledged && (
+                    <Typography variant="body2" sx={{ mb: 1 }}>
+                      <strong>Acknowledged</strong>{" "}
+                      {incident.acknowledgedBy
+                        ? `by ${incident.acknowledgedBy.displayName} `
+                        : ""}
+                      {incident.acknowledgedAt
+                        ? `on ${moment(incident.acknowledgedAt).format("LLL")}`
+                        : ""}
+                    </Typography>
+                  )}
                   <Typography variant="body1">
                     {incident.title || "An error occurred with this monitor."}
                   </Typography>

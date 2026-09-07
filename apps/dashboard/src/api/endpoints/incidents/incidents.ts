@@ -92,6 +92,8 @@ export interface MonitorIncident {
   rootCauseAnalysis?: string;
   resolved: boolean;
   acknowledged: boolean;
+  acknowledgedAt?: string;
+  acknowledgedBy?: IncidentUserResponse;
   isStatusPageVisible: boolean;
 }
 

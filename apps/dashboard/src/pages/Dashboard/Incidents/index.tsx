@@ -28,7 +28,7 @@ const IncidentsView: FunctionComponent = () => {
 
       <Container
         header="Incidents"
-        description="An overview of active and resolved incidents across your infrastructure."
+        description="An overview of action required and resolved incidents across your infrastructure."
       >
         <Box sx={{ borderBottom: 1, borderColor: "divider", mb: 3 }}>
           <Tabs
@@ -36,7 +36,7 @@ const IncidentsView: FunctionComponent = () => {
             onChange={handleTabChange}
             aria-label="incidents tabs"
           >
-            <Tab label="Active" />
+            <Tab label="Requires Attention" />
             <Tab label="History" />
           </Tabs>
         </Box>

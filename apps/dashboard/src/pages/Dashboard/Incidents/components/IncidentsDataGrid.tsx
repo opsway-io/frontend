@@ -56,6 +56,22 @@ const IncidentsDataGrid: FunctionComponent<IncidentsDataGridProps> = ({
       },
     },
     {
+      field: "acknowledged",
+      headerName: "Acknowledged",
+      minWidth: 140,
+      renderCell: (params) => {
+        const acknowledged = params.row.acknowledged;
+        return (
+          <Chip
+            label={acknowledged ? "Yes" : "No"}
+            color={acknowledged ? "success" : "warning"}
+            size="small"
+            variant="outlined"
+          />
+        );
+      },
+    },
+    {
       field: "createdAt",
       headerName: "Started",
       minWidth: 180,
@@ -107,6 +123,7 @@ const IncidentsDataGrid: FunctionComponent<IncidentsDataGridProps> = ({
       monitorId: incident.monitorId,
       title: incident.title,
       resolved: incident.resolved,
+      acknowledged: incident.acknowledged,
       createdAt: incident.createdAt,
       updatedAt: incident.updatedAt,
     })) || [];

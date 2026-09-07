@@ -24,7 +24,7 @@ const IncidentPageOverviewList: FunctionComponent<
     return (
       <Stack alignItems="center" justifyContent="center" py={4}>
         <Typography variant="body1" color="text.secondary">
-          No active incidents right now. Everything is running smoothly!
+          No action required right now. Everything is running smoothly!
         </Typography>
       </Stack>
     );
@@ -90,7 +90,7 @@ const OverviewListItem: FunctionComponent<OverviewListItemProps> = ({
             >
               <Stack textAlign={{ xs: "left", md: "right" }}>
                 <Typography variant="body2" color="text.secondary">
-                  {monitor.incidents.length} active incidents
+                  {monitor.incidents.length} action required
                 </Typography>
               </Stack>
 

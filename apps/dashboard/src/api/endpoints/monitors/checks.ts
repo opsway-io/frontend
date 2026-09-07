@@ -104,6 +104,8 @@ export interface Incident {
   createdAt: string;
   updatedAt: string;
   MonitorAssertionID: number;
+  resolved: boolean;
+  acknowledged: boolean;
 }
 
 export async function getMonitorsIncidents(

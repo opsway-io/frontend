@@ -44,6 +44,12 @@ export async function getIncidents(
   return response?.data;
 }
 
+export interface IncidentUserResponse {
+  id: number;
+  displayName: string;
+  email: string;
+}
+
 export interface GetIncidentResponse {
   id: number;
   teamId: number;
@@ -53,6 +59,7 @@ export interface GetIncidentResponse {
   resolved: boolean;
   acknowledged: boolean;
   acknowledgedAt?: string;
+  acknowledgedBy?: IncidentUserResponse;
   rootCauseAnalysis?: string;
   createdAt: string;
   updatedAt: string;

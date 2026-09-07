@@ -72,7 +72,7 @@ const IncidentDetailsContent: FunctionComponent<
 
       {!incident.resolved ? (
         <Alert
-          severity="error"
+          severity={incident.acknowledged ? "warning" : "error"}
           action={
             <Stack direction="row" spacing={1}>
               {!incident.acknowledged && (
@@ -100,7 +100,7 @@ const IncidentDetailsContent: FunctionComponent<
             </Stack>
           }
         >
-          <AlertTitle>Active Incident: {incident.title}</AlertTitle>
+          <AlertTitle>{incident.acknowledged ? "Acknowledged Incident" : "Active Incident"}: {incident.title}</AlertTitle>
           {incident.description}
           <br />
           This incident was triggered on{" "}
@@ -117,6 +117,7 @@ const IncidentDetailsContent: FunctionComponent<
               <br />
               <br />
               <strong>Acknowledged</strong>{" "}
+              {incident.acknowledgedBy ? `by ${incident.acknowledgedBy.displayName} ` : ""}
               {incident.acknowledgedAt
                 ? `on ${moment(incident.acknowledgedAt).format("LLL")}`
                 : ""}

@@ -2,23 +2,18 @@ import { FunctionComponent, useState } from "react";
 import { Helmet } from "react-helmet";
 import { Box, Tab, Tabs } from "@mui/material";
 import Container from "../../../components/Container";
-import Placeholder from "../../../components/Placeholder";
-import IncidentOverviewList from "./components/OverviewList";
 import IncidentsDataGrid from "./components/IncidentsDataGrid";
-import { useMonitorsIncidents } from "../../../hooks/monitors.query";
 import { useIncidents } from "../../../hooks/incidents.query";
 
 const IncidentsView: FunctionComponent = () => {
   const [tabIndex, setTabIndex] = useState(0);
 
+  const { data: activeIncidentsData } = useIncidents(false, 0, 100);
   const { data: historyIncidentsData } = useIncidents(true, 0, 100);
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     setTabIndex(newValue);
   };
-
-  const { data: monitorsIncidents, isLoading: incidentsAreLoading } =
-    useMonitorsIncidents();
 
   return (
     <>
@@ -43,11 +38,7 @@ const IncidentsView: FunctionComponent = () => {
 
         {tabIndex === 0 && (
           <Box>
-            {incidentsAreLoading ? (
-              <Placeholder />
-            ) : (
-              <IncidentOverviewList monitors={monitorsIncidents?.monitors} />
-            )}
+            <IncidentsDataGrid incidents={activeIncidentsData?.incidents} />
           </Box>
         )}
 

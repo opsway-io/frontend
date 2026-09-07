@@ -11,6 +11,8 @@ export interface Incident {
   title: string;
   description: string;
   acknowledged?: boolean;
+  acknowledgedAt?: string;
+  acknowledgedBy?: IncidentUserResponse;
   rootCauseAnalysis?: string;
   createdAt: string;
   updatedAt: string;

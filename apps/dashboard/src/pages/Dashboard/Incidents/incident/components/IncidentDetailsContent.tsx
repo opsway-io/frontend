@@ -117,7 +117,7 @@ const IncidentDetailsContent: FunctionComponent<
               <br />
               <br />
               <strong>Acknowledged</strong>{" "}
-              {incident.acknowledgedBy ? `by ${incident.acknowledgedBy.displayName} ` : ""}
+              {incident.acknowledgedBy ? `by ${incident.acknowledgedBy.displayName} ` : "(auto-acknowledged) "}
               {incident.acknowledgedAt
                 ? `on ${moment(incident.acknowledgedAt).format("LLL")}`
                 : ""}
@@ -141,7 +141,11 @@ const IncidentDetailsContent: FunctionComponent<
           This incident occurred on {moment(incident.createdAt).format(
             "LLL",
           )}{" "}
-          and is now resolved.
+          and was resolved{" "}
+          {incident.resolvedBy ? `by ${incident.resolvedBy.displayName} ` : "(auto-resolved) "}
+          {incident.resolvedAt
+            ? `on ${moment(incident.resolvedAt).format("LLL")}`
+            : ""}.
         </Alert>
       )}
 

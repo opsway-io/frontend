@@ -31,6 +31,9 @@ const AccountGeneralTabView = lazy(
 const AccountSecurityTabView = lazy(
   () => import("../pages/Dashboard/Account/tabs/Security"),
 );
+const AccountNotificationRulesTabView = lazy(
+  () => import("../pages/Dashboard/Account/tabs/NotificationRules"),
+);
 
 const TeamView = lazy(() => import("../pages/Dashboard/Team"));
 const TeamPeopleTabView = lazy(
@@ -149,6 +152,7 @@ const Routes: FunctionComponent = () => {
           <Route path="account" element={<AccountView />}>
             <Route path="general" element={<AccountGeneralTabView />} />
             <Route path="security" element={<AccountSecurityTabView />} />
+            <Route path="notifications" element={<AccountNotificationRulesTabView />} />
             <Route path="" element={<Navigate to="general" replace />} />
           </Route>
 

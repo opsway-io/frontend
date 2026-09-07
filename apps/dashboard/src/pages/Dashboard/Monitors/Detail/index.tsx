@@ -288,7 +288,7 @@ const MonitorDetailView: FunctionComponent = () => {
                       <strong>Acknowledged</strong>{" "}
                       {incident.acknowledgedBy
                         ? `by ${incident.acknowledgedBy.displayName} `
-                        : ""}
+                        : "(auto-acknowledged) "}
                       {incident.acknowledgedAt
                         ? `on ${moment(incident.acknowledgedAt).format("LLL")}`
                         : ""}

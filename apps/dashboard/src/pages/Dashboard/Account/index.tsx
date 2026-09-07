@@ -108,6 +108,12 @@ const AccountView: FunctionComponent = () => {
                 to="/account/security"
                 value="/account/security"
               />
+              <Tab
+                label="Notification Preferences"
+                component={Link}
+                to="/account/notifications"
+                value="/account/notifications"
+              />
             </Tabs>
           </Box>
         </Card>

@@ -82,3 +82,27 @@ export async function getTeams(userId: number | string): Promise<IGetTeams> {
   const response = await client.get(`/v1/users/${userId}/teams`);
   return response?.data;
 }
+
+export interface INotificationRule {
+  id?: number;
+  channel: string;
+  delay: number;
+}
+
+export interface IGetNotificationRulesResponse {
+  rules: INotificationRule[];
+}
+
+export async function getNotificationRules(
+  userId: number | string,
+): Promise<IGetNotificationRulesResponse> {
+  const response = await client.get(`/v1/users/${userId}/notification-rules`);
+  return response?.data;
+}
+
+export async function updateNotificationRules(
+  userId: number | string,
+  rules: INotificationRule[],
+): Promise<void> {
+  await client.put(`/v1/users/${userId}/notification-rules`, { rules });
+}

@@ -17,6 +17,8 @@ export interface Incident {
   createdAt: string;
   updatedAt: string;
   resolved?: boolean;
+  resolvedAt?: string;
+  resolvedBy?: IncidentUserResponse;
   occurrences?: number;
   isStatusPageVisible?: boolean;
 }
@@ -59,6 +61,8 @@ export interface GetIncidentResponse {
   title: string;
   description: string;
   resolved: boolean;
+  resolvedAt?: string;
+  resolvedBy?: IncidentUserResponse;
   acknowledged: boolean;
   acknowledgedAt?: string;
   acknowledgedBy?: IncidentUserResponse;
@@ -93,6 +97,8 @@ export interface MonitorIncident {
   operator: string;
   rootCauseAnalysis?: string;
   resolved: boolean;
+  resolvedAt?: string;
+  resolvedBy?: IncidentUserResponse;
   acknowledged: boolean;
   acknowledgedAt?: string;
   acknowledgedBy?: IncidentUserResponse;

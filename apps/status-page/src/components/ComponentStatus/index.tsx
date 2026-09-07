@@ -66,7 +66,7 @@ const ComponentStatus: FunctionComponent<ComponentStatusProps> = ({
   });
 
   const uptimeText =
-    uptimePercentage !== undefined
+    uptimePercentage != null
       ? `${uptimePercentage.toFixed(2)}% uptime (90 days)`
       : "100.00% uptime (90 days)";
 

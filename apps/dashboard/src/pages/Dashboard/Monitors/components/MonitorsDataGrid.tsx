@@ -107,8 +107,8 @@ const MonitorsDataGrid: FunctionComponent<MonitorsDataGridProps> = (props) => {
       ),
     },
     {
-      field: "24h",
-      headerName: "24H",
+      field: "30d",
+      headerName: "30D",
       align: "right",
       headerAlign: "right",
       sortable: false,

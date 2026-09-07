@@ -22,7 +22,7 @@ const UptimeCard: FunctionComponent<UptimeCardProps> = ({ monitorId }) => {
   return (
     <Card sx={{ flex: 1 }}>
       <CardContent>
-        <Typography sx={{ opacity: 0.5 }}>Uptime (24-hour)</Typography>
+        <Typography sx={{ opacity: 0.5 }}>Uptime (30-day)</Typography>
         <Conditional value={isLoading}>
           <Skeleton variant="text" width={100} height={28} />
         </Conditional>

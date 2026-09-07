@@ -1,4 +1,4 @@
-import { Box, Stack, Typography } from "@mui/material";
+import { Box, Stack, Typography, Tooltip } from "@mui/material";
 import { FunctionComponent } from "react";
 import dayjs from "dayjs";
 
@@ -49,12 +49,13 @@ const ComponentStatus: FunctionComponent<ComponentStatusProps> = ({
       uptime = isOperational ? 100 : 0;
     }
 
+    const date = dayjs().subtract(daysAgo, "day").format("MMM D, YYYY");
     let color = "#10b981"; // Emerald
-    let title = `${uptime.toFixed(1)}% uptime`;
+    let title = `${date}: ${uptime.toFixed(1)}% uptime`;
 
     if (uptime === -1) {
       color = "#9ca3af"; // Gray for no data
-      title = "No data";
+      title = `${date}: No data`;
     } else if (uptime < 90) {
       color = "#f59e0b"; // Amber
     } else if (uptime < 50) {
@@ -66,8 +67,8 @@ const ComponentStatus: FunctionComponent<ComponentStatusProps> = ({
 
   const uptimeText =
     uptimePercentage !== undefined
-      ? `${uptimePercentage.toFixed(2)}% uptime`
-      : "100.00% uptime";
+      ? `${uptimePercentage.toFixed(2)}% uptime (90 days)`
+      : "100.00% uptime (90 days)";
 
   return (
     <Stack direction="column" spacing={2} sx={{ width: "100%" }}>
@@ -106,21 +107,21 @@ const ComponentStatus: FunctionComponent<ComponentStatusProps> = ({
             sx={{ width: "100%", overflow: "hidden" }}
           >
             {chartDays.map((dayData, index) => (
-              <Box
-                key={index}
-                title={dayData.title}
-                sx={{
-                  flex: 1,
-                  height: "2rem",
-                  backgroundColor: dayData.color,
-                  borderRadius: 0.5,
-                  transition: "all 0.2s ease",
-                  "&:hover": {
-                    opacity: 0.7,
-                    transform: "scaleY(1.2)",
-                  },
-                }}
-              />
+              <Tooltip key={index} title={dayData.title} arrow placement="top">
+                <Box
+                  sx={{
+                    flex: 1,
+                    height: "2rem",
+                    backgroundColor: dayData.color,
+                    borderRadius: 0.5,
+                    transition: "all 0.2s ease",
+                    "&:hover": {
+                      opacity: 0.7,
+                      transform: "scaleY(1.2)",
+                    },
+                  }}
+                />
+              </Tooltip>
             ))}
           </Stack>
           <Stack direction="row" justifyContent="space-between">
@@ -150,11 +151,6 @@ const ComponentStatus: FunctionComponent<ComponentStatusProps> = ({
       )}
     </Stack>
   );
-};
-
-const getColor = (status: string) => {
-  if (status === "OPERATIONAL") return "#10b981"; // Emerald
-  return "#f43f5e"; // Rose
 };
 
 export default ComponentStatus;

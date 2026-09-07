@@ -90,6 +90,8 @@ export interface MonitorIncident {
   target: string;
   operator: string;
   rootCauseAnalysis?: string;
+  resolved: boolean;
+  acknowledged: boolean;
   isStatusPageVisible: boolean;
 }
 

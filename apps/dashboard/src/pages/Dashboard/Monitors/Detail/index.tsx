@@ -229,7 +229,7 @@ const MonitorDetailView: FunctionComponent = () => {
             {activeIncidents.map((incident) => (
               <Alert
                 key={incident.id}
-                severity="error"
+                severity={incident.acknowledged ? "warning" : "error"}
                 action={
                   <Stack direction="row" spacing={1}>
                     <Button
@@ -279,7 +279,7 @@ const MonitorDetailView: FunctionComponent = () => {
                     gap: 1,
                   }}
                 >
-                  <span>Active Incident:</span>
+                  <span>{incident.acknowledged ? "Acknowledged Incident" : "Active Incident"}:</span>
                 </AlertTitle>
 
                 <Stack spacing={1} mt={1}>

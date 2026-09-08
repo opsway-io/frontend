@@ -228,6 +228,7 @@ export interface IGetProductsResponse {
     name: string;
     price: number;
     currency: string;
+    lookupKey: string;
     marketing_features: string[];
   }[];
 }

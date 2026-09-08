@@ -19,43 +19,17 @@ import { BsCheckLg } from "react-icons/bs";
 import {
   useCurrentTeam,
   usePostCustomerPortal,
-  usePostCreateCheckoutSession,
+  useGetProducts,
 } from "../../../../hooks/team.query";
 import { enqueueSnackbar } from "notistack";
 
-const PLANS = [
-  {
-    plan: "FREE",
-    title: "Free",
-    description: "For small hobby projects",
-    price: "$0",
-    features: ["3 Team Members", "5 Monitors", "1 Status Page"],
-  },
-  {
-    plan: "TEAM",
-    title: "Team",
-    description: "For small teams",
-    price: "$29",
-    features: [
-      "5 Team Members",
-      "50 Monitors",
-      "5 Status Pages",
-      "Slack Integrations",
-    ],
-  },
-  {
-    plan: "ENTERPRISE",
-    title: "Enterprise",
-    description: "For large organizations",
-    price: "$99",
-    features: [
-      "Unlimited Team Members",
-      "Unlimited Monitors",
-      "Unlimited Status Pages",
-      "SSO (SAML)",
-    ],
-  },
-];
+const FREE_PLAN = {
+  plan: "FREE",
+  title: "Free",
+  description: "For small hobby projects",
+  price: "$0",
+  features: ["3 Team Members", "5 Monitors", "1 Status Page"],
+};
 
 declare global {
   namespace JSX {
@@ -71,6 +45,7 @@ declare global {
 const TeamPlanTabView: FunctionComponent = () => {
   const { data: team, isLoading: isLoadingTeam } = useCurrentTeam();
   const { data: customerPortal } = usePostCustomerPortal();
+  const { data: productsData, isLoading: isLoadingProducts } = useGetProducts();
 
   const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
 
@@ -82,9 +57,14 @@ const TeamPlanTabView: FunctionComponent = () => {
         "../../../../api/endpoints/teams"
       );
       await postCreateCheckoutSession(team.id, plan);
-      // It redirects to stripe checkout, or cancels and succeeds silently
+      
       if (plan === "FREE" && team.paymentPlan !== "FREE") {
         enqueueSnackbar("Successfully cancelled subscription", {
+          variant: "success",
+        });
+        window.location.reload();
+      } else {
+        enqueueSnackbar("Successfully updated subscription", {
           variant: "success",
         });
         window.location.reload();
@@ -100,7 +80,7 @@ const TeamPlanTabView: FunctionComponent = () => {
 
   return (
     <>
-      {isLoadingTeam ? (
+      {isLoadingTeam || isLoadingProducts ? (
         <Placeholder />
       ) : (
         <Card>
@@ -112,19 +92,40 @@ const TeamPlanTabView: FunctionComponent = () => {
               justifyContent="center"
               alignItems="stretch"
             >
-              {PLANS.map((p) => (
-                <Grid item key={p.plan}>
-                  <PricingCard
-                    title={p.title}
-                    description={p.description}
-                    price={p.price}
-                    features={p.features}
-                    selected={team?.paymentPlan === p.plan}
-                    isLoading={loadingPlan === p.plan}
-                    onSelect={() => handleSelectPlan(p.plan)}
-                  />
-                </Grid>
-              ))}
+              <Grid item key={FREE_PLAN.plan}>
+                <PricingCard
+                  title={FREE_PLAN.title}
+                  description={FREE_PLAN.description}
+                  price={FREE_PLAN.price}
+                  features={FREE_PLAN.features}
+                  selected={team?.paymentPlan === FREE_PLAN.plan}
+                  isLoading={loadingPlan === FREE_PLAN.plan}
+                  onSelect={() => handleSelectPlan(FREE_PLAN.plan)}
+                />
+              </Grid>
+              {productsData?.products?.map((p) => {
+                // Determine format
+                const priceString =
+                  p.price === 0
+                    ? "$0"
+                    : p.currency.toUpperCase() === "USD"
+                      ? `$${p.price}`
+                      : `${p.price} ${p.currency.toUpperCase()}`;
+                const planId = p.lookupKey.toUpperCase();
+                return (
+                  <Grid item key={planId}>
+                    <PricingCard
+                      title={p.name}
+                      description={`For your organization`}
+                      price={priceString}
+                      features={p.marketing_features}
+                      selected={team?.paymentPlan === planId}
+                      isLoading={loadingPlan === planId}
+                      onSelect={() => handleSelectPlan(planId)}
+                    />
+                  </Grid>
+                );
+              })}
             </Grid>
           </CardContent>
           {team?.paymentPlan && team.paymentPlan !== "FREE" && (

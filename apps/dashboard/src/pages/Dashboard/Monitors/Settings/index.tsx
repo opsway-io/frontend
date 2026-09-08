@@ -1,4 +1,3 @@
-import { DevTool } from "@hookform/devtools";
 import { LoadingButton } from "@mui/lab";
 import {
   Box,
@@ -72,8 +71,6 @@ const MonitorSettingsView: FunctionComponent = () => {
 
   return (
     <>
-      <DevTool control={formMethods.control} />
-
       <Helmet>
         <title>Monitors | Settings</title>
       </Helmet>

@@ -1,4 +1,3 @@
-import { DevTool } from "@hookform/devtools";
 import {
   Box,
   Button,
@@ -113,8 +112,6 @@ const MonitorCreateView: FunctionComponent = () => {
         onClose={() => setOpenUpgradeModal(false)}
         featureName="Monitors"
       />
-      <DevTool control={formMethods.control} />
-
       <Helmet>
         <title>Monitors | Create </title>
       </Helmet>

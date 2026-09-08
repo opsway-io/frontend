@@ -118,7 +118,7 @@ const MonitorsView: FunctionComponent = () => {
           </>
         }
       >
-        <Conditional value={data?.totalCount === 0}>
+        <Conditional value={data?.totalCount === 0 && !debouncedQuery}>
           <Card>
             <CardContent>
               <Stack
@@ -159,7 +159,7 @@ const MonitorsView: FunctionComponent = () => {
           </Card>
         </Conditional>
 
-        <Conditional value={data?.monitors.length !== 0}>
+        <Conditional value={data?.totalCount !== 0 || debouncedQuery !== ""}>
           <Card
             sx={{
               backgroundColor: (t) =>
@@ -206,6 +206,7 @@ const MonitorsView: FunctionComponent = () => {
                 border: (t) => `1px solid ${t.palette.divider}`,
               }}
               endIcon={<BsFilterRight />}
+              disabled
             >
               Filters
             </Button>

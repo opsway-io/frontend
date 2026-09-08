@@ -47,7 +47,7 @@ const TriggerHistoryCard: FunctionComponent<TriggerHistoryCardProps> = ({
   }
 
   const occurrences = data?.occurrences || [];
-  const totalOccurrences = incidentData?.occurrences || occurrences.length;
+  const totalOccurrences = data?.totalCount || occurrences.length;
 
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);

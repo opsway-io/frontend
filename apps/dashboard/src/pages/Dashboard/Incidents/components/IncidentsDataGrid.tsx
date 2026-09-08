@@ -42,12 +42,19 @@ const IncidentsDataGrid: FunctionComponent<IncidentsDataGridProps> = ({
     {
       field: "status",
       headerName: "Status",
-      minWidth: 120,
+      minWidth: 200,
       renderCell: (params) => {
         const resolved = params.row.resolved;
+        const resolvedBy = params.row.resolvedBy;
+        
+        let label = "Active";
+        if (resolved) {
+          label = resolvedBy ? `Resolved by ${resolvedBy.displayName}` : "Autoresolved";
+        }
+        
         return (
           <Chip
-            label={resolved ? "Resolved" : "Active"}
+            label={label}
             color={resolved ? "success" : "error"}
             size="small"
             variant="outlined"
@@ -58,13 +65,19 @@ const IncidentsDataGrid: FunctionComponent<IncidentsDataGridProps> = ({
     {
       field: "acknowledged",
       headerName: "Acknowledged",
-      minWidth: 140,
+      minWidth: 200,
       renderCell: (params) => {
         const acknowledged = params.row.acknowledged;
         const acknowledgedBy = params.row.acknowledgedBy;
+        
+        let label = "No";
+        if (acknowledged) {
+          label = acknowledgedBy ? `By ${acknowledgedBy.displayName}` : "Auto-acknowledged";
+        }
+
         return (
           <Chip
-            label={acknowledged ? (acknowledgedBy ? `Yes (by ${acknowledgedBy.displayName})` : "Yes") : "No"}
+            label={label}
             color={acknowledged ? "success" : "warning"}
             size="small"
             variant="outlined"
@@ -124,6 +137,7 @@ const IncidentsDataGrid: FunctionComponent<IncidentsDataGridProps> = ({
       monitorId: incident.monitorId,
       title: incident.title,
       resolved: incident.resolved,
+      resolvedBy: incident.resolvedBy,
       acknowledged: incident.acknowledged,
       acknowledgedBy: incident.acknowledgedBy,
       createdAt: incident.createdAt,

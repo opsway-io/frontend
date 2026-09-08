@@ -213,6 +213,7 @@ export interface IncidentOccurrenceResponse {
 }
 
 export interface GetIncidentOccurrencesResponse {
+  totalCount: number;
   occurrences: IncidentOccurrenceResponse[];
 }
 

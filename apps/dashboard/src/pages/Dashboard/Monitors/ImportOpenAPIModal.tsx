@@ -79,6 +79,9 @@ const ImportOpenAPIModal: FunctionComponent<ImportOpenAPIModalProps> = ({
               checkExpiration: true,
               expirationThresholdDays: 7,
             },
+            auth: {
+              method: "NONE",
+            },
             locations: ["eu-central-1"],
           },
           assertions: [

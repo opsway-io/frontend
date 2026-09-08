@@ -1,5 +1,12 @@
 import client from "../../client";
 
+export interface StatusPageGroup {
+  id?: number;
+  name: string;
+  order: number;
+  monitorIds: number[];
+}
+
 export interface StatusPage {
   id: number;
   name: string;
@@ -15,6 +22,7 @@ export interface StatusPage {
   showBranding: boolean;
   isPrivate: boolean;
   monitorIds: number[];
+  groups: StatusPageGroup[];
   createdAt: string;
   updatedAt: string;
 }
@@ -73,6 +81,7 @@ export interface PutStatusPageRequest {
   isPrivate?: boolean;
   password?: string;
   monitorIds?: number[];
+  groups?: StatusPageGroup[];
 }
 
 export const updateStatusPage = async (

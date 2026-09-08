@@ -1,4 +1,10 @@
-import { Card, CardContent, CardHeader, Typography, TablePagination } from "@mui/material";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  Typography,
+  TablePagination,
+} from "@mui/material";
 import {
   Timeline,
   TimelineItem,
@@ -11,7 +17,10 @@ import {
 } from "@mui/lab";
 import { FunctionComponent, useState } from "react";
 import moment from "moment";
-import { useIncidentOccurrences, useIncident } from "../../../../../hooks/incidents.query";
+import {
+  useIncidentOccurrences,
+  useIncident,
+} from "../../../../../hooks/incidents.query";
 import Placeholder from "../../../../../components/Placeholder";
 import { BiTargetLock } from "react-icons/bi";
 
@@ -29,7 +38,7 @@ const TriggerHistoryCard: FunctionComponent<TriggerHistoryCardProps> = ({
   const { data, isLoading } = useIncidentOccurrences(
     incidentId,
     page * rowsPerPage,
-    rowsPerPage
+    rowsPerPage,
   );
 
   if (isLoading) {
@@ -54,7 +63,7 @@ const TriggerHistoryCard: FunctionComponent<TriggerHistoryCardProps> = ({
   };
 
   const handleChangeRowsPerPage = (
-    event: React.ChangeEvent<HTMLInputElement>
+    event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);

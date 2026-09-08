@@ -22,6 +22,13 @@ export interface PublicMaintenance {
   endAt: string;
 }
 
+export interface PublicGroup {
+  id: number;
+  name: string;
+  order: number;
+  monitorIds: number[];
+}
+
 export interface GetPublicStatusPageResponse {
   name: string;
   logoUrl: string;
@@ -35,6 +42,7 @@ export interface GetPublicStatusPageResponse {
   showBranding: boolean;
   isPrivate: boolean;
   monitors: PublicMonitor[];
+  groups?: PublicGroup[];
   activeIncidents: PublicIncident[];
   activeMaintenance: PublicMaintenance[];
   maintenanceEvents: PublicMaintenance[];

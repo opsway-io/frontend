@@ -100,7 +100,12 @@ const IncidentDetailsContent: FunctionComponent<
             </Stack>
           }
         >
-          <AlertTitle>{incident.acknowledged ? "Acknowledged Incident" : "Active Incident"}: {incident.title}</AlertTitle>
+          <AlertTitle>
+            {incident.acknowledged
+              ? "Acknowledged Incident"
+              : "Active Incident"}
+            : {incident.title}
+          </AlertTitle>
           {incident.description}
           <br />
           This incident was triggered on{" "}
@@ -117,7 +122,9 @@ const IncidentDetailsContent: FunctionComponent<
               <br />
               <br />
               <strong>Acknowledged</strong>{" "}
-              {incident.acknowledgedBy ? `by ${incident.acknowledgedBy.displayName} ` : "(auto-acknowledged) "}
+              {incident.acknowledgedBy
+                ? `by ${incident.acknowledgedBy.displayName} `
+                : "(auto-acknowledged) "}
               {incident.acknowledgedAt
                 ? `on ${moment(incident.acknowledgedAt).format("LLL")}`
                 : ""}
@@ -142,10 +149,13 @@ const IncidentDetailsContent: FunctionComponent<
             "LLL",
           )}{" "}
           and was resolved{" "}
-          {incident.resolvedBy ? `by ${incident.resolvedBy.displayName} ` : "(auto-resolved) "}
+          {incident.resolvedBy
+            ? `by ${incident.resolvedBy.displayName} `
+            : "(auto-resolved) "}
           {incident.resolvedAt
             ? `on ${moment(incident.resolvedAt).format("LLL")}`
-            : ""}.
+            : ""}
+          .
         </Alert>
       )}
 

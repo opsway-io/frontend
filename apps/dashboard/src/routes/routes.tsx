@@ -152,7 +152,10 @@ const Routes: FunctionComponent = () => {
           <Route path="account" element={<AccountView />}>
             <Route path="general" element={<AccountGeneralTabView />} />
             <Route path="security" element={<AccountSecurityTabView />} />
-            <Route path="notifications" element={<AccountNotificationRulesTabView />} />
+            <Route
+              path="notifications"
+              element={<AccountNotificationRulesTabView />}
+            />
             <Route path="" element={<Navigate to="general" replace />} />
           </Route>
 

@@ -37,7 +37,7 @@ const AlertHistoryCard: FunctionComponent<AlertHistoryCardProps> = ({
   const { data: alertsData, isLoading: alertsLoading } = useIncidentAlerts(
     incidentId,
     page * rowsPerPage,
-    rowsPerPage
+    rowsPerPage,
   );
   const { data: rulesData, isLoading: rulesLoading } = useAlertRules();
 
@@ -64,7 +64,7 @@ const AlertHistoryCard: FunctionComponent<AlertHistoryCardProps> = ({
   };
 
   const handleChangeRowsPerPage = (
-    event: React.ChangeEvent<HTMLInputElement>
+    event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
@@ -122,7 +122,8 @@ const AlertHistoryCard: FunctionComponent<AlertHistoryCardProps> = ({
                     <TimelineContent sx={{ py: "12px", px: 2 }}>
                       <Stack spacing={1}>
                         <Typography variant="subtitle2" component="span">
-                          Rule: {rule ? rule.name : `Rule #${alert.alertRuleId}`}
+                          Rule:{" "}
+                          {rule ? rule.name : `Rule #${alert.alertRuleId}`}
                         </Typography>
                         {channels.length > 0 && (
                           <Stack direction="row" spacing={1} flexWrap="wrap">

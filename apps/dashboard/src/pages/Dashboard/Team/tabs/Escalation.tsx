@@ -84,13 +84,13 @@ const Escalation: FunctionComponent = () => {
         <form onSubmit={handleSubmit(onSubmit)}>
           <Stack spacing={3}>
             {errorMsg && <Alert severity="error">{errorMsg}</Alert>}
-            
+
             <TextField
               fullWidth
               label="Policy Name"
               {...register("name", { required: true })}
             />
-            
+
             <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
               <TextField
                 fullWidth

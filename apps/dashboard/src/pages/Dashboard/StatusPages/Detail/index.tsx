@@ -21,7 +21,7 @@ import { Helmet } from "react-helmet";
 import { BiWorld } from "react-icons/bi";
 import { BsFillShieldLockFill } from "react-icons/bs";
 import { Link, useParams } from "react-router-dom";
-import { useForm, Controller } from "react-hook-form";
+import { useForm, Controller, useFieldArray } from "react-hook-form";
 import {
   CategoryList,
   CategoryListItem,
@@ -34,7 +34,15 @@ import {
   useUpdateStatusPage,
 } from "../../../../hooks/statuspages.query";
 import { useMonitors } from "../../../../hooks/monitors.query";
-import { MenuItem, Select, FormControl, InputLabel } from "@mui/material";
+import {
+  MenuItem,
+  Select,
+  FormControl,
+  InputLabel,
+  IconButton,
+  Grid,
+} from "@mui/material";
+import { MdDelete } from "react-icons/md";
 
 interface StatusPagesDetailViewProps {}
 
@@ -46,6 +54,7 @@ interface FormValues {
   faviconUrl: string;
   layout: string;
   monitorIds: number[];
+  groups: { name: string; order: number; monitorIds: number[] }[];
   customCss: string;
   headerHtml: string;
   footerHtml: string;
@@ -74,6 +83,7 @@ const StatusPagesDetailView: FunctionComponent<
       faviconUrl: "",
       layout: "STATS",
       monitorIds: [],
+      groups: [],
       customCss: "",
       headerHtml: "",
       footerHtml: "",
@@ -96,6 +106,7 @@ const StatusPagesDetailView: FunctionComponent<
         faviconUrl: statusPage.faviconUrl || "",
         layout: statusPage.layout || "STATS",
         monitorIds: statusPage.monitorIds || [],
+        groups: statusPage.groups || [],
         customCss: statusPage.customCss || "",
         headerHtml: statusPage.headerHtml || "",
         footerHtml: statusPage.footerHtml || "",
@@ -109,6 +120,15 @@ const StatusPagesDetailView: FunctionComponent<
 
   const domain = watch("domain");
   const isPrivate = watch("isPrivate");
+
+  const {
+    fields: groupFields,
+    append: appendGroup,
+    remove: removeGroup,
+  } = useFieldArray({
+    control,
+    name: "groups",
+  });
 
   const onSubmit = async (data: FormValues) => {
     try {
@@ -191,22 +211,25 @@ const StatusPagesDetailView: FunctionComponent<
           <CardContent>
             <CategoryList>
               <CategoryListItem
-                title="Monitors"
-                description="The monitors displayed on the status page."
+                title="Monitors & Groups"
+                description="Organize the monitors displayed on the status page. You can group them by service or capability."
               >
+                <Typography variant="subtitle2" sx={{ mb: 1 }}>
+                  Ungrouped Monitors
+                </Typography>
                 <Controller
                   name="monitorIds"
                   control={control}
                   render={({ field }) => (
-                    <FormControl fullWidth>
+                    <FormControl fullWidth sx={{ mb: 4 }}>
                       <InputLabel id="monitors-select-label">
-                        Select monitors
+                        Select ungrouped monitors
                       </InputLabel>
                       <Select
                         {...field}
                         labelId="monitors-select-label"
                         multiple
-                        label="Select monitors"
+                        label="Select ungrouped monitors"
                       >
                         {monitorsQuery.data?.monitors?.map((monitor: any) => (
                           <MenuItem key={monitor.id} value={monitor.id}>
@@ -217,6 +240,78 @@ const StatusPagesDetailView: FunctionComponent<
                     </FormControl>
                   )}
                 />
+
+                <Typography variant="subtitle2" sx={{ mb: 1 }}>
+                  Monitor Groups
+                </Typography>
+                {groupFields.map((field, index) => (
+                  <Card key={field.id} variant="outlined" sx={{ mb: 2, p: 2 }}>
+                    <Stack
+                      direction="row"
+                      spacing={2}
+                      alignItems="center"
+                      sx={{ mb: 2 }}
+                    >
+                      <Controller
+                        name={`groups.${index}.name`}
+                        control={control}
+                        rules={{ required: true }}
+                        render={({ field }) => (
+                          <TextField
+                            {...field}
+                            label="Group Name (e.g. API)"
+                            size="small"
+                            sx={{ flexGrow: 1 }}
+                          />
+                        )}
+                      />
+                      <IconButton
+                        onClick={() => removeGroup(index)}
+                        color="error"
+                      >
+                        <MdDelete />
+                      </IconButton>
+                    </Stack>
+                    <Controller
+                      name={`groups.${index}.monitorIds`}
+                      control={control}
+                      render={({ field }) => (
+                        <FormControl fullWidth>
+                          <InputLabel id={`group-monitors-${index}`}>
+                            Select monitors for group
+                          </InputLabel>
+                          <Select
+                            {...field}
+                            labelId={`group-monitors-${index}`}
+                            multiple
+                            label="Select monitors for group"
+                          >
+                            {monitorsQuery.data?.monitors?.map(
+                              (monitor: any) => (
+                                <MenuItem key={monitor.id} value={monitor.id}>
+                                  {monitor.name}
+                                </MenuItem>
+                              ),
+                            )}
+                          </Select>
+                        </FormControl>
+                      )}
+                    />
+                  </Card>
+                ))}
+
+                <Button
+                  variant="outlined"
+                  onClick={() =>
+                    appendGroup({
+                      name: "",
+                      order: groupFields.length,
+                      monitorIds: [],
+                    })
+                  }
+                >
+                  + Add Group
+                </Button>
               </CategoryListItem>
             </CategoryList>
           </CardContent>

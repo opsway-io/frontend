@@ -1,5 +1,14 @@
 import { LoadingButton } from "@mui/lab";
-import { Box, Card, Stack, TextField, Typography, MenuItem, Button, IconButton } from "@mui/material";
+import {
+  Box,
+  Card,
+  Stack,
+  TextField,
+  Typography,
+  MenuItem,
+  Button,
+  IconButton,
+} from "@mui/material";
 import { FunctionComponent, useEffect, useState } from "react";
 import { useForm, Controller, useFieldArray } from "react-hook-form";
 import { toast } from "react-hot-toast";
@@ -66,14 +75,19 @@ const NotificationRules: FunctionComponent = () => {
         Notification Preferences
       </Typography>
       <Typography variant="body2" color="textSecondary" sx={{ mb: 4 }}>
-        Configure how and when you want to receive alerts when an incident occurs.
-        A delay of 0 means you will be notified immediately.
+        Configure how and when you want to receive alerts when an incident
+        occurs. A delay of 0 means you will be notified immediately.
       </Typography>
 
       <form onSubmit={handleSubmit(onSubmit)}>
         <Stack spacing={3}>
           {fields.map((field, index) => (
-            <Stack direction="row" spacing={2} alignItems="center" key={field.id}>
+            <Stack
+              direction="row"
+              spacing={2}
+              alignItems="center"
+              key={field.id}
+            >
               <Controller
                 name={`rules.${index}.channel`}
                 control={control}

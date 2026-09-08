@@ -9,6 +9,9 @@ import {
   Stack,
   TextField,
   Typography,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
 } from "@mui/material";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { FunctionComponent, useEffect, useState } from "react";
@@ -21,6 +24,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import Calendar from "./components/Calendar";
 import ComponentStatus from "./components/ComponentStatus";
 import SubscribeModal from "./components/SubscribeModal";
+import { MdExpandMore } from "react-icons/md";
 
 const currentDomain =
   window.location.hostname === "localhost"
@@ -364,6 +368,15 @@ const App: FunctionComponent = () => {
     statusText = "Active Maintenance";
   }
 
+  const groupedMonitorIds = new Set<number>();
+  data.groups?.forEach((g) =>
+    g.monitorIds.forEach((id) => groupedMonitorIds.add(id)),
+  );
+
+  const ungroupedMonitors = data.monitors.filter(
+    (m) => !groupedMonitorIds.has(m.id),
+  );
+
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       {data.headerHtml && (
@@ -574,48 +587,139 @@ const App: FunctionComponent = () => {
 
         {/* Components List */}
         {data.layout !== "SIMPLE" && (
-          <Card sx={{ ...glassCardStyle, overflow: "hidden" }}>
-            <Box
-              sx={{
-                px: 3,
-                py: 2.5,
-                borderBottom: "1px solid rgba(255,255,255,0.08)",
-              }}
-            >
-              <Typography variant="subtitle1" fontWeight="600">
-                Platform Components
-              </Typography>
-            </Box>
-
-            <Box sx={{ px: 1, py: 1 }}>
-              {data.monitors.map((m, idx) => (
+          <Stack spacing={3}>
+            {ungroupedMonitors.length > 0 && (
+              <Card sx={{ ...glassCardStyle, overflow: "hidden" }}>
                 <Box
-                  key={m.id}
                   sx={{
-                    px: 2,
-                    py: 1.5,
-                    borderRadius: 2,
-                    transition: "background-color 0.2s ease",
-                    "&:hover": {
-                      backgroundColor: "rgba(255,255,255,0.03)",
-                    },
+                    px: 3,
+                    py: 2.5,
+                    borderBottom: "1px solid rgba(255,255,255,0.08)",
                   }}
                 >
-                  <ComponentStatus
-                    name={m.name}
-                    status={m.status}
-                    layout={data.layout}
-                    createdAt={m.createdAt}
-                    uptimePercentage={m.uptimePercentage}
-                    dailyUptimes={m.dailyUptimes}
-                  />
-                  {idx < data.monitors.length - 1 && (
-                    <Divider sx={{ mt: 1.5, mb: 0, opacity: 0.5 }} />
-                  )}
+                  <Typography variant="subtitle1" fontWeight="600">
+                    Platform Components
+                  </Typography>
                 </Box>
-              ))}
-            </Box>
-          </Card>
+                <Box sx={{ px: 1, py: 1 }}>
+                  {ungroupedMonitors.map((m, idx) => (
+                    <Box
+                      key={m.id}
+                      sx={{
+                        px: 2,
+                        py: 1.5,
+                        borderRadius: 2,
+                        transition: "background-color 0.2s ease",
+                        "&:hover": {
+                          backgroundColor: "rgba(255,255,255,0.03)",
+                        },
+                      }}
+                    >
+                      <ComponentStatus
+                        name={m.name}
+                        status={m.status}
+                        layout={data.layout}
+                        createdAt={m.createdAt}
+                        uptimePercentage={m.uptimePercentage}
+                        dailyUptimes={m.dailyUptimes}
+                      />
+                      {idx < ungroupedMonitors.length - 1 && (
+                        <Divider sx={{ mt: 1.5, mb: 0, opacity: 0.5 }} />
+                      )}
+                    </Box>
+                  ))}
+                </Box>
+              </Card>
+            )}
+
+            {data.groups?.map((group) => {
+              const groupMonitors = data.monitors.filter((m) =>
+                group.monitorIds.includes(m.id),
+              );
+              if (groupMonitors.length === 0) return null;
+
+              const isGroupOperational = groupMonitors.every(
+                (m) => m.status === "OPERATIONAL",
+              );
+              const groupStatusText = isGroupOperational
+                ? "Operational"
+                : "Outage";
+              const groupStatusColor = isGroupOperational
+                ? "#10b981"
+                : "#f43f5e";
+
+              return (
+                <Accordion
+                  key={group.id}
+                  disableGutters
+                  sx={{
+                    ...glassCardStyle,
+                    background: "rgba(30, 41, 59, 0.4)",
+                    backgroundImage: "none",
+                  }}
+                >
+                  <AccordionSummary
+                    expandIcon={<MdExpandMore color="white" />}
+                    sx={{
+                      px: 3,
+                      py: 1,
+                      borderBottom: "1px solid rgba(255,255,255,0.08)",
+                    }}
+                  >
+                    <Stack
+                      direction="row"
+                      spacing={2}
+                      alignItems="center"
+                      sx={{ width: "100%" }}
+                    >
+                      <Typography
+                        variant="subtitle1"
+                        fontWeight="600"
+                        sx={{ flexGrow: 1 }}
+                      >
+                        {group.name}
+                      </Typography>
+                      <Typography
+                        variant="body2"
+                        color={groupStatusColor}
+                        fontWeight={600}
+                      >
+                        {groupStatusText}
+                      </Typography>
+                    </Stack>
+                  </AccordionSummary>
+                  <AccordionDetails sx={{ px: 1, py: 1 }}>
+                    {groupMonitors.map((m, idx) => (
+                      <Box
+                        key={m.id}
+                        sx={{
+                          px: 2,
+                          py: 1.5,
+                          borderRadius: 2,
+                          transition: "background-color 0.2s ease",
+                          "&:hover": {
+                            backgroundColor: "rgba(255,255,255,0.03)",
+                          },
+                        }}
+                      >
+                        <ComponentStatus
+                          name={m.name}
+                          status={m.status}
+                          layout={data.layout}
+                          createdAt={m.createdAt}
+                          uptimePercentage={m.uptimePercentage}
+                          dailyUptimes={m.dailyUptimes}
+                        />
+                        {idx < groupMonitors.length - 1 && (
+                          <Divider sx={{ mt: 1.5, mb: 0, opacity: 0.5 }} />
+                        )}
+                      </Box>
+                    ))}
+                  </AccordionDetails>
+                </Accordion>
+              );
+            })}
+          </Stack>
         )}
 
         {/* Calendar */}

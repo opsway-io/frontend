@@ -46,12 +46,14 @@ const IncidentsDataGrid: FunctionComponent<IncidentsDataGridProps> = ({
       renderCell: (params) => {
         const resolved = params.row.resolved;
         const resolvedBy = params.row.resolvedBy;
-        
+
         let label = "Active";
         if (resolved) {
-          label = resolvedBy ? `Resolved by ${resolvedBy.displayName}` : "Autoresolved";
+          label = resolvedBy
+            ? `Resolved by ${resolvedBy.displayName}`
+            : "Autoresolved";
         }
-        
+
         return (
           <Chip
             label={label}
@@ -70,7 +72,7 @@ const IncidentsDataGrid: FunctionComponent<IncidentsDataGridProps> = ({
         const acknowledged = params.row.acknowledged;
         const acknowledgedBy = params.row.acknowledgedBy;
         const acknowledgedByIntegration = params.row.acknowledgedByIntegration;
-        
+
         let label = "No";
         if (acknowledged) {
           if (acknowledgedBy) {

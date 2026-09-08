@@ -279,7 +279,12 @@ const MonitorDetailView: FunctionComponent = () => {
                     gap: 1,
                   }}
                 >
-                  <span>{incident.acknowledged ? "Acknowledged Incident" : "Active Incident"}:</span>
+                  <span>
+                    {incident.acknowledged
+                      ? "Acknowledged Incident"
+                      : "Active Incident"}
+                    :
+                  </span>
                 </AlertTitle>
 
                 <Stack spacing={1} mt={1}>

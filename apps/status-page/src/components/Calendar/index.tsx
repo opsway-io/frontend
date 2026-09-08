@@ -11,6 +11,9 @@ import {
   IconButton,
   Stack,
   Divider,
+  Select,
+  MenuItem,
+  FormControl,
 } from "@mui/material";
 import { FunctionComponent, useEffect, useState, useMemo } from "react";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
@@ -30,6 +33,7 @@ const Calendar: FunctionComponent<CalendarProps> = ({
   const [selectedDate, setSelectedDate] = useState<number | null>(null);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [filter, setFilter] = useState<"upcoming" | "past" | "all">("upcoming");
 
   const generateCalendar = (y: number, m: number) => {
     const firstDay = new Date(y, m, 1);
@@ -129,13 +133,29 @@ const Calendar: FunctionComponent<CalendarProps> = ({
     let events = maintenanceEvents;
     if (selectedDate) {
       events = getMaintenanceForDay(selectedDate);
+    } else {
+      const now = new Date();
+      if (filter === "upcoming") {
+        events = events.filter((e) => new Date(e.endAt) >= now);
+      } else if (filter === "past") {
+        events = events.filter((e) => new Date(e.endAt) < now);
+      }
     }
 
-    // Sort by startAt descending
-    return [...events].sort(
-      (a, b) => new Date(b.startAt).getTime() - new Date(a.startAt).getTime(),
-    );
-  }, [maintenanceEvents, selectedDate, year, month]);
+    const sorted = [...events];
+    if (filter === "upcoming" && !selectedDate) {
+      // Sort upcoming events so the soonest is first
+      sorted.sort(
+        (a, b) => new Date(a.startAt).getTime() - new Date(b.startAt).getTime(),
+      );
+    } else {
+      // Sort past/all events descending (most recent first)
+      sorted.sort(
+        (a, b) => new Date(b.startAt).getTime() - new Date(a.startAt).getTime(),
+      );
+    }
+    return sorted;
+  }, [maintenanceEvents, selectedDate, year, month, filter]);
 
   const paginatedEvents = useMemo(() => {
     return filteredEvents.slice(
@@ -283,11 +303,46 @@ const Calendar: FunctionComponent<CalendarProps> = ({
       </Table>
 
       <Box sx={{ mt: 3, px: 2 }}>
-        <Typography variant="h6" gutterBottom>
-          {selectedDate
-            ? `Maintenance for ${new Date(year, month, selectedDate).toLocaleDateString()}`
-            : "All Maintenance Events"}
-        </Typography>
+        <Stack
+          direction="row"
+          alignItems="center"
+          justifyContent="space-between"
+          sx={{ mb: 1 }}
+        >
+          <Typography variant="h6">
+            {selectedDate
+              ? `Maintenance for ${new Date(year, month, selectedDate).toLocaleDateString()}`
+              : "Maintenance Events"}
+          </Typography>
+          {!selectedDate && (
+            <FormControl size="small">
+              <Select
+                value={filter}
+                onChange={(e) => {
+                  setFilter(e.target.value as "upcoming" | "past" | "all");
+                  setPage(0);
+                }}
+                sx={{
+                  color: "text.secondary",
+                  fontSize: "0.875rem",
+                  "& .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "rgba(255,255,255,0.1)",
+                  },
+                  "&:hover .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "rgba(255,255,255,0.2)",
+                  },
+                  "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "#3b82f6",
+                  },
+                }}
+              >
+                <MenuItem value="upcoming">Upcoming</MenuItem>
+                <MenuItem value="past">Past</MenuItem>
+                <MenuItem value="all">All</MenuItem>
+              </Select>
+            </FormControl>
+          )}
+        </Stack>
         <Divider sx={{ mb: 2, borderColor: "rgba(255,255,255,0.08)" }} />
 
         <Table>

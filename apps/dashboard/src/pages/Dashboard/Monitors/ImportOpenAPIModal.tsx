@@ -42,6 +42,7 @@ const ImportOpenAPIModal: FunctionComponent<ImportOpenAPIModalProps> = ({
   const [endpoints, setEndpoints] = useState<PreviewOpenAPIEndpoint[]>([]);
   const [selectedEndpoints, setSelectedEndpoints] = useState<number[]>([]);
   const [step, setStep] = useState<"INPUT" | "SELECT">("INPUT");
+  const [baseUrl, setBaseUrl] = useState("");
 
   const [authMethod, setAuthMethod] = useState<"NONE" | "BASIC" | "OAUTH2_CLIENT_CREDENTIALS">("NONE");
   const [authUrl, setAuthUrl] = useState("");
@@ -58,6 +59,14 @@ const ImportOpenAPIModal: FunctionComponent<ImportOpenAPIModalProps> = ({
       onSuccess: (data) => {
         setEndpoints(data.endpoints);
         setSelectedEndpoints(data.endpoints.map((_, i) => i)); // select all by default
+        
+        try {
+          const parsedUrl = new URL(url);
+          setBaseUrl(parsedUrl.origin);
+        } catch (e) {
+          // ignore invalid url if backend somehow accepted it
+        }
+
         if (data.auth) {
           setAuthMethod(data.auth.method);
           if (data.auth.tokenUrl) setAuthUrl(data.auth.tokenUrl);
@@ -77,10 +86,10 @@ const ImportOpenAPIModal: FunctionComponent<ImportOpenAPIModalProps> = ({
       const selected = selectedEndpoints.map((i) => endpoints[i]);
       const req: CreateMonitorsBulkRequest = {
         monitors: selected.map((ep) => ({
-          name: ep.summary || `${ep.method} ${ep.path}`,
+          name: ep.summary || `${ep.method.toUpperCase()} ${ep.path}`,
           settings: {
             method: ep.method.toUpperCase() as any,
-            url: ep.path, // We use the path. User should update base url if needed
+            url: baseUrl ? `${baseUrl.replace(/\/$/, "")}/${ep.path.replace(/^\//, "")}` : ep.path,
             frequencySeconds: 60,
             body: {
               type: ep.requestBody ? "JSON" : "NONE",
@@ -133,6 +142,7 @@ const ImportOpenAPIModal: FunctionComponent<ImportOpenAPIModalProps> = ({
 
   const handleClose = () => {
     setUrl("");
+    setBaseUrl("");
     setEndpoints([]);
     setSelectedEndpoints([]);
     setStep("INPUT");
@@ -179,10 +189,17 @@ const ImportOpenAPIModal: FunctionComponent<ImportOpenAPIModalProps> = ({
           <Stack spacing={2}>
             <Alert severity="info">
               Discovered {endpoints.length} endpoints. Select the ones you want
-              to monitor. Note: The URL path will be imported as the monitor's
-              URL. You may need to prepend the base domain later in monitor
-              settings.
+              to monitor.
             </Alert>
+            <TextField
+              label="Base URL"
+              variant="outlined"
+              size="small"
+              fullWidth
+              value={baseUrl}
+              onChange={(e) => setBaseUrl(e.target.value)}
+              helperText="This URL will be prepended to all imported endpoint paths."
+            />
             <List
               sx={{
                 width: "100%",

@@ -109,7 +109,7 @@ const ImportOpenAPIModal: FunctionComponent<ImportOpenAPIModalProps> = ({
               username: authUsername || undefined,
               password: authPassword || undefined,
             },
-            locations: ["eu-central-1"],
+            locations: ["global"],
           },
           assertions: [
             {

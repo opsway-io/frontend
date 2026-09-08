@@ -76,8 +76,8 @@ const ComponentStatus: FunctionComponent<ComponentStatusProps> = ({
         uptime = dailyUptimes[arrIndex];
       }
     } else {
-      // If no data, use current status color
-      uptime = isOperational ? 100 : 0;
+      // If no data, show gray bar
+      uptime = -1;
     }
 
     const date = dayjs().subtract(daysAgo, "day").format("MMM D, YYYY");
@@ -92,8 +92,8 @@ const ComponentStatus: FunctionComponent<ComponentStatusProps> = ({
 
   const uptimeText =
     uptimePercentage != null
-      ? `${uptimePercentage.toFixed(2)}% uptime (90 days)`
-      : "100.00% uptime (90 days)";
+      ? `${uptimePercentage.toFixed(2)}% uptime (${displayDays} days)`
+      : "No data yet";
 
   return (
     <Stack direction="column" spacing={2} sx={{ width: "100%" }}>

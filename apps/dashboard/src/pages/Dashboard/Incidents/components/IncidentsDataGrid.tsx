@@ -72,7 +72,7 @@ const IncidentsDataGrid: FunctionComponent<IncidentsDataGridProps> = ({
         
         let label = "No";
         if (acknowledged) {
-          label = acknowledgedBy ? `By ${acknowledgedBy.displayName}` : "Auto-acknowledged";
+          label = acknowledgedBy ? `By ${acknowledgedBy.displayName}` : "Yes";
         }
 
         return (

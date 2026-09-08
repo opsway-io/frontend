@@ -186,6 +186,10 @@ export interface PreviewOpenAPIEndpoint {
 
 export interface PreviewOpenAPIResponse {
   endpoints: PreviewOpenAPIEndpoint[];
+  auth?: {
+    method: "OAUTH2_CLIENT_CREDENTIALS" | "BASIC";
+    tokenUrl?: string;
+  };
 }
 
 export async function previewOpenAPI(

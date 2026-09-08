@@ -43,6 +43,13 @@ const ImportOpenAPIModal: FunctionComponent<ImportOpenAPIModalProps> = ({
   const [selectedEndpoints, setSelectedEndpoints] = useState<number[]>([]);
   const [step, setStep] = useState<"INPUT" | "SELECT">("INPUT");
 
+  const [authMethod, setAuthMethod] = useState<"NONE" | "BASIC" | "OAUTH2_CLIENT_CREDENTIALS">("NONE");
+  const [authUrl, setAuthUrl] = useState("");
+  const [authClientId, setAuthClientId] = useState("");
+  const [authClientSecret, setAuthClientSecret] = useState("");
+  const [authUsername, setAuthUsername] = useState("");
+  const [authPassword, setAuthPassword] = useState("");
+
   const previewMutation = useMutation(
     async (importUrl: string) => {
       return previewOpenAPI(teamId!, importUrl);
@@ -51,6 +58,12 @@ const ImportOpenAPIModal: FunctionComponent<ImportOpenAPIModalProps> = ({
       onSuccess: (data) => {
         setEndpoints(data.endpoints);
         setSelectedEndpoints(data.endpoints.map((_, i) => i)); // select all by default
+        if (data.auth) {
+          setAuthMethod(data.auth.method);
+          if (data.auth.tokenUrl) setAuthUrl(data.auth.tokenUrl);
+        } else {
+          setAuthMethod("NONE");
+        }
         setStep("SELECT");
       },
       onError: () => {
@@ -80,7 +93,12 @@ const ImportOpenAPIModal: FunctionComponent<ImportOpenAPIModalProps> = ({
               expirationThresholdDays: 7,
             },
             auth: {
-              method: "NONE",
+              method: authMethod,
+              tokenUrl: authUrl || undefined,
+              clientId: authClientId || undefined,
+              clientSecret: authClientSecret || undefined,
+              username: authUsername || undefined,
+              password: authPassword || undefined,
             },
             locations: ["eu-central-1"],
           },
@@ -203,6 +221,69 @@ const ImportOpenAPIModal: FunctionComponent<ImportOpenAPIModalProps> = ({
                 </ListItem>
               ))}
             </List>
+
+            {authMethod !== "NONE" && (
+              <Stack spacing={2} sx={{ mt: 2, p: 2, bgcolor: "background.default", borderRadius: 1 }}>
+                <Typography variant="subtitle2">Global Authentication Settings</Typography>
+                <Typography variant="caption" color="text.secondary">
+                  The backend detected that this API requires authentication. These credentials will be applied to all imported monitors.
+                </Typography>
+
+                {authMethod === "OAUTH2_CLIENT_CREDENTIALS" && (
+                  <Stack spacing={2}>
+                    <TextField
+                      label="Token Endpoint URL"
+                      variant="outlined"
+                      size="small"
+                      fullWidth
+                      value={authUrl}
+                      onChange={(e) => setAuthUrl(e.target.value)}
+                    />
+                    <Stack spacing={2} direction="row">
+                      <TextField
+                        label="Client ID"
+                        variant="outlined"
+                        size="small"
+                        fullWidth
+                        value={authClientId}
+                        onChange={(e) => setAuthClientId(e.target.value)}
+                      />
+                      <TextField
+                        label="Client Secret"
+                        type="password"
+                        variant="outlined"
+                        size="small"
+                        fullWidth
+                        value={authClientSecret}
+                        onChange={(e) => setAuthClientSecret(e.target.value)}
+                      />
+                    </Stack>
+                  </Stack>
+                )}
+
+                {authMethod === "BASIC" && (
+                  <Stack spacing={2} direction="row">
+                    <TextField
+                      label="Username"
+                      variant="outlined"
+                      size="small"
+                      fullWidth
+                      value={authUsername}
+                      onChange={(e) => setAuthUsername(e.target.value)}
+                    />
+                    <TextField
+                      label="Password"
+                      type="password"
+                      variant="outlined"
+                      size="small"
+                      fullWidth
+                      value={authPassword}
+                      onChange={(e) => setAuthPassword(e.target.value)}
+                    />
+                  </Stack>
+                )}
+              </Stack>
+            )}
           </Stack>
         )}
       </DialogContent>

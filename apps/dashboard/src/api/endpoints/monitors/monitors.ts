@@ -163,3 +163,44 @@ export async function updateMonitorState(
     state,
   });
 }
+
+/*
+  OpenAPI Import
+*/
+
+export interface PreviewOpenAPIEndpoint {
+  method: string;
+  path: string;
+  summary: string;
+  requestBody?: string;
+  statusCode: string;
+}
+
+export interface PreviewOpenAPIResponse {
+  endpoints: PreviewOpenAPIEndpoint[];
+}
+
+export async function previewOpenAPI(
+  teamId: number,
+  url: string,
+): Promise<PreviewOpenAPIResponse> {
+  const response = await client.post(
+    `/v1/teams/${teamId}/monitors/openapi/preview`,
+    {
+      url,
+    },
+  );
+  return response?.data;
+}
+
+export interface CreateMonitorsBulkRequest {
+  monitors: Omit<CreateMonitorRequest, "teamId">[];
+}
+
+export async function createMonitorsBulk(
+  teamId: number,
+  data: CreateMonitorsBulkRequest,
+): Promise<void> {
+  const response = await client.post(`/v1/teams/${teamId}/monitors/bulk`, data);
+  return response?.data;
+}

@@ -24,6 +24,7 @@ import MonitorsDataGrid from "./components/MonitorsDataGrid";
 import * as MonitorsAPI from "../../../api/endpoints/monitors";
 import { useCurrentUserRole } from "../../../hooks/user.query";
 import { Role } from "../../../components/Restrict";
+import ImportOpenAPIModal from "./ImportOpenAPIModal";
 
 const MONITORS_PER_PAGE = 10;
 
@@ -35,6 +36,7 @@ const MonitorsView: FunctionComponent = () => {
   const debouncedQuery = useDebounce(query, 250);
 
   const [offset, setOffset] = useState(0);
+  const [isImportModalOpen, setIsImportModalOpen] = useState(false);
 
   useEffect(() => {
     setOffset(0);
@@ -100,6 +102,15 @@ const MonitorsView: FunctionComponent = () => {
               Create monitor
             </Button>
           </Conditional>,
+          <Conditional value={Role.ADMIN.equalOrHigher(currentRole)}>
+            <Button
+              variant="outlined"
+              color="secondary"
+              onClick={() => setIsImportModalOpen(true)}
+            >
+              Import from OpenAPI
+            </Button>
+          </Conditional>,
         ]}
         skeleton={
           <>
@@ -144,15 +155,24 @@ const MonitorsView: FunctionComponent = () => {
                     paddingTop: 2,
                   }}
                 >
-                  <Button
-                    startIcon={<IoAdd />}
-                    variant="gradiant1"
-                    color="success"
-                    component={NavLink}
-                    to="/monitors/create"
-                  >
-                    Create monitor
-                  </Button>
+                  <Stack direction="row" spacing={1}>
+                    <Button
+                      startIcon={<IoAdd />}
+                      variant="gradiant1"
+                      color="success"
+                      component={NavLink}
+                      to="/monitors/create"
+                    >
+                      Create monitor
+                    </Button>
+                    <Button
+                      variant="outlined"
+                      color="secondary"
+                      onClick={() => setIsImportModalOpen(true)}
+                    >
+                      Import from OpenAPI
+                    </Button>
+                  </Stack>
                 </Box>
               </Stack>
             </CardContent>
@@ -224,6 +244,10 @@ const MonitorsView: FunctionComponent = () => {
           </Card>
         </Conditional>
       </Container>
+      <ImportOpenAPIModal
+        open={isImportModalOpen}
+        onClose={() => setIsImportModalOpen(false)}
+      />
     </>
   );
 };

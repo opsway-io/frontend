@@ -32,6 +32,37 @@ const ComponentStatus: FunctionComponent<ComponentStatusProps> = ({
     displayDays = Math.min(daysDiff, 90);
   }
 
+  const getUptimeColor = (uptime: number) => {
+    if (uptime === -1) return "#9ca3af"; // Gray
+    if (uptime >= 99.9) return "#10b981"; // Emerald
+    if (uptime <= 90) return "#f43f5e"; // Rose
+
+    const parseHex = (hex: string) => [
+      parseInt(hex.slice(1, 3), 16),
+      parseInt(hex.slice(3, 5), 16),
+      parseInt(hex.slice(5, 7), 16),
+    ];
+
+    const interpolate = (c1: number[], c2: number[], factor: number) => {
+      const r = Math.round(c1[0] + factor * (c2[0] - c1[0]));
+      const g = Math.round(c1[1] + factor * (c2[1] - c1[1]));
+      const b = Math.round(c1[2] + factor * (c2[2] - c1[2]));
+      return `rgb(${r}, ${g}, ${b})`;
+    };
+
+    const red = parseHex("#f43f5e");
+    const yellow = parseHex("#f59e0b");
+    const green = parseHex("#10b981");
+
+    if (uptime < 99) {
+      const factor = (uptime - 90) / 9; // 90 to 99
+      return interpolate(red, yellow, factor);
+    } else {
+      const factor = (uptime - 99) / 0.9; // 99 to 99.9
+      return interpolate(yellow, green, factor);
+    }
+  };
+
   const chartDays = new Array(displayDays).fill(0).map((_, index) => {
     // Determine how many days ago this box represents (0 = today)
     const daysAgo = displayDays - 1 - index;
@@ -50,17 +81,11 @@ const ComponentStatus: FunctionComponent<ComponentStatusProps> = ({
     }
 
     const date = dayjs().subtract(daysAgo, "day").format("MMM D, YYYY");
-    let color = "#10b981"; // Emerald
     let title = `${date}: ${uptime.toFixed(1)}% uptime`;
-
     if (uptime === -1) {
-      color = "#9ca3af"; // Gray for no data
       title = `${date}: No data`;
-    } else if (uptime < 90) {
-      color = "#f43f5e"; // Rose for major outage
-    } else if (uptime < 99) {
-      color = "#f59e0b"; // Amber for minor outage/degraded
     }
+    const color = getUptimeColor(uptime);
 
     return { color, title, uptime };
   });

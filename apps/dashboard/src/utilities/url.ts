@@ -3,9 +3,12 @@ function stripProtocolAndPath(url?: string): string {
     return "";
   }
 
-  const u = new URL(url);
-
-  return `${u.host}`;
+  try {
+    const u = new URL(url);
+    return `${u.host}`;
+  } catch (e) {
+    return url;
+  }
 }
 
 export { stripProtocolAndPath };

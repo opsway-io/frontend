@@ -36,6 +36,14 @@ export interface MonitorSettings {
     checkExpiration: boolean;
     expirationThresholdDays: number;
   };
+  auth: {
+    method: "NONE" | "BASIC" | "OAUTH2_CLIENT_CREDENTIALS";
+    tokenUrl?: string;
+    clientId?: string;
+    clientSecret?: string;
+    username?: string;
+    password?: string;
+  };
   locations: string[];
 }
 

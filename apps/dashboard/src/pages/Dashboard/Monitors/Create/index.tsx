@@ -24,6 +24,7 @@ import HowAssertionsWork from "../components/HowAssertionsWork";
 import RequestSettings from "../components/RequestSettings";
 import ResponseAssertionSettings from "../components/ResponseAssertionSettings";
 import TLSVerificationSettings from "../components/TLSVerificationSettings";
+import AuthSettings from "../components/AuthSettings";
 import { SettingsFormData } from "../models/settingsFormData";
 import UpgradePromptModal from "../../../../components/UpgradePromptModal";
 import { isAxiosError } from "axios";
@@ -61,6 +62,9 @@ const MonitorCreateView: FunctionComponent = () => {
         },
         frequencySeconds: 300,
         locations: ["global"],
+        auth: {
+          method: "NONE",
+        },
       },
       assertions: [
         {
@@ -166,6 +170,7 @@ const MonitorCreateView: FunctionComponent = () => {
             <Tab value="request" label="Request" />
             <Tab value="assertions" label="Response assertions" />
             <Tab value="frequencyAndLocation" label="Frequency & Location" />
+            <Tab value="authentication" label="Authentication" />
             {!["TCP", "ICMP", "DNS", "POSTGRES", "MYSQL", "REDIS"].includes(
               formMethods.watch("settings.method"),
             ) && <Tab value="tlsVerification" label="SSL/TLS" />}
@@ -211,6 +216,20 @@ const MonitorCreateView: FunctionComponent = () => {
               <Card>
                 <CardContent>
                   <FrequencyAndLocationSettings />
+                </CardContent>
+              </Card>
+            </Stack>
+          </Box>
+
+          <Box
+            sx={{
+              display: selectedTab === "authentication" ? "block" : "none",
+            }}
+          >
+            <Stack spacing={2}>
+              <Card>
+                <CardContent>
+                  <AuthSettings />
                 </CardContent>
               </Card>
             </Stack>

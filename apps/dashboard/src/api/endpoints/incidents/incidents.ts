@@ -13,6 +13,7 @@ export interface Incident {
   acknowledged?: boolean;
   acknowledgedAt?: string;
   acknowledgedBy?: IncidentUserResponse;
+  acknowledgedByIntegration?: string;
   rootCauseAnalysis?: string;
   createdAt: string;
   updatedAt: string;
@@ -66,6 +67,7 @@ export interface GetIncidentResponse {
   acknowledged: boolean;
   acknowledgedAt?: string;
   acknowledgedBy?: IncidentUserResponse;
+  acknowledgedByIntegration?: string;
   rootCauseAnalysis?: string;
   createdAt: string;
   updatedAt: string;
@@ -102,6 +104,7 @@ export interface MonitorIncident {
   acknowledged: boolean;
   acknowledgedAt?: string;
   acknowledgedBy?: IncidentUserResponse;
+  acknowledgedByIntegration?: string;
   isStatusPageVisible: boolean;
 }
 

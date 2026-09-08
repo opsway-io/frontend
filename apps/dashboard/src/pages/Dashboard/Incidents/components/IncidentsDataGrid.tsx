@@ -69,10 +69,17 @@ const IncidentsDataGrid: FunctionComponent<IncidentsDataGridProps> = ({
       renderCell: (params) => {
         const acknowledged = params.row.acknowledged;
         const acknowledgedBy = params.row.acknowledgedBy;
+        const acknowledgedByIntegration = params.row.acknowledgedByIntegration;
         
         let label = "No";
         if (acknowledged) {
-          label = acknowledgedBy ? `By ${acknowledgedBy.displayName}` : "Yes";
+          if (acknowledgedBy) {
+            label = `By ${acknowledgedBy.displayName}`;
+          } else if (acknowledgedByIntegration) {
+            label = `By ${acknowledgedByIntegration}`;
+          } else {
+            label = "Yes";
+          }
         }
 
         return (

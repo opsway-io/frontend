@@ -1,5 +1,6 @@
 import { LoadingButton } from "@mui/lab";
 import {
+  Alert,
   Card,
   CardContent,
   CardHeader,
@@ -10,7 +11,7 @@ import {
   Button,
   MenuItem,
 } from "@mui/material";
-import { FunctionComponent, useEffect } from "react";
+import { FunctionComponent, useEffect, useState } from "react";
 import { SubmitHandler, useForm, useFieldArray } from "react-hook-form";
 import {
   useEscalationPolicy,
@@ -22,19 +23,22 @@ import { EscalationPolicy } from "../../../../api/endpoints/teams";
 interface FormInputs {
   name: string;
   escalationTimeoutMinutes: number;
+  enforcedChannel: string;
   rotations: { userId: number; tier: number }[];
 }
 
 const Escalation: FunctionComponent = () => {
   const { data: policy, isLoading: isPolicyLoading } = useEscalationPolicy();
-  const { mutate: updatePolicy, isLoading: isUpdating } =
+  const { mutateAsync: updatePolicy, isLoading: isUpdating } =
     useUpdateEscalationPolicy();
   const { data: usersData, isLoading: isUsersLoading } = useTeamUsers();
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   const { register, handleSubmit, reset, control } = useForm<FormInputs>({
     defaultValues: {
       name: "",
       escalationTimeoutMinutes: 15,
+      enforcedChannel: "",
       rotations: [],
     },
   });
@@ -49,13 +53,20 @@ const Escalation: FunctionComponent = () => {
       reset({
         name: policy.name,
         escalationTimeoutMinutes: policy.escalationTimeoutMinutes,
+        enforcedChannel: policy.enforcedChannel || "",
         rotations: policy.rotations || [],
       });
     }
   }, [policy, reset]);
 
-  const onSubmit: SubmitHandler<FormInputs> = (data) => {
-    updatePolicy(data as EscalationPolicy);
+  const onSubmit: SubmitHandler<FormInputs> = async (data) => {
+    setErrorMsg(null);
+    try {
+      await updatePolicy(data as EscalationPolicy);
+    } catch (e: any) {
+      const msg = e.response?.data?.message || "Failed to save policy.";
+      setErrorMsg(msg);
+    }
   };
 
   if (isPolicyLoading || isUsersLoading) return null;
@@ -72,20 +83,38 @@ const Escalation: FunctionComponent = () => {
       <CardContent>
         <form onSubmit={handleSubmit(onSubmit)}>
           <Stack spacing={3}>
+            {errorMsg && <Alert severity="error">{errorMsg}</Alert>}
+            
             <TextField
               fullWidth
               label="Policy Name"
               {...register("name", { required: true })}
             />
-            <TextField
-              fullWidth
-              type="number"
-              label="Escalation Timeout (minutes)"
-              {...register("escalationTimeoutMinutes", {
-                required: true,
-                min: 1,
-              })}
-            />
+            
+            <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
+              <TextField
+                fullWidth
+                type="number"
+                label="Escalation Timeout (minutes)"
+                {...register("escalationTimeoutMinutes", {
+                  required: true,
+                  min: 1,
+                })}
+              />
+
+              <TextField
+                select
+                fullWidth
+                label="Contact Method"
+                defaultValue={policy?.enforcedChannel || ""}
+                {...register("enforcedChannel")}
+              >
+                <MenuItem value="">User Preference (Default)</MenuItem>
+                <MenuItem value="email">Enforce Email</MenuItem>
+                <MenuItem value="sms">Enforce SMS</MenuItem>
+                <MenuItem value="voice">Enforce Voice Calls</MenuItem>
+              </TextField>
+            </Stack>
 
             <Typography variant="h6">On-Call Rotations</Typography>
             <Typography variant="body2" color="textSecondary">

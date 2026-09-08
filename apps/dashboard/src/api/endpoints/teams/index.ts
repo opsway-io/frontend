@@ -309,6 +309,7 @@ export interface OnCallRotation {
 export interface EscalationPolicy {
   name: string;
   escalationTimeoutMinutes: number;
+  enforcedChannel?: string;
   rotations: OnCallRotation[];
 }
 

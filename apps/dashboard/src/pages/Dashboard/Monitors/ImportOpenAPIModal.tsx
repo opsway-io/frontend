@@ -14,9 +14,15 @@ import {
   ListItemText,
   CircularProgress,
   Alert,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  OutlinedInput,
 } from "@mui/material";
 import { FunctionComponent, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useLocations } from "../../../hooks/prober.query";
 import useAuthenticationStore from "../../../hooks/authentication.store";
 import {
   previewOpenAPI,
@@ -50,6 +56,10 @@ const ImportOpenAPIModal: FunctionComponent<ImportOpenAPIModalProps> = ({
   const [authClientSecret, setAuthClientSecret] = useState("");
   const [authUsername, setAuthUsername] = useState("");
   const [authPassword, setAuthPassword] = useState("");
+  const [selectedLocations, setSelectedLocations] = useState<string[]>(["global"]);
+
+  const { data: locationsData } = useLocations();
+  const availableLocations = locationsData?.locations || [];
 
   const previewMutation = useMutation(
     async (importUrl: string) => {
@@ -109,7 +119,7 @@ const ImportOpenAPIModal: FunctionComponent<ImportOpenAPIModalProps> = ({
               username: authUsername || undefined,
               password: authPassword || undefined,
             },
-            locations: ["global"],
+            locations: selectedLocations.length > 0 ? selectedLocations : ["global"],
           },
           assertions: [
             {
@@ -299,6 +309,31 @@ const ImportOpenAPIModal: FunctionComponent<ImportOpenAPIModalProps> = ({
                     />
                   </Stack>
                 )}
+              </Stack>
+            )}
+
+            {availableLocations.length > 0 && (
+              <Stack spacing={2} sx={{ mt: 2, p: 2, bgcolor: "background.default", borderRadius: 1 }}>
+                <Typography variant="subtitle2">Locations</Typography>
+                <Typography variant="caption" color="text.secondary">
+                  Select the locations to run these monitors from.
+                </Typography>
+                <Stack direction="row" spacing={1} flexWrap="wrap">
+                  {availableLocations.map((loc) => (
+                    <Button
+                      key={loc}
+                      variant={selectedLocations.includes(loc) ? "contained" : "outlined"}
+                      size="small"
+                      onClick={() => {
+                        setSelectedLocations(prev =>
+                          prev.includes(loc) ? prev.filter(l => l !== loc) : [...prev, loc]
+                        );
+                      }}
+                    >
+                      {loc}
+                    </Button>
+                  ))}
+                </Stack>
               </Stack>
             )}
           </Stack>

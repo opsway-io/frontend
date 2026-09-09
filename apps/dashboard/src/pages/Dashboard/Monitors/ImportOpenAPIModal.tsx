@@ -113,7 +113,7 @@ const ImportOpenAPIModal: FunctionComponent<ImportOpenAPIModalProps> = ({
             },
             auth: {
               method: authMethod,
-              tokenUrl: authUrl || undefined,
+              tokenUrl: authUrl ? (baseUrl && !authUrl.startsWith("http") ? `${baseUrl.replace(/\/$/, "")}/${authUrl.replace(/^\//, "")}` : authUrl) : undefined,
               clientId: authClientId || undefined,
               clientSecret: authClientSecret || undefined,
               username: authUsername || undefined,

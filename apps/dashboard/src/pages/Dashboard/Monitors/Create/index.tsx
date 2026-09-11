@@ -25,6 +25,7 @@ import RequestSettings from "../components/RequestSettings";
 import ResponseAssertionSettings from "../components/ResponseAssertionSettings";
 import TLSVerificationSettings from "../components/TLSVerificationSettings";
 import AuthSettings from "../components/AuthSettings";
+import VariablesAndTeardownSettings from "../components/VariablesAndTeardownSettings";
 import { SettingsFormData } from "../models/settingsFormData";
 import UpgradePromptModal from "../../../../components/UpgradePromptModal";
 import { isAxiosError } from "axios";
@@ -65,7 +66,17 @@ const MonitorCreateView: FunctionComponent = () => {
         auth: {
           method: "NONE",
         },
+        teardown: {
+          enabled: false,
+          method: "DELETE",
+          url: "",
+          body: {
+            type: "NONE",
+            content: null,
+          },
+        },
       },
+      variables: [],
       assertions: [
         {
           key: uuidv4(),
@@ -168,6 +179,7 @@ const MonitorCreateView: FunctionComponent = () => {
 
           <Tabs value={selectedTab} onChange={(e, v) => setParams({ tab: v })}>
             <Tab value="request" label="Request" />
+            <Tab value="variablesAndTeardown" label="Variables & Teardown" />
             <Tab value="assertions" label="Response assertions" />
             <Tab value="frequencyAndLocation" label="Frequency & Location" />
             <Tab value="authentication" label="Authentication" />
@@ -181,6 +193,20 @@ const MonitorCreateView: FunctionComponent = () => {
               <Card>
                 <CardContent>
                   <RequestSettings />
+                </CardContent>
+              </Card>
+            </Stack>
+          </Box>
+
+          <Box
+            sx={{
+              display: selectedTab === "variablesAndTeardown" ? "block" : "none",
+            }}
+          >
+            <Stack spacing={2}>
+              <Card>
+                <CardContent>
+                  <VariablesAndTeardownSettings />
                 </CardContent>
               </Card>
             </Stack>

@@ -1,5 +1,4 @@
 import {
-  Box,
   Button,
   Card,
   Chip,
@@ -9,7 +8,7 @@ import {
   Typography,
 } from "@mui/material";
 import { FunctionComponent } from "react";
-import { IoOpenOutline, IoStatsChart } from "react-icons/io5";
+import { IoOpenOutline } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
 
 interface StatusPageOverviewListProps {}
@@ -88,27 +87,7 @@ const OverviewListItem: FunctionComponent<OverviewListItemProps> = ({
               </Stack>
             </Grid>
 
-            <Grid
-              item
-              direction="row"
-              display="flex"
-              justifyContent="flex-end"
-              alignItems="center"
-              gap={2}
-            >
-              <Stack textAlign={{ xs: "left", md: "right" }}>
-                <Typography variant="body2" color="text.secondary">
-                  109 visits today
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  1.2k visits this month
-                </Typography>
-              </Stack>
 
-              <Box sx={{ display: { xs: "none", md: "block" } }}>
-                <IoStatsChart size={38} />
-              </Box>
-            </Grid>
           </Grid>
         </Stack>
       </Card>

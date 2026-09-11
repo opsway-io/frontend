@@ -61,6 +61,7 @@ interface FormValues {
   customComponentsHtml: string;
   showBranding: boolean;
   isPrivate: boolean;
+  supportUrl: string;
   password?: string;
 }
 
@@ -90,6 +91,7 @@ const StatusPagesDetailView: FunctionComponent<
       customComponentsHtml: "",
       showBranding: true,
       isPrivate: false,
+      supportUrl: "",
       password: "",
     },
   });
@@ -113,6 +115,7 @@ const StatusPagesDetailView: FunctionComponent<
         customComponentsHtml: statusPage.customComponentsHtml || "",
         showBranding: statusPage.showBranding ?? true,
         isPrivate: statusPage.isPrivate || false,
+        supportUrl: statusPage.supportUrl || "",
         password: "",
       });
     }
@@ -349,6 +352,17 @@ const StatusPagesDetailView: FunctionComponent<
                   control={control}
                   render={({ field }) => (
                     <TextField {...field} label="Favicon URL" fullWidth />
+                  )}
+                />
+                <Controller
+                  name="supportUrl"
+                  control={control}
+                  render={({ field }) => (
+                    <TextField
+                      {...field}
+                      label="Support URL (e.g. mailto:support@example.com)"
+                      fullWidth
+                    />
                   )}
                 />
 

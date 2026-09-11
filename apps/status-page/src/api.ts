@@ -41,6 +41,7 @@ export interface GetPublicStatusPageResponse {
   customComponentsHtml: string;
   showBranding: boolean;
   isPrivate: boolean;
+  supportUrl?: string;
   monitors: PublicMonitor[];
   groups?: PublicGroup[];
   activeIncidents: PublicIncident[];

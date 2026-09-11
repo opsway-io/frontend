@@ -10,6 +10,7 @@ export interface Monitor {
   name: string;
   settings: MonitorSettings;
   assertions: MonitorAssertion[];
+  variables?: MonitorVariable[];
   createdAt: Date;
   updatedAt: Date;
 }
@@ -44,7 +45,22 @@ export interface MonitorSettings {
     username?: string;
     password?: string;
   };
+  teardown?: {
+    enabled: boolean;
+    method: "GET" | "POST" | "PUT" | "DELETE" | "HEAD" | "OPTIONS" | "PATCH";
+    url: string;
+    body: {
+      type: "NONE" | "RAW" | "JSON" | "GRAPHQL" | "XML";
+      content: string | null;
+    };
+  };
   locations: string[];
+}
+
+export interface MonitorVariable {
+  name: string;
+  source: string;
+  property: string;
 }
 
 export interface MonitorAssertion {
@@ -114,6 +130,7 @@ export interface CreateMonitorRequest {
   name: string;
   settings: MonitorSettings;
   assertions: MonitorAssertion[];
+  variables?: MonitorVariable[];
 }
 
 export async function createMonitor(
@@ -133,6 +150,7 @@ export interface UpdateMonitorRequest {
   state: "ACTIVE" | "INACTIVE";
   settings: MonitorSettings;
   assertions: MonitorAssertion[];
+  variables?: MonitorVariable[];
 }
 
 export async function updateMonitor(

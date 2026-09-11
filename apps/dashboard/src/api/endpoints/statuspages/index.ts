@@ -21,6 +21,7 @@ export interface StatusPage {
   customComponentsHtml: string;
   showBranding: boolean;
   isPrivate: boolean;
+  supportUrl: string;
   monitorIds: number[];
   groups: StatusPageGroup[];
   createdAt: string;
@@ -79,6 +80,7 @@ export interface PutStatusPageRequest {
   customComponentsHtml?: string;
   showBranding?: boolean;
   isPrivate?: boolean;
+  supportUrl?: string;
   password?: string;
   monitorIds?: number[];
   groups?: StatusPageGroup[];

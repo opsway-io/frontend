@@ -416,16 +416,20 @@ const App: FunctionComponent = () => {
           </Stack>
 
           <Stack direction="row" spacing={2}>
-            <Button
-              sx={{
-                color: "text.secondary",
-                textTransform: "none",
-                fontWeight: 500,
-                "&:hover": { backgroundColor: "rgba(255,255,255,0.05)" },
-              }}
-            >
-              Report a problem
-            </Button>
+            {data.supportUrl && (
+              <Button
+                href={data.supportUrl}
+                target={data.supportUrl.startsWith("mailto:") ? "_self" : "_blank"}
+                sx={{
+                  color: "text.secondary",
+                  textTransform: "none",
+                  fontWeight: 500,
+                  "&:hover": { backgroundColor: "rgba(255,255,255,0.05)" },
+                }}
+              >
+                Report a problem
+              </Button>
+            )}
             <Button
               variant="contained"
               onClick={() => setIsSubscribeOpen(true)}

@@ -358,7 +358,7 @@ const MonitorDetailView: FunctionComponent = () => {
 
           <Stack>
             <Typography color="primary" fontSize={24}>
-              {stripProtocolAndPath(data?.settings.url)}
+              {stripProtocolAndPath(data?.steps?.[0]?.url)}
             </Typography>
             <Typography color="secondary">
               <Conditional value={isActive && data?.settings.frequencySeconds}>
@@ -494,7 +494,7 @@ const MonitorDetailView: FunctionComponent = () => {
             />
             <CardContent>
               <IncidentsDataGrid
-                incidents={pastIncidents}
+                incidents={pastIncidents as any}
                 onViewClick={(id) => setSidebarIncidentId(id)}
               />
             </CardContent>

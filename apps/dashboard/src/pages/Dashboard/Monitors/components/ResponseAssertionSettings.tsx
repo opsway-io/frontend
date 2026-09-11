@@ -141,11 +141,11 @@ const sanitizeNumber = (value: string) => {
   return value.replace(/[^0-9]/g, "");
 };
 
-const ResponseAssertionSettings: FunctionComponent = () => {
+const ResponseAssertionSettings: FunctionComponent<{ stepIndex: number }> = ({ stepIndex }) => {
   const { control, getValues } = useFormContext<SettingsFormData>();
 
-  const { fields, append, remove, update } = useFieldArray<SettingsFormData, "assertions">({
-    name: "assertions",
+  const { fields, append, remove, update } = useFieldArray<SettingsFormData, any>({
+    name: `steps.${stepIndex}.assertions` as any,
   });
 
   return (
@@ -227,7 +227,7 @@ const ResponseAssertionSettings: FunctionComponent = () => {
             {fields.map((field, index) => (
               <TableRow key={field.id}>
                 <Controller
-                  name={`assertions.${index}.source` as const}
+                  name={`steps.${stepIndex}.assertions.${index}.source` as const}
                   control={control}
                   rules={{
                     required: true,
@@ -243,7 +243,7 @@ const ResponseAssertionSettings: FunctionComponent = () => {
                             field.onChange(e.target.value);
 
                             update(index, {
-                              ...getValues(`assertions.${index}`),
+                              ...getValues(`steps.${stepIndex}.assertions.${index}` as any),
                               ...getDefaultsForSource(e.target.value),
                               source: e.target.value,
                             });
@@ -262,23 +262,23 @@ const ResponseAssertionSettings: FunctionComponent = () => {
                       </Conditional>
 
                       <Conditional value={field.value === "STATUS_CODE"}>
-                        <StatusCodeAssertionCells index={index} />
+                        <StatusCodeAssertionCells index={index} stepIndex={stepIndex} />
                       </Conditional>
 
                       <Conditional value={field.value === "RESPONSE_TIME"}>
-                        <ResponseTimeAssertionCells index={index} />
+                        <ResponseTimeAssertionCells index={index} stepIndex={stepIndex} />
                       </Conditional>
 
                       <Conditional value={field.value === "HEADERS"}>
-                        <HeadersAssertionCells index={index} />
+                        <HeadersAssertionCells index={index} stepIndex={stepIndex} />
                       </Conditional>
 
                       <Conditional value={field.value === "RAW_BODY"}>
-                        <RawBodyAssertionCells index={index} />
+                        <RawBodyAssertionCells index={index} stepIndex={stepIndex} />
                       </Conditional>
 
                       <Conditional value={field.value === "JSON_BODY"}>
-                        <JSONBodyAssertionCells index={index} />
+                        <JSONBodyAssertionCells index={index} stepIndex={stepIndex} />
                       </Conditional>
                     </>
                   )}
@@ -347,9 +347,7 @@ const NoSourceCells: FunctionComponent = () => {
   );
 };
 
-const StatusCodeAssertionCells: FunctionComponent<{
-  index: number;
-}> = ({ index }) => {
+const StatusCodeAssertionCells: FunctionComponent<{ index: number; stepIndex: number; }> = ({ index, stepIndex }) => {
   const { control } = useFormContext<SettingsFormData>();
 
   return (
@@ -360,7 +358,7 @@ const StatusCodeAssertionCells: FunctionComponent<{
 
       <TableCell sx={{ flex: 1 }}>
         <Controller
-          name={`assertions.${index}.operator` as const}
+          name={`steps.${stepIndex}.assertions.${index}.operator` as const}
           rules={{
             required: true,
           }}
@@ -379,7 +377,7 @@ const StatusCodeAssertionCells: FunctionComponent<{
 
       <TableCell sx={{ flex: 1 }}>
         <Controller
-          name={`assertions.${index}.target` as const}
+          name={`steps.${stepIndex}.assertions.${index}.target` as const}
           control={control}
           rules={{
             required: true,
@@ -401,16 +399,14 @@ const StatusCodeAssertionCells: FunctionComponent<{
   );
 };
 
-const ResponseTimeAssertionCells: FunctionComponent<{
-  index: number;
-}> = ({ index }) => {
+const ResponseTimeAssertionCells: FunctionComponent<{ index: number; stepIndex: number; }> = ({ index, stepIndex }) => {
   const { control } = useFormContext<SettingsFormData>();
 
   return (
     <>
       <TableCell sx={{ flex: 1 }}>
         <Controller
-          name={`assertions.${index}.property` as const}
+          name={`steps.${stepIndex}.assertions.${index}.property` as const}
           control={control}
           rules={{
             required: true,
@@ -429,7 +425,7 @@ const ResponseTimeAssertionCells: FunctionComponent<{
 
       <TableCell sx={{ flex: 1 }}>
         <Controller
-          name={`assertions.${index}.operator` as const}
+          name={`steps.${stepIndex}.assertions.${index}.operator` as const}
           control={control}
           rules={{
             required: true,
@@ -448,7 +444,7 @@ const ResponseTimeAssertionCells: FunctionComponent<{
 
       <TableCell sx={{ flex: 1 }}>
         <Controller
-          name={`assertions.${index}.target` as const}
+          name={`steps.${stepIndex}.assertions.${index}.target` as const}
           control={control}
           rules={{
             required: true,
@@ -473,16 +469,14 @@ const ResponseTimeAssertionCells: FunctionComponent<{
   );
 };
 
-const HeadersAssertionCells: FunctionComponent<{
-  index: number;
-}> = ({ index }) => {
+const HeadersAssertionCells: FunctionComponent<{ index: number; stepIndex: number; }> = ({ index, stepIndex }) => {
   const { control, getValues, setValue } = useFormContext<SettingsFormData>();
 
   return (
     <>
       <TableCell sx={{ flex: 1 }}>
         <Controller
-          name={`assertions.${index}.property` as const}
+          name={`steps.${stepIndex}.assertions.${index}.property` as const}
           control={control}
           rules={{
             required: true,
@@ -513,7 +507,7 @@ const HeadersAssertionCells: FunctionComponent<{
       </TableCell>
 
       <Controller
-        name={`assertions.${index}.operator` as const}
+        name={`steps.${stepIndex}.assertions.${index}.operator` as const}
         control={control}
         render={({ field: operatorField }) => {
           return (
@@ -527,14 +521,14 @@ const HeadersAssertionCells: FunctionComponent<{
                     const opr = e.target.value;
 
                     if (opr === "EMPTY" || opr === "NOT_EMPTY") {
-                      setValue(`assertions.${index}.target`, "");
+                      setValue(`steps.${stepIndex}.assertions.${index}.target`, "");
                     }
 
                     if (opr === "LESS_THAN" || opr === "GREATER_THAN") {
-                      const target = getValues(`assertions.${index}.target`);
+                      const target = getValues(`steps.${stepIndex}.assertions.${index}.target`);
 
                       if (target && !isNumber(target)) {
-                        setValue(`assertions.${index}.target`, "");
+                        setValue(`steps.${stepIndex}.assertions.${index}.target`, "");
                       }
                     }
 
@@ -551,7 +545,7 @@ const HeadersAssertionCells: FunctionComponent<{
 
               <TableCell sx={{ flex: 1 }}>
                 <Controller
-                  name={`assertions.${index}.target` as const}
+                  name={`steps.${stepIndex}.assertions.${index}.target` as const}
                   control={control}
                   rules={{
                     required: true,
@@ -586,9 +580,7 @@ const HeadersAssertionCells: FunctionComponent<{
   );
 };
 
-const RawBodyAssertionCells: FunctionComponent<{
-  index: number;
-}> = ({ index }) => {
+const RawBodyAssertionCells: FunctionComponent<{ index: number; stepIndex: number; }> = ({ index, stepIndex }) => {
   const { control, setValue, getValues } = useFormContext<SettingsFormData>();
 
   return (
@@ -598,7 +590,7 @@ const RawBodyAssertionCells: FunctionComponent<{
       </TableCell>
 
       <Controller
-        name={`assertions.${index}.operator` as const}
+        name={`steps.${stepIndex}.assertions.${index}.operator` as const}
         rules={{
           required: true,
         }}
@@ -614,14 +606,14 @@ const RawBodyAssertionCells: FunctionComponent<{
                   const opr = e.target.value;
 
                   if (opr === "EMPTY" || opr === "NOT_EMPTY") {
-                    setValue(`assertions.${index}.target`, "");
+                    setValue(`steps.${stepIndex}.assertions.${index}.target`, "");
                   }
 
                   if (opr === "LESS_THAN" || opr === "GREATER_THAN") {
-                    const target = getValues(`assertions.${index}.target`);
+                    const target = getValues(`steps.${stepIndex}.assertions.${index}.target`);
 
                     if (target && !isNumber(target)) {
-                      setValue(`assertions.${index}.target`, "");
+                      setValue(`steps.${stepIndex}.assertions.${index}.target`, "");
                     }
                   }
 
@@ -638,7 +630,7 @@ const RawBodyAssertionCells: FunctionComponent<{
 
             <TableCell sx={{ flex: 1 }}>
               <Controller
-                name={`assertions.${index}.target` as const}
+                name={`steps.${stepIndex}.assertions.${index}.target` as const}
                 control={control}
                 rules={{
                   required: true,
@@ -672,9 +664,7 @@ const RawBodyAssertionCells: FunctionComponent<{
   );
 };
 
-const JSONBodyAssertionCells: FunctionComponent<{
-  index: number;
-}> = ({ index }) => {
+const JSONBodyAssertionCells: FunctionComponent<{ index: number; stepIndex: number; }> = ({ index, stepIndex }) => {
   const { control, setValue, getValues } = useFormContext<SettingsFormData>();
 
   const validateJSONPath = (value?: string): boolean => {
@@ -694,7 +684,7 @@ const JSONBodyAssertionCells: FunctionComponent<{
     <>
       <TableCell sx={{ flex: 1 }}>
         <Controller
-          name={`assertions.${index}.property` as const}
+          name={`steps.${stepIndex}.assertions.${index}.property` as const}
           control={control}
           rules={{
             required: true,
@@ -714,7 +704,7 @@ const JSONBodyAssertionCells: FunctionComponent<{
       </TableCell>
 
       <Controller
-        name={`assertions.${index}.operator` as const}
+        name={`steps.${stepIndex}.assertions.${index}.operator` as const}
         rules={{
           required: true,
         }}
@@ -735,14 +725,14 @@ const JSONBodyAssertionCells: FunctionComponent<{
                     opr === "NULL" ||
                     opr === "NOT_NULL"
                   ) {
-                    setValue(`assertions.${index}.target`, "");
+                    setValue(`steps.${stepIndex}.assertions.${index}.target`, "");
                   }
 
                   if (opr === "LESS_THAN" || opr === "GREATER_THAN") {
-                    const target = getValues(`assertions.${index}.target`);
+                    const target = getValues(`steps.${stepIndex}.assertions.${index}.target`);
 
                     if (target && !isNumber(target)) {
-                      setValue(`assertions.${index}.target`, "");
+                      setValue(`steps.${stepIndex}.assertions.${index}.target`, "");
                     }
                   }
 
@@ -759,7 +749,7 @@ const JSONBodyAssertionCells: FunctionComponent<{
 
             <TableCell sx={{ flex: 1 }}>
               <Controller
-                name={`assertions.${index}.target` as const}
+                name={`steps.${stepIndex}.assertions.${index}.target` as const}
                 rules={{
                   required: false,
                 }}

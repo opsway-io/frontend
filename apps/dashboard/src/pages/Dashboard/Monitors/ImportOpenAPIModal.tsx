@@ -8,6 +8,7 @@ import {
   TextField,
   Typography,
   Checkbox,
+  FormControlLabel,
   List,
   ListItem,
   ListItemIcon,
@@ -49,6 +50,7 @@ const ImportOpenAPIModal: FunctionComponent<ImportOpenAPIModalProps> = ({
   const [selectedEndpoints, setSelectedEndpoints] = useState<number[]>([]);
   const [step, setStep] = useState<"INPUT" | "SELECT">("INPUT");
   const [baseUrl, setBaseUrl] = useState("");
+  const [groupAsSingle, setGroupAsSingle] = useState(false);
 
   const [authMethod, setAuthMethod] = useState<"NONE" | "BASIC" | "OAUTH2_CLIENT_CREDENTIALS">("NONE");
   const [authUrl, setAuthUrl] = useState("");
@@ -94,42 +96,94 @@ const ImportOpenAPIModal: FunctionComponent<ImportOpenAPIModalProps> = ({
   const importMutation = useMutation(
     async () => {
       const selected = selectedEndpoints.map((i) => endpoints[i]);
-      const req: CreateMonitorsBulkRequest = {
-        monitors: selected.map((ep) => ({
-          name: ep.summary || `${ep.method.toUpperCase()} ${ep.path}`,
-          settings: {
-            method: ep.method.toUpperCase() as any,
-            url: baseUrl ? `${baseUrl.replace(/\/$/, "")}/${ep.path.replace(/^\//, "")}` : ep.path,
-            frequencySeconds: 60,
-            body: {
-              type: ep.requestBody ? "JSON" : "NONE",
-              content: ep.requestBody || null,
-            },
-            tls: {
-              enabled: true,
-              verifyHostname: true,
-              checkExpiration: true,
-              expirationThresholdDays: 7,
-            },
-            auth: {
-              method: authMethod,
-              tokenUrl: authUrl ? (baseUrl && !authUrl.startsWith("http") ? `${baseUrl.replace(/\/$/, "")}/${authUrl.replace(/^\//, "")}` : authUrl) : undefined,
-              clientId: authClientId || undefined,
-              clientSecret: authClientSecret || undefined,
-              username: authUsername || undefined,
-              password: authPassword || undefined,
-            },
-            locations: selectedLocations.length > 0 ? selectedLocations : ["global"],
-          },
-          assertions: ep.assertions && ep.assertions.length > 0 ? ep.assertions : [
+      let req: CreateMonitorsBulkRequest;
+
+      if (groupAsSingle) {
+        req = {
+          monitors: [
             {
-              source: "STATUS_CODE",
-              operator: "EQUAL",
-              target: ep.statusCode || "200",
+              name: `Imported OpenAPI - ${baseUrl || url}`,
+              settings: {
+                frequencySeconds: 60,
+                tls: {
+                  enabled: true,
+                  verifyHostname: true,
+                  checkExpiration: true,
+                  expirationThresholdDays: 7,
+                },
+                auth: {
+                  method: authMethod,
+                  tokenUrl: authUrl ? (baseUrl && !authUrl.startsWith("http") ? `${baseUrl.replace(/\/$/, "")}/${authUrl.replace(/^\//, "")}` : authUrl) : undefined,
+                  clientId: authClientId || undefined,
+                  clientSecret: authClientSecret || undefined,
+                  username: authUsername || undefined,
+                  password: authPassword || undefined,
+                },
+                locations: selectedLocations.length > 0 ? selectedLocations : ["global"],
+              },
+              steps: selected.map((ep) => ({
+                name: ep.summary || `${ep.method.toUpperCase()} ${ep.path}`,
+                method: ep.method.toUpperCase() as any,
+                url: baseUrl ? `${baseUrl.replace(/\/$/, "")}/${ep.path.replace(/^\//, "")}` : ep.path,
+                body: {
+                  type: ep.requestBody ? "JSON" : "NONE",
+                  content: ep.requestBody || null,
+                },
+                assertions: ep.assertions && ep.assertions.length > 0 ? ep.assertions : [
+                  {
+                    source: "STATUS_CODE",
+                    operator: "EQUAL",
+                    target: ep.statusCode || "200",
+                  },
+                ],
+              })),
             },
           ],
-        })),
-      };
+        };
+      } else {
+        req = {
+          monitors: selected.map((ep) => ({
+            name: ep.summary || `${ep.method.toUpperCase()} ${ep.path}`,
+            settings: {
+              frequencySeconds: 60,
+              tls: {
+                enabled: true,
+                verifyHostname: true,
+                checkExpiration: true,
+                expirationThresholdDays: 7,
+              },
+              auth: {
+                method: authMethod,
+                tokenUrl: authUrl ? (baseUrl && !authUrl.startsWith("http") ? `${baseUrl.replace(/\/$/, "")}/${authUrl.replace(/^\//, "")}` : authUrl) : undefined,
+                clientId: authClientId || undefined,
+                clientSecret: authClientSecret || undefined,
+                username: authUsername || undefined,
+                password: authPassword || undefined,
+              },
+              locations: selectedLocations.length > 0 ? selectedLocations : ["global"],
+            },
+            steps: [
+              {
+                name: ep.summary || `${ep.method.toUpperCase()} ${ep.path}`,
+                method: ep.method.toUpperCase() as any,
+                url: baseUrl ? `${baseUrl.replace(/\/$/, "")}/${ep.path.replace(/^\//, "")}` : ep.path,
+                body: {
+                  type: ep.requestBody ? "JSON" : "NONE",
+                  content: ep.requestBody || null,
+                },
+                assertions: ep.assertions && ep.assertions.length > 0 ? ep.assertions : [
+                  {
+                    source: "STATUS_CODE",
+                    operator: "EQUAL",
+                    target: ep.statusCode || "200",
+                  },
+                ],
+              }
+            ],
+          })),
+        };
+      }
+      
       return createMonitorsBulk(teamId!, req);
     },
     {
@@ -248,6 +302,16 @@ const ImportOpenAPIModal: FunctionComponent<ImportOpenAPIModalProps> = ({
                 </ListItem>
               ))}
             </List>
+
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={groupAsSingle}
+                  onChange={(e) => setGroupAsSingle(e.target.checked)}
+                />
+              }
+              label="Group into a single multi-step monitor"
+            />
 
             {authMethod !== "NONE" && (
               <Stack spacing={2} sx={{ mt: 2, p: 2, bgcolor: "background.default", borderRadius: 1 }}>
@@ -368,7 +432,7 @@ const ImportOpenAPIModal: FunctionComponent<ImportOpenAPIModalProps> = ({
               importMutation.isLoading ? <CircularProgress size={16} /> : null
             }
           >
-            Import {selectedEndpoints.length} Monitors
+            Import {groupAsSingle ? "1 Monitor" : `${selectedEndpoints.length} Monitors`}
           </Button>
         )}
       </DialogActions>

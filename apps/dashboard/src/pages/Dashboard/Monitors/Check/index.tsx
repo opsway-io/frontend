@@ -74,8 +74,8 @@ const MonitorCheckView: FunctionComponent = () => {
             elevation={2}
             sx={{ padding: 1, display: "flex", alignItems: "center", gap: 1 }}
           >
-            <Chip label={monitor?.settings.method} />
-            <span style={{ marginRight: "auto" }}>{monitor?.settings.url}</span>
+            <Chip label={monitor?.steps?.[0]?.method} />
+            <span style={{ marginRight: "auto" }}>{monitor?.steps?.[0]?.url}</span>
             <Chip
               label={check?.statusCode}
               color={

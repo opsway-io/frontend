@@ -4,13 +4,28 @@ import client from "../../client";
   Shared
 */
 
+export interface MonitorStep {
+  name: string;
+  method: "GET" | "POST" | "PUT" | "DELETE" | "HEAD" | "OPTIONS" | "PATCH";
+  url: string;
+  headers?: {
+    key: string;
+    value: string;
+  }[];
+  body: {
+    type: "NONE" | "RAW" | "JSON" | "GRAPHQL" | "XML";
+    content: string | null;
+  };
+  assertions: MonitorAssertion[];
+  variables?: MonitorVariable[];
+}
+
 export interface Monitor {
   id: number;
   state: "ACTIVE" | "INACTIVE" | "MAINTENANCE";
   name: string;
   settings: MonitorSettings;
-  assertions: MonitorAssertion[];
-  variables?: MonitorVariable[];
+  steps: MonitorStep[];
   createdAt: Date;
   updatedAt: Date;
 }
@@ -20,17 +35,7 @@ export interface MonitorWithStats extends Monitor {
 }
 
 export interface MonitorSettings {
-  method: "GET" | "POST" | "PUT" | "DELETE" | "HEAD" | "OPTIONS" | "PATCH";
-  url: string;
   frequencySeconds: number;
-  headers?: {
-    key: string;
-    value: string;
-  }[];
-  body: {
-    type: "NONE" | "RAW" | "JSON" | "GRAPHQL" | "XML";
-    content: string | null;
-  };
   tls: {
     enabled: boolean;
     verifyHostname: boolean;
@@ -44,15 +49,6 @@ export interface MonitorSettings {
     clientSecret?: string;
     username?: string;
     password?: string;
-  };
-  teardown?: {
-    enabled: boolean;
-    method: "GET" | "POST" | "PUT" | "DELETE" | "HEAD" | "OPTIONS" | "PATCH";
-    url: string;
-    body: {
-      type: "NONE" | "RAW" | "JSON" | "GRAPHQL" | "XML";
-      content: string | null;
-    };
   };
   locations: string[];
 }
@@ -129,8 +125,7 @@ export interface CreateMonitorRequest {
   teamId: number;
   name: string;
   settings: MonitorSettings;
-  assertions: MonitorAssertion[];
-  variables?: MonitorVariable[];
+  steps: MonitorStep[];
 }
 
 export async function createMonitor(
@@ -149,8 +144,7 @@ export interface UpdateMonitorRequest {
   name: string;
   state: "ACTIVE" | "INACTIVE";
   settings: MonitorSettings;
-  assertions: MonitorAssertion[];
-  variables?: MonitorVariable[];
+  steps: MonitorStep[];
 }
 
 export async function updateMonitor(

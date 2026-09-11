@@ -45,7 +45,7 @@ const IncidentsWindowMonitorView: FunctionComponent<
         <Stack direction="row" spacing={2} alignItems={"center"}>
           <Stack>
             <Typography color="primary" fontSize={24}>
-              {stripProtocolAndPath(data?.settings.url)}
+              {stripProtocolAndPath(data?.steps?.[0]?.url)}
             </Typography>
             <Typography color="secondary">
               {!incidentsAreLoading &&

@@ -18,7 +18,7 @@ import {
 import { SettingsFormData } from "../models/settingsFormData";
 import HeaderSettings from "./HeadersSettings";
 
-const RequestSettings: FunctionComponent = () => {
+const RequestSettings: FunctionComponent<{ stepIndex: number }> = ({ stepIndex }) => {
   const { control, setValue, trigger } = useFormContext<SettingsFormData>();
 
   return (
@@ -33,7 +33,7 @@ const RequestSettings: FunctionComponent = () => {
       <Stack direction="row" spacing={2}>
         <Stack>
           <Controller
-            name="settings.method"
+            name={`steps.${stepIndex}.method` as any}
             control={control}
             rules={{ required: true }}
             render={({ field }) => (
@@ -56,12 +56,12 @@ const RequestSettings: FunctionComponent = () => {
 
         <Stack flex="1">
           <Controller
-            name="settings.url"
+            name={`steps.${stepIndex}.url` as any}
             control={control}
             rules={{
               required: true,
               validate: (value) => {
-                const method = control._formValues.settings?.method || "GET";
+                const method = control._formValues.steps?.[stepIndex]?.method || "GET";
                 if (
                   [
                     "TCP",
@@ -78,13 +78,13 @@ const RequestSettings: FunctionComponent = () => {
                   return true;
                 }
                 return (
-                  /^https?:\/\/.+/.test(value) ||
+                  /^https?:\/\/.+/.test(String(value || "")) ||
                   "URL must start with http:// or https://"
                 );
               },
             }}
             render={({ field, fieldState }) => {
-              const method = control._formValues.settings?.method || "GET";
+              const method = control._formValues.steps?.[stepIndex]?.method || "GET";
               let placeholder = "https://api.example.com/pets";
               if (method === "TCP") placeholder = "example.com:8080";
               if (method === "POSTGRES")
@@ -125,7 +125,7 @@ const RequestSettings: FunctionComponent = () => {
             "BROWSER",
             "WEBSOCKET",
             "UDP",
-          ].includes(control._formValues.settings?.method || "GET")
+          ].includes(control._formValues.steps?.[stepIndex]?.method || "GET")
         }
       >
         <Divider />
@@ -137,7 +137,7 @@ const RequestSettings: FunctionComponent = () => {
           </Typography>
         </Stack>
 
-        <HeaderSettings />
+        <HeaderSettings stepIndex={stepIndex} />
 
         <Divider />
 
@@ -149,7 +149,7 @@ const RequestSettings: FunctionComponent = () => {
         </Stack>
 
         <Controller
-          name="settings.body.type"
+          name={`steps.${stepIndex}.body.type` as any}
           control={control}
           render={(bodyTypeProps) => (
             <>
@@ -161,8 +161,8 @@ const RequestSettings: FunctionComponent = () => {
                   bodyTypeProps.field.onChange(value);
 
                   if (value === "NONE") {
-                    setValue("settings.body.content", null);
-                    trigger("settings.body.content");
+                    setValue(`steps.${stepIndex}.body.content` as any, null);
+                    trigger(`steps.${stepIndex}.body.content` as any);
                   }
                 }}
                 size="small"
@@ -181,7 +181,7 @@ const RequestSettings: FunctionComponent = () => {
                 }
               >
                 <Controller
-                  name="settings.body.content"
+                  name={`steps.${stepIndex}.body.content` as any}
                   control={control}
                   render={(bodyProps) => (
                     <Editor
@@ -202,7 +202,7 @@ const RequestSettings: FunctionComponent = () => {
         />
       </Conditional>
 
-      <Conditional value={control._formValues.settings?.method === "BROWSER"}>
+      <Conditional value={control._formValues.steps?.[stepIndex]?.method === "BROWSER"}>
         <Divider />
 
         <Stack>
@@ -214,12 +214,12 @@ const RequestSettings: FunctionComponent = () => {
         </Stack>
 
         <Controller
-          name="settings.body.content"
+          name={`steps.${stepIndex}.body.content` as any}
           control={control}
           render={(bodyProps) => {
             // Ensure type is JSON for BROWSER method behind the scenes
-            if (control._formValues.settings?.body?.type !== "JSON") {
-              setValue("settings.body.type", "JSON");
+            if (control._formValues.steps?.[stepIndex]?.body?.type !== "JSON") {
+              setValue(`steps.${stepIndex}.body.type` as any, "JSON");
             }
             return (
               <Editor

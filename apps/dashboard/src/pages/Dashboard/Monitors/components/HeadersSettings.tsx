@@ -18,10 +18,10 @@ import Conditional from "../../../../components/Conditional";
 import { requestHeaders } from "../models/requestOptions";
 import { SettingsFormData } from "../models/settingsFormData";
 
-const HeaderSettings: FunctionComponent = () => {
+const HeaderSettings: FunctionComponent<{ stepIndex: number }> = ({ stepIndex }) => {
   const { control, register } = useFormContext<SettingsFormData>();
   const { fields, append, remove } = useFieldArray<SettingsFormData>({
-    name: "settings.headers",
+    name: `steps.${stepIndex}.headers` as any,
   });
 
   const t = useTheme();
@@ -87,7 +87,7 @@ const HeaderSettings: FunctionComponent = () => {
               <TableRow key={index}>
                 <TableCell sx={{ flex: 1 }}>
                   <Controller
-                    name={`settings.headers.${index}.key` as const}
+                    name={`steps.${stepIndex}.headers.${index}.key` as const}
                     control={control}
                     rules={{
                       required: true,
@@ -120,7 +120,7 @@ const HeaderSettings: FunctionComponent = () => {
                   <TextField
                     fullWidth
                     size="small"
-                    {...register(`settings.headers.${index}.value` as const)}
+                    {...register(`steps.${stepIndex}.headers.${index}.value` as const)}
                   />
                 </TableCell>
 

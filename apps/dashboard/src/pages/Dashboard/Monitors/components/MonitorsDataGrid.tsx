@@ -77,7 +77,7 @@ const MonitorsDataGrid: FunctionComponent<MonitorsDataGridProps> = (props) => {
                 {col.row.name}
               </Typography>
               <Typography variant="caption" color="text.secondary">
-                {stripProtocolAndPath(col.row.settings.url)}
+                {stripProtocolAndPath(col.row.steps?.[0]?.url || "")}
               </Typography>
             </Stack>
             {hasIncident && (

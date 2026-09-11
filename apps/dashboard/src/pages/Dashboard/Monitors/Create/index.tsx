@@ -21,11 +21,9 @@ import useAuthenticationStore from "../../../../hooks/authentication.store";
 import { useCreateMonitor } from "../../../../hooks/monitors.query";
 import FrequencyAndLocationSettings from "../components/FrequencyAndLocationSettings";
 import HowAssertionsWork from "../components/HowAssertionsWork";
-import RequestSettings from "../components/RequestSettings";
-import ResponseAssertionSettings from "../components/ResponseAssertionSettings";
+import StepsSettings from "../components/StepsSettings";
 import TLSVerificationSettings from "../components/TLSVerificationSettings";
 import AuthSettings from "../components/AuthSettings";
-import VariablesAndTeardownSettings from "../components/VariablesAndTeardownSettings";
 import { SettingsFormData } from "../models/settingsFormData";
 import UpgradePromptModal from "../../../../components/UpgradePromptModal";
 import { isAxiosError } from "axios";
@@ -39,7 +37,7 @@ const MonitorCreateView: FunctionComponent = () => {
   const [openUpgradeModal, setOpenUpgradeModal] = useState(false);
 
   const [params, setParams] = useSearchParams({
-    tab: "request",
+    tab: "steps",
   });
   const selectedTab = useMemo(() => params.get("tab"), [params]);
 
@@ -47,14 +45,27 @@ const MonitorCreateView: FunctionComponent = () => {
     defaultValues: {
       teamId: teamId,
       name: "",
-      settings: {
-        method: "GET",
-        url: "",
-        headers: [],
-        body: {
-          type: "NONE",
-          content: null,
+      steps: [
+        {
+          name: "Step 1",
+          method: "GET",
+          url: "",
+          headers: [],
+          body: {
+            type: "NONE",
+            content: null,
+          },
+          assertions: [
+            {
+              source: "STATUS_CODE",
+              operator: "EQUAL",
+              target: "200",
+            },
+          ],
+          variables: [],
         },
+      ],
+      settings: {
         tls: {
           enabled: true,
           verifyHostname: true,
@@ -66,25 +77,7 @@ const MonitorCreateView: FunctionComponent = () => {
         auth: {
           method: "NONE",
         },
-        teardown: {
-          enabled: false,
-          method: "DELETE",
-          url: "",
-          body: {
-            type: "NONE",
-            content: null,
-          },
-        },
       },
-      variables: [],
-      assertions: [
-        {
-          key: uuidv4(),
-          source: "STATUS_CODE",
-          operator: "EQUAL",
-          target: "200",
-        },
-      ],
     },
     mode: "onChange",
   });
@@ -178,59 +171,21 @@ const MonitorCreateView: FunctionComponent = () => {
           </Stack>
 
           <Tabs value={selectedTab} onChange={(e, v) => setParams({ tab: v })}>
-            <Tab value="request" label="Request" />
-            <Tab value="variablesAndTeardown" label="Variables & Teardown" />
-            <Tab value="assertions" label="Response assertions" />
-            <Tab value="frequencyAndLocation" label="Frequency & Location" />
+            <Tab value="steps" label="Steps" />
+                                    <Tab value="frequencyAndLocation" label="Frequency & Location" />
             <Tab value="authentication" label="Authentication" />
             {!["TCP", "ICMP", "DNS", "POSTGRES", "MYSQL", "REDIS"].includes(
-              formMethods.watch("settings.method"),
+              formMethods.watch("steps.0.method" as any),
             ) && <Tab value="tlsVerification" label="SSL/TLS" />}
           </Tabs>
 
-          <Box sx={{ display: selectedTab === "request" ? "block" : "none" }}>
-            <Stack spacing={2}>
-              <Card>
-                <CardContent>
-                  <RequestSettings />
-                </CardContent>
-              </Card>
-            </Stack>
+          <Box sx={{ display: selectedTab === "steps" ? "block" : "none" }}>
+            <StepsSettings />
           </Box>
 
-          <Box
-            sx={{
-              display: selectedTab === "variablesAndTeardown" ? "block" : "none",
-            }}
-          >
-            <Stack spacing={2}>
-              <Card>
-                <CardContent>
-                  <VariablesAndTeardownSettings />
-                </CardContent>
-              </Card>
-            </Stack>
-          </Box>
+          
 
-          <Box
-            sx={{
-              display: selectedTab === "assertions" ? "block" : "none",
-            }}
-          >
-            <Stack spacing={2}>
-              <Card>
-                <CardContent>
-                  <ResponseAssertionSettings />
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardContent>
-                  <HowAssertionsWork />
-                </CardContent>
-              </Card>
-            </Stack>
-          </Box>
+          
 
           <Box
             sx={{

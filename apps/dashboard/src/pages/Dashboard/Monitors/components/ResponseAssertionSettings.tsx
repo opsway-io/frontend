@@ -144,7 +144,7 @@ const sanitizeNumber = (value: string) => {
 const ResponseAssertionSettings: FunctionComponent = () => {
   const { control, getValues } = useFormContext<SettingsFormData>();
 
-  const { fields, append, remove, update } = useFieldArray<SettingsFormData>({
+  const { fields, append, remove, update } = useFieldArray<SettingsFormData, "assertions">({
     name: "assertions",
   });
 
@@ -225,7 +225,7 @@ const ResponseAssertionSettings: FunctionComponent = () => {
 
           <TableBody>
             {fields.map((field, index) => (
-              <TableRow key={field.key}>
+              <TableRow key={field.id}>
                 <Controller
                   name={`assertions.${index}.source` as const}
                   control={control}

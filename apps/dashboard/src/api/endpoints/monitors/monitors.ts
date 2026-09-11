@@ -200,6 +200,7 @@ export interface PreviewOpenAPIEndpoint {
   summary: string;
   requestBody?: string;
   statusCode: string;
+  assertions?: MonitorAssertion[];
 }
 
 export interface PreviewOpenAPIResponse {

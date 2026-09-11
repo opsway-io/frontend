@@ -121,7 +121,7 @@ const ImportOpenAPIModal: FunctionComponent<ImportOpenAPIModalProps> = ({
             },
             locations: selectedLocations.length > 0 ? selectedLocations : ["global"],
           },
-          assertions: [
+          assertions: ep.assertions && ep.assertions.length > 0 ? ep.assertions : [
             {
               source: "STATUS_CODE",
               operator: "EQUAL",

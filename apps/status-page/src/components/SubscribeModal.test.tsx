@@ -39,6 +39,8 @@ describe("SubscribeModal", () => {
       expect(api.subscribeToStatusPage).toHaveBeenCalledWith(
         "test.com",
         "test@example.com",
+        "EMAIL",
+        "",
       );
       expect(
         screen.getByText(/Subscription request sent!/i),

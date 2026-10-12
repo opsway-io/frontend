@@ -77,6 +77,8 @@ export const getPublicStatusPage = async (
 export const subscribeToStatusPage = async (
   domain: string,
   email: string,
+  channel: string = "EMAIL",
+  destination: string = "",
 ): Promise<void> => {
   const response = await fetch(
     `/v1/public/status-pages/${encodeURIComponent(domain)}/subscribe`,
@@ -85,7 +87,7 @@ export const subscribeToStatusPage = async (
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ email }),
+      body: JSON.stringify({ email, channel, destination }),
     },
   );
 

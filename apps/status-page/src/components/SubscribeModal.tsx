@@ -7,6 +7,9 @@ import {
   DialogTitle,
   TextField,
   Alert,
+  Tabs,
+  Tab,
+  Box,
 } from "@mui/material";
 import { FunctionComponent, useState } from "react";
 import { subscribeToStatusPage } from "../api";
@@ -22,7 +25,9 @@ const SubscribeModal: FunctionComponent<Props> = ({
   onClose,
   domain,
 }) => {
+  const [channel, setChannel] = useState<"EMAIL" | "WEBHOOK" | "SLACK">("EMAIL");
   const [email, setEmail] = useState("");
+  const [destination, setDestination] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
@@ -33,7 +38,7 @@ const SubscribeModal: FunctionComponent<Props> = ({
     setError("");
 
     try {
-      await subscribeToStatusPage(domain, email);
+      await subscribeToStatusPage(domain, email, channel, destination);
       setSuccess(true);
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred");
@@ -46,6 +51,7 @@ const SubscribeModal: FunctionComponent<Props> = ({
     if (!loading) {
       setSuccess(false);
       setEmail("");
+      setDestination("");
       setError("");
       onClose();
     }
@@ -54,11 +60,19 @@ const SubscribeModal: FunctionComponent<Props> = ({
   return (
     <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
       <DialogTitle>Subscribe to Updates</DialogTitle>
+      <Box sx={{ borderBottom: 1, borderColor: "divider", px: 3 }}>
+        <Tabs value={channel} onChange={(_, val) => setChannel(val)}>
+          <Tab label="Email" value="EMAIL" />
+          <Tab label="Webhook" value="WEBHOOK" />
+          <Tab label="Slack" value="SLACK" />
+        </Tabs>
+      </Box>
       <form onSubmit={handleSubmit}>
         <DialogContent>
           <DialogContentText mb={2}>
-            Get notified via email whenever opsway creates, updates, or resolves
-            an incident.
+            {channel === "EMAIL" && "Get notified via email whenever an incident or maintenance is created or resolved."}
+            {channel === "WEBHOOK" && "Receive JSON HTTP POST payloads directly to your monitoring system or incident bot."}
+            {channel === "SLACK" && "Post live incident notifications directly to your team's Slack incoming webhook."}
           </DialogContentText>
 
           {error && (
@@ -68,23 +82,50 @@ const SubscribeModal: FunctionComponent<Props> = ({
           )}
           {success ? (
             <Alert severity="success">
-              Subscription request sent! Please check your email to verify your
-              subscription.
+              {channel === "EMAIL"
+                ? "Subscription request sent! Please check your email to verify your subscription."
+                : "Subscription created successfully! You will receive live incident alerts."}
             </Alert>
           ) : (
-            <TextField
-              autoFocus
-              margin="dense"
-              id="name"
-              label="Email Address"
-              type="email"
-              fullWidth
-              variant="outlined"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              disabled={loading}
-            />
+            <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+              <TextField
+                autoFocus
+                label={channel === "EMAIL" ? "Email Address" : "Notification Contact Email"}
+                type="email"
+                fullWidth
+                variant="outlined"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                disabled={loading}
+              />
+              {channel === "WEBHOOK" && (
+                <TextField
+                  label="Webhook Endpoint URL"
+                  type="url"
+                  placeholder="https://example.com/alerts"
+                  fullWidth
+                  variant="outlined"
+                  value={destination}
+                  onChange={(e) => setDestination(e.target.value)}
+                  required
+                  disabled={loading}
+                />
+              )}
+              {channel === "SLACK" && (
+                <TextField
+                  label="Slack Webhook URL"
+                  type="url"
+                  placeholder="https://hooks.slack.com/services/..."
+                  fullWidth
+                  variant="outlined"
+                  value={destination}
+                  onChange={(e) => setDestination(e.target.value)}
+                  required
+                  disabled={loading}
+                />
+              )}
+            </Box>
           )}
         </DialogContent>
         <DialogActions>
@@ -96,7 +137,7 @@ const SubscribeModal: FunctionComponent<Props> = ({
               type="submit"
               variant="contained"
               color="primary"
-              disabled={loading || !email}
+              disabled={loading || !email || (channel !== "EMAIL" && !destination)}
             >
               Subscribe
             </Button>

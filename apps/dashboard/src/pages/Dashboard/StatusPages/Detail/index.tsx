@@ -667,6 +667,63 @@ const StatusPagesDetailView: FunctionComponent<
           </CardContent>
         </Card>
 
+        <Card>
+          <CardContent>
+            <CategoryList>
+              <CategoryListItem
+                title="Embeds & Badges"
+                description="Embed real-time status badges in your README or display an in-app banner widget during active incidents."
+              >
+                <Stack spacing={3}>
+                  <div>
+                    <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600 }}>
+                      Live Status Badge (SVG)
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+                      Display an up-to-date status badge in your markdown documents, GitHub README, or website header.
+                    </Typography>
+                    <TextField
+                      fullWidth
+                      label="Markdown Badge"
+                      value={`[![Status](${window.location.origin}/v1/public/status-pages/${domain || "domain"}/badge.svg)](${window.location.origin}/v1/public/status-pages/${domain || "domain"})`}
+                      InputProps={{ readOnly: true }}
+                      size="small"
+                      sx={{ mb: 1.5 }}
+                    />
+                    <TextField
+                      fullWidth
+                      label="HTML Embed"
+                      value={`<img src="${window.location.origin}/v1/public/status-pages/${domain || "domain"}/badge.svg" alt="Status" />`}
+                      InputProps={{ readOnly: true }}
+                      size="small"
+                    />
+                  </div>
+
+                  <Divider />
+
+                  <div>
+                    <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600 }}>
+                      In-App Status Banner Widget
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+                      Add this script to your web app's HTML &lt;head&gt; or &lt;body&gt;. It will automatically display a notice banner at the top of your app whenever an incident or maintenance is active.
+                    </Typography>
+                    <TextField
+                      fullWidth
+                      multiline
+                      rows={2}
+                      label="JavaScript Snippet"
+                      value={`<script src="${window.location.origin}/v1/public/status-pages/${domain || "domain"}/widget.js" async></script>`}
+                      InputProps={{ readOnly: true }}
+                      size="small"
+                    />
+                  </div>
+                </Stack>
+              </CategoryListItem>
+            </CategoryList>
+          </CardContent>
+        </Card>
+
         <Button
           variant="contained"
           color="success"

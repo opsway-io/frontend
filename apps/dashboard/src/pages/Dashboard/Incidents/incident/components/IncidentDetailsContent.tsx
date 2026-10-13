@@ -106,8 +106,29 @@ const IncidentDetailsContent: FunctionComponent<
               : "Active Incident"}
             : {incident.title}
           </AlertTitle>
-          {incident.description}
-          <br />
+          {incident.description && (
+            <Typography
+              component="div"
+              sx={{
+                whiteSpace: "pre-wrap",
+                fontFamily: "monospace",
+                fontSize: "0.85rem",
+                lineHeight: 1.6,
+                my: 1.5,
+                p: 2,
+                bgcolor: (theme) =>
+                  theme.palette.mode === "dark"
+                    ? "rgba(0,0,0,0.4)"
+                    : "rgba(0,0,0,0.06)",
+                borderRadius: 1,
+                border: "1px solid",
+                borderColor: "divider",
+                overflowX: "auto",
+              }}
+            >
+              {incident.description}
+            </Typography>
+          )}
           This incident was triggered on{" "}
           {moment(incident.createdAt).format("LLL")}.
           {incident.occurrences > 1 && (
@@ -135,16 +156,52 @@ const IncidentDetailsContent: FunctionComponent<
               <br />
               <br />
               <strong>Root Cause Analysis (AI generated):</strong>
-              <br />
-              {incident.rootCauseAnalysis}
+              <Typography
+                component="div"
+                sx={{
+                  whiteSpace: "pre-wrap",
+                  fontSize: "0.9rem",
+                  lineHeight: 1.5,
+                  mt: 1,
+                  p: 1.5,
+                  bgcolor: (theme) =>
+                    theme.palette.mode === "dark"
+                      ? "rgba(0,0,0,0.3)"
+                      : "rgba(0,0,0,0.04)",
+                  borderRadius: 1,
+                }}
+              >
+                {incident.rootCauseAnalysis}
+              </Typography>
             </>
           )}
         </Alert>
       ) : (
         <Alert severity="success">
           <AlertTitle>Resolved Incident: {incident.title}</AlertTitle>
-          {incident.description}
-          <br />
+          {incident.description && (
+            <Typography
+              component="div"
+              sx={{
+                whiteSpace: "pre-wrap",
+                fontFamily: "monospace",
+                fontSize: "0.85rem",
+                lineHeight: 1.6,
+                my: 1.5,
+                p: 2,
+                bgcolor: (theme) =>
+                  theme.palette.mode === "dark"
+                    ? "rgba(0,0,0,0.4)"
+                    : "rgba(0,0,0,0.06)",
+                borderRadius: 1,
+                border: "1px solid",
+                borderColor: "divider",
+                overflowX: "auto",
+              }}
+            >
+              {incident.description}
+            </Typography>
+          )}
           This incident occurred on {moment(incident.createdAt).format(
             "LLL",
           )}{" "}

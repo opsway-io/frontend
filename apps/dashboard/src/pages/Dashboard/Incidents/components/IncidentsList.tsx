@@ -82,7 +82,9 @@ const IncidentsListItem: FunctionComponent<IncidentsListItemProps> = ({
                     </>
                   ) : (
                     <>
-                      {incident.description || incident.title}
+                      {incident.description
+                        ? incident.description.split("\n")[0]
+                        : incident.title}
                       {incident.rootCauseAnalysis && (
                         <>
                           <br />

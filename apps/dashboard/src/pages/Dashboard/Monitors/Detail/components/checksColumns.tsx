@@ -6,6 +6,12 @@ import { isCertValid } from "../../../../../utilities/tls";
 import { formatNanosecondsAsMilliseconds } from "../../models/checkPhases";
 import CheckPhasesBar from "./CheckPhasesBar";
 
+const statusCodeColor = (statusCode: number) => {
+  if (statusCode >= 200 && statusCode < 400) return "success";
+  if (statusCode >= 400 && statusCode < 500) return "warning";
+  return "danger";
+};
+
 /** Column definitions for the monitor checks grid. */
 const checksColumns: GridColDef<Check>[] = [
   {
@@ -16,7 +22,7 @@ const checksColumns: GridColDef<Check>[] = [
     headerAlign: "left",
     sortable: false,
     renderCell: (col) => (
-      <Chip variant="soft" color="success">
+      <Chip variant="soft" color={statusCodeColor(Number(col.value))}>
         {col.value}
       </Chip>
     ),
@@ -36,8 +42,16 @@ const checksColumns: GridColDef<Check>[] = [
     align: "center",
     headerAlign: "center",
     sortable: false,
-    renderCell: (col) =>
-      isCertValid(col.row.tls.notAfter) ? (
+    renderCell: (col) => {
+      if (!col.row.tls?.notAfter) {
+        return (
+          <Chip variant="outlined" color="neutral" sx={{ opacity: 0.6 }}>
+            N/A
+          </Chip>
+        );
+      }
+
+      return isCertValid(col.row.tls.notAfter) ? (
         <Chip variant="soft" color="success" aria-label="Valid certificate">
           <IoLockClosed style={{ verticalAlign: "middle" }} />
         </Chip>
@@ -45,7 +59,8 @@ const checksColumns: GridColDef<Check>[] = [
         <Chip variant="soft" color="danger" aria-label="Invalid certificate">
           <IoWarning style={{ verticalAlign: "middle" }} />
         </Chip>
-      ),
+      );
+    },
   },
   {
     field: "anomaly",

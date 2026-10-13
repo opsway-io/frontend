@@ -66,7 +66,12 @@ const MonitorGroupsSection: FunctionComponent<MonitorGroupsSectionProps> = ({
           color="neutral"
           startDecorator={<IoAdd />}
           onClick={() =>
-            append({ name: "", order: fields.length, monitorIds: [] })
+            append({
+              name: "",
+              container: "",
+              order: fields.length,
+              monitorIds: [],
+            })
           }
         >
           Add Group

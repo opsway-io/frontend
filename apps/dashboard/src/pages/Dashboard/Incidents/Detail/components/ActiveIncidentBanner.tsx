@@ -11,6 +11,7 @@ import {
   useAcknowledgeIncident,
   useSolveIncident,
 } from "../../../../../hooks/incidents.query";
+import PreformattedBlock from "./PreformattedBlock";
 
 interface ActiveIncidentBannerProps {
   incident: GetIncidentResponse;
@@ -84,9 +85,12 @@ const ActiveIncidentBanner: FunctionComponent<ActiveIncidentBannerProps> = ({
           {incident.acknowledged ? "Acknowledged Incident" : "Active Incident"}:{" "}
           {incident.title}
         </Typography>
-        <Typography level="body-sm" color={color}>
-          {incident.description}
-          <br />
+        <Typography level="body-sm" color={color} component="div">
+          {incident.description && (
+            <PreformattedBlock monospace>
+              {incident.description}
+            </PreformattedBlock>
+          )}
           This incident was triggered on{" "}
           {moment(incident.createdAt).format("LLL")}.
           {incident.occurrences > 1 && (
@@ -104,8 +108,9 @@ const ActiveIncidentBanner: FunctionComponent<ActiveIncidentBannerProps> = ({
           {incident.rootCauseAnalysis && (
             <Paragraph>
               <strong>Root Cause Analysis (AI generated):</strong>
-              <br />
-              {incident.rootCauseAnalysis}
+              <PreformattedBlock>
+                {incident.rootCauseAnalysis}
+              </PreformattedBlock>
             </Paragraph>
           )}
         </Typography>

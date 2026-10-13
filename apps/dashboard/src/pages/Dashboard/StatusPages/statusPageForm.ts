@@ -8,7 +8,12 @@ export interface StatusPageFormValues {
   faviconUrl: string;
   layout: string;
   monitorIds: number[];
-  groups: { name: string; order: number; monitorIds: number[] }[];
+  groups: {
+    name: string;
+    container?: string;
+    order: number;
+    monitorIds: number[];
+  }[];
   customCss: string;
   headerHtml: string;
   footerHtml: string;

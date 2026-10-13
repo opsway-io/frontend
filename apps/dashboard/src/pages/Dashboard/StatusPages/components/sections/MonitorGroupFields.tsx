@@ -38,7 +38,11 @@ const MonitorGroupFields: FunctionComponent<MonitorGroupFieldsProps> = ({
       bgcolor: "background.level1",
     }}
   >
-    <Stack direction="row" spacing={1} alignItems="flex-end">
+    <Stack
+      direction={{ xs: "column", sm: "row" }}
+      spacing={1}
+      alignItems={{ xs: "stretch", sm: "flex-end" }}
+    >
       <Controller
         name={`groups.${index}.name`}
         control={control}
@@ -50,12 +54,27 @@ const MonitorGroupFields: FunctionComponent<MonitorGroupFieldsProps> = ({
           </FormControl>
         )}
       />
+      <Controller
+        name={`groups.${index}.container`}
+        control={control}
+        render={({ field }) => (
+          <FormControl sx={{ flexGrow: 1 }}>
+            <FormLabel>Container / Region</FormLabel>
+            <Input
+              {...field}
+              value={field.value || ""}
+              placeholder="e.g. US-East"
+            />
+          </FormControl>
+        )}
+      />
       <Tooltip title="Remove group">
         <IconButton
           variant="plain"
           color="danger"
           aria-label="Remove group"
           onClick={onRemove}
+          sx={{ alignSelf: { xs: "flex-end", sm: "auto" } }}
         >
           <IoTrashOutline />
         </IconButton>

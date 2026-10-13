@@ -3,6 +3,7 @@ import client from "../client";
 interface StatusPageGroup {
   id?: number;
   name: string;
+  container?: string;
   order: number;
   monitorIds: number[];
 }

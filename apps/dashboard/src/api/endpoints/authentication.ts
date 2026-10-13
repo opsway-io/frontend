@@ -117,3 +117,12 @@ export async function logout(): Promise<void> {
     },
   );
 }
+
+export interface IGetMeResponse {
+  user: IGetUserResponse;
+}
+
+export async function getMe(): Promise<IGetMeResponse> {
+  const response = await client.get<IGetMeResponse>("/v1/auth/me");
+  return response.data;
+}

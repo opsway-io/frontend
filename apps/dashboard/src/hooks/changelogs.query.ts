@@ -1,65 +1,68 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, keepPreviousData } from "@tanstack/react-query";
 import * as ChangelogsAPI from "../api/endpoints/changelogs";
 import useAuthenticationStore from "./authentication.store";
-import { getQueryClient } from "./client.query";
+import { getQueryClient } from "./queryClient";
 
 const queryClient = getQueryClient();
 
 export const useCreateChangelog = () => {
   const teamId = useAuthenticationStore((state) => state.currentTeamId);
 
-  return useMutation(
-    (name: string) => {
+  return useMutation({
+    mutationFn: (name: string) => {
       if (!teamId) {
         return Promise.resolve(null);
       }
 
       return ChangelogsAPI.createChangelog(teamId, name);
     },
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries(["teams", teamId, "changelogs"]);
-      },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["teams", teamId, "changelogs"],
+      });
     },
-  );
+  });
 };
 
 export const useDeleteChangelog = () => {
   const teamId = useAuthenticationStore((state) => state.currentTeamId);
 
-  return useMutation(
-    (changelogId: number) => {
+  return useMutation({
+    mutationFn: (changelogId: number) => {
       if (!teamId) {
         return Promise.resolve(null);
       }
 
       return ChangelogsAPI.deleteChangelog(teamId, changelogId);
     },
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries(["teams", teamId, "changelogs"]);
-      },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["teams", teamId, "changelogs"],
+      });
     },
-  );
+  });
 };
 
 export const useChangelog = (changelogId: number) => {
   const teamId = useAuthenticationStore((state) => state.currentTeamId);
 
-  return useQuery(["teams", teamId, "changelogs", changelogId], () => {
-    if (!teamId) {
-      return Promise.resolve(null);
-    }
+  return useQuery({
+    queryKey: ["teams", teamId, "changelogs", changelogId],
+    queryFn: () => {
+      if (!teamId) {
+        return Promise.resolve(null);
+      }
 
-    return ChangelogsAPI.getChangelog(teamId, changelogId);
+      return ChangelogsAPI.getChangelog(teamId, changelogId);
+    },
   });
 };
 
 export const useChangelogs = (offset = 0, limit = 10, query?: string) => {
   const teamId = useAuthenticationStore((state) => state.currentTeamId);
 
-  return useQuery(
-    [
+  return useQuery({
+    queryKey: [
       "teams",
       teamId,
       "changelogs",
@@ -69,17 +72,15 @@ export const useChangelogs = (offset = 0, limit = 10, query?: string) => {
         query,
       },
     ],
-    () => {
+    queryFn: () => {
       if (!teamId) {
         return Promise.resolve(null);
       }
 
       return ChangelogsAPI.getChangelogs(teamId, offset, limit, query);
     },
-    {
-      keepPreviousData: true,
-    },
-  );
+    placeholderData: keepPreviousData,
+  });
 };
 
 export const useChangelogEntries = (
@@ -90,8 +91,8 @@ export const useChangelogEntries = (
 ) => {
   const teamId = useAuthenticationStore((state) => state.currentTeamId);
 
-  return useQuery(
-    [
+  return useQuery({
+    queryKey: [
       "teams",
       teamId,
       "changelogs",
@@ -103,7 +104,7 @@ export const useChangelogEntries = (
         query,
       },
     ],
-    () => {
+    queryFn: () => {
       if (!teamId) {
         return Promise.resolve(null);
       }
@@ -116,50 +117,42 @@ export const useChangelogEntries = (
         query,
       );
     },
-    {
-      keepPreviousData: true,
-    },
-  );
+    placeholderData: keepPreviousData,
+  });
 };
 
 export const useChangelogEntry = (changelogId: number, entryId: number) => {
   const teamId = useAuthenticationStore((state) => state.currentTeamId);
 
-  return useQuery(
-    ["teams", teamId, "changelogs", changelogId, "entries", entryId],
-    () => {
+  return useQuery({
+    queryKey: ["teams", teamId, "changelogs", changelogId, "entries", entryId],
+    queryFn: () => {
       if (!teamId) {
         return Promise.resolve(null);
       }
 
       return ChangelogsAPI.getChangelogEntry(teamId, changelogId, entryId);
     },
-  );
+  });
 };
 
 export const useCreateChangelogEntry = (changelogId: number) => {
   const teamId = useAuthenticationStore((state) => state.currentTeamId);
 
-  return useMutation(
-    (data: ChangelogsAPI.IPostChangelogEntryRequest) => {
+  return useMutation({
+    mutationFn: (data: ChangelogsAPI.IPostChangelogEntryRequest) => {
       if (!teamId) {
         return Promise.reject(new Error("No team selected"));
       }
 
       return ChangelogsAPI.createChangelogEntry(teamId, changelogId, data);
     },
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries([
-          "teams",
-          teamId,
-          "changelogs",
-          changelogId,
-          "entries",
-        ]);
-      },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["teams", teamId, "changelogs", changelogId, "entries"],
+      });
     },
-  );
+  });
 };
 
 export const useUpdateChangelogEntry = (
@@ -168,8 +161,8 @@ export const useUpdateChangelogEntry = (
 ) => {
   const teamId = useAuthenticationStore((state) => state.currentTeamId);
 
-  return useMutation(
-    (data: ChangelogsAPI.IPutChangelogEntryRequest) => {
+  return useMutation({
+    mutationFn: (data: ChangelogsAPI.IPutChangelogEntryRequest) => {
       if (!teamId) {
         return Promise.reject(new Error("No team selected"));
       }
@@ -181,41 +174,29 @@ export const useUpdateChangelogEntry = (
         data,
       );
     },
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries([
-          "teams",
-          teamId,
-          "changelogs",
-          changelogId,
-          "entries",
-        ]);
-      },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["teams", teamId, "changelogs", changelogId, "entries"],
+      });
     },
-  );
+  });
 };
 
 export const useDeleteChangelogEntry = (changelogId: number) => {
   const teamId = useAuthenticationStore((state) => state.currentTeamId);
 
-  return useMutation(
-    (entryId: number) => {
+  return useMutation({
+    mutationFn: (entryId: number) => {
       if (!teamId) {
         return Promise.resolve(null);
       }
 
       return ChangelogsAPI.deleteChangelogEntry(teamId, changelogId, entryId);
     },
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries([
-          "teams",
-          teamId,
-          "changelogs",
-          changelogId,
-          "entries",
-        ]);
-      },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["teams", teamId, "changelogs", changelogId, "entries"],
+      });
     },
-  );
+  });
 };

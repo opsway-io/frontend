@@ -1,21 +1,11 @@
-@import url("@fontsource/inter");
 
-html, body {
-  background-color: #1d2128;
-  font-family: "Inter", sans-serif;
+/* Colors, background and base typography come from the Joy CssBaseline/theme. */
+html,
+body {
   margin: 0;
   padding: 0;
 }
 
-h1 {
-  font-size: 32px !important;
-}
-
-a {
-  color: #79ab5d;
-  text-decoration: none;
-
-  &:hover {
-    text-decoration: underline;
-  }
+html {
+  scroll-behavior: smooth;
 }

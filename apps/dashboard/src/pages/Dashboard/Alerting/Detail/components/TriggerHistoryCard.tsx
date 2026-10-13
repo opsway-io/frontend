@@ -1,37 +1,38 @@
-import {
-  Box,
-  Card,
-  CardContent,
-  CardHeader,
-  Chip,
-  Stack,
-  Typography,
-} from "@mui/material";
-import { FunctionComponent } from "react";
+import { Box, Card, Chip, Link as JoyLink, Stack, Typography } from "@mui/joy";
+import { FunctionComponent, ReactNode } from "react";
 import moment from "moment";
 import { Link } from "react-router-dom";
 import { useAlertRuleTriggers } from "../../../../../hooks/alerting.query";
-import Placeholder from "../../../../../components/Placeholder";
+import Placeholder from "../../../../../components/Placeholder/Placeholder";
+import { Timeline, TimelineItem } from "../../../../../components/Timeline";
+import { parseChannels } from "../../alertRules";
 
 interface TriggerHistoryCardProps {
   ruleId: number;
 }
 
+const CardHeader: FunctionComponent<{ subheader: ReactNode }> = ({
+  subheader,
+}) => (
+  <Box>
+    <Typography level="title-md">Trigger History</Typography>
+    <Typography level="body-sm" textColor="text.secondary">
+      {subheader}
+    </Typography>
+  </Box>
+);
+
 const TriggerHistoryCard: FunctionComponent<TriggerHistoryCardProps> = ({
   ruleId,
 }) => {
-  const { data: triggersData, isLoading } = useAlertRuleTriggers(ruleId);
+  const { data: triggersData, isPending: isLoading } =
+    useAlertRuleTriggers(ruleId);
 
   if (isLoading) {
     return (
-      <Card variant="outlined">
-        <CardHeader
-          title="Trigger History"
-          subheader="Recent times this rule sent alerts"
-        />
-        <CardContent>
-          <Placeholder />
-        </CardContent>
+      <Card>
+        <CardHeader subheader="Recent times this rule sent alerts" />
+        <Placeholder />
       </Card>
     );
   }
@@ -40,77 +41,66 @@ const TriggerHistoryCard: FunctionComponent<TriggerHistoryCardProps> = ({
   const totalOccurrences = triggersData?.totalCount || triggers.length;
 
   return (
-    <Card variant="outlined">
+    <Card>
       <CardHeader
-        title="Trigger History"
         subheader={`Recent times this rule sent alerts (${totalOccurrences} occurrence${totalOccurrences === 1 ? "" : "s"})`}
       />
-      <CardContent>
-        {triggers.length === 0 ? (
-          <Typography variant="body2" color="text.secondary" align="center">
-            No triggers found for this rule.
-          </Typography>
-        ) : (
-          <Stack spacing={2}>
+      {triggers.length === 0 ? (
+        <Typography
+          level="body-sm"
+          textColor="text.tertiary"
+          textAlign="center"
+          py={2}
+        >
+          No triggers found for this rule.
+        </Typography>
+      ) : (
+        <Box sx={{ pt: 1 }}>
+          <Timeline>
             {triggers.map((trigger) => {
-              let channels = [];
-              try {
-                channels = JSON.parse(trigger.channels);
-              } catch (e) {
-                // ignore
-              }
+              const channels = parseChannels(trigger.channels);
 
               return (
-                <Box
+                <TimelineItem
                   key={trigger.id}
-                  sx={{
-                    p: 2,
-                    border: 1,
-                    borderColor: "divider",
-                    borderRadius: 1,
-                  }}
+                  color={trigger.incidentId ? "danger" : "neutral"}
+                  title={
+                    trigger.incidentId ? (
+                      <JoyLink
+                        component={Link}
+                        to={`/incidents/incident/${trigger.incidentId}`}
+                        level="title-sm"
+                      >
+                        View Incident #{trigger.incidentId}
+                      </JoyLink>
+                    ) : (
+                      "Triggered without incident"
+                    )
+                  }
+                  timestamp={`Triggered on ${moment(trigger.createdAt).format(
+                    "MMMM Do YYYY, h:mm:ss a",
+                  )}`}
                 >
-                  <Stack
-                    direction="row"
-                    justifyContent="space-between"
-                    alignItems="center"
-                  >
-                    <Stack spacing={1}>
-                      <Typography variant="subtitle2">
-                        {trigger.incidentId ? (
-                          <Link
-                            to={`/incidents/incident/${trigger.incidentId}`}
-                          >
-                            View Incident #{trigger.incidentId}
-                          </Link>
-                        ) : (
-                          "Triggered without incident"
-                        )}
-                      </Typography>
-                      <Typography variant="body2" color="text.secondary">
-                        Triggered on{" "}
-                        {moment(trigger.createdAt).format(
-                          "MMMM Do YYYY, h:mm:ss a",
-                        )}
-                      </Typography>
-                    </Stack>
-                    <Stack direction="row" spacing={1}>
-                      {channels.map((channel: string) => (
-                        <Chip
-                          key={channel}
-                          label={channel}
-                          size="small"
-                          variant="outlined"
-                        />
+                  {channels.length > 0 && (
+                    <Stack
+                      direction="row"
+                      spacing={0.75}
+                      flexWrap="wrap"
+                      useFlexGap
+                    >
+                      {channels.map((channel) => (
+                        <Chip key={channel} variant="outlined" color="neutral">
+                          {channel}
+                        </Chip>
                       ))}
                     </Stack>
-                  </Stack>
-                </Box>
+                  )}
+                </TimelineItem>
               );
             })}
-          </Stack>
-        )}
-      </CardContent>
+          </Timeline>
+        </Box>
+      )}
     </Card>
   );
 };

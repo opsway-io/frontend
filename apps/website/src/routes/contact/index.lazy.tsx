@@ -1,4 +1,4 @@
-import { Container, Stack, Typography } from "@mui/material";
+import { Container, Typography } from "@mui/joy";
 import { createLazyFileRoute } from "@tanstack/react-router";
 import { Helmet } from "react-helmet";
 
@@ -14,10 +14,18 @@ function Index() {
         <meta name="keywords" content="contact,support" />
       </Helmet>
 
-      <Container maxWidth="xl">
-        <Stack spacing={2}>
-          <Typography variant="h1">Contact</Typography>
-        </Stack>
+      <Container maxWidth="md" sx={{ pt: { xs: 8, md: 12 } }}>
+        <Typography
+          level="h1"
+          sx={{
+            maxWidth: 760,
+            mx: "auto",
+            fontSize: { xs: "2rem", md: "2.5rem" },
+            letterSpacing: "-0.02em",
+          }}
+        >
+          Contact
+        </Typography>
       </Container>
     </>
   );

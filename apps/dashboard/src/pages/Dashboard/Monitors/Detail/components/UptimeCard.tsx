@@ -1,37 +1,21 @@
-import { Card, CardContent, Skeleton, Typography } from "@mui/material";
-import { FunctionComponent, useEffect, useState } from "react";
+import { FunctionComponent } from "react";
 import { useMonitor } from "../../../../../hooks/monitors.query";
-import Conditional from "../../../../../components/Conditional";
+import StatCard from "./StatCard";
 
 interface UptimeCardProps {
   monitorId: number;
 }
 
 const UptimeCard: FunctionComponent<UptimeCardProps> = ({ monitorId }) => {
-  const { data, isLoading } = useMonitor(monitorId);
-  const [uptime, setUptime] = useState<string>("None");
-
-  useEffect(() => {
-    if (!data?.stats.uptimePercentage) {
-      return;
-    }
-
-    setUptime(`${Number(data.stats.uptimePercentage).toFixed(2)}%`);
-  }, [monitorId, data]);
+  const { data, isPending } = useMonitor(monitorId);
+  const uptime = data?.stats.uptimePercentage;
 
   return (
-    <Card sx={{ flex: 1 }}>
-      <CardContent>
-        <Typography sx={{ opacity: 0.5 }}>Uptime (30-day)</Typography>
-        <Conditional value={isLoading}>
-          <Skeleton variant="text" width={100} height={28} />
-        </Conditional>
-
-        <Conditional value={!isLoading}>
-          <Typography fontSize="1.25rem">{uptime}</Typography>
-        </Conditional>
-      </CardContent>
-    </Card>
+    <StatCard
+      label="Uptime (30-day)"
+      value={uptime ? `${Number(uptime).toFixed(2)}%` : "None"}
+      loading={isPending}
+    />
   );
 };
 

@@ -1,6 +1,10 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import { BrowserRouter } from "react-router-dom";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ThemeProvider } from "@mui/joy/styles";
+import { JoyTheme } from "@opsway/ui";
+import { ReactNode } from "react";
 import MonitorsDataGrid from "./MonitorsDataGrid";
 import { MonitorWithStats } from "../../../../api/endpoints/monitors";
 
@@ -14,6 +18,7 @@ const mockMonitors: MonitorWithStats[] = [
     teamID: 1,
     name: "Production API",
     state: "ACTIVE",
+    steps: [{ url: "https://api.example.com" }] as any,
     settings: {
       url: "https://api.example.com",
       frequencySeconds: 60,
@@ -27,21 +32,29 @@ const mockMonitors: MonitorWithStats[] = [
   } as any,
 ];
 
+const Providers = ({ children }: { children: ReactNode }) => (
+  <QueryClientProvider client={new QueryClient()}>
+    <ThemeProvider theme={JoyTheme}>
+      <BrowserRouter>{children}</BrowserRouter>
+    </ThemeProvider>
+  </QueryClientProvider>
+);
+
 describe("MonitorsDataGrid", () => {
   it("renders correctly with empty data", () => {
     render(
-      <BrowserRouter>
+      <Providers>
         <MonitorsDataGrid monitors={[]} />
-      </BrowserRouter>,
+      </Providers>,
     );
     expect(screen.getByText("No monitors")).toBeInTheDocument();
   });
 
   it("renders monitor items properly", () => {
     render(
-      <BrowserRouter>
+      <Providers>
         <MonitorsDataGrid monitors={mockMonitors} />
-      </BrowserRouter>,
+      </Providers>,
     );
     expect(screen.getByText("Production API")).toBeInTheDocument();
     expect(screen.getByText("api.example.com")).toBeInTheDocument();

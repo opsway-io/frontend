@@ -6,7 +6,7 @@ function stripProtocolAndPath(url?: string): string {
   try {
     const u = new URL(url);
     return `${u.host}`;
-  } catch (e) {
+  } catch {
     return url;
   }
 }

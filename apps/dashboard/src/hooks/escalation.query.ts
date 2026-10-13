@@ -5,36 +5,34 @@ import useAuthenticationStore from "./authentication.store";
 export const useEscalationPolicy = () => {
   const teamId = useAuthenticationStore((state) => state.currentTeamId);
 
-  return useQuery(
-    ["team", teamId, "escalationPolicy"],
-    () => {
+  return useQuery({
+    queryKey: ["teams", teamId, "escalationPolicy"],
+    queryFn: () => {
       if (!teamId) {
         return Promise.resolve(null);
       }
 
       return TeamsAPI.getEscalationPolicy(teamId);
     },
-    {
-      enabled: !!teamId,
-    },
-  );
+    enabled: !!teamId,
+  });
 };
 
 export const useUpdateEscalationPolicy = () => {
   const queryClient = useQueryClient();
   const teamId = useAuthenticationStore((state) => state.currentTeamId);
 
-  return useMutation(
-    (policy: TeamsAPI.EscalationPolicy) => {
+  return useMutation({
+    mutationFn: (policy: TeamsAPI.EscalationPolicy) => {
       if (!teamId) {
         return Promise.reject(new Error("Team not found"));
       }
       return TeamsAPI.putEscalationPolicy(teamId, policy);
     },
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries(["team", teamId, "escalationPolicy"]);
-      },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["teams", teamId, "escalationPolicy"],
+      });
     },
-  );
+  });
 };

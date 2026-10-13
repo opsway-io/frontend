@@ -1,17 +1,44 @@
-import { DataGridProps, GridColDef, GridRowsProp } from "@mui/x-data-grid";
-import { FunctionComponent } from "react";
+import { Button, Chip } from "@mui/joy";
 import moment from "moment";
+import { FunctionComponent } from "react";
 import { Link } from "react-router-dom";
-import { Chip, Button } from "@mui/material";
-import DataGrid from "../../../../components/DataGrid";
 import { Incident } from "../../../../api/endpoints/incidents";
+import DataGrid, {
+  DataGridProps,
+  GridColDef,
+} from "../../../../components/DataGrid/DataGrid";
 import { useMonitors } from "../../../../hooks/monitors.query";
 
-interface IncidentsDataGridProps
-  extends Omit<DataGridProps, "columns" | "rows"> {
+interface IncidentsDataGridProps extends Omit<
+  DataGridProps<Incident>,
+  "columns" | "rows"
+> {
   incidents?: Incident[];
+  /** Called by "View details" instead of navigating to the incident page. */
   onViewClick?: (incidentId: number) => void;
 }
+
+const statusLabel = (incident: Incident) => {
+  if (!incident.resolved) return "Active";
+  return incident.resolvedBy
+    ? `Resolved by ${incident.resolvedBy.displayName}`
+    : "Autoresolved";
+};
+
+const acknowledgedLabel = (incident: Incident) => {
+  if (!incident.acknowledged) return "No";
+  if (incident.acknowledgedBy)
+    return `By ${incident.acknowledgedBy.displayName}`;
+  if (incident.acknowledgedByIntegration)
+    return `By ${incident.acknowledgedByIntegration}`;
+  return "Yes";
+};
+
+const durationLabel = (incident: Incident) => {
+  if (!incident.resolved) return "Ongoing";
+  const end = moment(incident.resolvedAt ?? incident.updatedAt);
+  return moment.duration(end.diff(moment(incident.createdAt))).humanize();
+};
 
 const IncidentsDataGrid: FunctionComponent<IncidentsDataGridProps> = ({
   incidents,
@@ -19,145 +46,97 @@ const IncidentsDataGrid: FunctionComponent<IncidentsDataGridProps> = ({
   ...rest
 }) => {
   const { data: monitorsData } = useMonitors();
-  const monitors = monitorsData?.monitors || [];
+  const monitors = monitorsData?.monitors ?? [];
 
-  const columns: GridColDef[] = [
+  const columns: GridColDef<Incident>[] = [
     {
       field: "monitor",
       headerName: "Monitor",
-      minWidth: 150,
+      minWidth: 140,
       flex: 1,
-      renderCell: (params) => {
-        const monitorId = params.row.monitorId;
-        const monitor = monitors.find((m) => m.id === monitorId);
-        return monitor ? monitor.name : "Unknown Monitor";
-      },
+      renderCell: ({ row }) =>
+        monitors.find((monitor) => monitor.id === row.monitorId)?.name ??
+        "Unknown Monitor",
     },
     {
       field: "title",
       headerName: "Title",
-      minWidth: 200,
+      minWidth: 180,
       flex: 2,
     },
     {
       field: "status",
       headerName: "Status",
-      minWidth: 200,
-      renderCell: (params) => {
-        const resolved = params.row.resolved;
-        const resolvedBy = params.row.resolvedBy;
-
-        let label = "Active";
-        if (resolved) {
-          label = resolvedBy
-            ? `Resolved by ${resolvedBy.displayName}`
-            : "Autoresolved";
-        }
-
-        return (
-          <Chip
-            label={label}
-            color={resolved ? "success" : "error"}
-            size="small"
-            variant="outlined"
-          />
-        );
-      },
+      minWidth: 110,
+      renderCell: ({ row }) => (
+        <Chip variant="soft" color={row.resolved ? "success" : "danger"}>
+          {statusLabel(row)}
+        </Chip>
+      ),
     },
     {
       field: "acknowledged",
       headerName: "Acknowledged",
-      minWidth: 200,
-      renderCell: (params) => {
-        const acknowledged = params.row.acknowledged;
-        const acknowledgedBy = params.row.acknowledgedBy;
-        const acknowledgedByIntegration = params.row.acknowledgedByIntegration;
-
-        let label = "No";
-        if (acknowledged) {
-          if (acknowledgedBy) {
-            label = `By ${acknowledgedBy.displayName}`;
-          } else if (acknowledgedByIntegration) {
-            label = `By ${acknowledgedByIntegration}`;
-          } else {
-            label = "Yes";
-          }
-        }
-
-        return (
-          <Chip
-            label={label}
-            color={acknowledged ? "success" : "warning"}
-            size="small"
-            variant="outlined"
-          />
-        );
-      },
+      minWidth: 130,
+      renderCell: ({ row }) => (
+        <Chip variant="soft" color={row.acknowledged ? "warning" : "neutral"}>
+          {acknowledgedLabel(row)}
+        </Chip>
+      ),
     },
     {
       field: "createdAt",
       headerName: "Started",
-      minWidth: 180,
+      minWidth: 160,
       flex: 1,
-      valueFormatter: (params) => moment(params.value).format("LLL"),
+      renderCell: ({ value }) => moment(value).format("LLL"),
     },
     {
       field: "duration",
       headerName: "Duration",
-      minWidth: 150,
+      minWidth: 110,
       flex: 1,
-      valueGetter: (params) => {
-        if (!params.row.resolved) return "Ongoing";
-        const start = moment(params.row.createdAt);
-        const end = moment(params.row.updatedAt); // assuming updatedAt is roughly resolved time if resolved
-        return moment.duration(end.diff(start)).humanize();
-      },
+      valueGetter: ({ row }) => durationLabel(row),
     },
     {
       field: "actions",
-      headerName: "Actions",
+      headerName: "",
       minWidth: 120,
+      align: "right",
       sortable: false,
-      renderCell: (params) => {
-        if (onViewClick) {
-          return (
-            <Button size="small" onClick={() => onViewClick(params.row.id)}>
-              View Details
-            </Button>
-          );
-        }
-
-        return (
+      renderCell: ({ row }) =>
+        onViewClick ? (
           <Button
-            size="small"
-            component={Link}
-            to={`/incidents/incident/${params.row.id}`}
+            variant="outlined"
+            color="neutral"
+            sx={{ whiteSpace: "nowrap" }}
+            onClick={(e) => {
+              e.stopPropagation();
+              onViewClick(Number(row.id));
+            }}
           >
-            View Details
+            View details
           </Button>
-        );
-      },
+        ) : (
+          <Button
+            variant="outlined"
+            color="neutral"
+            sx={{ whiteSpace: "nowrap" }}
+            onClick={(e) => e.stopPropagation()}
+            component={Link}
+            to={`/incidents/incident/${row.id}`}
+          >
+            View details
+          </Button>
+        ),
     },
   ];
 
-  const rows: GridRowsProp =
-    incidents?.map((incident) => ({
-      id: incident.id,
-      monitorId: incident.monitorId,
-      title: incident.title,
-      resolved: incident.resolved,
-      resolvedBy: incident.resolvedBy,
-      acknowledged: incident.acknowledged,
-      acknowledgedBy: incident.acknowledgedBy,
-      createdAt: incident.createdAt,
-      updatedAt: incident.updatedAt,
-    })) || [];
-
   return (
-    <DataGrid
+    <DataGrid<Incident>
       autoHeight
       columns={columns}
-      rows={rows}
+      rows={incidents ?? []}
       disableRowSelectionOnClick
       initialState={{
         sorting: {

@@ -1,50 +1,47 @@
 import {
-  DialogTitle,
-  IconButton,
-  MenuItem,
+  Button,
+  FormControl,
+  FormLabel,
+  Input,
+  Option,
+  Select,
   Stack,
-  TextField,
   Typography,
-} from "@mui/material";
-import { FunctionComponent, useState } from "react";
-import CloseIcon from "@mui/icons-material/Close";
-import { useCurrentTeam } from "../../../../hooks/team.query";
-import { Controller, useForm } from "react-hook-form";
+} from "@mui/joy";
 import { validate as validateEmail } from "email-validator";
-
-import * as TeamsAPI from "../../../../api/endpoints/teams";
-import { enqueueSnackbar } from "notistack";
-import { LoadingButton } from "@mui/lab";
+import { FunctionComponent } from "react";
+import { Controller, useForm } from "react-hook-form";
 import {
   Dialog,
   DialogActions,
   DialogContent,
-} from "../../../../components/Dialog";
-import UpgradePromptModal from "../../../../components/UpgradePromptModal";
-import { isAxiosError } from "axios";
+} from "../../../../components/Dialog/Dialog";
+import UpgradePromptModal from "../../../../components/UpgradePromptModal/UpgradePromptModal";
+import { ASSIGNABLE_ROLES } from "../teamRoles";
+import useSendInvitation from "../useSendInvitation";
 
 interface InvitationDialogProps {
   open: boolean;
   onClose?: () => void;
 }
 
-const InvitationDialog: FunctionComponent<InvitationDialogProps> = (props) => {
-  const { data: team } = useCurrentTeam();
+interface InvitationFormValues {
+  email: string;
+  role: string;
+}
 
-  const [loading, setLoading] = useState(false);
-  const [openUpgradeModal, setOpenUpgradeModal] = useState(false);
+const InvitationDialog: FunctionComponent<InvitationDialogProps> = (props) => {
+  const { sendInvitation, isPending, upgradeRequired, closeUpgradePrompt } =
+    useSendInvitation();
 
   const {
     register,
     formState: { isValid },
-    getValues,
+    handleSubmit,
     control,
     reset,
-  } = useForm<{ email: string; role: string }>({
-    defaultValues: {
-      email: "",
-      role: "MEMBER",
-    },
+  } = useForm<InvitationFormValues>({
+    defaultValues: { email: "", role: "MEMBER" },
   });
 
   const onClose = () => {
@@ -52,100 +49,84 @@ const InvitationDialog: FunctionComponent<InvitationDialogProps> = (props) => {
     reset();
   };
 
-  const onSubmit = async () => {
-    if (!team) return;
+  const onSubmit = handleSubmit(async ({ email, role }) => {
+    const result = await sendInvitation(email, role);
 
-    const { email, role } = getValues();
-
-    try {
-      setLoading(true);
-
-      await TeamsAPI.postTeamUserInvite(team?.id, {
-        email,
-        role,
-      });
-
-      enqueueSnackbar(`Invitation sent to ${email}`, {
-        variant: "success",
-      });
-
-      reset();
-    } catch (error: any) {
-      if (isAxiosError(error) && error.response?.status === 402) {
-        props.onClose?.();
-        setOpenUpgradeModal(true);
-        return;
-      }
-
-      if (error?.response?.status === 409) {
-        enqueueSnackbar(`User ${email} is already a member of this team`, {
-          variant: "info",
-        });
-        return;
-      }
-
-      enqueueSnackbar("Failed to send invitation", {
-        variant: "error",
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
+    if (result === "sent") reset();
+    if (result === "upgrade-required") props.onClose?.();
+  });
 
   return (
     <>
       <UpgradePromptModal
-        open={openUpgradeModal}
-        onClose={() => setOpenUpgradeModal(false)}
+        open={upgradeRequired}
+        onClose={closeUpgradePrompt}
         featureName="Team Members"
       />
-      <Dialog open={props.open} onClose={onClose} title="Invite a member">
-        <DialogContent sx={{ minWidth: 400 }}>
-          <Stack spacing={2}>
-            <TextField
-              placeholder="foo@bar.com"
-              fullWidth
-              disabled={loading}
-              label="Email"
-              {...register("email", {
-                required: true,
-                validate: (value) => {
-                  return validateEmail(value);
-                },
-              })}
-            />
+      <Dialog
+        open={props.open}
+        onClose={onClose}
+        title="Invite a member"
+        maxWidth="sm"
+      >
+        <form onSubmit={onSubmit} style={{ display: "contents" }}>
+          <DialogContent>
+            <Stack spacing={2}>
+              <FormControl disabled={isPending}>
+                <FormLabel>Email</FormLabel>
+                <Input
+                  placeholder="foo@bar.com"
+                  type="email"
+                  // oxlint-disable-next-line jsx-a11y/no-autofocus -- first field of a dialog the user just opened
+                  autoFocus
+                  slotProps={{
+                    input: register("email", {
+                      required: true,
+                      validate: (value) => validateEmail(value),
+                    }),
+                  }}
+                />
+              </FormControl>
 
-            <Controller
-              name="role"
-              control={control}
-              rules={{ required: true }}
-              render={({ field }) => (
-                <TextField select label="Role" {...field}>
-                  <MenuItem value="ADMIN">Admin</MenuItem>
-                  <MenuItem value="MEMBER">Member</MenuItem>
-                </TextField>
-              )}
-            />
+              <Controller
+                name="role"
+                control={control}
+                rules={{ required: true }}
+                render={({ field }) => (
+                  <FormControl disabled={isPending}>
+                    <FormLabel>Role</FormLabel>
+                    <Select
+                      value={field.value}
+                      onChange={(_, value) => field.onChange(value)}
+                      onBlur={field.onBlur}
+                    >
+                      {ASSIGNABLE_ROLES.map((role) => (
+                        <Option key={role.value} value={role.value}>
+                          {role.label}
+                        </Option>
+                      ))}
+                    </Select>
+                  </FormControl>
+                )}
+              />
 
-            <Typography variant="body2" color="textSecondary">
-              Members can see everything in this team, but can't edit or create
-              anything. Admins can do everything except manage billing and
-              delete the team.
-            </Typography>
-          </Stack>
-        </DialogContent>
+              <Typography level="body-sm" textColor="text.secondary">
+                Members can see everything in this team, but can't edit or
+                create anything. Admins can do everything except manage billing
+                and delete the team.
+              </Typography>
+            </Stack>
+          </DialogContent>
 
-        <DialogActions>
-          <LoadingButton
-            variant="contained"
-            color="success"
-            disabled={!isValid}
-            onClick={onSubmit}
-            loading={loading}
-          >
-            Send invite
-          </LoadingButton>
-        </DialogActions>
+          <DialogActions>
+            <Button variant="plain" color="neutral" onClick={onClose}>
+              Cancel
+            </Button>
+            <Button type="submit" disabled={!isValid} loading={isPending}>
+              Send invite
+            </Button>
+          </DialogActions>
+        </form>
       </Dialog>
     </>
   );

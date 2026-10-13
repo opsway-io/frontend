@@ -1,114 +1,128 @@
-import { LoadingButton } from "@mui/lab";
-import { Box, DialogProps, Stack, Typography } from "@mui/material";
-import { useSnackbar } from "notistack";
+import {
+  Box,
+  Button,
+  Radio,
+  RadioGroup,
+  Sheet,
+  Stack,
+  Typography,
+} from "@mui/joy";
+import { enqueueSnackbar } from "notistack";
 import { FunctionComponent, useState } from "react";
 import {
   IGetTeamResponse,
   IGetTeamUserResponse,
 } from "../../../../api/endpoints/teams";
+import Avatar from "../../../../components/Avatar/Avatar";
 import {
   Dialog,
   DialogActions,
   DialogContent,
-} from "../../../../components/Dialog";
-import { RadioCard, RadioCardGroup } from "../../../../components/RadioCard";
+} from "../../../../components/Dialog/Dialog";
 import { useMutateTeamUser } from "../../../../hooks/team.query";
-import Avatar from "../../../../components/Avatar";
+import { ASSIGNABLE_ROLES } from "../teamRoles";
 
-interface ChangeRoleModalProps extends DialogProps {
+interface ChangeRoleDialogProps {
+  open: boolean;
+  onClose?: () => void;
   user: IGetTeamUserResponse;
   team: IGetTeamResponse;
 }
 
-const ChangeRoleModal: FunctionComponent<ChangeRoleModalProps> = (props) => {
-  const { enqueueSnackbar } = useSnackbar();
-  const { mutate, isLoading } = useMutateTeamUser(props.team.id, props.user.id);
+const ChangeRoleDialog: FunctionComponent<ChangeRoleDialogProps> = ({
+  open,
+  onClose,
+  user,
+  team,
+}) => {
+  const { mutate, isPending } = useMutateTeamUser(team.id, user.id);
+  const [selectedRole, setSelectedRole] = useState(user.role);
+  const userName = user.displayName || user.name;
 
-  const [selectedRole, setSelectedRole] = useState(props.user.role);
-
-  const changeRole = (role: string) => {
+  const changeRole = () => {
     mutate(
+      { role: selectedRole },
       {
-        role,
-      },
-      {
-        onSuccess: () => {
-          props.onClose?.({}, "escapeKeyDown");
-        },
+        onSuccess: () => onClose?.(),
         onError: () => {
-          enqueueSnackbar("Failed to change role", {
-            variant: "error",
-          });
+          enqueueSnackbar("Failed to change role", { variant: "error" });
         },
       },
     );
   };
 
   return (
-    <Dialog title={"Change role"} {...props}>
-      <DialogContent sx={{ minWidth: 400 }}>
-        <Stack
-          direction="row"
-          sx={{
-            paddingBottom: 2,
-          }}
-        >
-          <Avatar
-            src={props.user.avatarUrl}
-            name={props.user.displayName || props.user.name}
-            sx={{
-              width: 64,
-              height: 64,
-              marginRight: 2,
-            }}
-          />
-          <Box
-            sx={{
-              flex: 1,
-              justifyContent: "center",
-              display: "flex",
-              flexDirection: "column",
-            }}
-          >
-            <Typography variant="body1" fontWeight={600}>
-              {props.user.displayName || props.user.name}
+    <Dialog
+      title="Change role"
+      open={open}
+      onClose={() => onClose?.()}
+      maxWidth="sm"
+    >
+      <DialogContent>
+        <Stack direction="row" alignItems="center" spacing={1.5} sx={{ pb: 2 }}>
+          <Avatar src={user.avatarUrl} name={userName} size="lg" />
+          <Box sx={{ minWidth: 0 }}>
+            <Typography level="title-md" noWrap>
+              {userName}
             </Typography>
-            <Typography variant="body2" color="text.secondary">
-              {props.user.email}
+            <Typography level="body-sm" textColor="text.secondary" noWrap>
+              {user.email}
             </Typography>
           </Box>
         </Stack>
 
-        <RadioCardGroup
+        <RadioGroup
           value={selectedRole}
           onChange={(e) => setSelectedRole(e.target.value)}
+          sx={{ gap: 1 }}
         >
-          <RadioCard
-            label="Admin"
-            value="ADMIN"
-            description="Can manage the team, its members and monitors."
-          />
-          <RadioCard
-            label="Member"
-            value="MEMBER"
-            description="Can view but not edit the team and its monitors."
-          />
-        </RadioCardGroup>
+          {ASSIGNABLE_ROLES.map((role) => (
+            <Sheet
+              key={role.value}
+              variant="outlined"
+              sx={{
+                p: 1.5,
+                borderRadius: "md",
+                transition: "border-color 120ms, background-color 120ms",
+                ...(selectedRole === role.value && {
+                  borderColor: "neutral.400",
+                  bgcolor: "background.level1",
+                }),
+              }}
+            >
+              <Radio
+                overlay
+                value={role.value}
+                color="neutral"
+                label={
+                  <Box>
+                    <Typography level="title-sm">{role.label}</Typography>
+                    <Typography level="body-sm" textColor="text.secondary">
+                      {role.description}
+                    </Typography>
+                  </Box>
+                }
+                sx={{ alignItems: "flex-start" }}
+              />
+            </Sheet>
+          ))}
+        </RadioGroup>
       </DialogContent>
 
       <DialogActions>
-        <Stack direction="row" spacing={1}>
-          <LoadingButton
-            onClick={() => changeRole(selectedRole)}
-            color="error"
-            variant="contained"
-          >
-            Change role
-          </LoadingButton>
-        </Stack>
+        <Button variant="plain" color="neutral" onClick={() => onClose?.()}>
+          Cancel
+        </Button>
+        <Button
+          onClick={changeRole}
+          loading={isPending}
+          disabled={selectedRole === user.role}
+        >
+          Change role
+        </Button>
       </DialogActions>
     </Dialog>
   );
 };
 
-export default ChangeRoleModal;
+export default ChangeRoleDialog;

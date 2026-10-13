@@ -18,15 +18,4 @@ function secondsHumanize(seconds: number): string {
   return millisecondsHumanize(seconds * 1000);
 }
 
-function timeAgoHumanize(date: Date | string): string {
-  if (typeof date === "string") {
-    date = new Date(date);
-  }
-
-  const now = new Date();
-  const ms = now.getTime() - date.getTime();
-
-  return millisecondsHumanize(ms) + " ago";
-}
-
-export { millisecondsHumanize, secondsHumanize, timeAgoHumanize };
+export { millisecondsHumanize, secondsHumanize };

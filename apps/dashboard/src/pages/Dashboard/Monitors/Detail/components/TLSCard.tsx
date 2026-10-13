@@ -1,121 +1,66 @@
-import {
-  Card,
-  CardContent,
-  Typography,
-  Skeleton,
-  useTheme,
-} from "@mui/material";
-import { FunctionComponent, useMemo } from "react";
-import {
-  IoAlert,
-  IoAlertCircle,
-  IoLockClosed,
-  IoLockOpen,
-} from "react-icons/io5";
+import { Box } from "@mui/joy";
+import { FunctionComponent } from "react";
+import { IoAlertCircle, IoLockClosed } from "react-icons/io5";
 import { useLatestMonitorCheck } from "../../../../../hooks/monitors.query";
 import { certDaysUntilExpiry } from "../../../../../utilities/tls";
-import Conditional from "../../../../../components/Conditional";
+import StatCard from "./StatCard";
 
 interface TLSCardProps {
-  monitorId?: number;
+  monitorId: number;
 }
 
+const formatExpiry = (days: number) =>
+  `Expires in ${days}${days === 1 ? " day" : " days"}`;
+
 const TLSCard: FunctionComponent<TLSCardProps> = ({ monitorId }) => {
-  const theme = useTheme();
+  const { data, isPending } = useLatestMonitorCheck(monitorId);
 
-  const { data, isLoading } = useLatestMonitorCheck(monitorId);
+  const unknown = data === null;
+  const tlsEnabled = !!data?.tls;
+  const daysUntilExpiry = data?.tls?.notAfter
+    ? certDaysUntilExpiry(data.tls.notAfter)
+    : 0;
+  const expired = !!data?.tls?.notAfter && daysUntilExpiry <= 0;
 
-  const tlsEnabled = useMemo(() => {
-    return !!data?.tls;
-  }, [data?.tls]);
-
-  const expired = useMemo(() => {
-    if (!data?.tls?.notAfter) {
-      return false;
+  const getIndicator = () => {
+    if (isPending || unknown) {
+      return undefined;
     }
-    return certDaysUntilExpiry(data.tls.notAfter) <= 0;
-  }, [data?.tls?.notAfter]);
 
-  const daysUntilCertExpires = useMemo(() => {
-    if (!data?.tls?.notAfter) {
-      return 0;
+    const healthy = tlsEnabled && !expired;
+    return (
+      <Box
+        component={tlsEnabled && expired ? IoAlertCircle : IoLockClosed}
+        sx={{ color: healthy ? "success.400" : "danger.400", flexShrink: 0 }}
+      />
+    );
+  };
+
+  const getValue = () => {
+    if (unknown) {
+      return "Unknown";
     }
-    return certDaysUntilExpiry(data.tls.notAfter);
-  }, [data?.tls?.notAfter]);
+    if (!tlsEnabled) {
+      return "Not enabled";
+    }
+    return daysUntilExpiry <= 0 ? "Expired" : formatExpiry(daysUntilExpiry);
+  };
 
-  const unknown = useMemo(() => {
-    return data === null;
-  }, [data]);
+  const showsIssuer = !unknown && tlsEnabled && !expired && data?.tls?.issuer;
 
   return (
-    <Card sx={{ flex: 1 }}>
-      <CardContent>
-        <Typography
-          sx={{ opacity: 0.5, display: "flex", alignItems: "center", gap: 1 }}
-        >
-          <Conditional value={isLoading}>
-            <Skeleton variant="text" width={100} />
-          </Conditional>
-
-          <Conditional value={!isLoading}>
-            <Conditional value={unknown}>TLS</Conditional>
-
-            <Conditional value={!unknown}>
-              <Conditional value={!tlsEnabled}>
-                TLS
-                <IoLockClosed color={theme.palette.error.main} />
-              </Conditional>
-
-              <Conditional value={tlsEnabled}>
-                <Conditional value={unknown}>TLS</Conditional>
-
-                <Conditional value={!expired}>
-                  TLS
-                  <IoLockClosed color={theme.palette.success.main} />
-                  {data?.tls?.issuer}
-                </Conditional>
-
-                <Conditional value={expired}>
-                  TLS
-                  <IoAlertCircle color={theme.palette.error.main} />
-                </Conditional>
-              </Conditional>
-            </Conditional>
-          </Conditional>
-        </Typography>
-
-        <Conditional value={isLoading}>
-          <Skeleton variant="text" width={200} height={28} />
-        </Conditional>
-
-        <Conditional value={!isLoading}>
-          <Conditional value={unknown}>
-            <Typography fontSize="1.25rem">Unknown</Typography>
-          </Conditional>
-
-          <Conditional value={!unknown}>
-            <Conditional value={!tlsEnabled}>
-              <Typography fontSize="1.25rem">Not enabled</Typography>
-            </Conditional>
-
-            <Conditional value={tlsEnabled}>
-              <Conditional value={daysUntilCertExpires <= 0}>
-                <Typography fontSize="1.25rem" color={theme.palette.error.main}>
-                  Expired
-                </Typography>
-              </Conditional>
-
-              <Conditional value={daysUntilCertExpires > 0}>
-                <Typography fontSize="1.25rem">
-                  {`Expires in ${daysUntilCertExpires}`}
-                  {daysUntilCertExpires == 1 ? " day" : " days"}
-                </Typography>
-              </Conditional>
-            </Conditional>
-          </Conditional>
-        </Conditional>
-      </CardContent>
-    </Card>
+    <StatCard
+      label="TLS"
+      indicator={getIndicator()}
+      loading={isPending}
+      value={getValue()}
+      valueColor={
+        !unknown && tlsEnabled && daysUntilExpiry <= 0
+          ? "danger.400"
+          : undefined
+      }
+      caption={showsIssuer ? data?.tls?.issuer : undefined}
+    />
   );
 };
 

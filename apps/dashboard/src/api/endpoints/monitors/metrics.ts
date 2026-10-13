@@ -4,12 +4,12 @@ import client from "../../client";
   Shared
 */
 
-export interface Metric {
+interface Metric {
   name: string;
   timing: MetricTiming[];
 }
 
-export interface MetricTiming {
+interface MetricTiming {
   timing: number;
   start: string;
 }

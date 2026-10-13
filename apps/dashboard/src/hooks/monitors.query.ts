@@ -1,114 +1,120 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, keepPreviousData } from "@tanstack/react-query";
 import * as MonitorsAPI from "../api/endpoints/monitors";
 import useAuthenticationStore from "./authentication.store";
-import { getQueryClient } from "./client.query";
+import { getQueryClient } from "./queryClient";
 
 const queryClient = getQueryClient();
 
 export const useCreateMonitor = () => {
   const teamId = useAuthenticationStore((state) => state.currentTeamId);
 
-  return useMutation(
-    (data: MonitorsAPI.CreateMonitorRequest) => {
+  return useMutation({
+    mutationFn: (data: MonitorsAPI.CreateMonitorRequest) => {
       if (!teamId) {
         return Promise.resolve(null);
       }
 
       return MonitorsAPI.createMonitor(teamId, data);
     },
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries(["teams", teamId, "monitors"]);
-      },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["teams", teamId, "monitors"],
+      });
     },
-  );
+  });
 };
 
 export const useDeleteMonitor = () => {
   const teamId = useAuthenticationStore((state) => state.currentTeamId);
 
-  return useMutation(
-    (monitorId: number) => {
+  return useMutation({
+    mutationFn: (monitorId: number) => {
       if (!teamId) {
         return Promise.resolve(null);
       }
 
       return MonitorsAPI.deleteMonitor(teamId, monitorId);
     },
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries(["teams", teamId, "monitors"]);
-      },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["teams", teamId, "monitors"],
+      });
     },
-  );
+  });
 };
 
 export const useUpdateMonitor = (moniterId: number) => {
   const teamId = useAuthenticationStore((state) => state.currentTeamId);
 
-  return useMutation(
-    (data: MonitorsAPI.UpdateMonitorRequest) => {
+  return useMutation({
+    mutationFn: (data: MonitorsAPI.UpdateMonitorRequest) => {
       if (!teamId) {
         return Promise.resolve(null);
       }
 
       return MonitorsAPI.updateMonitor(teamId, moniterId, data);
     },
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries(["teams", teamId, "monitors"]);
-      },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["teams", teamId, "monitors"],
+      });
     },
-  );
+  });
 };
 
 export const useUpdateMonitorState = (monitorId: number) => {
   const teamId = useAuthenticationStore((state) => state.currentTeamId);
 
-  return useMutation(
-    (state: "ACTIVE" | "INACTIVE") => {
+  return useMutation({
+    mutationFn: (state: "ACTIVE" | "INACTIVE") => {
       if (!teamId) {
         return Promise.resolve(null);
       }
 
       return MonitorsAPI.updateMonitorState(teamId, monitorId, state);
     },
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries(["teams", teamId, "monitors"]);
-      },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["teams", teamId, "monitors"],
+      });
     },
-  );
+  });
 };
 
 export const useMonitor = (monitorId: number) => {
   const teamId = useAuthenticationStore((state) => state.currentTeamId);
 
-  return useQuery(["teams", teamId, "monitors", monitorId], () => {
-    if (!teamId) {
-      return Promise.resolve(null);
-    }
+  return useQuery({
+    queryKey: ["teams", teamId, "monitors", monitorId],
+    queryFn: () => {
+      if (!teamId) {
+        return Promise.resolve(null);
+      }
 
-    return MonitorsAPI.getMonitor(teamId, monitorId);
+      return MonitorsAPI.getMonitor(teamId, monitorId);
+    },
   });
 };
 
 export const useMonitors = (offset = 0, limit = 100) => {
   const teamId = useAuthenticationStore((state) => state.currentTeamId);
 
-  return useQuery(["teams", teamId, "monitors", { offset, limit }], () => {
-    if (!teamId) {
-      return Promise.resolve(null);
-    }
-    return MonitorsAPI.getMonitors(teamId, offset, limit);
+  return useQuery({
+    queryKey: ["teams", teamId, "monitors", { offset, limit }],
+    queryFn: () => {
+      if (!teamId) {
+        return Promise.resolve(null);
+      }
+      return MonitorsAPI.getMonitors(teamId, offset, limit);
+    },
   });
 };
 
 export const useMonitorChecks = (monitorId?: number, offset = 0, limit = 5) => {
   const teamId = useAuthenticationStore((state) => state.currentTeamId);
 
-  return useQuery(
-    [
+  return useQuery({
+    queryKey: [
       "teams",
       teamId,
       "monitors",
@@ -119,83 +125,38 @@ export const useMonitorChecks = (monitorId?: number, offset = 0, limit = 5) => {
         limit,
       },
     ],
-    () => {
+    queryFn: () => {
       if (!teamId || !monitorId) {
         return Promise.resolve(null);
       }
 
       return MonitorsAPI.getMonitorChecks(teamId, monitorId, offset, limit);
     },
-    {
-      keepPreviousData: true,
-    },
-  );
-};
-
-export const useFailedMonitorChecks = (
-  monitorId: number,
-  assertionId: number,
-  offset = 0,
-  limit = 5,
-) => {
-  const teamId = useAuthenticationStore((state) => state.currentTeamId);
-
-  return useQuery(
-    [
-      "teams",
-      teamId,
-      "monitors",
-      monitorId,
-      "checks",
-      "assertion",
-      assertionId,
-      {
-        offset,
-        limit,
-      },
-    ],
-    () => {
-      if (!teamId || !monitorId) {
-        return Promise.resolve(null);
-      }
-
-      return MonitorsAPI.getFailedMonitorChecks(
-        teamId,
-        monitorId,
-        assertionId,
-        offset,
-        limit,
-      );
-    },
-    {
-      keepPreviousData: true,
-    },
-  );
+    placeholderData: keepPreviousData,
+  });
 };
 
 export const useMonitorsIncidents = () => {
   const teamId = useAuthenticationStore((state) => state.currentTeamId);
 
-  return useQuery(
-    ["teams", teamId, "monitors", "incidents"],
-    () => {
+  return useQuery({
+    queryKey: ["teams", teamId, "monitors", "incidents"],
+    queryFn: () => {
       if (!teamId) {
         return Promise.resolve(null);
       }
 
       return MonitorsAPI.getMonitorsIncidents(teamId);
     },
-    {
-      refetchInterval: 10000,
-    },
-  );
+    refetchInterval: 10000,
+  });
 };
 
 export const useLatestMonitorCheck = (monitorId?: number) => {
   const teamId = useAuthenticationStore((state) => state.currentTeamId);
 
-  return useQuery(
-    [
+  return useQuery({
+    queryKey: [
       "teams",
       teamId,
       "monitors",
@@ -206,7 +167,7 @@ export const useLatestMonitorCheck = (monitorId?: number) => {
         limit: 1,
       },
     ],
-    async () => {
+    queryFn: async () => {
       if (!teamId || !monitorId) {
         return Promise.resolve(null);
       }
@@ -218,22 +179,22 @@ export const useLatestMonitorCheck = (monitorId?: number) => {
 
       return null;
     },
-  );
+  });
 };
 
 export const useMonitorCheck = (monitorId: number, checkId: number) => {
   const teamId = useAuthenticationStore((state) => state.currentTeamId);
 
-  return useQuery(
-    ["teams", teamId, "monitors", monitorId, "checks", checkId],
-    () => {
+  return useQuery({
+    queryKey: ["teams", teamId, "monitors", monitorId, "checks", checkId],
+    queryFn: () => {
       if (!teamId) {
         return Promise.resolve(null);
       }
 
       return MonitorsAPI.getMonitorCheck(teamId, monitorId, checkId);
     },
-  );
+  });
 };
 
 export const useMonitorMetrics = (
@@ -243,13 +204,67 @@ export const useMonitorMetrics = (
 ) => {
   const teamId = useAuthenticationStore((state) => state.currentTeamId);
 
-  return useQuery(
-    ["teams", teamId, "monitors", monitorId, "metrics", start, end],
-    () => {
+  return useQuery({
+    queryKey: ["teams", teamId, "monitors", monitorId, "metrics", start, end],
+    queryFn: () => {
       if (!teamId) {
         return Promise.resolve(null);
       }
       return MonitorsAPI.getMonitorMetrics(teamId, monitorId, start, end);
     },
-  );
+  });
+};
+
+export const useSearchMonitors = (
+  offset: number,
+  limit: number,
+  query: string,
+) => {
+  const teamId = useAuthenticationStore((state) => state.currentTeamId);
+
+  return useQuery({
+    queryKey: ["teams", teamId, "monitors", { offset, query }],
+    queryFn: () => {
+      if (!teamId) {
+        return Promise.resolve(null);
+      }
+
+      return MonitorsAPI.getMonitors(teamId, offset, limit, query || undefined);
+    },
+    placeholderData: keepPreviousData,
+    refetchInterval: 10000,
+  });
+};
+
+export const usePreviewOpenAPI = () => {
+  const teamId = useAuthenticationStore((state) => state.currentTeamId);
+
+  return useMutation({
+    mutationFn: (url: string) => {
+      if (!teamId) {
+        return Promise.reject(new Error("Team not found"));
+      }
+
+      return MonitorsAPI.previewOpenAPI(teamId, url);
+    },
+  });
+};
+
+export const useCreateMonitorsBulk = () => {
+  const teamId = useAuthenticationStore((state) => state.currentTeamId);
+
+  return useMutation({
+    mutationFn: (data: MonitorsAPI.CreateMonitorsBulkRequest) => {
+      if (!teamId) {
+        return Promise.reject(new Error("Team not found"));
+      }
+
+      return MonitorsAPI.createMonitorsBulk(teamId, data);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["teams", teamId, "monitors"],
+      });
+    },
+  });
 };

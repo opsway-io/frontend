@@ -3,23 +3,17 @@ import {
   Box,
   Button,
   Card,
-  CardContent,
+  Chip,
   Container,
   Divider,
-  Grid,
   List,
   ListItem,
-  ListItemIcon,
-  ListItemText,
+  ListItemDecorator,
+  Sheet,
+  Stack,
   Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
   Typography,
-  useTheme,
-} from "@mui/material";
+} from "@mui/joy";
 import { BsCheckLg } from "react-icons/bs";
 import { createLazyFileRoute } from "@tanstack/react-router";
 import { Helmet } from "react-helmet";
@@ -39,111 +33,93 @@ function Index() {
         />
       </Helmet>
 
-      <Container maxWidth="xl">
-        <Box
-          sx={{
-            textAlign: "center",
-          }}
-        >
-          <Typography
-            variant="h3"
-            sx={{
-              color: (t) => t.palette.success.main,
-              fontWeight: 700,
-              display: "inline",
-              fontSize: {
-                xs: 36,
-                md: 48,
-              },
-            }}
-          >
-            Choose the plan{" "}
+      <Container maxWidth="lg" sx={{ pt: { xs: 8, md: 12 } }}>
+        <Box sx={{ textAlign: "center", maxWidth: 760, mx: "auto" }}>
+          <Typography level="body-md" fontWeight={600} textColor="primary.300">
+            Pricing
           </Typography>
           <Typography
-            variant="h3"
+            level="h1"
             sx={{
-              display: "inline",
-              fontWeight: 700,
-              fontSize: {
-                xs: 36,
-                md: 48,
-              },
+              mt: 1.5,
+              fontSize: { xs: "2.25rem", md: "3rem" },
+              fontWeight: 600,
+              letterSpacing: "-0.02em",
+              lineHeight: 1.15,
             }}
           >
-            right for your team
+            Choose the plan right for your team
           </Typography>
 
           <Typography
-            variant="h6"
-            color="text.secondary"
-            sx={{
-              maxWidth: 800,
-              margin: "auto",
-              marginTop: 2,
-            }}
+            textColor="text.secondary"
+            sx={{ mt: 2.5, fontSize: { xs: "1.125rem", md: "1.25rem" } }}
           >
             Whatever you need a simple monitor and status page or full
             enterprise super powers 🦸, we got you covered.
           </Typography>
         </Box>
 
-        <Grid
-          container
-          spacing={2}
-          justifyContent="center"
+        <Box
           sx={{
-            marginTop: 4,
+            mt: { xs: 6, md: 8 },
+            display: "grid",
+            gap: { xs: 2, md: 3 },
+            gridTemplateColumns: { xs: "1fr", md: "repeat(3, 1fr)" },
+            alignItems: "stretch",
+            maxWidth: { xs: 440, md: "none" },
+            mx: "auto",
           }}
         >
-          <Grid item>
-            <PricingCard
-              title="Free"
-              description="For small teams"
-              price="0£"
-              features={[
-                "Up to 10 users",
-                "Up to 5 monitors",
-                "Up to 5 status pages",
-                "1 month of history",
-              ]}
-            />
-          </Grid>
-          <Grid item>
-            <PricingCard
-              title="Team"
-              description="For medium teams"
-              price="20£"
-              features={[
-                "Up to 25 users",
-                "Up to 25 monitors",
-                "Up to 10 status pages",
-                "Up to 5 on-call schedules",
-                "1 year of history",
-              ]}
-            />
-          </Grid>
-          <Grid item>
-            <PricingCard
-              title="Enterprise"
-              description="For large teams"
-              price="100£"
-              features={[
-                "Unlimited users",
-                "Unlimited monitors",
-                "Unlimited status pages",
-                "Unlimited On-call schedules",
-                "1 year of history",
-                "Priority support",
-              ]}
-            />
-          </Grid>
-        </Grid>
+          <PricingCard
+            title="Free"
+            description="For small teams"
+            price="0£"
+            features={[
+              "Up to 10 users",
+              "Up to 5 monitors",
+              "Up to 5 status pages",
+              "1 month of history",
+            ]}
+          />
+          <PricingCard
+            title="Team"
+            description="For medium teams"
+            price="20£"
+            highlighted
+            features={[
+              "Up to 25 users",
+              "Up to 25 monitors",
+              "Up to 10 status pages",
+              "Up to 5 on-call schedules",
+              "1 year of history",
+            ]}
+          />
+          <PricingCard
+            title="Enterprise"
+            description="For large teams"
+            price="100£"
+            features={[
+              "Unlimited users",
+              "Unlimited monitors",
+              "Unlimited status pages",
+              "Unlimited On-call schedules",
+              "1 year of history",
+              "Priority support",
+            ]}
+          />
+        </Box>
 
         <Typography
-          variant="h5"
-          color="text.secondary"
-          sx={{ marginTop: 12, marginBottom: 2 }}
+          level="h2"
           textAlign="center"
+          sx={{
+            mt: { xs: 10, md: 12 },
+            mb: 4,
+            fontSize: { xs: "1.5rem", md: "1.875rem" },
+            fontWeight: 600,
+            letterSpacing: "-0.02em",
+          }}
         >
           Feature overview
         </Typography>
@@ -159,6 +135,7 @@ interface PricingCardProps {
   description: string;
   price: string;
   features: string[];
+  highlighted?: boolean;
 }
 
 const PricingCard: FunctionComponent<PricingCardProps> = ({
@@ -166,94 +143,86 @@ const PricingCard: FunctionComponent<PricingCardProps> = ({
   description,
   price,
   features,
+  highlighted,
 }) => {
-  const theme = useTheme();
-
   return (
     <Card
       sx={{
-        flex: 1,
-        minWidth: 300,
-        height: "100%",
-        display: "flex",
-        flexDirection: "column",
+        p: { xs: 3, md: 4 },
+        gap: 3,
+        borderRadius: "xl",
+        ...(highlighted && {
+          borderColor: "primary.600",
+          outline: "1px solid",
+          outlineColor: "primary.600",
+        }),
       }}
     >
-      <Box
-        sx={{
-          padding: 2,
-        }}
-      >
-        <Typography variant="h4" color="text.primary">
-          {title}
-        </Typography>
-
-        <Typography variant="body1" color="text.secondary">
+      <Stack spacing={0.5}>
+        <Stack
+          direction="row"
+          alignItems="center"
+          justifyContent="space-between"
+        >
+          <Typography level="title-lg">{title}</Typography>
+          {highlighted && (
+            <Chip color="primary" variant="soft">
+              Popular
+            </Chip>
+          )}
+        </Stack>
+        <Typography level="body-sm" textColor="text.secondary">
           {description}
         </Typography>
-      </Box>
+      </Stack>
 
-      <CardContent
-        sx={{
-          display: "flex",
-          gap: 1,
-        }}
-      >
-        <Typography variant="h5">{price}</Typography>
-        <Typography variant="h5" color="text.secondary">
+      <Stack direction="row" alignItems="baseline" spacing={1}>
+        <Typography
+          sx={{
+            fontSize: "2.5rem",
+            fontWeight: 600,
+            letterSpacing: "-0.03em",
+            lineHeight: 1,
+          }}
+        >
+          {price}
+        </Typography>
+        <Typography level="body-md" textColor="text.tertiary">
           / month
         </Typography>
-      </CardContent>
+      </Stack>
 
-      <Divider
-        sx={{
-          marginLeft: 2,
-          marginRight: 2,
-          opacity: 0.25,
-        }}
-      />
+      <Button
+        component="a"
+        href="https://my.opsway.eu/account/general"
+        size="md"
+        variant={highlighted ? "solid" : "outlined"}
+        color={highlighted ? "primary" : "neutral"}
+      >
+        Get started
+      </Button>
 
-      <CardContent
+      <Divider />
+
+      <List
+        size="sm"
         sx={{
-          paddingTop: 0,
+          "--ListItem-paddingX": "0px",
+          "--ListItemDecorator-size": "28px",
           flex: 1,
-          display: "flex",
-          flexDirection: "column",
         }}
       >
-        <List>
-          {features.map((feature) => (
-            <ListItem
-              sx={{
-                paddingRight: 0,
-                paddingLeft: 0,
-              }}
-            >
-              <ListItemIcon
-                sx={{
-                  minWidth: 36,
-                }}
-              >
-                <BsCheckLg color={theme.palette.success.main} />
-              </ListItemIcon>
-              <ListItemText primary={feature} />
-            </ListItem>
-          ))}
-        </List>
-
-        <Button
-          variant="contained"
-          color="success"
-          fullWidth
-          sx={{
-            marginTop: "auto",
-          }}
-          component="a"
-          href="https://my.opsway.eu/account/general"
-        >
-          Get started
-        </Button>
-      </CardContent>
+        {features.map((feature) => (
+          <ListItem key={feature}>
+            <ListItemDecorator sx={{ color: "primary.400" }}>
+              <BsCheckLg />
+            </ListItemDecorator>
+            <Typography level="body-sm" textColor="text.secondary">
+              {feature}
+            </Typography>
+          </ListItem>
+        ))}
+      </List>
     </Card>
   );
 };
@@ -265,9 +234,34 @@ interface Feature {
   enterprise?: boolean | string | number | ReactNode;
 }
 
-const FeatureOverview: FunctionComponent = () => {
-  const t = useTheme();
+const renderValue = (value: Feature["free"]): ReactNode => {
+  if (value === undefined || value === null || value === false) {
+    return (
+      <Typography component="span" textColor="text.tertiary">
+        —
+      </Typography>
+    );
+  }
 
+  if (value === "yes" || value === true) {
+    return (
+      <Box
+        component="span"
+        sx={{
+          color: "primary.400",
+          display: "inline-flex",
+          verticalAlign: "middle",
+        }}
+      >
+        <BsCheckLg title="yes" />
+      </Box>
+    );
+  }
+
+  return value as ReactNode;
+};
+
+const FeatureOverview: FunctionComponent = () => {
   const features: Feature[] = [
     {
       name: "Users",
@@ -323,57 +317,49 @@ const FeatureOverview: FunctionComponent = () => {
   ];
 
   return (
-    <TableContainer>
+    <Sheet
+      variant="outlined"
+      sx={{
+        maxWidth: 1000,
+        mx: "auto",
+        borderRadius: "lg",
+        overflow: "auto",
+      }}
+    >
       <Table
+        size="md"
+        hoverRow
         sx={{
-          "& td": {
-            backgroundColor: t.palette.background.paper,
-          },
-
-          "& *": {
-            fontSize: {
-              xs: 10,
-              md: 16,
-            },
-          },
-
-          maxWidth: 1000,
-          margin: "auto",
+          minWidth: 440,
+          "--TableCell-paddingX": { xs: "12px", md: "20px" },
+          "--TableCell-paddingY": "12px",
+          "& th, & td": { fontSize: { xs: "sm", md: "md" } },
+          "& thead th": { bgcolor: "background.level1" },
+          "& thead th:not(:first-of-type), & tbody td": { textAlign: "right" },
+          "& tbody th": { fontWeight: 500, color: "text.primary" },
+          "& tbody td": { color: "text.secondary" },
         }}
-        size="small"
       >
-        <TableHead
-          sx={{
-            backgroundColor: t.palette.divider,
-          }}
-        >
-          <TableRow>
-            <TableCell width={200}>Feature</TableCell>
-            <TableCell align="right" width={200}>
-              Free
-            </TableCell>
-            <TableCell align="right" width={200}>
-              Team
-            </TableCell>
-            <TableCell align="right" width={200}>
-              Enterprise
-            </TableCell>
-          </TableRow>
-        </TableHead>
+        <thead>
+          <tr>
+            <th style={{ width: "34%" }}>Feature</th>
+            <th>Free</th>
+            <th>Team</th>
+            <th>Enterprise</th>
+          </tr>
+        </thead>
 
-        <TableBody>
+        <tbody>
           {features.map((feature) => (
-            <TableRow>
-              <TableCell component="th" scope="row">
-                {feature.name}
-              </TableCell>
-              <TableCell align="right">{feature.free}</TableCell>
-              <TableCell align="right">{feature.team}</TableCell>
-              <TableCell align="right">{feature.enterprise}</TableCell>
-            </TableRow>
+            <tr key={feature.name}>
+              <th scope="row">{feature.name}</th>
+              <td>{renderValue(feature.free)}</td>
+              <td>{renderValue(feature.team)}</td>
+              <td>{renderValue(feature.enterprise)}</td>
+            </tr>
           ))}
-        </TableBody>
+        </tbody>
       </Table>
-    </TableContainer>
+    </Sheet>
   );
 };

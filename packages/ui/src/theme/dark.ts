@@ -1,7 +1,11 @@
-import { alpha, createTheme } from "@mui/material/styles";
-import { Shadows } from "@mui/material/styles/shadows";
+import {
+  alpha,
+  createTheme,
+  type Shadows,
+  type SimplePaletteColorOptions,
+} from "@mui/material/styles";
 
-declare module "@mui/material/styles/createPalette" {
+declare module "@mui/material/styles" {
   interface Semantic {
     monitors: SimplePaletteColorOptions;
     alerting: SimplePaletteColorOptions;
@@ -20,14 +24,13 @@ declare module "@mui/material/styles/createPalette" {
   }
 }
 
-import "@mui/material/Button";
 declare module "@mui/material/Button" {
   interface ButtonPropsVariantOverrides {
     gradiant1: true;
   }
 }
 
-const shadows = new Array(25).fill("none") as Shadows;
+const shadows = Array.from({ length: 25 }, () => "none") as Shadows;
 
 const theme = createTheme({
   shape: {

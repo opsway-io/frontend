@@ -8,10 +8,10 @@ Welcome to the Opsway frontend repository guidelines. This document provides tec
 
 The frontend is structured as a TypeScript monorepo using **pnpm** and **Turborepo**:
 
-- **[apps/dashboard](file:///home/teis/opsway/frontend/apps/dashboard)**: Vite + React + Material UI dashboard application.
+- **[apps/dashboard](file:///home/teis/opsway/frontend/apps/dashboard)**: Vite + React + Joy UI (`@mui/joy`) dashboard application (dark theme).
 - **[apps/status-page](file:///home/teis/opsway/frontend/apps/status-page)**: Vite + React + Material UI public service status pages.
-- **[apps/website](file:///home/teis/opsway/frontend/apps/website)**: Vite + React + Material UI website using `@tanstack/react-router`.
-- **[packages/ui](file:///home/teis/opsway/frontend/packages/ui)**: Shareable component library exporting React components utilizing Material UI styling.
+- **[apps/website](file:///home/teis/opsway/frontend/apps/website)**: Vite + React + Joy UI marketing website using `@tanstack/react-router` (own dark theme in `src/theme.ts`).
+- **[packages/ui](file:///home/teis/opsway/frontend/packages/ui)**: Shared themes: `JoyTheme` (dashboard) and the legacy Material `DarkTheme` (status-page).
 
 ---
 
@@ -21,7 +21,11 @@ All command executions must be performed from the root [frontend/](file:///home/
 
 - **Development Server**: `pnpm dev`
 - **Production Build**: `pnpm build`
-- **Linter**: `pnpm lint`
+- **Linter**: `pnpm lint` (oxlint, config in `.oxlintrc.json`)
+- **Type check**: `pnpm typecheck` (TypeScript 7)
+- **Tests**: `pnpm test` (vitest)
+- **Unused code/deps**: `pnpm knip`
+- **Everything**: `pnpm check`
 - **Formatting**: `pnpm format`
 
 ---
@@ -35,7 +39,7 @@ All command executions must be performed from the root [frontend/](file:///home/
 
 ### UI & Styling Guidelines
 
-- **Design System & Theme**: All styling should run through the Material UI (MUI) styling system using `@mui/material` or Emotion `styled` hooks.
+- **Design System & Theme**: Dashboard and website styling runs through Joy UI (`@mui/joy` components, `sx`, `styled` from `@mui/joy`) and the theme tokens (`text.secondary`, `background.level1`, `divider`, `radius`, …). Don't import `@mui/material` there; the status-page app still uses Material UI.
 - **Vanilla CSS vs Tailwind**: Avoid TailwindCSS unless explicitly requested by the user. Rely on predefined theme configuration tokens and shared components in `@opsway/ui`.
 - Maintain responsive layouts and smooth transitions. Avoid hardcoded generic colors (e.g. `red`, `blue`); instead, query theme colors.
 
@@ -50,7 +54,7 @@ All command executions must be performed from the root [frontend/](file:///home/
   ```bash
   pnpm start:mocked
   ```
-  This is configured using `axios-mock-adapter`.
+  This sets the `MOCKED` env flag (see `apps/dashboard/src/env.ts`); there is currently no mock adapter implementation.
 - **Rule**: When adding, updating, or removing API calls, always verify and update the mock adapters in [apps/dashboard/src](file:///home/teis/opsway/frontend/apps/dashboard/src) (look for mock definitions/adapters) to ensure the mocked development server launches successfully and functions correctly.
 
 ---
@@ -59,6 +63,6 @@ All command executions must be performed from the root [frontend/](file:///home/
 
 Before completing any frontend task:
 
-1. Run `pnpm lint` to check for ESLint or TypeScript issues.
+1. Run `pnpm check` (oxlint, TypeScript, vitest and knip) and fix everything it reports.
 2. Run `pnpm build` to verify there are no compilation errors inside Turborepo.
 3. Validate mock configurations if you modified REST integrations.

@@ -25,7 +25,9 @@ const SubscribeModal: FunctionComponent<Props> = ({
   onClose,
   domain,
 }) => {
-  const [channel, setChannel] = useState<"EMAIL" | "WEBHOOK" | "SLACK">("EMAIL");
+  const [channel, setChannel] = useState<"EMAIL" | "WEBHOOK" | "SLACK">(
+    "EMAIL",
+  );
   const [email, setEmail] = useState("");
   const [destination, setDestination] = useState("");
   const [loading, setLoading] = useState(false);
@@ -70,9 +72,12 @@ const SubscribeModal: FunctionComponent<Props> = ({
       <form onSubmit={handleSubmit}>
         <DialogContent>
           <DialogContentText mb={2}>
-            {channel === "EMAIL" && "Get notified via email whenever an incident or maintenance is created or resolved."}
-            {channel === "WEBHOOK" && "Receive JSON HTTP POST payloads directly to your monitoring system or incident bot."}
-            {channel === "SLACK" && "Post live incident notifications directly to your team's Slack incoming webhook."}
+            {channel === "EMAIL" &&
+              "Get notified via email whenever an incident or maintenance is created or resolved."}
+            {channel === "WEBHOOK" &&
+              "Receive JSON HTTP POST payloads directly to your monitoring system or incident bot."}
+            {channel === "SLACK" &&
+              "Post live incident notifications directly to your team's Slack incoming webhook."}
           </DialogContentText>
 
           {error && (
@@ -89,8 +94,13 @@ const SubscribeModal: FunctionComponent<Props> = ({
           ) : (
             <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
               <TextField
+                // oxlint-disable-next-line jsx-a11y/no-autofocus -- first field of the dialog
                 autoFocus
-                label={channel === "EMAIL" ? "Email Address" : "Notification Contact Email"}
+                label={
+                  channel === "EMAIL"
+                    ? "Email Address"
+                    : "Notification Contact Email"
+                }
                 type="email"
                 fullWidth
                 variant="outlined"
@@ -137,7 +147,9 @@ const SubscribeModal: FunctionComponent<Props> = ({
               type="submit"
               variant="contained"
               color="primary"
-              disabled={loading || !email || (channel !== "EMAIL" && !destination)}
+              disabled={
+                loading || !email || (channel !== "EMAIL" && !destination)
+              }
             >
               Subscribe
             </Button>

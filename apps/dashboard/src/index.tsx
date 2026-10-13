@@ -1,14 +1,17 @@
+import "@fontsource/inter";
 import ReactDOM from "react-dom/client";
 import "./index.scss";
-import reportWebVitals from "./reportWebVitals";
-import { Box, ThemeProvider } from "@mui/material";
+import { Box, CssBaseline, CssVarsProvider } from "@mui/joy";
 import { BrowserRouter } from "react-router-dom";
 import { QueryClientProvider } from "@tanstack/react-query";
-import { getQueryClient } from "./hooks/client.query";
+import { getQueryClient } from "./hooks/queryClient";
 import { Helmet } from "react-helmet";
-import { SnackbarProvider } from "./components/Snackbar";
+import { SnackbarProvider } from "./components/Snackbar/SnackbarProvider";
 import Routes from "./routes/routes";
-import { DarkTheme } from "@opsway/ui";
+import { installInterceptors } from "./api/installInterceptors";
+import { JoyTheme } from "@opsway/ui";
+
+installInterceptors();
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement,
@@ -17,7 +20,13 @@ const root = ReactDOM.createRoot(
 root.render(
   <BrowserRouter>
     <QueryClientProvider client={getQueryClient()}>
-      <ThemeProvider theme={DarkTheme}>
+      <CssVarsProvider
+        theme={JoyTheme}
+        defaultMode="dark"
+        modeStorageKey="opsway-mode"
+        disableNestedContext
+      >
+        <CssBaseline />
         <SnackbarProvider>
           <Helmet>
             <title>opsway</title>
@@ -27,18 +36,14 @@ root.render(
             sx={{
               display: "flex",
               flex: 1,
-              backgroundColor: (t) => t.palette.background.default,
+              minWidth: 0,
+              backgroundColor: "background.body",
             }}
           >
             <Routes />
           </Box>
         </SnackbarProvider>
-      </ThemeProvider>
+      </CssVarsProvider>
     </QueryClientProvider>
   </BrowserRouter>,
 );
-
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();

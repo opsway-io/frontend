@@ -1,14 +1,14 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-export interface SidebarState {
+interface SidebarState {
   collapsed?: boolean;
   setCollapsed: (collapsed: boolean) => void;
 }
 
 const useSidebarStore = create<SidebarState>()(
   persist(
-    (set, get) => ({
+    (set) => ({
       setCollapsed: (collapsed: boolean) => set({ collapsed }),
     }),
     {

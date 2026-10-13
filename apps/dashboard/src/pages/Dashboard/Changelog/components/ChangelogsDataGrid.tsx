@@ -1,28 +1,32 @@
-import { DataGridProps, GridColDef, GridRowsProp } from "@mui/x-data-grid";
+import { IconButton, Tooltip, Typography } from "@mui/joy";
 import { FunctionComponent, useState } from "react";
+import { VscRemove } from "react-icons/vsc";
 import { useNavigate } from "react-router-dom";
-import { IconButton, Stack, Tooltip, Typography } from "@mui/material";
-import { VscEdit, VscRemove } from "react-icons/vsc";
 import { Changelog } from "../../../../api/endpoints/changelogs";
-import { useCurrentUserRole } from "../../../../hooks/user.query";
+import DataGrid, {
+  DataGridProps,
+  GridColDef,
+} from "../../../../components/DataGrid/DataGrid";
 import { Role } from "../../../../components/Restrict";
-import DataGrid from "../../../../components/DataGrid";
-import DeleteChangelogDialog from "./DeleteChangelogModal";
+import { useCurrentUserRole } from "../../../../hooks/user.query";
+import DeleteChangelogDialog from "./DeleteChangelogDialog";
 
-interface ChangelogsDataGridProps
-  extends Omit<DataGridProps, "columns" | "rows"> {
+interface ChangelogsDataGridProps extends Omit<
+  DataGridProps<Changelog>,
+  "columns" | "rows"
+> {
   changelogs?: Changelog[];
 }
 
-const ChangelogsDataGrid: FunctionComponent<ChangelogsDataGridProps> = (
-  props,
-) => {
+const ChangelogsDataGrid: FunctionComponent<ChangelogsDataGridProps> = ({
+  changelogs,
+  ...rest
+}) => {
   const navigate = useNavigate();
   const currentRole = useCurrentUserRole();
+  const [changelogToDelete, setChangelogToDelete] = useState<Changelog>();
 
-  const rows: GridRowsProp<Changelog> = props.changelogs || [];
-
-  const columns: GridColDef<any>[] = [
+  const columns: GridColDef<Changelog>[] = [
     {
       field: "name",
       headerName: "Name",
@@ -52,9 +56,9 @@ const ChangelogsDataGrid: FunctionComponent<ChangelogsDataGridProps> = (
       width: 250,
       align: "right",
       sortable: false,
-      renderCell: (cell) => (
-        <Typography variant="body2" color="textSecondary">
-          {new Date(cell.value).toLocaleString()}
+      renderCell: ({ value }) => (
+        <Typography level="body-sm" textColor="text.secondary">
+          {new Date(value).toLocaleString()}
         </Typography>
       ),
     },
@@ -66,55 +70,42 @@ const ChangelogsDataGrid: FunctionComponent<ChangelogsDataGridProps> = (
       headerName: "",
       align: "right",
       sortable: false,
-      renderCell: (cell) => {
-        // eslint-disable-next-line react-hooks/rules-of-hooks
-        const [open, setOpen] = useState(false);
-
-        return (
-          <>
-            <Stack direction="row" spacing={1}>
-              <Tooltip title="Edit changelog" placement="top">
-                <IconButton>
-                  <VscEdit />
-                </IconButton>
-              </Tooltip>
-
-              <Tooltip title="Delete changelog" placement="top">
-                <IconButton
-                  onClick={(e) => {
-                    setOpen(true);
-                    e.stopPropagation();
-                  }}
-                >
-                  <VscRemove />
-                </IconButton>
-              </Tooltip>
-            </Stack>
-
-            <DeleteChangelogDialog
-              changelog={cell.row}
-              open={open}
-              onClose={() => {
-                setOpen(false);
-              }}
-            />
-          </>
-        );
-      },
+      renderCell: ({ row }) => (
+        <Tooltip title="Delete changelog" placement="top">
+          <IconButton
+            variant="plain"
+            color="danger"
+            aria-label="Delete changelog"
+            onClick={(e) => {
+              e.stopPropagation();
+              setChangelogToDelete(row);
+            }}
+          >
+            <VscRemove />
+          </IconButton>
+        </Tooltip>
+      ),
     });
   }
 
   return (
-    <DataGrid
-      {...props}
-      columns={columns}
-      rows={rows}
-      rowHeight={42}
-      onRowClick={(r) => {
-        navigate(`/changelogs/${r.id}`);
-      }}
-      noRowsContent="No changelogs"
-    />
+    <>
+      <DataGrid<Changelog>
+        {...rest}
+        columns={columns}
+        rows={changelogs ?? []}
+        rowHeight={42}
+        onRowClick={({ id }) => navigate(`/changelogs/${id}`)}
+        noRowsContent="No changelogs"
+      />
+
+      {changelogToDelete && (
+        <DeleteChangelogDialog
+          changelog={changelogToDelete}
+          onClose={() => setChangelogToDelete(undefined)}
+        />
+      )}
+    </>
   );
 };
 

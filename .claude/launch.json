@@ -1,0 +1,33 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "website-preview",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": [
+        "--filter",
+        "website",
+        "exec",
+        "vite",
+        "--port",
+        "5185",
+        "--strictPort"
+      ],
+      "port": 5185
+    },
+    {
+      "name": "dashboard-preview",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": [
+        "--filter",
+        "dashboard",
+        "exec",
+        "vite",
+        "--port",
+        "5183",
+        "--strictPort"
+      ],
+      "port": 5183
+    }
+  ]
+}

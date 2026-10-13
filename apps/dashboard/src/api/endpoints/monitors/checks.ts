@@ -13,7 +13,7 @@ export interface Check {
   createdAt: string;
   anomaly?: boolean;
 }
-export interface Timing {
+interface Timing {
   dnsLookup: number;
   tcpConnection: number;
   tlsHandshake: number;
@@ -22,7 +22,7 @@ export interface Timing {
   total: number;
 }
 
-export interface TLS {
+interface TLS {
   version: string;
   cipher: string;
   issuer: string;
@@ -58,39 +58,11 @@ export async function getMonitorChecks(
   return response?.data;
 }
 
-/*
-  Get Failed Monitor Checks
-*/
-
-export interface GetFailedMonitorChecksResponse {
-  checks: Check[];
-}
-
-export async function getFailedMonitorChecks(
-  teamId: number,
-  monitorId: number,
-  assertionId: number,
-  offset?: number,
-  limit?: number,
-): Promise<GetFailedMonitorChecksResponse> {
-  const response = await client.get(
-    `/v1/teams/${teamId}/monitors/${monitorId}/checks/failed/${assertionId}`,
-    {
-      params: {
-        offset,
-        limit,
-      },
-    },
-  );
-
-  return response?.data;
-}
-
 export interface GetMonitorsIncidentsResponse {
   monitors: MonitorsWithIncidents[];
 }
 
-export interface MonitorsWithIncidents {
+interface MonitorsWithIncidents {
   id: number;
   teamId: number;
   state: string;
@@ -99,7 +71,7 @@ export interface MonitorsWithIncidents {
   updatedAt: string;
   incidents: Incident[];
 }
-export interface Incident {
+interface Incident {
   id: number;
   createdAt: string;
   updatedAt: string;

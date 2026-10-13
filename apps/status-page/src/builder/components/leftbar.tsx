@@ -50,28 +50,28 @@ const LeftBar: FunctionComponent<LeftBarProps> = () => {
       </Typography>
 
       <Grid container spacing={1}>
-        <Grid item xs={4}>
+        <Grid size={4}>
           <ComponentItem />
         </Grid>
-        <Grid item xs={4}>
+        <Grid size={4}>
           <ComponentItem />
         </Grid>
-        <Grid item xs={4}>
+        <Grid size={4}>
           <ComponentItem />
         </Grid>
-        <Grid item xs={4}>
+        <Grid size={4}>
           <ComponentItem />
         </Grid>
-        <Grid item xs={4}>
+        <Grid size={4}>
           <ComponentItem />
         </Grid>
-        <Grid item xs={4}>
+        <Grid size={4}>
           <ComponentItem />
         </Grid>
-        <Grid item xs={4}>
+        <Grid size={4}>
           <ComponentItem />
         </Grid>
-        <Grid item xs={4}>
+        <Grid size={4}>
           <ComponentItem />
         </Grid>
       </Grid>
@@ -81,13 +81,13 @@ const LeftBar: FunctionComponent<LeftBarProps> = () => {
       </Typography>
 
       <Grid container spacing={1}>
-        <Grid item xs={4}>
+        <Grid size={4}>
           <ComponentItem />
         </Grid>
-        <Grid item xs={4}>
+        <Grid size={4}>
           <ComponentItem />
         </Grid>
-        <Grid item xs={4}>
+        <Grid size={4}>
           <ComponentItem />
         </Grid>
       </Grid>
@@ -97,16 +97,16 @@ const LeftBar: FunctionComponent<LeftBarProps> = () => {
       </Typography>
 
       <Grid container spacing={1}>
-        <Grid item xs={4}>
+        <Grid size={4}>
           <ComponentItem />
         </Grid>
-        <Grid item xs={4}>
+        <Grid size={4}>
           <ComponentItem />
         </Grid>
-        <Grid item xs={4}>
+        <Grid size={4}>
           <ComponentItem />
         </Grid>
-        <Grid item xs={4}>
+        <Grid size={4}>
           <ComponentItem />
         </Grid>
       </Grid>

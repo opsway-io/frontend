@@ -1,35 +1,25 @@
 import { AxiosInstance } from "axios";
 import useAuthenticationStore from "../../hooks/authentication.store";
 
-// Log out if the response is 401: Unauthorized
-export function LogOutInterceptor(inst: AxiosInstance) {
-  inst.interceptors.request.use(
-    async (request) => {
-      const authStore = useAuthenticationStore.getState();
-
-      // Skip authorization middleware if the request is to the auth endpoint
-      const orgAuth = request.headers?.Authorization;
-      if (orgAuth !== undefined && orgAuth === "") {
-        return request;
-      }
-
-      // Check if the access token has expired, if so log out
-      if (!authStore.isAuthenticated()) {
-        useAuthenticationStore.getState().logOut();
-      }
-
+/** Logs the user out when unauthenticated or when a request returns 401. */
+export function installLogoutInterceptor(instance: AxiosInstance) {
+  instance.interceptors.request.use((request) => {
+    // Auth endpoints opt out by sending an empty Authorization header.
+    if (request.headers?.Authorization === "") {
       return request;
-    },
-    async (error) => {
-      return Promise.reject(error);
-    },
-  );
+    }
 
-  inst.interceptors.response.use(
-    async (response) => {
-      return response;
-    },
-    async (error) => {
+    const authStore = useAuthenticationStore.getState();
+    if (!authStore.isAuthenticated()) {
+      authStore.logOut();
+    }
+
+    return request;
+  });
+
+  instance.interceptors.response.use(
+    (response) => response,
+    (error) => {
       if (
         error.response?.status === 401 &&
         !error.config?.url?.includes("/auth/")

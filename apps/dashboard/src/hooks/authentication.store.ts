@@ -1,10 +1,9 @@
 import { AxiosError } from "axios";
-import jwt_decode from "jwt-decode";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import * as AuthenticationAPI from "../api/endpoints/authentication";
 import { IGetUserResponse } from "../api/endpoints/users";
-import { getQueryClient } from "./client.query";
+import { getQueryClient } from "./queryClient";
 
 const queryClient = getQueryClient();
 
@@ -18,23 +17,45 @@ interface AuthenticationState {
   currentTeamId?: number;
 }
 
+interface AuthenticationResult {
+  success: boolean;
+  user?: IGetUserResponse;
+  error?: AxiosError<any>;
+}
+
+/**
+ * Turns a login/register response into store state. Users with exactly one
+ * team get it selected right away so they skip the team selection screen.
+ */
+async function toSession(
+  request: Promise<AuthenticationAPI.ILoginResponse>,
+): Promise<{ result: AuthenticationResult; state?: AuthenticationState }> {
+  try {
+    const { user } = await request;
+    if (!user) {
+      throw new Error("User missing in authentication response");
+    }
+
+    const currentTeamId =
+      user.teams.length === 1 ? user.teams[0].id : undefined;
+
+    return {
+      result: { success: true, user },
+      state: { currentUserId: user.id, currentTeamId },
+    };
+  } catch (error) {
+    return { result: { success: false, error: error as AxiosError<any> } };
+  }
+}
+
 interface AuthenticationActions {
   isAuthenticated(): boolean;
 
   logOut(): void;
-  logIn(
-    email: string,
-    password: string,
-  ): Promise<{
-    success: boolean;
-    user?: IGetUserResponse;
-    error?: AxiosError<any>;
-  }>;
-  register(data: AuthenticationAPI.IRegisterRequest): Promise<{
-    success: boolean;
-    user?: IGetUserResponse;
-    error?: AxiosError<any>;
-  }>;
+  logIn(email: string, password: string): Promise<AuthenticationResult>;
+  register(
+    data: AuthenticationAPI.IRegisterRequest,
+  ): Promise<AuthenticationResult>;
   setCurrentUserID(userId?: number): void;
   setCurrentTeamID(teamId?: number): void;
 
@@ -74,70 +95,20 @@ const useAuthenticationStore = create<
         }
       },
 
-      logIn: async (
-        email: string,
-        password: string,
-      ): Promise<{
-        success: boolean;
-        user?: IGetUserResponse;
-        error?: AxiosError<any>;
-      }> => {
-        try {
-          const response = await AuthenticationAPI.login(email, password);
-
-          if (!response.user) {
-            throw new Error("User missing in login response");
-          }
-
-          let teamId = undefined;
-
-          // If the user only has one team, set it as the current team
-          // This is to prevent the user from having to select a team on login
-          if (response.user.teams.length === 1) {
-            teamId = response.user.teams[0].id;
-          }
-
-          set({
-            currentUserId: response.user?.id,
-            currentTeamId: teamId,
-          });
-
-          return { success: true, user: response.user };
-        } catch (error: any) {
-          return { success: false, error: error as AxiosError<any> };
-        }
+      logIn: async (email, password) => {
+        const { result, state } = await toSession(
+          AuthenticationAPI.login(email, password),
+        );
+        if (state) set(state);
+        return result;
       },
 
-      register: async (
-        data: AuthenticationAPI.IRegisterRequest,
-      ): Promise<{
-        success: boolean;
-        user?: IGetUserResponse;
-        error?: AxiosError<any>;
-      }> => {
-        try {
-          const response = await AuthenticationAPI.register(data);
-
-          if (!response.user) {
-            throw new Error("User missing in register response");
-          }
-
-          let teamId = undefined;
-
-          // If the user only has one team, set it as the current team
-          if (response.user.teams.length === 1) {
-            teamId = response.user.teams[0].id;
-          }
-
-          set({
-            currentUserId: response.user?.id,
-            currentTeamId: teamId,
-          });
-
-          return { success: true, user: response.user };
-        } catch (error: any) {
-          return { success: false, error: error as AxiosError<any> };
-        }
+      register: async (data) => {
+        const { result, state } = await toSession(
+          AuthenticationAPI.register(data),
+        );
+        if (state) set(state);
+        return result;
       },
 
       setCurrentUserID: (userId?: number) => {

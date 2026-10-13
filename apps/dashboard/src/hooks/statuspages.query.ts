@@ -12,7 +12,7 @@ import {
 } from "../api/endpoints/statuspages";
 import { useCurrentTeam } from "./team.query";
 
-export const statusPagesKeys = {
+const statusPagesKeys = {
   all: ["status-pages"] as const,
   lists: () => [...statusPagesKeys.all, "list"] as const,
   list: (teamId: number) => [...statusPagesKeys.lists(), teamId] as const,
@@ -79,7 +79,7 @@ export const useDeleteStatusPage = () => {
       deleteStatusPage(team.data!.id, statusPageId),
     onSuccess: (_, statusPageId) => {
       queryClient.invalidateQueries({ queryKey: statusPagesKeys.lists() });
-      queryClient.invalidateQueries({
+      queryClient.removeQueries({
         queryKey: statusPagesKeys.detail(team.data!.id, statusPageId),
       });
     },

@@ -1,0 +1,240 @@
+import client from "../client";
+
+/*
+  Shared
+*/
+
+export interface Incident {
+  id: number;
+  teamId: number;
+  monitorId: number;
+  title: string;
+  description: string;
+  acknowledged?: boolean;
+  acknowledgedAt?: string;
+  acknowledgedBy?: IncidentUserResponse;
+  acknowledgedByIntegration?: string;
+  rootCauseAnalysis?: string;
+  createdAt: string;
+  updatedAt: string;
+  resolved?: boolean;
+  resolvedAt?: string;
+  resolvedBy?: IncidentUserResponse;
+  occurrences?: number;
+  isStatusPageVisible?: boolean;
+}
+
+/*
+  Get Team Incidents
+*/
+
+export interface GetIncidentsResponse {
+  incidents: Incident[];
+}
+
+export async function getIncidents(
+  teamId: number,
+  resolved?: boolean,
+  offset?: number,
+  limit?: number,
+): Promise<GetIncidentsResponse> {
+  const response = await client.get(`/v1/teams/${teamId}/incidents`, {
+    params: {
+      resolved,
+      offset,
+      limit,
+    },
+  });
+
+  return response?.data;
+}
+
+interface IncidentUserResponse {
+  id: number;
+  displayName: string;
+  email: string;
+}
+
+export interface GetIncidentResponse {
+  id: number;
+  teamId: number;
+  monitorId: number;
+  title: string;
+  description: string;
+  resolved: boolean;
+  resolvedAt?: string;
+  resolvedBy?: IncidentUserResponse;
+  acknowledged: boolean;
+  acknowledgedAt?: string;
+  acknowledgedBy?: IncidentUserResponse;
+  acknowledgedByIntegration?: string;
+  rootCauseAnalysis?: string;
+  createdAt: string;
+  updatedAt: string;
+  occurrences: number;
+  isStatusPageVisible: boolean;
+}
+
+export async function getIncident(
+  teamId: number,
+  incidentId: number,
+): Promise<GetIncidentResponse> {
+  const response = await client.get(
+    `/v1/teams/${teamId}/incidents/${incidentId}`,
+  );
+
+  return response?.data;
+}
+
+export interface MonitorIncident {
+  id: number;
+  teamId: number;
+  monitorId: number;
+  title: string;
+  description: string;
+  createdAt: string;
+  updatedAt: string;
+  property: string;
+  target: string;
+  operator: string;
+  rootCauseAnalysis?: string;
+  resolved: boolean;
+  resolvedAt?: string;
+  resolvedBy?: IncidentUserResponse;
+  acknowledged: boolean;
+  acknowledgedAt?: string;
+  acknowledgedBy?: IncidentUserResponse;
+  acknowledgedByIntegration?: string;
+  isStatusPageVisible: boolean;
+}
+
+/*
+  Get Team Incidents
+*/
+
+export interface GetMonitorIncidentsResponse {
+  incidents: MonitorIncident[];
+}
+
+export async function getMonitorIncidents(
+  teamId: number,
+  monitorId: number,
+  offset?: number,
+  limit?: number,
+): Promise<GetMonitorIncidentsResponse> {
+  const response = await client.get(
+    `/v1/teams/${teamId}/incidents/monitor/${monitorId}`,
+    {
+      params: {
+        offset,
+        limit,
+      },
+    },
+  );
+
+  return response?.data;
+}
+
+export interface PatchSolveMonitorIncidentRequest {
+  resolved: boolean;
+}
+
+export async function patchSolveMonitorIncident(
+  teamId: number,
+  incidentId: number,
+  data: PatchSolveMonitorIncidentRequest,
+): Promise<void> {
+  const response = await client.patch(
+    `/v1/teams/${teamId}/incidents/${incidentId}/resolved`,
+    data,
+  );
+
+  return response?.data;
+}
+
+export async function patchAcknowledgeMonitorIncident(
+  teamId: number,
+  incidentId: number,
+): Promise<void> {
+  const response = await client.patch(
+    `/v1/teams/${teamId}/incidents/${incidentId}/acknowledge`,
+  );
+
+  return response?.data;
+}
+
+export interface PatchIncidentVisibilityRequest {
+  isStatusPageVisible: boolean;
+}
+
+export async function patchIncidentVisibility(
+  teamId: number,
+  incidentId: number,
+  data: PatchIncidentVisibilityRequest,
+): Promise<void> {
+  const response = await client.patch(
+    `/v1/teams/${teamId}/incidents/${incidentId}/visibility`,
+    data,
+  );
+
+  return response?.data;
+}
+
+interface IIncidentAlert {
+  id: number;
+  alertRuleId: number;
+  channels: string;
+  createdAt: string;
+}
+
+export interface GetIncidentAlertsResponse {
+  totalCount: number;
+  alerts: IIncidentAlert[];
+}
+
+export async function getIncidentAlerts(
+  teamId: number,
+  incidentId: number,
+  offset?: number,
+  limit?: number,
+): Promise<GetIncidentAlertsResponse> {
+  const response = await client.get(
+    `/v1/teams/${teamId}/incidents/${incidentId}/alerts`,
+    {
+      params: {
+        offset,
+        limit,
+      },
+    },
+  );
+  return response?.data;
+}
+
+interface IncidentOccurrenceResponse {
+  id: number;
+  createdAt: string;
+}
+
+export interface GetIncidentOccurrencesResponse {
+  totalCount: number;
+  occurrences: IncidentOccurrenceResponse[];
+}
+
+export async function getIncidentOccurrences(
+  teamId: number,
+  incidentId: number,
+  offset?: number,
+  limit?: number,
+): Promise<GetIncidentOccurrencesResponse> {
+  const response = await client.get(
+    `/v1/teams/${teamId}/incidents/${incidentId}/occurrences`,
+    {
+      params: {
+        offset,
+        limit,
+      },
+    },
+  );
+
+  return response?.data;
+}

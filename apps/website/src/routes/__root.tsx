@@ -3,8 +3,8 @@ import {
   Outlet,
   ScrollRestoration,
 } from "@tanstack/react-router";
+import { Box } from "@mui/joy";
 import Navbar from "../components/Navbar";
-import Spacer from "../components/Spacer";
 import Footer from "../components/Footer";
 
 export const Route = createRootRoute({
@@ -13,17 +13,24 @@ export const Route = createRootRoute({
 
 function Index() {
   return (
-    <>
+    <Box
+      sx={{
+        minHeight: "100vh",
+        display: "flex",
+        flexDirection: "column",
+        bgcolor: "background.body",
+        color: "text.primary",
+        overflowX: "clip",
+      }}
+    >
       <Navbar />
 
-      <Spacer />
-
       <ScrollRestoration />
-      <Outlet />
-
-      <Spacer />
+      <Box component="main" sx={{ flex: 1 }}>
+        <Outlet />
+      </Box>
 
       <Footer />
-    </>
+    </Box>
   );
 }

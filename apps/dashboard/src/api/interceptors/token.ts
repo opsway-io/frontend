@@ -4,7 +4,8 @@ import useAuthenticationStore, {
   AuthenticationActions,
 } from "../../hooks/authentication.store";
 
-export function TokenInterceptor(inst: AxiosInstance) {
+/** Retries a 401 request once after refreshing the session cookies. */
+export function installTokenRefreshInterceptor(inst: AxiosInstance) {
   inst.interceptors.response.use(
     (response) => response,
     async (error) => {
@@ -65,6 +66,6 @@ function subscribeTokenRefresh(cb: (failure?: boolean) => void) {
 }
 
 function onTokenRefreshed(failure?: boolean) {
-  refreshSubscribers.map((cb) => cb(failure));
+  refreshSubscribers.forEach((cb) => cb(failure));
   refreshSubscribers = [];
 }

@@ -2,121 +2,94 @@ import {
   Box,
   Container,
   Divider,
-  Grid,
+  Link as JoyLink,
+  Stack,
   Typography,
-  darken,
-} from "@mui/material";
+} from "@mui/joy";
 import { Link } from "@tanstack/react-router";
 import { FunctionComponent } from "react";
+import { IoLogoGithub } from "react-icons/io5";
+
+const linkSx = {
+  color: "text.secondary",
+  fontWeight: 600,
+  fontSize: "md",
+  "&:hover": { color: "text.primary", textDecoration: "none" },
+} as const;
+
+const year = new Date().getFullYear();
 
 const Footer: FunctionComponent = () => {
-  const year = new Date().getFullYear();
-
   return (
-    <footer
-      style={{
-        flex: 1,
-      }}
+    <Box
+      component="footer"
+      sx={{ borderTop: "1px solid", borderColor: "divider", mt: 10 }}
     >
-      <Box
-        sx={{
-          backgroundColor: (t) => darken(t.palette.background.default, 0.1),
-        }}
-      >
-        <Container
-          maxWidth="xl"
-          sx={{
-            paddingTop: {
-              xs: 4,
-              md: 8,
-            },
-            paddingBottom: {
-              xs: 4,
-              md: 8,
-            },
-            opacity: 0.75,
-            textAlign: {
-              xs: "center",
-              md: "left",
-            },
-          }}
+      <Container maxWidth="lg" sx={{ py: { xs: 6, md: 8 } }}>
+        <Stack
+          direction={{ xs: "column", md: "row" }}
+          spacing={{ xs: 4, md: 8 }}
+          justifyContent="space-between"
         >
-          <Grid
-            container
-            spacing={{
-              xs: 2,
-              md: 4,
-            }}
+          <Stack spacing={2} sx={{ maxWidth: 320 }}>
+            <Box component={Link} to="/" sx={{ display: "inline-flex" }}>
+              <img src="/img/logo.svg" alt="opsway" style={{ height: 20 }} />
+            </Box>
+            <Typography level="body-md" textColor="text.secondary">
+              Open source monitoring, status pages and alerting for your
+              websites and services.
+            </Typography>
+          </Stack>
+
+          <Stack
+            direction="row"
+            flexWrap="wrap"
+            useFlexGap
+            columnGap={4}
+            rowGap={1.5}
+            alignItems="flex-start"
           >
-            <Grid item xs={12} md={3}>
-              <Typography variant="h6">Open source</Typography>
-              <Typography variant="body1">
-                opsway is an open source project. You can find the source code
-                on <Link href="https://github.com/opsway-io">GitHub</Link>.
-              </Typography>
-            </Grid>
+            <JoyLink component={Link} to="/pricing" sx={linkSx}>
+              Pricing
+            </JoyLink>
+            <JoyLink component={Link} to="/contact" sx={linkSx}>
+              Contact
+            </JoyLink>
+            <JoyLink component={Link} to="/terms-of-service" sx={linkSx}>
+              Terms
+            </JoyLink>
+            <JoyLink component={Link} to="/privacy-policy" sx={linkSx}>
+              Privacy
+            </JoyLink>
+            <JoyLink component={Link} to="/gdpr" sx={linkSx}>
+              GDPR
+            </JoyLink>
+          </Stack>
+        </Stack>
 
-            <Grid item xs={12} md={3}>
-              <Typography variant="h6">Resources</Typography>
-              <Typography
-                variant="body1"
-                component={Link}
-                to="/terms-of-service"
-              >
-                Terms of Service
-              </Typography>
-              <br />
-              <Typography variant="body1" component={Link} to="/privacy-policy">
-                Privacy Policy
-              </Typography>
-              <br />
-              <Typography variant="body1" component={Link} to="/gdpr">
-                GDPR
-              </Typography>
-            </Grid>
+        <Divider sx={{ my: { xs: 4, md: 5 } }} />
 
-            <Grid item xs={12} md={3}>
-              <Typography variant="h6">Company</Typography>
-              <Typography variant="body1" component={Link} to="/contact">
-                Contact
-              </Typography>
-              <br />
-              <Typography variant="body1" component={Link}>
-                Blog
-              </Typography>
-            </Grid>
-
-            <Grid item xs={12} md={3}>
-              <Typography variant="h6">Community</Typography>
-              <Typography
-                variant="body1"
-                component={Link}
-                href="https://github.com/opsway-io"
-              >
-                GitHub
-              </Typography>
-            </Grid>
-          </Grid>
-
-          <Divider
-            sx={{
-              opacity: 0.1,
-              marginTop: 4,
-              marginBottom: 4,
-            }}
-          />
-
-          <Typography
-            variant="body1"
-            sx={{
-              opacity: 0.5,
-            }}
-          >
-            Copyright © {year} opsway. All rights reserved.
+        <Stack
+          direction="row"
+          justifyContent="space-between"
+          alignItems="center"
+        >
+          <Typography level="body-md" textColor="text.tertiary">
+            © {year} opsway. All rights reserved.
           </Typography>
-        </Container>
-      </Box>
-    </footer>
+          <JoyLink
+            href="https://github.com/opsway-io"
+            aria-label="opsway on GitHub"
+            sx={{
+              color: "text.tertiary",
+              "&:hover": { color: "text.primary" },
+            }}
+          >
+            <IoLogoGithub size={22} />
+          </JoyLink>
+        </Stack>
+      </Container>
+    </Box>
   );
 };
 

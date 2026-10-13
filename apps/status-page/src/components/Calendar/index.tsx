@@ -1,24 +1,11 @@
-import {
-  Table,
-  Tooltip,
-  Typography,
-  Box,
-  TablePagination,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableRow,
-  IconButton,
-  Stack,
-  Divider,
-  Select,
-  MenuItem,
-  FormControl,
-} from "@mui/material";
-import { FunctionComponent, useEffect, useState, useMemo } from "react";
+import { Box, IconButton, Stack, Typography } from "@mui/material";
+import { FunctionComponent, useState } from "react";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 
 import { PublicMaintenance } from "../../api";
+import { MaintenanceFilter, selectListedEvents } from "./calendarUtils";
+import MaintenanceEventList from "./MaintenanceEventList";
+import MonthGrid from "./MonthGrid";
 
 interface CalendarProps {
   maintenanceEvents?: PublicMaintenance[];
@@ -27,142 +14,29 @@ interface CalendarProps {
 const Calendar: FunctionComponent<CalendarProps> = ({
   maintenanceEvents = [],
 }) => {
-  const [monthTable, setMonthTable] = useState<(number | undefined)[][]>([]);
-  const [year, setYear] = useState<number>(new Date().getFullYear());
-  const [month, setMonth] = useState<number>(new Date().getMonth());
+  // Captured once on mount; used as "today" for the month and the filters.
+  const [now] = useState(() => new Date());
+  const [{ year, month }, setVisibleMonth] = useState(() => ({
+    year: now.getFullYear(),
+    month: now.getMonth(),
+  }));
   const [selectedDate, setSelectedDate] = useState<number | null>(null);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
-  const [filter, setFilter] = useState<"upcoming" | "past" | "all">("upcoming");
+  const [filter, setFilter] = useState<MaintenanceFilter>("upcoming");
 
-  const generateCalendar = (y: number, m: number) => {
-    const firstDay = new Date(y, m, 1);
-    const lastDay = new Date(y, m + 1, 0);
-
-    const firstDayWeekday = firstDay.getDay() === 0 ? 6 : firstDay.getDay() - 1;
-
-    const firstDayDate = firstDay.getDate();
-    const lastDayDate = lastDay.getDate();
-
-    const weeks: (number | undefined)[][] = [[], [], [], [], [], []];
-
-    let currentWeek = 0;
-
-    for (let i = 0; i < firstDayWeekday; i++) {
-      weeks[currentWeek].push(undefined);
-    }
-
-    for (let i = firstDayDate; i <= lastDayDate; i++) {
-      weeks[currentWeek].push(i);
-      if (weeks[currentWeek].length === 7) {
-        currentWeek++;
-      }
-    }
-
-    while (
-      weeks[currentWeek] &&
-      weeks[currentWeek].length < 7 &&
-      weeks[currentWeek].length > 0
-    ) {
-      weeks[currentWeek].push(undefined);
-    }
-
-    // Remove completely empty trailing weeks
-    const validWeeks = weeks.filter((week) => week.length > 0);
-    setMonthTable(validWeeks);
-  };
-
-  useEffect(() => {
-    generateCalendar(year, month);
-  }, [year, month]);
-
-  const handlePrevMonth = () => {
-    if (month === 0) {
-      setMonth(11);
-      setYear(year - 1);
-    } else {
-      setMonth(month - 1);
-    }
+  const changeMonth = (delta: -1 | 1) => {
+    const target = new Date(year, month + delta, 1);
+    setVisibleMonth({ year: target.getFullYear(), month: target.getMonth() });
     setSelectedDate(null);
   };
 
-  const handleNextMonth = () => {
-    if (month === 11) {
-      setMonth(0);
-      setYear(year + 1);
-    } else {
-      setMonth(month + 1);
-    }
-    setSelectedDate(null);
-  };
-
-  const getMaintenanceForDay = (day: number) => {
-    const checkDate = new Date(year, month, day);
-    // Set time to middle of day to avoid timezone boundaries
-    checkDate.setHours(12, 0, 0, 0);
-
-    return maintenanceEvents.filter((m) => {
-      const start = new Date(m.startAt);
-      const end = new Date(m.endAt);
-
-      // Zero out times for date comparison
-      const startDate = new Date(
-        start.getFullYear(),
-        start.getMonth(),
-        start.getDate(),
-        0,
-        0,
-        0,
-        0,
-      );
-      const endDate = new Date(
-        end.getFullYear(),
-        end.getMonth(),
-        end.getDate(),
-        23,
-        59,
-        59,
-        999,
-      );
-
-      return checkDate >= startDate && checkDate <= endDate;
-    });
-  };
-
-  const filteredEvents = useMemo(() => {
-    let events = maintenanceEvents;
-    if (selectedDate) {
-      events = getMaintenanceForDay(selectedDate);
-    } else {
-      const now = new Date();
-      if (filter === "upcoming") {
-        events = events.filter((e) => new Date(e.endAt) >= now);
-      } else if (filter === "past") {
-        events = events.filter((e) => new Date(e.endAt) < now);
-      }
-    }
-
-    const sorted = [...events];
-    if (filter === "upcoming" && !selectedDate) {
-      // Sort upcoming events so the soonest is first
-      sorted.sort(
-        (a, b) => new Date(a.startAt).getTime() - new Date(b.startAt).getTime(),
-      );
-    } else {
-      // Sort past/all events descending (most recent first)
-      sorted.sort(
-        (a, b) => new Date(b.startAt).getTime() - new Date(a.startAt).getTime(),
-      );
-    }
-    return sorted;
-  }, [maintenanceEvents, selectedDate, year, month, filter]);
-
-  const paginatedEvents = useMemo(() => {
-    return filteredEvents.slice(
-      page * rowsPerPage,
-      page * rowsPerPage + rowsPerPage,
-    );
-  }, [filteredEvents, page, rowsPerPage]);
+  const listedEvents = selectListedEvents(
+    maintenanceEvents,
+    filter,
+    now,
+    selectedDate ? { year, month, day: selectedDate } : null,
+  );
 
   const monthName = new Date(year, month).toLocaleString("default", {
     month: "long",
@@ -181,254 +55,55 @@ const Calendar: FunctionComponent<CalendarProps> = ({
           borderBottom: "1px solid rgba(255,255,255,0.08)",
         }}
       >
-        <IconButton onClick={handlePrevMonth} sx={{ color: "text.secondary" }}>
+        <IconButton
+          onClick={() => changeMonth(-1)}
+          sx={{ color: "text.secondary" }}
+        >
           <FaChevronLeft size={16} />
         </IconButton>
         <Typography variant="subtitle1" fontWeight="600">
           {monthName}
         </Typography>
-        <IconButton onClick={handleNextMonth} sx={{ color: "text.secondary" }}>
+        <IconButton
+          onClick={() => changeMonth(1)}
+          sx={{ color: "text.secondary" }}
+        >
           <FaChevronRight size={16} />
         </IconButton>
       </Stack>
 
-      <Table
-        sx={{
-          "& thead": {
-            "& th": {
-              textAlign: "center",
-              padding: 2,
-              width: "calc(100% / 7)",
-              borderBottom: "1px solid rgba(255,255,255,0.08)",
-              color: "text.secondary",
-              fontWeight: 600,
-              border: "none",
-            },
-          },
-
-          "& tr": {
-            "& td": {
-              textAlign: "center",
-              padding: 2,
-              fontSize: 16,
-              width: "calc(100% / 7)",
-              border: "1px solid rgba(255,255,255,0.05)",
-              transition: "all 0.2s ease",
-            },
-          },
+      <MonthGrid
+        year={year}
+        month={month}
+        events={maintenanceEvents}
+        selectedDay={selectedDate}
+        onSelectDay={(day) => {
+          setSelectedDate(day);
+          setPage(0);
         }}
-      >
-        <thead>
-          <tr>
-            <th>Mon</th>
-            <th>Tue</th>
-            <th>Wed</th>
-            <th>Thu</th>
-            <th>Fri</th>
-            <th>Sat</th>
-            <th>Sun</th>
-          </tr>
-        </thead>
-        <tbody>
-          {monthTable.map((m, mIdx) => (
-            <tr key={`week-${mIdx}`}>
-              {m.map((d, dIdx) => {
-                const dayMaintenance = d ? getMaintenanceForDay(d) : [];
-                const hasMaintenance = dayMaintenance.length > 0;
+      />
 
-                const isSelected = selectedDate === d;
-                let bg = "transparent";
-                if (isSelected) bg = "rgba(59, 130, 246, 0.3)";
-                else if (hasMaintenance) bg = "rgba(59, 130, 246, 0.15)";
-                else if (d) bg = "rgba(255,255,255,0.02)";
-
-                return (
-                  <td
-                    key={`day-${mIdx}-${dIdx}`}
-                    style={{
-                      backgroundColor: bg,
-                      color:
-                        hasMaintenance || isSelected ? "#60a5fa" : "inherit",
-                      fontWeight:
-                        hasMaintenance || isSelected ? "bold" : "normal",
-                      padding: 0,
-                      cursor: d ? "pointer" : "default",
-                    }}
-                    onClick={() => {
-                      if (d) {
-                        setSelectedDate(isSelected ? null : d);
-                        setPage(0);
-                      }
-                    }}
-                  >
-                    <Tooltip
-                      title={
-                        hasMaintenance ? (
-                          <Box sx={{ p: 1 }}>
-                            <Typography variant="subtitle2" gutterBottom>
-                              Maintenance Events:
-                            </Typography>
-                            {dayMaintenance.map((m, i) => (
-                              <Box
-                                key={m.id}
-                                mb={i < dayMaintenance.length - 1 ? 2 : 0}
-                              >
-                                <Typography variant="body2" fontWeight="bold">
-                                  {m.title}
-                                </Typography>
-                                <Typography variant="caption">
-                                  {new Date(m.startAt).toLocaleTimeString()} -{" "}
-                                  {new Date(m.endAt).toLocaleTimeString()}
-                                </Typography>
-                              </Box>
-                            ))}
-                          </Box>
-                        ) : (
-                          ""
-                        )
-                      }
-                      placement="top"
-                      arrow
-                    >
-                      <Box sx={{ width: "100%", height: "100%", padding: 2 }}>
-                        {d || ""}
-                      </Box>
-                    </Tooltip>
-                  </td>
-                );
-              })}
-            </tr>
-          ))}
-        </tbody>
-      </Table>
-
-      <Box sx={{ mt: 3, px: 2 }}>
-        <Stack
-          direction="row"
-          alignItems="center"
-          justifyContent="space-between"
-          sx={{ mb: 1 }}
-        >
-          <Typography variant="h6">
-            {selectedDate
-              ? `Maintenance for ${new Date(year, month, selectedDate).toLocaleDateString()}`
-              : "Maintenance Events"}
-          </Typography>
-          {!selectedDate && (
-            <FormControl size="small">
-              <Select
-                value={filter}
-                onChange={(e) => {
-                  setFilter(e.target.value as "upcoming" | "past" | "all");
-                  setPage(0);
-                }}
-                sx={{
-                  color: "text.secondary",
-                  fontSize: "0.875rem",
-                  "& .MuiOutlinedInput-notchedOutline": {
-                    borderColor: "rgba(255,255,255,0.1)",
-                  },
-                  "&:hover .MuiOutlinedInput-notchedOutline": {
-                    borderColor: "rgba(255,255,255,0.2)",
-                  },
-                  "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                    borderColor: "#3b82f6",
-                  },
-                }}
-              >
-                <MenuItem value="upcoming">Upcoming</MenuItem>
-                <MenuItem value="past">Past</MenuItem>
-                <MenuItem value="all">All</MenuItem>
-              </Select>
-            </FormControl>
-          )}
-        </Stack>
-        <Divider sx={{ mb: 2, borderColor: "rgba(255,255,255,0.08)" }} />
-
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell
-                sx={{
-                  color: "text.secondary",
-                  fontWeight: "600",
-                  borderColor: "rgba(255,255,255,0.08)",
-                }}
-              >
-                Title
-              </TableCell>
-              <TableCell
-                sx={{
-                  color: "text.secondary",
-                  fontWeight: "600",
-                  borderColor: "rgba(255,255,255,0.08)",
-                }}
-              >
-                Start Time
-              </TableCell>
-              <TableCell
-                sx={{
-                  color: "text.secondary",
-                  fontWeight: "600",
-                  borderColor: "rgba(255,255,255,0.08)",
-                }}
-              >
-                End Time
-              </TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {paginatedEvents.length > 0 ? (
-              paginatedEvents.map((event) => (
-                <TableRow
-                  key={event.id}
-                  sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-                >
-                  <TableCell sx={{ borderColor: "rgba(255,255,255,0.05)" }}>
-                    <Typography variant="body2" fontWeight="500">
-                      {event.title}
-                    </Typography>
-                  </TableCell>
-                  <TableCell sx={{ borderColor: "rgba(255,255,255,0.05)" }}>
-                    {new Date(event.startAt).toLocaleString()}
-                  </TableCell>
-                  <TableCell sx={{ borderColor: "rgba(255,255,255,0.05)" }}>
-                    {new Date(event.endAt).toLocaleString()}
-                  </TableCell>
-                </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell
-                  colSpan={3}
-                  align="center"
-                  sx={{ py: 4, borderColor: "rgba(255,255,255,0.05)" }}
-                >
-                  <Typography color="text.secondary">
-                    No maintenance events found.
-                  </Typography>
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-
-        {filteredEvents.length > 0 && (
-          <TablePagination
-            component="div"
-            count={filteredEvents.length}
-            page={page}
-            onPageChange={(_, newPage) => setPage(newPage)}
-            rowsPerPage={rowsPerPage}
-            onRowsPerPageChange={(e) => {
-              setRowsPerPage(parseInt(e.target.value, 10));
-              setPage(0);
-            }}
-            rowsPerPageOptions={[5, 10, 25]}
-            sx={{ borderTop: "1px solid rgba(255,255,255,0.08)" }}
-          />
-        )}
-      </Box>
+      <MaintenanceEventList
+        title={
+          selectedDate
+            ? `Maintenance for ${new Date(year, month, selectedDate).toLocaleDateString()}`
+            : "Maintenance Events"
+        }
+        events={listedEvents}
+        showFilter={!selectedDate}
+        filter={filter}
+        onFilterChange={(value) => {
+          setFilter(value);
+          setPage(0);
+        }}
+        page={page}
+        onPageChange={setPage}
+        rowsPerPage={rowsPerPage}
+        onRowsPerPageChange={(value) => {
+          setRowsPerPage(value);
+          setPage(0);
+        }}
+      />
     </Box>
   );
 };

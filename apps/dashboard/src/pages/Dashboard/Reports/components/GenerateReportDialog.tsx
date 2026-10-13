@@ -1,55 +1,63 @@
 import {
   Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-  MenuItem,
+  FormControl,
+  FormLabel,
+  Input,
+  Option,
+  Select,
   Stack,
-  TextField,
-} from "@mui/material";
+  Typography,
+} from "@mui/joy";
 import { FunctionComponent, useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useCreateReport } from "../../../../hooks/reports.query";
 import { IPostReportRequest } from "../../../../api/endpoints/reports";
 import { enqueueSnackbar } from "notistack";
 import moment from "moment";
+import {
+  Dialog,
+  DialogActions,
+  DialogContent,
+} from "../../../../components/Dialog/Dialog";
+import { getErrorMessage } from "../../../../utilities/errors";
+import { ReportType } from "../reportTypes";
 
-export interface GenerateReportDialogProps {
+interface GenerateReportDialogProps {
   open: boolean;
   onClose: () => void;
-  defaultReportType?: IPostReportRequest["reportType"];
+  defaultReportType?: ReportType;
 }
+
+/** The last month up to today. */
+const defaultValues = (reportType: ReportType): IPostReportRequest => ({
+  reportType,
+  start: moment().subtract(1, "months").format("YYYY-MM-DD"),
+  end: moment().format("YYYY-MM-DD"),
+});
 
 const GenerateReportDialog: FunctionComponent<GenerateReportDialogProps> = ({
   open,
   onClose,
   defaultReportType = "UPTIME",
 }) => {
-  const { mutateAsync: createReport, isLoading } = useCreateReport();
+  const { mutateAsync: createReport, isPending: isLoading } = useCreateReport();
 
   const { control, handleSubmit, reset } = useForm<IPostReportRequest>({
-    defaultValues: {
-      reportType: defaultReportType,
-      start: moment().subtract(1, "months").format("YYYY-MM-DD"),
-      end: moment().format("YYYY-MM-DD"),
-    },
+    defaultValues: defaultValues(defaultReportType),
   });
 
   useEffect(() => {
     if (open) {
-      reset({
-        reportType: defaultReportType,
-        start: moment().subtract(1, "months").format("YYYY-MM-DD"),
-        end: moment().format("YYYY-MM-DD"),
-      });
+      reset(defaultValues(defaultReportType));
     }
   }, [open, defaultReportType, reset]);
 
+  // The type is fixed when picked from a specific (non uptime) report card.
+  const canChangeType =
+    defaultReportType === "CUSTOM" || defaultReportType === "UPTIME";
+
   const onSubmit = async (data: IPostReportRequest) => {
     try {
-      // Ensure ISO string for dates if required, or keep YYYY-MM-DD based on API preference.
       await createReport({
         ...data,
         start: moment(data.start).startOf("day").toISOString(),
@@ -57,84 +65,83 @@ const GenerateReportDialog: FunctionComponent<GenerateReportDialogProps> = ({
       });
       enqueueSnackbar("Report generated successfully", { variant: "success" });
       onClose();
-    } catch (err: any) {
-      enqueueSnackbar(err.message || "Failed to generate report", {
+    } catch (err) {
+      enqueueSnackbar(getErrorMessage(err, "Failed to generate report"), {
         variant: "error",
       });
     }
   };
 
   return (
-    <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
-      <DialogTitle>Generate Report</DialogTitle>
+    <Dialog open={open} onClose={onClose} title="Generate Report" maxWidth="sm">
       <form onSubmit={handleSubmit(onSubmit)}>
         <DialogContent>
-          <DialogContentText sx={{ mb: 3 }}>
+          <Typography level="body-sm" textColor="text.secondary" sx={{ mb: 2 }}>
             Generate a new report for the specified date range. The report will
             be available in the previous reports list shortly.
-          </DialogContentText>
-          <Stack spacing={3}>
+          </Typography>
+          <Stack spacing={2}>
             <Controller
               name="reportType"
               control={control}
               rules={{ required: true }}
               render={({ field }) => (
-                <TextField
-                  {...field}
-                  select
-                  label="Report Type"
-                  fullWidth
-                  disabled={
-                    defaultReportType !== "CUSTOM" &&
-                    defaultReportType !== "UPTIME"
-                  } // Allow changing if they clicked custom
-                >
-                  <MenuItem value="UPTIME">Uptime overview</MenuItem>
-                  <MenuItem value="PERFORMANCE">Performance overview</MenuItem>
-                  <MenuItem value="INCIDENT">Incident overview</MenuItem>
-                  <MenuItem value="ALL">All in!</MenuItem>
-                  <MenuItem value="CUSTOM">Custom report</MenuItem>
-                </TextField>
+                <FormControl required disabled={!canChangeType}>
+                  <FormLabel>Report Type</FormLabel>
+                  <Select
+                    name={field.name}
+                    value={field.value}
+                    onChange={(_, value) => field.onChange(value)}
+                    onBlur={field.onBlur}
+                  >
+                    <Option value="UPTIME">Uptime overview</Option>
+                    <Option value="PERFORMANCE">Performance overview</Option>
+                    <Option value="INCIDENT">Incident overview</Option>
+                    <Option value="ALL">All in!</Option>
+                    <Option value="CUSTOM">Custom report</Option>
+                  </Select>
+                </FormControl>
               )}
             />
 
-            <Controller
-              name="start"
-              control={control}
-              rules={{ required: true }}
-              render={({ field }) => (
-                <TextField
-                  {...field}
-                  label="Start Date"
-                  type="date"
-                  fullWidth
-                  InputLabelProps={{ shrink: true }}
-                />
-              )}
-            />
+            <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
+              <Controller
+                name="start"
+                control={control}
+                rules={{ required: true }}
+                render={({ field }) => (
+                  <FormControl required sx={{ flex: 1 }}>
+                    <FormLabel>Start Date</FormLabel>
+                    <Input {...field} type="date" />
+                  </FormControl>
+                )}
+              />
 
-            <Controller
-              name="end"
-              control={control}
-              rules={{ required: true }}
-              render={({ field }) => (
-                <TextField
-                  {...field}
-                  label="End Date"
-                  type="date"
-                  fullWidth
-                  InputLabelProps={{ shrink: true }}
-                />
-              )}
-            />
+              <Controller
+                name="end"
+                control={control}
+                rules={{ required: true }}
+                render={({ field }) => (
+                  <FormControl required sx={{ flex: 1 }}>
+                    <FormLabel>End Date</FormLabel>
+                    <Input {...field} type="date" />
+                  </FormControl>
+                )}
+              />
+            </Stack>
           </Stack>
         </DialogContent>
         <DialogActions>
-          <Button onClick={onClose} color="inherit" disabled={isLoading}>
+          <Button
+            variant="plain"
+            color="neutral"
+            onClick={onClose}
+            disabled={isLoading}
+          >
             Cancel
           </Button>
-          <Button type="submit" variant="contained" disabled={isLoading}>
-            {isLoading ? "Generating..." : "Generate"}
+          <Button type="submit" loading={isLoading}>
+            Generate
           </Button>
         </DialogActions>
       </form>

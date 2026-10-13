@@ -4,7 +4,7 @@ import client from "../../client";
   Shared
 */
 
-export interface MonitorStep {
+interface MonitorStep {
   name: string;
   method: "GET" | "POST" | "PUT" | "DELETE" | "HEAD" | "OPTIONS" | "PATCH";
   url: string;
@@ -34,7 +34,7 @@ export interface MonitorWithStats extends Monitor {
   stats: MonitorStats;
 }
 
-export interface MonitorSettings {
+interface MonitorSettings {
   frequencySeconds: number;
   tls: {
     enabled: boolean;
@@ -53,7 +53,7 @@ export interface MonitorSettings {
   locations: string[];
 }
 
-export interface MonitorVariable {
+interface MonitorVariable {
   name: string;
   source: string;
   property: string;
@@ -66,7 +66,7 @@ export interface MonitorAssertion {
   target?: string;
 }
 
-export interface MonitorStats {
+interface MonitorStats {
   totalCount: number;
   uptimePercentage: number;
   averageResponseTime: number;
@@ -199,6 +199,8 @@ export interface PreviewOpenAPIEndpoint {
 
 export interface PreviewOpenAPIResponse {
   endpoints: PreviewOpenAPIEndpoint[];
+  /** Server base URL declared in the spec, if any. */
+  baseUrl?: string;
   auth?: {
     method: "OAUTH2_CLIENT_CREDENTIALS" | "BASIC";
     tokenUrl?: string;

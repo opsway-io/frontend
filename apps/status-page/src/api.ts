@@ -1,4 +1,4 @@
-export interface PublicMonitor {
+interface PublicMonitor {
   id: number;
   name: string;
   status: "OPERATIONAL" | "OUTAGE";
@@ -7,7 +7,7 @@ export interface PublicMonitor {
   dailyUptimes?: number[];
 }
 
-export interface PublicIncident {
+interface PublicIncident {
   id: number;
   title: string;
   description: string;
@@ -22,7 +22,7 @@ export interface PublicMaintenance {
   endAt: string;
 }
 
-export interface PublicGroup {
+interface PublicGroup {
   id: number;
   name: string;
   order: number;
@@ -77,8 +77,8 @@ export const getPublicStatusPage = async (
 export const subscribeToStatusPage = async (
   domain: string,
   email: string,
-  channel: string = "EMAIL",
-  destination: string = "",
+  channel = "EMAIL",
+  destination = "",
 ): Promise<void> => {
   const response = await fetch(
     `/v1/public/status-pages/${encodeURIComponent(domain)}/subscribe`,

@@ -1,24 +1,47 @@
-import { Stack, Typography, Chip } from "@mui/material";
-import { DataGridProps, GridColDef, GridRowsProp } from "@mui/x-data-grid";
+import { Chip, Sheet, Stack, Tooltip, Typography } from "@mui/joy";
 import { FunctionComponent } from "react";
-import { AiOutlinePause } from "react-icons/ai";
-import { IoCheckmark, IoConstruct } from "react-icons/io5";
+import { IoCheckmark, IoConstructOutline, IoPause } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
 import { MonitorWithStats } from "../../../../api/endpoints/monitors";
-import Avatar from "../../../../components/Avatar";
-import DataGrid from "../../../../components/DataGrid";
+import DataGrid, {
+  DataGridProps,
+  GridColDef,
+  GridRowsProp,
+} from "../../../../components/DataGrid/DataGrid";
 import { Role } from "../../../../components/Restrict";
-import ResultThumbGraph from "../../../../components/ResultThumbGraph";
+import ResultThumbGraph from "../../../../components/ResultThumbGraph/ResultThumbGraph";
 import { useCurrentUserRole } from "../../../../hooks/user.query";
 import { secondsHumanize } from "../../../../utilities/time";
 import { stripProtocolAndPath } from "../../../../utilities/url";
 import { useMonitorsIncidents } from "../../../../hooks/monitors.query";
-import ItemMenu from "./ItemMenu";
+import MonitorActionsMenu from "./MonitorActionsMenu";
 
-interface MonitorsDataGridProps
-  extends Omit<DataGridProps, "columns" | "rows"> {
+interface MonitorsDataGridProps extends Omit<
+  DataGridProps,
+  "columns" | "rows"
+> {
   monitors?: MonitorWithStats[];
 }
+
+const statusIndicator = (state: MonitorWithStats["state"]) => {
+  if (state === "ACTIVE") {
+    return {
+      color: "success" as const,
+      label: "Active",
+      icon: <IoCheckmark />,
+    };
+  }
+
+  if (state === "MAINTENANCE") {
+    return {
+      color: "warning" as const,
+      label: "Maintenance",
+      icon: <IoConstructOutline />,
+    };
+  }
+
+  return { color: "neutral" as const, label: "Paused", icon: <IoPause /> };
+};
 
 const MonitorsDataGrid: FunctionComponent<MonitorsDataGridProps> = (props) => {
   const navigate = useNavigate();
@@ -31,34 +54,40 @@ const MonitorsDataGrid: FunctionComponent<MonitorsDataGridProps> = (props) => {
     {
       field: "status",
       headerName: "",
-      width: 70,
-      align: "right",
+      width: 56,
+      align: "center",
       sortable: false,
-      renderCell: (p) => (
-        <Avatar
-          sx={{
-            backgroundColor: (t) => {
-              if (p.row.state === "ACTIVE") return t.palette.success.main;
-              if (p.row.state === "MAINTENANCE") return t.palette.warning.main;
-              return t.palette.grey[500];
-            },
-            color: (t) => t.palette.success.contrastText,
-          }}
-        >
-          {p.row.state === "ACTIVE" ? (
-            <IoCheckmark />
-          ) : p.row.state === "MAINTENANCE" ? (
-            <IoConstruct />
-          ) : (
-            <AiOutlinePause />
-          )}
-        </Avatar>
-      ),
+      renderCell: (p) => {
+        const status = statusIndicator(p.row.state);
+
+        return (
+          <Tooltip title={status.label} placement="right">
+            <Sheet
+              variant="soft"
+              color={status.color}
+              aria-label={status.label}
+              sx={{
+                width: 28,
+                height: 28,
+                borderRadius: "sm",
+                display: "inline-flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontSize: "md",
+                color: `${status.color}.400`,
+              }}
+            >
+              {status.icon}
+            </Sheet>
+          </Tooltip>
+        );
+      },
     },
     {
       field: "name",
       headerName: "Name",
       flex: 1,
+      minWidth: 200,
       sortable: false,
       renderCell: (col) => {
         const hasIncident = monitorsIncidents?.monitors?.some(
@@ -66,27 +95,19 @@ const MonitorsDataGrid: FunctionComponent<MonitorsDataGridProps> = (props) => {
         );
 
         return (
-          <Stack direction="row" spacing={1} alignItems="center">
-            <Stack>
-              <Typography
-                variant="subtitle1"
-                sx={{
-                  lineHeight: 1,
-                }}
-              >
+          <Stack direction="row" spacing={1} alignItems="center" minWidth={0}>
+            <Stack minWidth={0}>
+              <Typography level="title-sm" noWrap>
                 {col.row.name}
               </Typography>
-              <Typography variant="caption" color="text.secondary">
+              <Typography level="body-xs" textColor="text.tertiary" noWrap>
                 {stripProtocolAndPath(col.row.steps?.[0]?.url || "")}
               </Typography>
             </Stack>
             {hasIncident && (
-              <Chip
-                size="small"
-                color="error"
-                label="Incident"
-                sx={{ height: 20, fontSize: "0.7rem" }}
-              />
+              <Chip size="sm" color="danger" variant="soft">
+                Incident
+              </Chip>
             )}
           </Stack>
         );
@@ -147,9 +168,10 @@ const MonitorsDataGrid: FunctionComponent<MonitorsDataGridProps> = (props) => {
     columns.push({
       field: "actions",
       headerName: "",
+      width: 56,
       align: "right",
       sortable: false,
-      renderCell: (col) => <ItemMenu monitor={col.row} />,
+      renderCell: (col) => <MonitorActionsMenu monitor={col.row} />,
     });
   }
 

@@ -1,16 +1,13 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import * as IncidentsAPI from "../api/endpoints/incidents";
 import useAuthenticationStore from "./authentication.store";
-import { getQueryClient } from "./client.query";
-
-const globalQueryClient = getQueryClient();
 
 export const useIncidents = (resolved?: boolean, offset = 0, limit = 5) => {
   const teamId = useAuthenticationStore((state) => state.currentTeamId);
 
-  return useQuery(
-    [
-      "team",
+  return useQuery({
+    queryKey: [
+      "teams",
       teamId,
       "incidents",
       {
@@ -19,25 +16,28 @@ export const useIncidents = (resolved?: boolean, offset = 0, limit = 5) => {
         limit,
       },
     ],
-    () => {
+    queryFn: () => {
       if (!teamId) {
         return Promise.resolve(null);
       }
 
       return IncidentsAPI.getIncidents(teamId, resolved, offset, limit);
     },
-  );
+  });
 };
 
 export const useIncident = (incidentId: number) => {
   const teamId = useAuthenticationStore((state) => state.currentTeamId);
 
-  return useQuery(["team", teamId, "incident", incidentId], () => {
-    if (!teamId || !incidentId) {
-      return Promise.resolve(null);
-    }
+  return useQuery({
+    queryKey: ["teams", teamId, "incident", incidentId],
+    queryFn: () => {
+      if (!teamId || !incidentId) {
+        return Promise.resolve(null);
+      }
 
-    return IncidentsAPI.getIncident(teamId, incidentId);
+      return IncidentsAPI.getIncident(teamId, incidentId);
+    },
   });
 };
 
@@ -48,9 +48,9 @@ export const useMonitorIncidents = (
 ) => {
   const teamId = useAuthenticationStore((state) => state.currentTeamId);
 
-  return useQuery(
-    [
-      "team",
+  return useQuery({
+    queryKey: [
+      "teams",
       teamId,
       "monitor",
       monitorId,
@@ -60,25 +60,23 @@ export const useMonitorIncidents = (
         limit,
       },
     ],
-    () => {
+    queryFn: () => {
       if (!teamId) {
         return Promise.resolve(null);
       }
 
       return IncidentsAPI.getMonitorIncidents(teamId, monitorId, offset, limit);
     },
-    {
-      refetchInterval: 10000,
-    },
-  );
+    refetchInterval: 10000,
+  });
 };
 
 export const useSolveIncident = () => {
   const teamId = useAuthenticationStore((state) => state.currentTeamId);
   const queryClient = useQueryClient();
 
-  return useMutation(
-    (data: { incidentId: number }) => {
+  return useMutation({
+    mutationFn: (data: { incidentId: number }) => {
       if (!teamId) {
         return Promise.reject(new Error("Team not found"));
       }
@@ -86,21 +84,18 @@ export const useSolveIncident = () => {
         resolved: true,
       });
     },
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries(["team", teamId]);
-        queryClient.invalidateQueries(["teams", teamId]);
-      },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["teams", teamId] });
     },
-  );
+  });
 };
 
 export const useAcknowledgeIncident = () => {
   const teamId = useAuthenticationStore((state) => state.currentTeamId);
   const queryClient = useQueryClient();
 
-  return useMutation(
-    (data: { incidentId: number }) => {
+  return useMutation({
+    mutationFn: (data: { incidentId: number }) => {
       if (!teamId) {
         return Promise.reject(new Error("Team not found"));
       }
@@ -109,13 +104,10 @@ export const useAcknowledgeIncident = () => {
         data.incidentId,
       );
     },
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries(["team", teamId]);
-        queryClient.invalidateQueries(["teams", teamId]);
-      },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["teams", teamId] });
     },
-  );
+  });
 };
 
 export const useIncidentAlerts = (
@@ -125,9 +117,9 @@ export const useIncidentAlerts = (
 ) => {
   const teamId = useAuthenticationStore((state) => state.currentTeamId);
 
-  return useQuery(
-    [
-      "team",
+  return useQuery({
+    queryKey: [
+      "teams",
       teamId,
       "incident",
       incidentId,
@@ -137,14 +129,14 @@ export const useIncidentAlerts = (
         limit,
       },
     ],
-    () => {
+    queryFn: () => {
       if (!teamId || !incidentId) {
         return Promise.resolve(null);
       }
 
       return IncidentsAPI.getIncidentAlerts(teamId, incidentId, offset, limit);
     },
-  );
+  });
 };
 
 export const useIncidentOccurrences = (
@@ -154,9 +146,17 @@ export const useIncidentOccurrences = (
 ) => {
   const teamId = useAuthenticationStore((state) => state.currentTeamId);
 
-  return useQuery(
-    ["teams", teamId, "incidents", incidentId, "occurrences", offset, limit],
-    () => {
+  return useQuery({
+    queryKey: [
+      "teams",
+      teamId,
+      "incidents",
+      incidentId,
+      "occurrences",
+      offset,
+      limit,
+    ],
+    queryFn: () => {
       if (!teamId) {
         return Promise.resolve(null);
       }
@@ -168,18 +168,19 @@ export const useIncidentOccurrences = (
         limit,
       );
     },
-    {
-      enabled: !!teamId,
-    },
-  );
+    enabled: !!teamId,
+  });
 };
 
 export const useUpdateIncidentVisibility = () => {
   const teamId = useAuthenticationStore((state) => state.currentTeamId);
   const queryClient = useQueryClient();
 
-  return useMutation(
-    (data: { incidentId: number; isStatusPageVisible: boolean }) => {
+  return useMutation({
+    mutationFn: (data: {
+      incidentId: number;
+      isStatusPageVisible: boolean;
+    }) => {
       if (!teamId) {
         return Promise.reject(new Error("Team not found"));
       }
@@ -187,11 +188,8 @@ export const useUpdateIncidentVisibility = () => {
         isStatusPageVisible: data.isStatusPageVisible,
       });
     },
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries(["team", teamId]);
-        queryClient.invalidateQueries(["teams", teamId]);
-      },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["teams", teamId] });
     },
-  );
+  });
 };

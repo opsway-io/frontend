@@ -4,135 +4,170 @@ import { Navigate, Route, Routes as RouterRoutes } from "react-router-dom";
 import { Role } from "../components/Restrict";
 import RestrictedRoute from "./RestrictedRoute";
 
-import DashboardBaseView from "../pages/Dashboard";
-import AuthenticationBaseView from "../pages/Authentication";
+import DashboardLayout from "../pages/Dashboard/DashboardLayout";
+import AuthenticationLayout from "../pages/Authentication/AuthenticationLayout";
 
-const ErrorsBaseView = lazy(() => import("../pages/Errors"));
+const ErrorLayout = lazy(() => import("../pages/Errors/ErrorLayout"));
 
-const NotFoundView = lazy(() => import("../pages/Errors/404"));
-const AccessRestrictedView = lazy(() => import("../pages/Errors/403"));
-
-const LoginView = lazy(() => import("../pages/Authentication/Login"));
-const OAuthLoginView = lazy(() => import("../pages/Authentication/OAuth"));
-const RegisterAccountView = lazy(
-  () => import("../pages/Authentication/UserRegister"),
-);
-const ResetPasswordView = lazy(
-  () => import("../pages/Authentication/ResetPassword"),
-);
-const ForgotPasswordView = lazy(
-  () => import("../pages/Authentication/ForgotPassword"),
+const NotFoundPage = lazy(() => import("../pages/Errors/NotFoundPage"));
+const AccessRestrictedPage = lazy(
+  () => import("../pages/Errors/AccessRestrictedPage"),
 );
 
-const AccountView = lazy(() => import("../pages/Dashboard/Account"));
-const AccountGeneralTabView = lazy(
-  () => import("../pages/Dashboard/Account/tabs/General"),
+const LoginPage = lazy(() => import("../pages/Authentication/Login/LoginPage"));
+const OAuthCallbackPage = lazy(
+  () => import("../pages/Authentication/OAuth/OAuthCallbackPage"),
 );
-const AccountSecurityTabView = lazy(
-  () => import("../pages/Dashboard/Account/tabs/Security"),
+const UserRegisterPage = lazy(
+  () => import("../pages/Authentication/UserRegister/UserRegisterPage"),
 );
-const AccountNotificationRulesTabView = lazy(
-  () => import("../pages/Dashboard/Account/tabs/NotificationRules"),
+const ResetPasswordPage = lazy(
+  () => import("../pages/Authentication/ResetPassword/ResetPasswordPage"),
 );
-
-const TeamView = lazy(() => import("../pages/Dashboard/Team"));
-const TeamPeopleTabView = lazy(
-  () => import("../pages/Dashboard/Team/tabs/People"),
-);
-const TeamInvitationsTabView = lazy(
-  () => import("../pages/Dashboard/Team/tabs/Invitations"),
-);
-const TeamSettingsTabView = lazy(
-  () => import("../pages/Dashboard/Team/tabs/Settings"),
-);
-const TeamEscalationTabView = lazy(
-  () => import("../pages/Dashboard/Team/tabs/Escalation"),
-);
-const TeamApiKeysTabView = lazy(
-  () => import("../pages/Dashboard/Team/tabs/ApiKeys"),
-);
-const TeamSubscriptionTabView = lazy(
-  () => import("../pages/Dashboard/Team/tabs/Subscription"),
-);
-const TeamSelectionView = lazy(
-  () => import("../pages/Authentication/TeamSelection"),
-);
-const TeamRegisterView = lazy(
-  () => import("../pages/Authentication/TeamRegister"),
+const ForgotPasswordPage = lazy(
+  () => import("../pages/Authentication/ForgotPassword/ForgotPasswordPage"),
 );
 
-const MonitorsView = lazy(() => import("../pages/Dashboard/Monitors"));
-const MonitorDetailView = lazy(
-  () => import("../pages/Dashboard/Monitors/Detail"),
+const AccountPage = lazy(
+  () => import("../pages/Dashboard/Account/AccountPage"),
 );
-const MonitorCreateView = lazy(
-  () => import("../pages/Dashboard/Monitors/Create"),
+const AccountGeneralTab = lazy(
+  () => import("../pages/Dashboard/Account/tabs/GeneralTab"),
 );
-const MonitorCheckView = lazy(
-  () => import("../pages/Dashboard/Monitors/Check"),
+const AccountSecurityTab = lazy(
+  () => import("../pages/Dashboard/Account/tabs/SecurityTab"),
 );
-const MonitorSettingsView = lazy(
-  () => import("../pages/Dashboard/Monitors/Settings"),
-);
-
-const AlertingView = lazy(() => import("../pages/Dashboard/Alerting"));
-const AlertRuleCreateView = lazy(
-  () => import("../pages/Dashboard/Alerting/Create"),
-);
-const AlertRuleDetailView = lazy(
-  () => import("../pages/Dashboard/Alerting/Detail"),
+const AccountNotificationRulesTab = lazy(
+  () => import("../pages/Dashboard/Account/tabs/NotificationRulesTab"),
 );
 
-const HeartbeatView = lazy(() => import("../pages/Dashboard/Heartbeats"));
+const TeamPage = lazy(() => import("../pages/Dashboard/Team/TeamPage"));
+const TeamPeopleTab = lazy(
+  () => import("../pages/Dashboard/Team/tabs/PeopleTab"),
+);
+const TeamInvitationsTab = lazy(
+  () => import("../pages/Dashboard/Team/tabs/InvitationsTab"),
+);
+
+const SettingsPage = lazy(
+  () => import("../pages/Dashboard/Settings/SettingsPage"),
+);
+const SettingsGeneralTab = lazy(
+  () => import("../pages/Dashboard/Settings/tabs/GeneralTab"),
+);
+const SettingsIntegrationsTab = lazy(
+  () => import("../pages/Dashboard/Settings/tabs/IntegrationsTab"),
+);
+const SettingsApiKeysTab = lazy(
+  () => import("../pages/Dashboard/Settings/tabs/ApiKeysTab"),
+);
+const SettingsBillingTab = lazy(
+  () => import("../pages/Dashboard/Settings/tabs/BillingTab"),
+);
+const TeamSelectionPage = lazy(
+  () => import("../pages/Authentication/TeamSelection/TeamSelectionPage"),
+);
+const TeamRegisterPage = lazy(
+  () => import("../pages/Authentication/TeamRegister/TeamRegisterPage"),
+);
+
+const MonitorsPage = lazy(
+  () => import("../pages/Dashboard/Monitors/MonitorsPage"),
+);
+const MonitorDetailPage = lazy(
+  () => import("../pages/Dashboard/Monitors/Detail/MonitorDetailPage"),
+);
+const CreateMonitorPage = lazy(
+  () => import("../pages/Dashboard/Monitors/CreateMonitorPage"),
+);
+const CheckDetailPage = lazy(
+  () => import("../pages/Dashboard/Monitors/CheckDetailPage"),
+);
+const MonitorSettingsPage = lazy(
+  () => import("../pages/Dashboard/Monitors/MonitorSettingsPage"),
+);
+
+const AlertingPage = lazy(
+  () => import("../pages/Dashboard/Alerting/AlertingPage"),
+);
+const AlertRulesTab = lazy(
+  () => import("../pages/Dashboard/Alerting/tabs/AlertRulesTab"),
+);
+const EscalationTab = lazy(
+  () => import("../pages/Dashboard/Alerting/tabs/EscalationTab"),
+);
+const AlertRuleCreatePage = lazy(
+  () => import("../pages/Dashboard/Alerting/Create/AlertRuleCreatePage"),
+);
+const AlertRuleDetailPage = lazy(
+  () => import("../pages/Dashboard/Alerting/Detail/AlertRuleDetailPage"),
+);
+
+const HeartbeatView = lazy(
+  () => import("../pages/Dashboard/Heartbeats/HeartbeatsPage"),
+);
 const HeartbeatCreateView = lazy(
-  () => import("../pages/Dashboard/Heartbeats/Create"),
+  () => import("../pages/Dashboard/Heartbeats/Create/HeartbeatCreatePage"),
 );
 const HeartbeatDetailView = lazy(
-  () => import("../pages/Dashboard/Heartbeats/Detail"),
+  () => import("../pages/Dashboard/Heartbeats/Detail/HeartbeatDetailPage"),
 );
 const IncidentDetailView = lazy(
-  () => import("../pages/Dashboard/Incidents/incident"),
+  () => import("../pages/Dashboard/Incidents/Detail/IncidentDetailPage"),
 );
 
-const MaintenanceView = lazy(() => import("../pages/Dashboard/Maintenance"));
+const MaintenanceView = lazy(
+  () => import("../pages/Dashboard/Maintenance/MaintenancePage"),
+);
 const MaintenanceCreateView = lazy(
-  () => import("../pages/Dashboard/Maintenance/Create"),
+  () => import("../pages/Dashboard/Maintenance/Create/MaintenanceCreatePage"),
 );
 const MaintenanceDetailView = lazy(
-  () => import("../pages/Dashboard/Maintenance/Detail"),
+  () => import("../pages/Dashboard/Maintenance/Detail/MaintenanceDetailPage"),
 );
 
-const IncidentsView = lazy(() => import("../pages/Dashboard/Incidents"));
-const IncidentsMontiorView = lazy(
-  () => import("../pages/Dashboard/Incidents/monitors"),
+const IncidentsView = lazy(
+  () => import("../pages/Dashboard/Incidents/IncidentsPage"),
+);
+const IncidentsMonitorView = lazy(
+  () => import("../pages/Dashboard/Incidents/Monitor/MonitorIncidentsPage"),
 );
 
-const ChangelogView = lazy(() => import("../pages/Dashboard/Changelog"));
+const ChangelogView = lazy(
+  () => import("../pages/Dashboard/Changelog/ChangelogsPage"),
+);
 const ChangelogEntriesCreateView = lazy(
-  () => import("../pages/Dashboard/Changelog/Entries/Create"),
+  () =>
+    import("../pages/Dashboard/Changelog/Entries/Create/ChangelogEntryCreatePage"),
 );
 const ChangelogEntriesView = lazy(
-  () => import("../pages/Dashboard/Changelog/Entries"),
+  () => import("../pages/Dashboard/Changelog/Entries/ChangelogEntriesPage"),
 );
 const ChangelogEntriesDetailView = lazy(
-  () => import("../pages/Dashboard/Changelog/Entries/Detail"),
+  () =>
+    import("../pages/Dashboard/Changelog/Entries/Detail/ChangelogEntryDetailPage"),
 );
 
-const StatusPagesView = lazy(() => import("../pages/Dashboard/StatusPages"));
+const StatusPagesView = lazy(
+  () => import("../pages/Dashboard/StatusPages/StatusPagesPage"),
+);
 const StatusPagesCreateView = lazy(
-  () => import("../pages/Dashboard/StatusPages/Create"),
+  () => import("../pages/Dashboard/StatusPages/Create/StatusPageCreatePage"),
 );
 const StatusPagesDetailView = lazy(
-  () => import("../pages/Dashboard/StatusPages/Detail"),
+  () => import("../pages/Dashboard/StatusPages/Detail/StatusPageDetailPage"),
 );
 
-const ReportsView = lazy(() => import("../pages/Dashboard/Reports"));
+const ReportsView = lazy(
+  () => import("../pages/Dashboard/Reports/ReportsPage"),
+);
 const ReportDetailView = lazy(
-  () => import("../pages/Dashboard/Reports/Detail"),
+  () => import("../pages/Dashboard/Reports/Detail/ReportDetailPage"),
 );
 
-const TeamAcceptInvitationView = lazy(
-  () => import("../pages/Authentication/TeamAcceptInvitation"),
+const TeamAcceptInvitationPage = lazy(
+  () =>
+    import("../pages/Authentication/TeamAcceptInvitation/TeamAcceptInvitationPage"),
 );
 
 const Routes: FunctionComponent = () => {
@@ -142,47 +177,57 @@ const Routes: FunctionComponent = () => {
         <Route
           element={
             <RestrictedRoute authenticated>
-              <DashboardBaseView />
+              <DashboardLayout />
             </RestrictedRoute>
           }
         >
           <Route index element={<Navigate to="monitors" replace />} />
 
           {/* Account */}
-          <Route path="account" element={<AccountView />}>
-            <Route path="general" element={<AccountGeneralTabView />} />
-            <Route path="security" element={<AccountSecurityTabView />} />
+          <Route path="account" element={<AccountPage />}>
+            <Route path="general" element={<AccountGeneralTab />} />
+            <Route path="security" element={<AccountSecurityTab />} />
             <Route
               path="notifications"
-              element={<AccountNotificationRulesTabView />}
+              element={<AccountNotificationRulesTab />}
             />
             <Route path="" element={<Navigate to="general" replace />} />
           </Route>
 
           {/* Monitor */}
           <Route path="monitors">
-            <Route index path="" element={<MonitorsView />} />
-            <Route path=":id" element={<MonitorDetailView />} />
+            <Route index path="" element={<MonitorsPage />} />
+            <Route path=":id" element={<MonitorDetailPage />} />
             <Route
               path=":id/settings"
               element={
                 <RestrictedRoute minRole={Role.ADMIN}>
-                  <MonitorSettingsView />
+                  <MonitorSettingsPage />
                 </RestrictedRoute>
               }
             />
             <Route
               path=":monitorId/checks/:checkId"
-              element={<MonitorCheckView />}
+              element={<CheckDetailPage />}
             />
-            <Route path="create" element={<MonitorCreateView />} />
+            <Route path="create" element={<CreateMonitorPage />} />
           </Route>
 
           {/* Alerting */}
           <Route path="alerting">
-            <Route index path="" element={<AlertingView />} />
-            <Route path="create" element={<AlertRuleCreateView />} />
-            <Route path=":ruleId" element={<AlertRuleDetailView />} />
+            <Route element={<AlertingPage />}>
+              <Route index element={<AlertRulesTab />} />
+              <Route
+                path="escalation"
+                element={
+                  <RestrictedRoute minRole={Role.ADMIN}>
+                    <EscalationTab />
+                  </RestrictedRoute>
+                }
+              />
+            </Route>
+            <Route path="create" element={<AlertRuleCreatePage />} />
+            <Route path=":ruleId" element={<AlertRuleDetailPage />} />
           </Route>
 
           <Route path="heartbeats">
@@ -194,7 +239,7 @@ const Routes: FunctionComponent = () => {
           {/* Incidents  */}
           <Route path="incidents">
             <Route index path="" element={<IncidentsView />} />
-            <Route path=":id/monitor" element={<IncidentsMontiorView />} />
+            <Route path=":id/monitor" element={<IncidentsMonitorView />} />
             <Route
               path="incident/:incidentId"
               element={<IncidentDetailView />}
@@ -223,7 +268,7 @@ const Routes: FunctionComponent = () => {
                 }
               />
               <Route
-                path="entries/:id"
+                path="entries/:entryId"
                 element={<ChangelogEntriesDetailView />}
               />
             </Route>
@@ -248,81 +293,81 @@ const Routes: FunctionComponent = () => {
           </Route>
 
           {/* Team */}
-          <Route path="team" element={<TeamView />}>
-            <Route path="people" element={<TeamPeopleTabView />} />
+          <Route path="team" element={<TeamPage />}>
+            <Route path="people" element={<TeamPeopleTab />} />
             <Route
               path="invitations"
               element={
                 <RestrictedRoute minRole={Role.ADMIN}>
-                  <TeamInvitationsTabView />
+                  <TeamInvitationsTab />
                 </RestrictedRoute>
               }
             />
-
-            <Route
-              path="settings"
-              element={
-                <RestrictedRoute minRole={Role.ADMIN}>
-                  <TeamSettingsTabView />
-                </RestrictedRoute>
-              }
-            />
-            <Route
-              path="escalation"
-              element={
-                <RestrictedRoute minRole={Role.ADMIN}>
-                  <TeamEscalationTabView />
-                </RestrictedRoute>
-              }
-            />
-            <Route
-              path="apikeys"
-              element={
-                <RestrictedRoute minRole={Role.ADMIN}>
-                  <TeamApiKeysTabView />
-                </RestrictedRoute>
-              }
-            />
-            <Route
-              path="subscription"
-              element={
-                <RestrictedRoute minRole={Role.ADMIN}>
-                  <TeamSubscriptionTabView />
-                </RestrictedRoute>
-              }
-            />
-
-            <Route path="" element={<Navigate to="people" replace />} />
+            <Route index element={<Navigate to="people" replace />} />
           </Route>
+
+          {/* Settings */}
+          <Route
+            path="settings"
+            element={
+              <RestrictedRoute minRole={Role.ADMIN}>
+                <SettingsPage />
+              </RestrictedRoute>
+            }
+          >
+            <Route path="general" element={<SettingsGeneralTab />} />
+            <Route path="integrations" element={<SettingsIntegrationsTab />} />
+            <Route path="api-keys" element={<SettingsApiKeysTab />} />
+            <Route path="billing" element={<SettingsBillingTab />} />
+            <Route index element={<Navigate to="general" replace />} />
+          </Route>
+
+          {/* Old team URLs, kept for bookmarks and Stripe redirects */}
+          <Route
+            path="team/settings"
+            element={<Navigate to="/settings/general" replace />}
+          />
+          <Route
+            path="team/apikeys"
+            element={<Navigate to="/settings/api-keys" replace />}
+          />
+          <Route
+            path="team/subscription"
+            element={<Navigate to="/settings/billing" replace />}
+          />
+          <Route
+            path="team/escalation"
+            element={<Navigate to="/alerting/escalation" replace />}
+          />
         </Route>
 
         {/* Authentication  */}
-        <Route path="login" element={<AuthenticationBaseView />}>
+        <Route path="login" element={<AuthenticationLayout />}>
           <Route element={<RestrictedRoute unauthenticated />}>
-            <Route index element={<LoginView />} />
+            <Route index element={<LoginPage />} />
 
-            <Route path="forgot-password" element={<ForgotPasswordView />} />
-            <Route path="reset-password" element={<ResetPasswordView />} />
+            <Route path="forgot-password" element={<ForgotPasswordPage />} />
+            <Route path="reset-password" element={<ResetPasswordPage />} />
 
-            <Route path="register" element={<RegisterAccountView />} />
+            <Route path="register" element={<UserRegisterPage />} />
 
-            <Route path="oauth" element={<OAuthLoginView />} />
+            <Route path="oauth" element={<OAuthCallbackPage />} />
           </Route>
 
           <Route element={<RestrictedRoute authenticated />}>
-            <Route path="team/select" element={<TeamSelectionView />} />
-            <Route path="team/register" element={<TeamRegisterView />} />
-            <Route path="team/invite" element={<TeamAcceptInvitationView />} />
+            <Route path="team/select" element={<TeamSelectionPage />} />
+            <Route path="team/register" element={<TeamRegisterPage />} />
+            <Route path="team/invite" element={<TeamAcceptInvitationPage />} />
           </Route>
         </Route>
 
         {/* Errors */}
-        <Route element={<ErrorsBaseView />}>
+        <Route element={<ErrorLayout />}>
           <Route
             path="/error/access-restricted"
-            element={<AccessRestrictedView />}
+            element={<AccessRestrictedPage />}
           />
-          <Route path="*" element={<NotFoundView />} />
+          <Route path="*" element={<NotFoundPage />} />
         </Route>
       </RouterRoutes>
     </Suspense>

@@ -32,7 +32,7 @@ const currentDomain =
     : window.location.hostname;
 
 // Reusable glassmorphic styles
-export const glassCardStyle = {
+const glassCardStyle = {
   background: "rgba(30, 41, 59, 0.4)",
   backdropFilter: "blur(12px)",
   WebkitBackdropFilter: "blur(12px)",
@@ -192,7 +192,7 @@ const App: FunctionComponent = () => {
         }
         setLoading(false);
       });
-  }, []);
+  }, [isVerificationRoute]);
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -304,6 +304,7 @@ const App: FunctionComponent = () => {
               label="Password"
               variant="outlined"
               fullWidth
+              // oxlint-disable-next-line jsx-a11y/no-autofocus -- only field on the password gate
               autoFocus
               value={passwordInput}
               onChange={(e) => setPasswordInput(e.target.value)}
@@ -419,7 +420,9 @@ const App: FunctionComponent = () => {
             {data.supportUrl && (
               <Button
                 href={data.supportUrl}
-                target={data.supportUrl.startsWith("mailto:") ? "_self" : "_blank"}
+                target={
+                  data.supportUrl.startsWith("mailto:") ? "_self" : "_blank"
+                }
                 sx={{
                   color: "text.secondary",
                   textTransform: "none",

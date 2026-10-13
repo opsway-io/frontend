@@ -1,4 +1,4 @@
-export interface Environment {
+interface Environment {
   MOCKED: boolean;
   API_BASE_URL: string;
   SOCIAL_LOGIN: boolean;

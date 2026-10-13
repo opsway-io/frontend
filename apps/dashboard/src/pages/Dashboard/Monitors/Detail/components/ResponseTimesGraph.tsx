@@ -1,16 +1,20 @@
-import { FunctionComponent, useMemo, useState } from "react";
 import {
   Box,
-  useTheme,
-  ToggleButton,
-  ToggleButtonGroup,
+  Button,
   Stack,
+  ToggleButtonGroup,
   Typography,
-} from "@mui/material";
-import Chart from "react-apexcharts";
-import { ApexOptions } from "apexcharts";
-import { useMonitorMetrics } from "../../../../../hooks/monitors.query";
+  useTheme,
+} from "@mui/joy";
 import moment from "moment";
+import { FunctionComponent, useMemo, useState } from "react";
+import Chart from "react-apexcharts";
+import { useMonitorMetrics } from "../../../../../hooks/monitors.query";
+import { buildResponseTimeChartOptions } from "../graph/responseTimeChartOptions";
+import {
+  buildResponseTimeSeries,
+  ChartMode,
+} from "../graph/responseTimeSeries";
 
 interface ResponseTimesGraphProps {
   monitorId: number;
@@ -23,11 +27,9 @@ const ResponseTimesGraph: FunctionComponent<ResponseTimesGraphProps> = (
   props,
 ) => {
   const theme = useTheme();
-  const [chartMode, setChartMode] = useState<"breakdown" | "anomaly">(
-    "breakdown",
-  );
+  const [chartMode, setChartMode] = useState<ChartMode>("breakdown");
 
-  const { data, isLoading } = useMonitorMetrics(
+  const { data, isPending } = useMonitorMetrics(
     props.monitorId,
     props.start,
     props.end,
@@ -35,294 +37,25 @@ const ResponseTimesGraph: FunctionComponent<ResponseTimesGraphProps> = (
 
   const startMs = props.start ? moment(props.start).valueOf() : undefined;
   const endMs = props.end ? moment(props.end).valueOf() : undefined;
-  const isCustomRange = startMs != null && endMs != null;
 
-  // Check if anomalies/predictions are present in data
-  const hasAnomalyData = useMemo(() => {
-    return !!data?.metrics?.some((m) => m.name === "Expected");
-  }, [data]);
+  const hasAnomalyData = !!data?.metrics?.some((m) => m.name === "Expected");
 
-  const options: ApexOptions = useMemo(() => {
-    const isAnomalyMode = chartMode === "anomaly";
-    return {
-      markers: {
-        size: 0,
-        hover: {
-          size: 4,
-        },
-        colors: isAnomalyMode
-          ? [
-              theme.palette.text.secondary,
-              theme.palette.primary.main,
-              theme.palette.text.disabled,
-              theme.palette.text.disabled,
-              theme.palette.error.main,
-            ]
-          : [
-              theme.palette.primary.main,
-              theme.palette.secondary.main,
-              theme.palette.success.main,
-              theme.palette.warning.main,
-              theme.palette.info.main,
-              theme.palette.text.secondary,
-            ],
-      },
-      chart: {
-        toolbar: {
-          show: false,
-        },
-        animations: {
-          enabled: false,
-        },
-        zoom: {
-          enabled: true,
-        },
-        stacked: !isAnomalyMode,
-      },
-      stroke: {
-        curve: "smooth",
-        width: isAnomalyMode ? [2, 3, 1, 1, 0] : 2,
-        dashArray: isAnomalyMode ? [5, 0, 5, 5, 0] : 0,
-      },
-      fill: {
-        type: isAnomalyMode ? "solid" : "gradient",
-        opacity: isAnomalyMode ? [1, 1, 1, 1, 1] : 0.8,
-        gradient: isAnomalyMode
-          ? undefined
-          : {
-              shadeIntensity: 1,
-              opacityFrom: 0.7,
-              opacityTo: 0.3,
-              stops: [0, 90, 100],
-            },
-      },
-      colors: isAnomalyMode
-        ? [
-            theme.palette.text.secondary, // Expected: Gray
-            theme.palette.primary.main, // Actual: Blue
-            theme.palette.text.disabled, // Confidence Upper Bound
-            theme.palette.text.disabled, // Confidence Lower Bound
-            theme.palette.error.main, // Anomaly: Red
-          ]
-        : [
-            "#008FFB", // DNS - Blue
-            "#00E396", // TCP - Green
-            "#FEB019", // TLS - Yellow
-            "#FF4560", // Processing - Red
-            "#775DD0", // Transfer - Purple
-            "#546E7A", // Overhead - Blue Grey
-          ],
-      grid: {
-        borderColor: theme.palette.divider,
-        strokeDashArray: 4,
-        xaxis: {
-          lines: {
-            show: true,
-          },
-        },
-        yaxis: {
-          lines: {
-            show: true,
-          },
-        },
-        padding: {
-          top: 0,
-          right: 0,
-          bottom: 0,
-          left: 10,
-        },
-      },
-      xaxis: {
-        axisBorder: {
-          show: true,
-          color: theme.palette.divider,
-        },
-        range: isCustomRange
-          ? undefined
-          : isAnomalyMode
-            ? props.interval + 86400000
-            : props.interval,
-        min: startMs,
-        max: endMs,
-        type: "datetime",
-        tickAmount: 10,
-        labels: {
-          formatter: (value) => {
-            if (props.interval > 86400000 * 3) {
-              return moment(value).format("MMM DD");
-            }
-            return moment(value).format("MMM DD, HH:mm");
-          },
-          style: {
-            colors: theme.palette.text.secondary,
-          },
-        },
-        tooltip: {
-          enabled: true,
-          formatter: (value: string) => {
-            return moment(value).format("DD MMM YYYY, HH:mm:ss");
-          },
-        },
-      },
-      yaxis: {
-        type: "numeric",
-        labels: {
-          formatter: (value) => {
-            if (value >= 1000) {
-              return `${(value / 1000).toFixed(2)} s`;
-            }
-            return `${Math.round(value)} ms`;
-          },
-          style: {
-            colors: theme.palette.text.secondary,
-          },
-        },
-      },
-      dataLabels: {
-        enabled: false,
-      },
-      tooltip: {
-        enabled: true,
-        theme: "dark",
-        shared: true,
-        intersect: false,
-        x: {
-          format: "dd MMM yyyy, HH:mm:ss",
-        },
-        y: {
-          formatter: (value: any) => {
-            if (value == null) return "N/A";
-            if (value >= 1000) return `${(value / 1000).toFixed(2)} s`;
-            return `${Math.round(value)} ms`;
-          },
-        },
-      },
-      legend: {
-        labels: {
-          colors: "#ddd",
-        },
-        onItemHover: {
-          highlightDataSeries: false,
-        },
-      },
-    };
-  }, [theme, props.interval, chartMode, isCustomRange, startMs, endMs]);
+  const options = useMemo(
+    () =>
+      buildResponseTimeChartOptions({
+        palette: theme.palette,
+        mode: chartMode,
+        interval: props.interval,
+        startMs,
+        endMs,
+      }),
+    [theme.palette, chartMode, props.interval, startMs, endMs],
+  );
 
-  const metrics = useMemo(() => {
-    if (!data || !data.metrics) return [];
-
-    if (chartMode === "breakdown") {
-      // Show first 6 series (standard timing phases breakdown + overhead)
-      return data.metrics
-        .filter((m) =>
-          ["DNS", "TCP", "TLS", "Processing", "Transfer", "Overhead"].includes(
-            m.name,
-          ),
-        )
-        .map((metric) => ({
-          name: metric.name,
-          type: "area" as const,
-          data: metric.timing.map((t) => ({
-            x: moment(t.start).valueOf(),
-            y: t.timing,
-          })),
-        }));
-    } else {
-      // Show Anomaly Detection series
-      const dns = data.metrics.find((m) => m.name === "DNS")?.timing || [];
-      const tcp = data.metrics.find((m) => m.name === "TCP")?.timing || [];
-      const tls = data.metrics.find((m) => m.name === "TLS")?.timing || [];
-      const processing =
-        data.metrics.find((m) => m.name === "Processing")?.timing || [];
-      const transfer =
-        data.metrics.find((m) => m.name === "Transfer")?.timing || [];
-
-      const expected =
-        data.metrics.find((m) => m.name === "Expected")?.timing || [];
-      const upper =
-        data.metrics.find((m) => m.name === "Upper Limit")?.timing || [];
-      const lower =
-        data.metrics.find((m) => m.name === "Lower Limit")?.timing || [];
-      const anomaly =
-        data.metrics.find((m) => m.name === "Anomaly")?.timing || [];
-
-      const total = data.metrics.find((m) => m.name === "Total")?.timing || [];
-
-      // Parse dates using local timezone context to properly align ClickHouse local dates with Go's UTC forecast dates
-      // Map over `expected` for ALL arrays to guarantee perfectly identical x values
-
-      const expectedData = expected.map((e) => ({
-        x: moment(e.start).valueOf(),
-        y: e.timing,
-      }));
-
-      const actualData = expected.map((e, idx) => {
-        const t = total[idx];
-        if (t) {
-          return {
-            x: moment(e.start).valueOf(),
-            y: t.timing,
-          };
-        }
-        return {
-          x: moment(e.start).valueOf(),
-          y: null,
-        };
-      });
-
-      const upperData = expected.map((e, idx) => ({
-        x: moment(e.start).valueOf(),
-        y: upper[idx] ? upper[idx].timing : null,
-      }));
-
-      const lowerData = expected.map((e, idx) => ({
-        x: moment(e.start).valueOf(),
-        y: lower[idx] ? lower[idx].timing : null,
-      }));
-
-      const anomalyData = expected.map((e, idx) => {
-        const a = anomaly[idx];
-        if (a) {
-          return {
-            x: moment(e.start).valueOf(),
-            y: a.timing !== -1 ? a.timing : null,
-          };
-        }
-        return {
-          x: moment(e.start).valueOf(),
-          y: null,
-        };
-      });
-
-      return [
-        {
-          name: "Expected Time (Profile)",
-          type: "line" as const,
-          data: expectedData,
-        },
-        {
-          name: "Actual Response Time",
-          type: "line" as const,
-          data: actualData,
-        },
-        {
-          name: "Confidence Upper Bound",
-          type: "line" as const,
-          data: upperData,
-        },
-        {
-          name: "Confidence Lower Bound",
-          type: "line" as const,
-          data: lowerData,
-        },
-        {
-          name: "Anomaly Detected",
-          type: "scatter" as const,
-          data: anomalyData,
-        },
-      ];
-    }
-  }, [data, chartMode]);
+  const series = useMemo(
+    () => buildResponseTimeSeries(data?.metrics, chartMode),
+    [data?.metrics, chartMode],
+  );
 
   return (
     <Box>
@@ -330,30 +63,34 @@ const ResponseTimesGraph: FunctionComponent<ResponseTimesGraphProps> = (
         direction="row"
         justifyContent="space-between"
         alignItems="center"
+        flexWrap="wrap"
+        gap={1}
         sx={{ mb: 2 }}
       >
-        <Typography variant="subtitle1" fontWeight="bold">
-          Performance Graph
-        </Typography>
+        <Typography level="title-sm">Performance Graph</Typography>
         <ToggleButtonGroup
           value={chartMode}
-          exclusive
-          onChange={(_, value) => value && setChartMode(value)}
-          size="small"
+          onChange={(_, value) => value && setChartMode(value as ChartMode)}
+          size="sm"
+          variant="outlined"
+          color="neutral"
+          sx={{
+            '& [aria-pressed="true"]': {
+              bgcolor: "background.level3",
+              color: "text.primary",
+            },
+          }}
         >
-          <ToggleButton value="breakdown">Timing Breakdown</ToggleButton>
-          <ToggleButton
-            value="anomaly"
-            disabled={!hasAnomalyData && !isLoading}
-          >
+          <Button value="breakdown">Timing Breakdown</Button>
+          <Button value="anomaly" disabled={!hasAnomalyData && !isPending}>
             Anomaly & Forecast
-          </ToggleButton>
+          </Button>
         </ToggleButtonGroup>
       </Stack>
       <Chart
         key={chartMode}
         options={options}
-        series={metrics}
+        series={series}
         height={400}
         type="line"
       />

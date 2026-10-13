@@ -1,0 +1,40 @@
+{
+  "$schema": "https://unpkg.com/knip@6/schema.json",
+  "workspaces": {
+    ".": {
+      "entry": [
+        "e2e/**/*.ts"
+      ]
+    },
+    "apps/dashboard": {
+      "project": [
+        "src/**/*.{ts,tsx}"
+      ]
+    },
+    "apps/website": {
+      "entry": [
+        "src/routes/**/*.tsx"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx}"
+      ]
+    },
+    "apps/status-page": {
+      "project": [
+        "src/**/*.{ts,tsx}"
+      ],
+      "ignore": [
+        "src/builder/**"
+      ],
+      "ignoreDependencies": [
+        "@dnd-kit/core",
+        "zustand"
+      ]
+    },
+    "packages/ui": {
+      "project": [
+        "src/**/*.ts"
+      ]
+    }
+  }
+}

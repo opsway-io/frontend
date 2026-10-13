@@ -1,0 +1,111 @@
+import { Box, Button, Stack, Typography } from "@mui/joy";
+import { enqueueSnackbar } from "notistack";
+import { FunctionComponent } from "react";
+import { IoOpenOutline } from "react-icons/io5";
+import Placeholder from "../../../../components/Placeholder/Placeholder";
+import {
+  useChangePlan,
+  useCurrentTeam,
+  useGetProducts,
+  useOpenCustomerPortal,
+} from "../../../../hooks/team.query";
+import { FREE_PLAN, toBillingPlans } from "../billingPlans";
+import PricingCard from "../components/PricingCard";
+
+const BillingTab: FunctionComponent = () => {
+  const { data: team, isPending: isLoadingTeam } = useCurrentTeam();
+  const { data: productsData, isPending: isLoadingProducts } = useGetProducts();
+  const changePlan = useChangePlan();
+  const customerPortal = useOpenCustomerPortal();
+
+  if (isLoadingTeam || isLoadingProducts) return <Placeholder />;
+
+  const plans = toBillingPlans(productsData?.products);
+  const hasPaidPlan = !!team?.paymentPlan && team.paymentPlan !== FREE_PLAN.id;
+
+  const selectPlan = (planId: string) => {
+    changePlan.mutate(planId, {
+      onSuccess: (checkoutUrl) => {
+        // New subscriptions are completed in Stripe Checkout.
+        if (checkoutUrl) {
+          window.location.assign(checkoutUrl);
+          return;
+        }
+
+        enqueueSnackbar(
+          planId === FREE_PLAN.id
+            ? "Successfully cancelled subscription"
+            : "Successfully updated subscription",
+          { variant: "success" },
+        );
+      },
+      onError: (error) => {
+        enqueueSnackbar(error.message || "Failed to process plan change", {
+          variant: "error",
+        });
+      },
+    });
+  };
+
+  const openCustomerPortal = () => {
+    customerPortal.mutate(undefined, {
+      onSuccess: (url) => window.location.assign(url),
+      onError: () => {
+        enqueueSnackbar("Failed to open the billing portal", {
+          variant: "error",
+        });
+      },
+    });
+  };
+
+  return (
+    <Stack spacing={2}>
+      <Stack
+        direction={{ xs: "column", sm: "row" }}
+        justifyContent="space-between"
+        alignItems={{ xs: "stretch", sm: "flex-end" }}
+        gap={2}
+      >
+        <Box>
+          <Typography level="title-lg">Choose a subscription</Typography>
+          <Typography level="body-sm" textColor="text.secondary">
+            Pick the plan that fits your team. You can change it at any time.
+          </Typography>
+        </Box>
+        {hasPaidPlan && (
+          <Button
+            variant="outlined"
+            color="neutral"
+            endDecorator={<IoOpenOutline />}
+            loading={customerPortal.isPending}
+            onClick={openCustomerPortal}
+          >
+            Manage subscription (billing portal)
+          </Button>
+        )}
+      </Stack>
+
+      <Box
+        sx={{
+          display: "grid",
+          gap: 2,
+          gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))",
+          alignItems: "stretch",
+        }}
+      >
+        {plans.map((plan) => (
+          <PricingCard
+            key={plan.id}
+            plan={plan}
+            selected={team?.paymentPlan === plan.id}
+            isLoading={changePlan.isPending && changePlan.variables === plan.id}
+            disabled={changePlan.isPending}
+            onSelect={() => selectPlan(plan.id)}
+          />
+        ))}
+      </Box>
+    </Stack>
+  );
+};
+
+export default BillingTab;

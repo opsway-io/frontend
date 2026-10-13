@@ -1,204 +1,369 @@
 import {
-  AppBar,
   Box,
   Button,
   Container,
-  Fade,
+  Divider,
+  Dropdown,
   IconButton,
-  List,
-  ListItem,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
-  Toolbar,
-  alpha,
-} from "@mui/material";
-import { IoIosArrowForward } from "react-icons/io";
-import { Link } from "@tanstack/react-router";
-import { FunctionComponent, useEffect, useState } from "react";
-import { IoMenu } from "react-icons/io5";
-import { MdOutlineNavigateNext } from "react-icons/md";
+  Menu,
+  MenuButton,
+  MenuItem,
+  Stack,
+  Typography,
+} from "@mui/joy";
+import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
+import { FunctionComponent, ReactNode, useEffect, useState } from "react";
+import {
+  IoChevronDown,
+  IoClose,
+  IoGlobeOutline,
+  IoLogoGithub,
+  IoMenu,
+  IoNotificationsOutline,
+  IoPulseOutline,
+  IoWarningOutline,
+} from "react-icons/io5";
 
-const Navbar = () => {
-  return (
-    <>
-      <BigDeviceNavbar />
-      <SmallDeviceNavbar />
-    </>
-  );
-};
+const GITHUB_URL = "https://github.com/opsway-io";
+const DASHBOARD_URL = "https://my.opsway.eu";
 
-const BigDeviceNavbar: FunctionComponent = () => {
+interface ProductLink {
+  title: string;
+  description: string;
+  hash: string;
+  icon: ReactNode;
+}
+
+const productLinks: ProductLink[] = [
+  {
+    title: "Monitoring",
+    description: "Multi-step API and uptime checks",
+    hash: "monitoring",
+    icon: <IoPulseOutline />,
+  },
+  {
+    title: "Incidents & on-call",
+    description: "Escalations, acknowledgements, timelines",
+    hash: "incidents",
+    icon: <IoWarningOutline />,
+  },
+  {
+    title: "Status pages",
+    description: "Keep customers informed automatically",
+    hash: "status-pages",
+    icon: <IoGlobeOutline />,
+  },
+  {
+    title: "Alerting",
+    description: "Slack, Teams, Discord, webhooks and more",
+    hash: "alerting",
+    icon: <IoNotificationsOutline />,
+  },
+];
+
+const pageLinks: { label: string; to: string; hash?: string }[] = [
+  { label: "Features", to: "/", hash: "features" },
+  { label: "Pricing", to: "/pricing" },
+  { label: "FAQ", to: "/", hash: "faq" },
+  { label: "Contact", to: "/contact" },
+];
+
+const navLinkSx = {
+  fontWeight: 600,
+  color: "text.secondary",
+  "&:hover": { color: "text.primary", bgcolor: "neutral.plainHoverBg" },
+  "&.active:not([data-hash])": { color: "text.primary" },
+} as const;
+
+const ProductIcon: FunctionComponent<{ children: ReactNode }> = ({
+  children,
+}) => (
+  <Box
+    sx={{
+      width: 36,
+      height: 36,
+      flexShrink: 0,
+      borderRadius: "md",
+      display: "grid",
+      placeItems: "center",
+      fontSize: 18,
+      color: "primary.300",
+      bgcolor: "background.level1",
+      border: "1px solid",
+      borderColor: "neutral.700",
+    }}
+  >
+    {children}
+  </Box>
+);
+
+const ProductMenu: FunctionComponent = () => {
+  const navigate = useNavigate();
+
   return (
-    <Container maxWidth="xl" sx={{ display: { xs: "none", md: "block" } }}>
-      <Toolbar
-        disableGutters
+    <Dropdown>
+      <MenuButton
+        variant="plain"
+        color="neutral"
+        endDecorator={<IoChevronDown />}
+        sx={navLinkSx}
+      >
+        Product
+      </MenuButton>
+      <Menu
+        placement="bottom-start"
         sx={{
-          marginTop: 1,
-          marginBottom: 1,
+          p: 1,
+          minWidth: 340,
+          borderRadius: "lg",
+          bgcolor: "background.popup",
+          borderColor: "neutral.700",
+          boxShadow: "lg",
+          "--ListItem-radius": "8px",
         }}
       >
-        <Box>
-          <Link to="/">
-            <img
-              src="img/logo.svg"
-              alt="logo"
-              style={{ height: 24, marginRight: 32, marginBottom: -8 }}
-            />
-          </Link>
-        </Box>
-        <Box
-          sx={{
-            display: "flex",
-            gap: 2,
-            width: "100%",
-            justifyContent: "flex-end",
-            ".active": {
-              backgroundColor: (t) => t.palette.action.selected,
-              color: (t) => t.palette.success.main,
-            },
-          }}
-        >
-          <Button
-            sx={{
-              fontSize: 14,
-              fontWeight: 400,
-            }}
-            component={Link}
-            to="/pricing"
-            size="large"
+        {productLinks.map((link) => (
+          <MenuItem
+            key={link.hash}
+            onClick={() => navigate({ to: "/", hash: link.hash })}
+            sx={{ gap: 1.5, py: 1, alignItems: "flex-start" }}
           >
-            Pricing
-          </Button>
-          {/* <Button
-                      sx={{
-                          fontSize: 14,
-                          fontWeight: 400,
-                      }}
-                      component={Link}
-                      to="/docs"
-                      size="large"
-                  >
-                      Documentation
-                  </Button> */}
-          <Button
-            sx={{
-              fontSize: 14,
-              fontWeight: 400,
-            }}
-            component={"a"}
-            href="https://github.com/opsway-io"
-            size="large"
-          >
-            GitHub
-          </Button>
-          <Button
-            sx={{
-              fontSize: 14,
-              fontWeight: 400,
-            }}
-            variant="outlined"
-            component={"a"}
-            href="https://my.opsway.eu"
-            color="success"
-            endIcon={<IoIosArrowForward />}
-            size="large"
-          >
-            Dashboard
-          </Button>
-        </Box>
-      </Toolbar>
-    </Container>
+            <ProductIcon>{link.icon}</ProductIcon>
+            <Box>
+              <Typography level="title-sm">{link.title}</Typography>
+              <Typography level="body-xs" textColor="text.tertiary">
+                {link.description}
+              </Typography>
+            </Box>
+          </MenuItem>
+        ))}
+      </Menu>
+    </Dropdown>
   );
 };
 
-const SmallDeviceNavbar: FunctionComponent = () => {
-  const [open, setOpen] = useState(false);
+const Navbar: FunctionComponent = () => {
+  const [scrolled, setScrolled] = useState(false);
+  const location = useRouterState({ select: (s) => s.location });
+  // The mobile menu stays open only for the location it was opened on, so
+  // navigating (path or hash) closes it.
+  const locationKey = `${location.pathname}#${location.hash}`;
+  const [openedAt, setOpenedAt] = useState<string | null>(null);
+  const open = openedAt === locationKey;
 
   useEffect(() => {
-    setOpen(false);
-  }, [window.location.pathname]);
+    const onScroll = () => setScrolled(window.scrollY > 8);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   return (
-    <AppBar
-      position="fixed"
+    <Box
+      component="header"
       sx={{
-        display: { xs: "flex", md: "none" },
-        background: (t) => alpha(t.palette.background.default, 0.5),
-        backdropFilter: "blur(20px)",
+        position: "sticky",
+        top: 0,
+        zIndex: 1100,
+        bgcolor: "background.body",
+        borderBottom: "1px solid",
+        borderColor: scrolled || open ? "divider" : "transparent",
+        transition: "border-color 150ms",
       }}
-      className="glass"
     >
-      <Toolbar
-        sx={{
-          justifyContent: "space-between",
-          alignItems: "center",
-          marginLeft: 1,
-        }}
-      >
-        <Link to="/">
-          <img src="img/logo.svg" alt="logo" style={{ height: 18 }} />
-        </Link>
+      <Container maxWidth="lg">
+        <Stack
+          direction="row"
+          alignItems="center"
+          spacing={4}
+          useFlexGap
+          sx={{ height: 72 }}
+        >
+          <Box
+            component={Link}
+            to="/"
+            aria-label="opsway home"
+            sx={{ display: "flex", alignItems: "center", flexShrink: 0 }}
+          >
+            {/* The wordmark has descenders (p, y): nudge it down so the
+                letters' x-height lines up optically with the nav text. */}
+            <img
+              src="/img/logo.svg"
+              alt="opsway"
+              style={{ height: 22, transform: "translateY(3px)" }}
+            />
+          </Box>
 
-        <IconButton
-          size="large"
-          onClick={() => {
-            setOpen((prev) => !prev);
+          {/* Desktop navigation */}
+          <Stack
+            component="nav"
+            aria-label="Main"
+            direction="row"
+            spacing={0.5}
+            sx={{ display: { xs: "none", md: "flex" }, flex: 1 }}
+          >
+            <ProductMenu />
+            {pageLinks.map((link) => (
+              <Button
+                key={link.label}
+                component={Link}
+                to={link.to}
+                hash={link.hash}
+                data-hash={link.hash}
+                variant="plain"
+                color="neutral"
+                sx={navLinkSx}
+              >
+                {link.label}
+              </Button>
+            ))}
+          </Stack>
+
+          <Stack
+            direction="row"
+            alignItems="center"
+            spacing={1}
+            sx={{ display: { xs: "none", md: "flex" } }}
+          >
+            <IconButton
+              component="a"
+              href={GITHUB_URL}
+              aria-label="opsway on GitHub"
+              variant="plain"
+              color="neutral"
+              sx={{ fontSize: 20 }}
+            >
+              <IoLogoGithub />
+            </IconButton>
+            <Divider
+              orientation="vertical"
+              sx={{ mx: 1, height: 20, alignSelf: "center" }}
+            />
+            <Button
+              component="a"
+              href={`${DASHBOARD_URL}/login`}
+              variant="plain"
+              color="neutral"
+              sx={navLinkSx}
+            >
+              Log in
+            </Button>
+            <Button component="a" href={`${DASHBOARD_URL}/login/register`}>
+              Sign up for free
+            </Button>
+          </Stack>
+
+          <IconButton
+            variant="plain"
+            color="neutral"
+            aria-label={open ? "Close menu" : "Open menu"}
+            aria-expanded={open}
+            onClick={() => setOpenedAt(open ? null : locationKey)}
+            sx={{ display: { xs: "inline-flex", md: "none" }, ml: "auto" }}
+          >
+            {open ? <IoClose size={22} /> : <IoMenu size={22} />}
+          </IconButton>
+        </Stack>
+      </Container>
+
+      {/* Mobile navigation */}
+      {open && (
+        <Box
+          sx={{
+            display: { xs: "block", md: "none" },
+            pb: 3,
+            maxHeight: "calc(100vh - 72px)",
+            overflowY: "auto",
           }}
         >
-          <IoMenu />
-        </IconButton>
-      </Toolbar>
-
-      <Fade in={open} unmountOnExit>
-        <List sx={{}} dense>
-          <ListItem>
-            <ListItemButton component={Link} to="/pricing">
-              <ListItemText primary="Pricing" />
-
-              <ListItemIcon
-                sx={{
-                  minWidth: "auto",
-                }}
-              >
-                <MdOutlineNavigateNext />
-              </ListItemIcon>
-            </ListItemButton>
-          </ListItem>
-          <ListItem>
-            <ListItemButton component={"a"} href="https://github.com/opsway-io">
-              <ListItemText primary="GitHub" />
-
-              <ListItemIcon
-                sx={{
-                  minWidth: "auto",
-                }}
-              >
-                <MdOutlineNavigateNext />
-              </ListItemIcon>
-            </ListItemButton>
-          </ListItem>
-
-          <ListItem>
-            <ListItemButton
-              component={"a"}
-              href="https://my.opsway.eu"
-              color="success"
+          <Container maxWidth="lg">
+            <Typography
+              level="body-xs"
+              fontWeight={600}
+              textTransform="uppercase"
+              letterSpacing="0.06em"
+              textColor="text.tertiary"
+              sx={{ px: 1, pt: 1, pb: 1 }}
             >
-              <ListItemText primary="Dashboard" />
+              Product
+            </Typography>
+            <Stack spacing={0.5}>
+              {productLinks.map((link) => (
+                <Button
+                  key={link.hash}
+                  component={Link}
+                  to="/"
+                  hash={link.hash}
+                  variant="plain"
+                  color="neutral"
+                  startDecorator={<ProductIcon>{link.icon}</ProductIcon>}
+                  sx={{
+                    justifyContent: "flex-start",
+                    gap: 0.5,
+                    px: 1,
+                    py: 1,
+                    color: "text.primary",
+                    fontWeight: 600,
+                  }}
+                >
+                  {link.title}
+                </Button>
+              ))}
+            </Stack>
 
-              <ListItemIcon
-                sx={{
-                  minWidth: "auto",
-                }}
+            <Divider sx={{ my: 2 }} />
+
+            <Stack spacing={0.5}>
+              {pageLinks.map((link) => (
+                <Button
+                  key={link.label}
+                  component={Link}
+                  to={link.to}
+                  hash={link.hash}
+                  data-hash={link.hash}
+                  variant="plain"
+                  color="neutral"
+                  size="lg"
+                  sx={{ ...navLinkSx, justifyContent: "flex-start", px: 1 }}
+                >
+                  {link.label}
+                </Button>
+              ))}
+              <Button
+                component="a"
+                href={GITHUB_URL}
+                variant="plain"
+                color="neutral"
+                size="lg"
+                startDecorator={<IoLogoGithub />}
+                sx={{ ...navLinkSx, justifyContent: "flex-start", px: 1 }}
               >
-                <MdOutlineNavigateNext />
-              </ListItemIcon>
-            </ListItemButton>
-          </ListItem>
-        </List>
-      </Fade>
-    </AppBar>
+                GitHub
+              </Button>
+            </Stack>
+
+            <Stack spacing={1.5} sx={{ mt: 2 }}>
+              <Button
+                component="a"
+                href={`${DASHBOARD_URL}/login/register`}
+                size="lg"
+              >
+                Sign up for free
+              </Button>
+              <Button
+                component="a"
+                href={`${DASHBOARD_URL}/login`}
+                variant="outlined"
+                color="neutral"
+                size="lg"
+              >
+                Log in
+              </Button>
+            </Stack>
+          </Container>
+        </Box>
+      )}
+    </Box>
   );
 };
 

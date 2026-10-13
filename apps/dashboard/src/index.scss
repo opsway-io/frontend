@@ -1,4 +1,3 @@
-@import url("@fontsource/inter");
 
 :root {
   color-scheme: dark;
@@ -18,4 +17,92 @@ body,
 #root {
   display: flex;
   flex: 1;
+}
+
+// Flatpickr: align the dark theme with the Joy theme tokens
+.flatpickr-calendar {
+  background: var(--joy-palette-background-popup) !important;
+  border: 1px solid var(--joy-palette-divider) !important;
+  border-radius: var(--joy-radius-lg) !important;
+  box-shadow: var(--joy-shadow-lg) !important;
+  font-family: inherit !important;
+  margin-top: 4px;
+
+  &::before,
+  &::after {
+    display: none !important;
+  }
+
+  .flatpickr-months .flatpickr-month,
+  .flatpickr-current-month .flatpickr-monthDropdown-months,
+  .flatpickr-weekdays,
+  span.flatpickr-weekday {
+    background: transparent !important;
+    color: var(--joy-palette-text-primary) !important;
+    fill: var(--joy-palette-text-primary) !important;
+  }
+
+  span.flatpickr-weekday {
+    color: var(--joy-palette-text-tertiary) !important;
+    font-weight: 500;
+  }
+
+  .flatpickr-months .flatpickr-prev-month,
+  .flatpickr-months .flatpickr-next-month {
+    color: var(--joy-palette-text-secondary) !important;
+    fill: var(--joy-palette-text-secondary) !important;
+  }
+
+  .flatpickr-day {
+    color: var(--joy-palette-text-primary);
+    border-radius: var(--joy-radius-sm);
+
+    &:hover,
+    &:focus {
+      background: var(--joy-palette-neutral-softHoverBg);
+      border-color: transparent;
+    }
+
+    &.today {
+      border-color: var(--joy-palette-divider);
+    }
+
+    &.prevMonthDay,
+    &.nextMonthDay,
+    &.flatpickr-disabled {
+      color: var(--joy-palette-text-tertiary);
+      opacity: 0.6;
+    }
+
+    &.selected,
+    &.selected:hover,
+    &.startRange,
+    &.endRange {
+      background: var(--joy-palette-primary-solidBg);
+      border-color: var(--joy-palette-primary-solidBg);
+      color: var(--joy-palette-primary-solidColor);
+    }
+
+    &.inRange {
+      background: var(--joy-palette-neutral-softBg);
+      border-color: transparent;
+      box-shadow: none;
+    }
+  }
+
+  .flatpickr-time {
+    border-top: 1px solid var(--joy-palette-divider) !important;
+
+    input,
+    .flatpickr-time-separator,
+    .flatpickr-am-pm {
+      color: var(--joy-palette-text-primary) !important;
+      background: transparent !important;
+    }
+
+    input:hover,
+    input:focus {
+      background: var(--joy-palette-neutral-softHoverBg) !important;
+    }
+  }
 }

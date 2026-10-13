@@ -1,87 +1,88 @@
-import { LoadingButton } from "@mui/lab";
-import { Alert, Stack, TextField, Typography } from "@mui/material";
-import { FunctionComponent, useEffect, useState } from "react";
+import { Alert, Button, Input, Stack, Typography } from "@mui/joy";
+import { FunctionComponent, useState } from "react";
+import { IoWarningOutline } from "react-icons/io5";
 import { Monitor } from "../../../../api/endpoints/monitors";
 import {
   Dialog,
   DialogActions,
   DialogContent,
-  DialogProps,
-} from "../../../../components/Dialog";
+} from "../../../../components/Dialog/Dialog";
 import { useDeleteMonitor } from "../../../../hooks/monitors.query";
 
-interface DeleteMonitorDialogProps extends Omit<DialogProps, "onClose"> {
+interface DeleteMonitorDialogProps {
+  open: boolean;
   monitor: Monitor;
-  onClose: (ok?: boolean) => void;
+  onClose: (deleted: boolean) => void;
 }
 
+/** Asks the user to type the monitor name before deleting it. */
 const DeleteMonitorDialog: FunctionComponent<DeleteMonitorDialogProps> = (
   props,
 ) => {
-  const [textFieldValue, setTextFieldValue] = useState<string>("");
+  const [confirmation, setConfirmation] = useState("");
+  const { isPending, mutate } = useDeleteMonitor();
 
-  const { error, isLoading, mutate } = useDeleteMonitor();
-
-  useEffect(() => {
-    setTextFieldValue("");
-  }, [props.open]);
+  const close = (deleted: boolean) => {
+    setConfirmation("");
+    props.onClose(deleted);
+  };
 
   const handleDelete = () => {
-    if (!props.monitor) {
-      return;
-    }
-
-    mutate(props.monitor.id, {
-      onSuccess: () => {
-        props.onClose?.(true);
-      },
-    });
+    mutate(props.monitor.id, { onSuccess: () => close(true) });
   };
 
   return (
     <Dialog
       title="Are you absolutely sure?"
-      {...props}
-      onClose={() => {
-        props.onClose?.(false);
-      }}
+      maxWidth="xs"
+      open={props.open}
+      onClose={() => close(false)}
     >
-      <DialogContent
-        sx={{
-          maxWidth: 500,
-        }}
-      >
+      <DialogContent>
         <Stack spacing={2}>
-          <Alert severity="error">This action cannot be undone.</Alert>
+          <Alert
+            color="danger"
+            variant="soft"
+            startDecorator={<IoWarningOutline />}
+          >
+            This action cannot be undone.
+          </Alert>
 
-          <Typography>
+          <Typography level="body-sm" textColor="text.secondary">
             This will permanently delete the monitor including all related data
             such as metrics, checks and incidents.
           </Typography>
 
-          <Typography>
-            Please type <strong>{props.monitor?.name}</strong> to confirm.
+          <Typography level="body-sm" textColor="text.secondary">
+            Please type{" "}
+            <Typography fontWeight="lg" textColor="text.primary">
+              {props.monitor.name}
+            </Typography>{" "}
+            to confirm.
           </Typography>
 
-          <TextField
-            fullWidth
-            value={textFieldValue}
-            onChange={(e) => setTextFieldValue(e.target.value)}
-            autoFocus={true}
+          <Input
+            value={confirmation}
+            onChange={(e) => setConfirmation(e.target.value)}
+            aria-label="Monitor name"
+            // oxlint-disable-next-line jsx-a11y/no-autofocus -- first field of a dialog
+            autoFocus
           />
         </Stack>
       </DialogContent>
 
       <DialogActions>
-        <LoadingButton
-          variant="contained"
-          color="error"
-          disabled={textFieldValue !== props.monitor?.name}
-          loading={isLoading}
+        <Button variant="outlined" color="neutral" onClick={() => close(false)}>
+          Cancel
+        </Button>
+        <Button
+          color="danger"
+          disabled={confirmation !== props.monitor.name}
+          loading={isPending}
           onClick={handleDelete}
         >
           Delete
-        </LoadingButton>
+        </Button>
       </DialogActions>
     </Dialog>
   );

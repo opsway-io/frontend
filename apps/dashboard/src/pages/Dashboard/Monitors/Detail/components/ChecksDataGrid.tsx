@@ -40,7 +40,16 @@ const ChecksDataGrid: FunctionComponent<MonitorChecksDataGridProps> = (
       align: "left",
       headerAlign: "left",
       sortable: false,
-      renderCell: (row) => <Chip label={row.value} color="success" />,
+      renderCell: (row) => {
+        const code = Number(row.value);
+        const color =
+          code >= 200 && code < 400
+            ? "success"
+            : code >= 400 && code < 500
+            ? "warning"
+            : "error";
+        return <Chip label={row.value} color={color} size="small" />;
+      },
     },
     {
       field: "location",
@@ -58,10 +67,20 @@ const ChecksDataGrid: FunctionComponent<MonitorChecksDataGridProps> = (
       headerAlign: "center",
       sortable: false,
       renderCell: (col) => {
+        if (!col.row.tls?.notAfter) {
+          return (
+            <Chip
+              label="N/A"
+              size="small"
+              variant="outlined"
+              sx={{ opacity: 0.6 }}
+            />
+          );
+        }
         if (isCertValid(col.row.tls.notAfter)) {
-          return <Chip label={<IoLockClosed />} color="success" />;
+          return <Chip label={<IoLockClosed />} color="success" size="small" />;
         } else {
-          return <Chip label={<IoWarning size={18} />} color="error" />;
+          return <Chip label={<IoWarning size={18} />} color="error" size="small" />;
         }
       },
     },

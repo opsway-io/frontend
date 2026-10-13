@@ -12,6 +12,7 @@ import {
   Accordion,
   AccordionSummary,
   AccordionDetails,
+  Chip,
 } from "@mui/material";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { FunctionComponent, useEffect, useState } from "react";
@@ -144,6 +145,7 @@ const App: FunctionComponent = () => {
   const [passwordInput, setPasswordInput] = useState("");
   const [loginError, setLoginError] = useState("");
   const [isSubscribeOpen, setIsSubscribeOpen] = useState(false);
+  const [selectedContainer, setSelectedContainer] = useState<string>("ALL");
 
   const isVerificationRoute =
     window.location.pathname.startsWith("/subscribe/verify/");
@@ -377,6 +379,32 @@ const App: FunctionComponent = () => {
     (m) => !groupedMonitorIds.has(m.id),
   );
 
+  const containers = Array.from(
+    new Set(
+      data.groups
+        ?.map((g) => g.container)
+        .filter((c): c is string => Boolean(c && c.trim() !== "")),
+    ),
+  );
+
+  const monitorsWithUptime = data.monitors.filter(
+    (m) => m.uptimePercentage != null,
+  );
+  const overallUptime =
+    monitorsWithUptime.length > 0
+      ? (
+          monitorsWithUptime.reduce(
+            (acc, m) => acc + (m.uptimePercentage ?? 100),
+            0,
+          ) / monitorsWithUptime.length
+        ).toFixed(2)
+      : null;
+
+  const visibleGroups = data.groups?.filter((group) => {
+    if (selectedContainer === "ALL") return true;
+    return group.container === selectedContainer;
+  });
+
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       {data.headerHtml && (
@@ -592,7 +620,57 @@ const App: FunctionComponent = () => {
         {/* Components List */}
         {data.layout !== "SIMPLE" && (
           <Stack spacing={3}>
-            {ungroupedMonitors.length > 0 && (
+            {overallUptime && (
+              <Card
+                sx={{
+                  ...glassCardStyle,
+                  px: 3,
+                  py: 1.5,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  background: "rgba(16, 185, 129, 0.08)",
+                  borderColor: "rgba(16, 185, 129, 0.2)",
+                }}
+              >
+                <Typography variant="body2" color="text.secondary">
+                  System SLA Uptime
+                </Typography>
+                <Typography variant="subtitle2" color="#10b981" fontWeight="700">
+                  {overallUptime}%
+                </Typography>
+              </Card>
+            )}
+
+            {containers.length > 0 && (
+              <Stack
+                direction="row"
+                spacing={1}
+                sx={{ flexWrap: "wrap", gap: 1 }}
+              >
+                <Chip
+                  label="All Components"
+                  onClick={() => setSelectedContainer("ALL")}
+                  color={selectedContainer === "ALL" ? "primary" : "default"}
+                  variant={selectedContainer === "ALL" ? "filled" : "outlined"}
+                  size="small"
+                  sx={{ fontWeight: 600, borderRadius: 2 }}
+                />
+                {containers.map((c) => (
+                  <Chip
+                    key={c}
+                    label={c}
+                    onClick={() => setSelectedContainer(c)}
+                    color={selectedContainer === c ? "primary" : "default"}
+                    variant={selectedContainer === c ? "filled" : "outlined"}
+                    size="small"
+                    sx={{ fontWeight: 600, borderRadius: 2 }}
+                  />
+                ))}
+              </Stack>
+            )}
+
+            {selectedContainer === "ALL" && ungroupedMonitors.length > 0 && (
               <Card sx={{ ...glassCardStyle, overflow: "hidden" }}>
                 <Box
                   sx={{
@@ -636,7 +714,7 @@ const App: FunctionComponent = () => {
               </Card>
             )}
 
-            {data.groups?.map((group) => {
+            {visibleGroups?.map((group) => {
               const groupMonitors = data.monitors.filter((m) =>
                 group.monitorIds.includes(m.id),
               );
@@ -645,12 +723,20 @@ const App: FunctionComponent = () => {
               const isGroupOperational = groupMonitors.every(
                 (m) => m.status === "OPERATIONAL",
               );
-              const groupStatusText = isGroupOperational
-                ? "Operational"
-                : "Outage";
-              const groupStatusColor = isGroupOperational
-                ? "#10b981"
-                : "#f43f5e";
+              const groupStatus =
+                group.status || (isGroupOperational ? "OPERATIONAL" : "OUTAGE");
+              const groupStatusText =
+                groupStatus === "OPERATIONAL"
+                  ? "Operational"
+                  : groupStatus === "DEGRADED"
+                  ? "Degraded"
+                  : "Outage";
+              const groupStatusColor =
+                groupStatus === "OPERATIONAL"
+                  ? "#10b981"
+                  : groupStatus === "DEGRADED"
+                  ? "#f59e0b"
+                  : "#f43f5e";
 
               return (
                 <Accordion
@@ -672,7 +758,7 @@ const App: FunctionComponent = () => {
                   >
                     <Stack
                       direction="row"
-                      spacing={2}
+                      spacing={1.5}
                       alignItems="center"
                       sx={{ width: "100%" }}
                     >
@@ -683,6 +769,19 @@ const App: FunctionComponent = () => {
                       >
                         {group.name}
                       </Typography>
+                      {group.container && (
+                        <Chip
+                          label={group.container}
+                          size="small"
+                          variant="outlined"
+                          sx={{
+                            borderColor: "rgba(255,255,255,0.2)",
+                            color: "rgba(255,255,255,0.8)",
+                            fontSize: "0.75rem",
+                            height: 22,
+                          }}
+                        />
+                      )}
                       <Typography
                         variant="body2"
                         color={groupStatusColor}
@@ -736,9 +835,35 @@ const App: FunctionComponent = () => {
                 borderBottom: "1px solid rgba(255,255,255,0.08)",
               }}
             >
-              <Typography variant="subtitle1" fontWeight="600">
-                Maintenance Calendar
-              </Typography>
+              <Stack
+                direction="row"
+                justifyContent="space-between"
+                alignItems="center"
+              >
+                <Typography variant="subtitle1" fontWeight="600">
+                  Maintenance Calendar
+                </Typography>
+                <Button
+                  href={`/v1/public/status-pages/${encodeURIComponent(currentDomain)}/calendar.ics`}
+                  target="_blank"
+                  rel="noreferrer"
+                  variant="outlined"
+                  size="small"
+                  sx={{
+                    borderColor: "rgba(255,255,255,0.2)",
+                    color: "#fff",
+                    textTransform: "none",
+                    fontSize: "0.8rem",
+                    borderRadius: 2,
+                    "&:hover": {
+                      borderColor: "rgba(255,255,255,0.4)",
+                      backgroundColor: "rgba(255,255,255,0.05)",
+                    },
+                  }}
+                >
+                  Subscribe (iCal)
+                </Button>
+              </Stack>
             </Box>
             <Box sx={{ p: 2 }}>
               <Calendar maintenanceEvents={data.maintenanceEvents || []} />

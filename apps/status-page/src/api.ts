@@ -25,7 +25,9 @@ export interface PublicMaintenance {
 export interface PublicGroup {
   id: number;
   name: string;
+  container?: string;
   order: number;
+  status?: "OPERATIONAL" | "DEGRADED" | "OUTAGE";
   monitorIds: number[];
 }
 

@@ -54,7 +54,7 @@ interface FormValues {
   faviconUrl: string;
   layout: string;
   monitorIds: number[];
-  groups: { name: string; order: number; monitorIds: number[] }[];
+  groups: { name: string; container?: string; order: number; monitorIds: number[] }[];
   customCss: string;
   headerHtml: string;
   footerHtml: string;
@@ -250,7 +250,7 @@ const StatusPagesDetailView: FunctionComponent<
                 {groupFields.map((field, index) => (
                   <Card key={field.id} variant="outlined" sx={{ mb: 2, p: 2 }}>
                     <Stack
-                      direction="row"
+                      direction={{ xs: "column", sm: "row" }}
                       spacing={2}
                       alignItems="center"
                       sx={{ mb: 2 }}
@@ -263,6 +263,19 @@ const StatusPagesDetailView: FunctionComponent<
                           <TextField
                             {...field}
                             label="Group Name (e.g. API)"
+                            size="small"
+                            sx={{ flexGrow: 1 }}
+                          />
+                        )}
+                      />
+                      <Controller
+                        name={`groups.${index}.container`}
+                        control={control}
+                        render={({ field }) => (
+                          <TextField
+                            {...field}
+                            value={field.value || ""}
+                            label="Container / Region (e.g. US-East)"
                             size="small"
                             sx={{ flexGrow: 1 }}
                           />
@@ -308,6 +321,7 @@ const StatusPagesDetailView: FunctionComponent<
                   onClick={() =>
                     appendGroup({
                       name: "",
+                      container: "",
                       order: groupFields.length,
                       monitorIds: [],
                     })

@@ -11,9 +11,23 @@ describe("time utilities", () => {
     expect(millisecondsHumanize(7200000)).toBe("2 hours");
   });
 
+  it("should handle edge cases in millisecondsHumanize", () => {
+    expect(millisecondsHumanize(0)).toBe("0 seconds");
+    expect(millisecondsHumanize(-100)).toBe("0 seconds");
+    expect(millisecondsHumanize(NaN)).toBe("0 seconds");
+  });
+
   it("should humanize seconds correctly", () => {
     expect(secondsHumanize(1)).toBe("1 second");
     expect(secondsHumanize(60)).toBe("1 minute");
     expect(secondsHumanize(3600)).toBe("1 hour");
+  });
+
+  it("should handle edge cases and legacy nanoseconds in secondsHumanize", () => {
+    expect(secondsHumanize(0)).toBe("0 seconds");
+    expect(secondsHumanize(-50)).toBe("0 seconds");
+    expect(secondsHumanize(NaN)).toBe("0 seconds");
+    // Legacy nanoseconds (60 billion ns -> 60 seconds -> 1 minute)
+    expect(secondsHumanize(60000000000)).toBe("1 minute");
   });
 });

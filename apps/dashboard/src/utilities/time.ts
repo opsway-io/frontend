@@ -1,4 +1,8 @@
 function millisecondsHumanize(ms: number): string {
+  if (isNaN(ms) || ms <= 0) {
+    return "0 seconds";
+  }
+
   const seconds = Math.floor(ms / 1000);
   const minutes = Math.floor(seconds / 60);
   const hours = Math.floor(minutes / 60);
@@ -15,6 +19,15 @@ function millisecondsHumanize(ms: number): string {
 }
 
 function secondsHumanize(seconds: number): string {
+  if (isNaN(seconds) || seconds <= 0) {
+    return "0 seconds";
+  }
+
+  // Handle legacy nanosecond values defensively (>= 1,000,000,000)
+  if (seconds >= 1_000_000_000) {
+    seconds = Math.floor(seconds / 1_000_000_000);
+  }
+
   return millisecondsHumanize(seconds * 1000);
 }
 

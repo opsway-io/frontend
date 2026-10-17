@@ -15,6 +15,7 @@ interface OpenAPIEndpointListProps {
   endpoints: PreviewOpenAPIEndpoint[];
   selected: number[];
   onToggle: (index: number) => void;
+  validateBodyFields?: boolean;
 }
 
 const OpenAPIEndpointList: FunctionComponent<OpenAPIEndpointListProps> = (
@@ -38,6 +39,11 @@ const OpenAPIEndpointList: FunctionComponent<OpenAPIEndpointListProps> = (
               endAction={
                 <Typography level="body-xs" textColor="text.tertiary" noWrap>
                   Expect {endpoint.statusCode}
+                  {props.validateBodyFields !== false &&
+                    endpoint.assertions &&
+                    endpoint.assertions.length > 1 && (
+                      <> · {endpoint.assertions.length} assertions</>
+                    )}
                 </Typography>
               }
               sx={{ pr: 12 }}

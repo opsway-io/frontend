@@ -58,6 +58,7 @@ const ImportOpenAPIWizard: FunctionComponent<ImportOpenAPIWizardProps> = ({
   const [selectedEndpoints, setSelectedEndpoints] = useState<number[]>([]);
   const [baseUrl, setBaseUrl] = useState("");
   const [groupAsSingle, setGroupAsSingle] = useState(false);
+  const [validateBodyFields, setValidateBodyFields] = useState(true);
   const [auth, setAuth] = useState<ImportAuth>(emptyImportAuth);
   const [selectedLocations, setSelectedLocations] = useState(["global"]);
 
@@ -95,6 +96,7 @@ const ImportOpenAPIWizard: FunctionComponent<ImportOpenAPIWizardProps> = ({
       baseUrl,
       specUrl: url,
       groupAsSingle,
+      validateBodyFields,
       auth,
       locations: selectedLocations,
     });
@@ -155,6 +157,14 @@ const ImportOpenAPIWizard: FunctionComponent<ImportOpenAPIWizardProps> = ({
               endpoints={endpoints}
               selected={selectedEndpoints}
               onToggle={toggleEndpoint}
+              validateBodyFields={validateBodyFields}
+            />
+
+            <Checkbox
+              size="sm"
+              checked={validateBodyFields}
+              onChange={(e) => setValidateBodyFields(e.target.checked)}
+              label="Validate response body fields (assertions from schema)"
             />
 
             <Checkbox

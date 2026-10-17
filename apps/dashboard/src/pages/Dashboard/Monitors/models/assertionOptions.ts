@@ -42,7 +42,14 @@ const assertionJSONBodyOperators = [
 
 /** Operators that compare against nothing, so the target field is cleared and disabled. */
 const textOperatorsWithoutTarget = ["EMPTY", "NOT_EMPTY"];
-const jsonOperatorsWithoutTarget = ["EMPTY", "NOT_EMPTY", "NULL", "NOT_NULL"];
+const jsonOperatorsWithoutTarget = [
+  "EMPTY",
+  "NOT_EMPTY",
+  "NULL",
+  "NOT_NULL",
+  "HAS_KEY",
+  "NOT_HAS_KEY",
+];
 
 /** Operators that only make sense with a numeric target. */
 const numericOperators = ["LESS_THAN", "GREATER_THAN"];
@@ -74,6 +81,8 @@ const assertionOptionLabels: Record<string, string> = {
   NOT_EMPTY: "Not empty",
   NOT_NULL: "Not null",
   NULL: "Null",
+  HAS_KEY: "Has key",
+  NOT_HAS_KEY: "Not has key",
 };
 
 const getAssertionOptionLabel = (option: string) =>

@@ -66,6 +66,55 @@ describe("buildImportRequest", () => {
       "https://api.example.com/oauth/token",
     );
   });
+
+  it("includes return body assertions by default", () => {
+    const endpointWithAssertions: PreviewOpenAPIEndpoint = {
+      method: "get",
+      path: "/v1/pets/1",
+      summary: "Get pet",
+      statusCode: "200",
+      assertions: [
+        { source: "STATUS_CODE", operator: "EQUAL", target: "200" },
+        { source: "JSON_BODY", property: "$.id", operator: "NOT_NULL" },
+        { source: "JSON_BODY", property: "$.name", operator: "HAS_KEY" },
+      ],
+    };
+
+    const request = buildImportRequest({
+      ...baseOptions,
+      endpoints: [endpointWithAssertions],
+    });
+
+    expect(request.monitors[0].steps[0].assertions).toEqual([
+      { source: "STATUS_CODE", operator: "EQUAL", target: "200" },
+      { source: "JSON_BODY", property: "$.id", operator: "NOT_NULL" },
+      { source: "JSON_BODY", property: "$.name", operator: "HAS_KEY" },
+    ]);
+  });
+
+  it("filters out return body assertions when validateBodyFields is false", () => {
+    const endpointWithAssertions: PreviewOpenAPIEndpoint = {
+      method: "get",
+      path: "/v1/pets/1",
+      summary: "Get pet",
+      statusCode: "200",
+      assertions: [
+        { source: "STATUS_CODE", operator: "EQUAL", target: "200" },
+        { source: "JSON_BODY", property: "$.id", operator: "NOT_NULL" },
+        { source: "JSON_BODY", property: "$.name", operator: "HAS_KEY" },
+      ],
+    };
+
+    const request = buildImportRequest({
+      ...baseOptions,
+      endpoints: [endpointWithAssertions],
+      validateBodyFields: false,
+    });
+
+    expect(request.monitors[0].steps[0].assertions).toEqual([
+      { source: "STATUS_CODE", operator: "EQUAL", target: "200" },
+    ]);
+  });
 });
 
 describe("getOrigin", () => {

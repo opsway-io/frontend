@@ -23,6 +23,7 @@ interface ImportOptions {
   baseUrl: string;
   specUrl: string;
   groupAsSingle: boolean;
+  validateBodyFields?: boolean;
   auth: ImportAuth;
   locations: string[];
 }
@@ -61,25 +62,33 @@ const getEndpointName = (endpoint: PreviewOpenAPIEndpoint) =>
 const buildStep = (
   endpoint: PreviewOpenAPIEndpoint,
   baseUrl: string,
-): ImportStep => ({
-  name: getEndpointName(endpoint),
-  method: endpoint.method.toUpperCase() as ImportStep["method"],
-  url: baseUrl ? joinUrl(baseUrl, endpoint.path) : endpoint.path,
-  body: {
-    type: endpoint.requestBody ? "JSON" : "NONE",
-    content: endpoint.requestBody || null,
-  },
-  assertions:
-    endpoint.assertions && endpoint.assertions.length > 0
-      ? endpoint.assertions
-      : [
-          {
-            source: "STATUS_CODE",
-            operator: "EQUAL",
-            target: endpoint.statusCode || "200",
-          },
-        ],
-});
+  validateBodyFields = true,
+): ImportStep => {
+  let assertions = endpoint.assertions || [];
+  if (!validateBodyFields) {
+    assertions = assertions.filter((a) => a.source === "STATUS_CODE");
+  }
+
+  return {
+    name: getEndpointName(endpoint),
+    method: endpoint.method.toUpperCase() as ImportStep["method"],
+    url: baseUrl ? joinUrl(baseUrl, endpoint.path) : endpoint.path,
+    body: {
+      type: endpoint.requestBody ? "JSON" : "NONE",
+      content: endpoint.requestBody || null,
+    },
+    assertions:
+      assertions.length > 0
+        ? assertions
+        : [
+            {
+              source: "STATUS_CODE",
+              operator: "EQUAL",
+              target: endpoint.statusCode || "200",
+            },
+          ],
+  };
+};
 
 const buildSettings = (options: ImportOptions): ImportMonitor["settings"] => {
   const { auth, baseUrl } = options;
@@ -117,6 +126,7 @@ const buildImportRequest = (
   options: ImportOptions,
 ): CreateMonitorsBulkRequest => {
   const settings = buildSettings(options);
+  const validateBodyFields = options.validateBodyFields ?? true;
 
   if (options.groupAsSingle) {
     return {
@@ -125,7 +135,7 @@ const buildImportRequest = (
           name: `Imported OpenAPI - ${options.baseUrl || options.specUrl}`,
           settings,
           steps: options.endpoints.map((endpoint) =>
-            buildStep(endpoint, options.baseUrl),
+            buildStep(endpoint, options.baseUrl, validateBodyFields),
           ),
         },
       ],
@@ -136,7 +146,7 @@ const buildImportRequest = (
     monitors: options.endpoints.map((endpoint) => ({
       name: getEndpointName(endpoint),
       settings,
-      steps: [buildStep(endpoint, options.baseUrl)],
+      steps: [buildStep(endpoint, options.baseUrl, validateBodyFields)],
     })),
   };
 };

@@ -28,7 +28,10 @@ const createDefaultStep = (stepNumber: number): MonitorFormStep => ({
   variables: [],
 });
 
-const createDefaultMonitorFormValues = (teamId: number): MonitorFormData => ({
+const createDefaultMonitorFormValues = (
+  teamId: number,
+  initialLocations: string[] = ["opsway-dk"],
+): MonitorFormData => ({
   teamId,
   name: "",
   steps: [createDefaultStep(1)],
@@ -40,7 +43,7 @@ const createDefaultMonitorFormValues = (teamId: number): MonitorFormData => ({
       expirationThresholdDays: 7,
     },
     frequencySeconds: 300,
-    locations: ["global"],
+    locations: initialLocations.length > 0 ? initialLocations : ["opsway-dk"],
     auth: {
       method: "NONE",
     },

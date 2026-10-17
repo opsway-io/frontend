@@ -13,6 +13,20 @@ interface LocationOptionProps {
   onClick?: () => void;
 }
 
+const KNOWN_FLAGS = new Set([
+  "de",
+  "dk",
+  "es",
+  "fr",
+  "gb",
+  "ie",
+  "in",
+  "it",
+  "jp",
+  "pl",
+  "us",
+]);
+
 const flagSx = {
   width: 40,
   height: 30,
@@ -58,7 +72,8 @@ const LocationOption: FunctionComponent<LocationOptionProps> = (props) => {
         },
       }}
     >
-      {props.countryCode === "random" ? (
+      {props.countryCode === "random" ||
+      !KNOWN_FLAGS.has(props.countryCode.toLowerCase()) ? (
         <Box
           sx={{
             ...flagSx,

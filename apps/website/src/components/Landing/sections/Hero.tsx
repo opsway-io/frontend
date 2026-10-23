@@ -1,6 +1,7 @@
 import { Box, Button, Chip, Container, Stack, Typography } from "@mui/joy";
 import { FunctionComponent } from "react";
-import { IoArrowForward, IoLogoGithub } from "react-icons/io5";
+import { IoPulseOutline } from "react-icons/io5";
+import { PiTerminalWindowBold, PiSparkleFill } from "react-icons/pi";
 import { HeroVisual } from "../visuals";
 import { DASHBOARD_URL, GITHUB_URL } from "../constants";
 
@@ -20,10 +21,10 @@ const Hero: FunctionComponent = () => (
             color="primary"
             sx={{ fontWeight: 600 }}
           >
-            Open source
+            Umbrella Suite
           </Chip>
         }
-        endDecorator={<IoArrowForward />}
+        endDecorator={<PiSparkleFill color="#A871B7" />}
         sx={{
           pl: 0.5,
           textDecoration: "none",
@@ -32,7 +33,7 @@ const Hero: FunctionComponent = () => (
           color: "text.secondary",
         }}
       >
-        Star us on GitHub
+        Monitoring + Log Search + Autonomous AI SRE
       </Chip>
 
       <Typography
@@ -42,50 +43,62 @@ const Hero: FunctionComponent = () => (
           fontWeight: 600,
           letterSpacing: "-0.025em",
           lineHeight: 1.12,
-          maxWidth: 880,
+          maxWidth: 920,
         }}
       >
-        Know it's broken{" "}
+        The Unified Observability &{" "}
         <Box component="span" sx={{ color: "primary.400" }}>
-          before your customers do
+          Autonomous SRE Suite
         </Box>
       </Typography>
 
       <Typography
         textColor="text.secondary"
-        sx={{ fontSize: { xs: "1.125rem", md: "1.25rem" }, maxWidth: 680 }}
+        sx={{ fontSize: { xs: "1.125rem", md: "1.25rem" }, maxWidth: 740 }}
       >
-        Open source uptime and API monitoring, incident management, on-call and
-        status pages — in one place. If something breaks, we'll let you know.
+        Real-time uptime and API monitoring, lightning-fast semantic log search, and autonomous
+        AI agents that investigate incidents, correlate error logs, and execute remediation in seconds.
       </Typography>
 
       <Stack
-        direction={{ xs: "column-reverse", sm: "row" }}
+        direction={{ xs: "column", sm: "row" }}
         spacing={1.5}
         sx={{ pt: 1, width: { xs: "100%", sm: "auto" } }}
       >
         <Button
           component="a"
-          href={GITHUB_URL}
+          href="https://monitoring.opsway.eu"
           size="lg"
-          variant="outlined"
-          color="neutral"
-          startDecorator={<IoLogoGithub />}
+          variant="solid"
+          color="primary"
+          startDecorator={<IoPulseOutline />}
         >
-          View on GitHub
+          Open Monitoring
         </Button>
         <Button
           component="a"
-          href={`${DASHBOARD_URL}/login/register`}
+          href="https://logs.opsway.eu"
           size="lg"
-          endDecorator={<IoArrowForward />}
+          variant="outlined"
+          color="neutral"
+          startDecorator={<PiTerminalWindowBold />}
         >
-          Start for free
+          Explore Log Search
+        </Button>
+        <Button
+          component="a"
+          href={`${DASHBOARD_URL}/services`}
+          size="lg"
+          variant="outlined"
+          color="neutral"
+          startDecorator={<PiSparkleFill color="#A871B7" />}
+        >
+          Opsway Hub & AI
         </Button>
       </Stack>
 
       <Typography level="body-sm" textColor="text.tertiary">
-        Free plan available · No credit card required
+        Independent product subdomains or combined into one unified platform
       </Typography>
     </Stack>
 

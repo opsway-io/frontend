@@ -21,9 +21,12 @@ function LandingPage() {
     <>
       <Helmet>
         <title>
-          opsway.eu: Real-time Monitoring, Status Pages and Alerting for your
-          websites and services 🚀
+          Opsway: Unified Observability & Autonomous SRE Suite (Monitoring + Log Search + AI Agents) 🚀
         </title>
+        <meta
+          name="description"
+          content="Opsway connects real-time uptime monitoring, lightning-fast semantic log search, and autonomous AI agents for instant incident investigation and automated remediation."
+        />
       </Helmet>
 
       <Hero />

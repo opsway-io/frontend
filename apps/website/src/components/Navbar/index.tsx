@@ -23,6 +23,7 @@ import {
   IoPulseOutline,
   IoWarningOutline,
 } from "react-icons/io5";
+import { PiTerminalWindowBold, PiSparkleFill } from "react-icons/pi";
 
 const GITHUB_URL = "https://github.com/opsway-io";
 const DASHBOARD_URL = "https://my.opsway.eu";
@@ -30,39 +31,48 @@ const DASHBOARD_URL = "https://my.opsway.eu";
 interface ProductLink {
   title: string;
   description: string;
-  hash: string;
+  url?: string;
+  hash?: string;
   icon: ReactNode;
 }
 
 const productLinks: ProductLink[] = [
   {
     title: "Monitoring",
-    description: "Multi-step API and uptime checks",
-    hash: "monitoring",
+    description: "API, synthetic checks and uptime monitoring",
+    url: "https://monitoring.opsway.eu",
     icon: <IoPulseOutline />,
   },
   {
-    title: "Incidents & on-call",
-    description: "Escalations, acknowledgements, timelines",
-    hash: "incidents",
-    icon: <IoWarningOutline />,
+    title: "Log Search",
+    description: "Semantic vector & SQL log exploration",
+    url: "https://logs.opsway.eu",
+    icon: <PiTerminalWindowBold />,
   },
   {
-    title: "Status pages",
-    description: "Keep customers informed automatically",
-    hash: "status-pages",
+    title: "Autonomous AI Agents",
+    description: "Root-cause investigation & 1-click remediation",
+    url: "https://my.opsway.eu/services",
+    icon: <PiSparkleFill />,
+  },
+  {
+    title: "Status Pages",
+    description: "Public real-time incident & service health",
+    url: "https://status.opsway.eu",
     icon: <IoGlobeOutline />,
   },
   {
-    title: "Alerting",
-    description: "Slack, Teams, Discord, webhooks and more",
-    hash: "alerting",
-    icon: <IoNotificationsOutline />,
+    title: "Incidents & On-call",
+    description: "Escalations, acknowledgements, timelines",
+    url: "https://monitoring.opsway.eu/incidents",
+    icon: <IoWarningOutline />,
   },
 ];
 
-const pageLinks: { label: string; to: string; hash?: string }[] = [
-  { label: "Features", to: "/", hash: "features" },
+const pageLinks: { label: string; to?: string; href?: string; hash?: string }[] = [
+  { label: "Monitoring", href: "https://monitoring.opsway.eu" },
+  { label: "Log Search", href: "https://logs.opsway.eu" },
+  { label: "Opsway Hub", href: "https://my.opsway.eu" },
   { label: "Pricing", to: "/pricing" },
   { label: "FAQ", to: "/", hash: "faq" },
   { label: "Contact", to: "/contact" },
@@ -124,9 +134,11 @@ const ProductMenu: FunctionComponent = () => {
       >
         {productLinks.map((link) => (
           <MenuItem
-            key={link.hash}
-            onClick={() => navigate({ to: "/", hash: link.hash })}
-            sx={{ gap: 1.5, py: 1, alignItems: "flex-start" }}
+            key={link.title}
+            component={link.url ? "a" : "button"}
+            href={link.url}
+            onClick={link.url ? undefined : () => link.hash && navigate({ to: "/", hash: link.hash })}
+            sx={{ gap: 1.5, py: 1, alignItems: "flex-start", textDecoration: "none" }}
           >
             <ProductIcon>{link.icon}</ProductIcon>
             <Box>
@@ -203,20 +215,33 @@ const Navbar: FunctionComponent = () => {
             sx={{ display: { xs: "none", md: "flex" }, flex: 1 }}
           >
             <ProductMenu />
-            {pageLinks.map((link) => (
-              <Button
-                key={link.label}
-                component={Link}
-                to={link.to}
-                hash={link.hash}
-                data-hash={link.hash}
-                variant="plain"
-                color="neutral"
-                sx={navLinkSx}
-              >
-                {link.label}
-              </Button>
-            ))}
+            {pageLinks.map((link) =>
+              link.href ? (
+                <Button
+                  key={link.label}
+                  component="a"
+                  href={link.href}
+                  variant="plain"
+                  color="neutral"
+                  sx={navLinkSx}
+                >
+                  {link.label}
+                </Button>
+              ) : (
+                <Button
+                  key={link.label}
+                  component={Link}
+                  to={link.to!}
+                  hash={link.hash}
+                  data-hash={link.hash}
+                  variant="plain"
+                  color="neutral"
+                  sx={navLinkSx}
+                >
+                  {link.label}
+                </Button>
+              )
+            )}
           </Stack>
 
           <Stack
@@ -314,21 +339,35 @@ const Navbar: FunctionComponent = () => {
             <Divider sx={{ my: 2 }} />
 
             <Stack spacing={0.5}>
-              {pageLinks.map((link) => (
-                <Button
-                  key={link.label}
-                  component={Link}
-                  to={link.to}
-                  hash={link.hash}
-                  data-hash={link.hash}
-                  variant="plain"
-                  color="neutral"
-                  size="lg"
-                  sx={{ ...navLinkSx, justifyContent: "flex-start", px: 1 }}
-                >
-                  {link.label}
-                </Button>
-              ))}
+              {pageLinks.map((link) =>
+                link.href ? (
+                  <Button
+                    key={link.label}
+                    component="a"
+                    href={link.href}
+                    variant="plain"
+                    color="neutral"
+                    size="lg"
+                    sx={{ ...navLinkSx, justifyContent: "flex-start", px: 1 }}
+                  >
+                    {link.label}
+                  </Button>
+                ) : (
+                  <Button
+                    key={link.label}
+                    component={Link}
+                    to={link.to!}
+                    hash={link.hash}
+                    data-hash={link.hash}
+                    variant="plain"
+                    color="neutral"
+                    size="lg"
+                    sx={{ ...navLinkSx, justifyContent: "flex-start", px: 1 }}
+                  >
+                    {link.label}
+                  </Button>
+                )
+              )}
               <Button
                 component="a"
                 href={GITHUB_URL}

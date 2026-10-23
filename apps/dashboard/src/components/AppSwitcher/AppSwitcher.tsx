@@ -9,7 +9,7 @@ import {
   Typography,
 } from "@mui/joy";
 import { FunctionComponent } from "react";
-import { IoAppsOutline, IoPulseOutline, IoCodeSlashOutline } from "react-icons/io5";
+import { IoAppsOutline, IoPulseOutline, IoGlobeOutline, IoHomeOutline } from "react-icons/io5";
 import { PiTerminalWindowBold, PiSparkleFill } from "react-icons/pi";
 import { MdOutlineCreditCard } from "react-icons/md";
 
@@ -44,11 +44,19 @@ const AppSwitcher: FunctionComponent<AppSwitcherProps> = ({ currentApp = "monito
       isInternal: true,
     },
     {
-      id: "pantomath",
-      name: "Code Graph (Pantomath)",
-      desc: "AST & Infra Knowledge Graph",
-      icon: <IoCodeSlashOutline size={20} color="#f4ac45" />,
-      url: "https://pantomath.opsway.eu",
+      id: "status",
+      name: "Status Pages",
+      desc: "Public Service Health Pages",
+      icon: <IoGlobeOutline size={20} color="#5185a5" />,
+      url: "https://status.opsway.eu",
+      isInternal: false,
+    },
+    {
+      id: "website",
+      name: "Opsway Suite Home",
+      desc: "Umbrella Platform Portal",
+      icon: <IoHomeOutline size={20} color="#f4ac45" />,
+      url: "https://opsway.eu",
       isInternal: false,
     },
     {

@@ -104,6 +104,64 @@ const BillingTab: FunctionComponent = () => {
           />
         ))}
       </Box>
+
+      {/* Modular Product Suite Overview */}
+      <Box sx={{ pt: 2 }}>
+        <Typography level="title-md" mb={0.5}>
+          Opsway Modular Product Suite &amp; Agent Entitlements
+        </Typography>
+        <Typography level="body-xs" textColor="text.tertiary" mb={2}>
+          Every Opsway product works standalone with its own free tier or combines into a unified ecosystem via the Unified MCP Gateway.
+        </Typography>
+
+        <Box
+          sx={{
+            display: "grid",
+            gap: 2,
+            gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
+          }}
+        >
+          <Box sx={{ p: 2, borderRadius: "md", bgcolor: "background.surface", border: "1px solid", borderColor: "divider" }}>
+            <Stack direction="row" justifyContent="space-between" alignItems="center" mb={1}>
+              <Typography level="title-sm">Opsway Monitoring</Typography>
+              <Chip size="sm" variant="soft" color="success">Active</Chip>
+            </Stack>
+            <Typography level="body-xs" textColor="text.secondary">
+              Multi-location probes, IsolationForest anomaly detection, status pages, and on-call alerting.
+            </Typography>
+          </Box>
+
+          <Box sx={{ p: 2, borderRadius: "md", bgcolor: "background.surface", border: "1px solid", borderColor: "divider" }}>
+            <Stack direction="row" justifyContent="space-between" alignItems="center" mb={1}>
+              <Typography level="title-sm">Opsway Log-Search</Typography>
+              <Chip size="sm" variant="soft" color="info">Active</Chip>
+            </Stack>
+            <Typography level="body-xs" textColor="text.secondary">
+              Milvus vector &amp; SQL log engine, OTLP log ingestion, semantic log search, and built-in MCP server.
+            </Typography>
+          </Box>
+
+          <Box sx={{ p: 2, borderRadius: "md", bgcolor: "background.surface", border: "1px solid", borderColor: "divider" }}>
+            <Stack direction="row" justifyContent="space-between" alignItems="center" mb={1}>
+              <Typography level="title-sm">Pantomath Code Graph</Typography>
+              <Chip size="sm" variant="soft" color="warning">Ready</Chip>
+            </Stack>
+            <Typography level="body-xs" textColor="text.secondary">
+              Git AST parsing &amp; Kubernetes manifest property graph for line-level root-cause diagnosis.
+            </Typography>
+          </Box>
+
+          <Box sx={{ p: 2, borderRadius: "md", bgcolor: "background.surface", border: "1px solid", borderColor: "divider" }}>
+            <Stack direction="row" justifyContent="space-between" alignItems="center" mb={1}>
+              <Typography level="title-sm">Autonomous Agent (BYOA)</Typography>
+              <Chip size="sm" variant="soft" color="primary">Included</Chip>
+            </Stack>
+            <Typography level="body-xs" textColor="text.secondary">
+              Unified MCP Gateway (`/v1/mcp`) &amp; outbound signed webhooks to connect Claude, Cursor, or custom agents.
+            </Typography>
+          </Box>
+        </Box>
+      </Box>
     </Stack>
   );
 };

@@ -7,8 +7,9 @@ import {
   IoBuildOutline,
   IoPulseOutline,
   IoSettingsOutline,
+  IoLayersOutline,
 } from "react-icons/io5";
-import { PiFireSimpleBold } from "react-icons/pi";
+import { PiFireSimpleBold, PiTerminalWindowBold } from "react-icons/pi";
 import { RiAlarmWarningLine } from "react-icons/ri";
 import useSidebarStore from "../../hooks/sidebar.store";
 import { useCurrentTeam } from "../../hooks/team.query";
@@ -50,6 +51,12 @@ const navigation: NavigationSection[] = [
         iconColor: "semantic.monitors",
       },
       {
+        to: "/services",
+        text: "Services",
+        icon: <IoLayersOutline />,
+        iconColor: "semantic.maintenance",
+      },
+      {
         to: "/alerting",
         text: "Alerting",
         icon: <RiAlarmWarningLine />,
@@ -78,6 +85,17 @@ const navigation: NavigationSection[] = [
         text: "Reports",
         icon: <GoGraph />,
         iconColor: "semantic.reports",
+      },
+    ],
+  },
+  {
+    label: "Opsway Suite",
+    items: [
+      {
+        to: "https://logs.opsway.eu",
+        text: "Log Search ↗",
+        icon: <PiTerminalWindowBold />,
+        iconColor: "info",
       },
     ],
   },

@@ -7,6 +7,7 @@ import {
   useUpdateIncidentVisibility,
 } from "../../../../../hooks/incidents.query";
 import ActiveIncidentBanner from "./ActiveIncidentBanner";
+import AgentInvestigationCard from "./AgentInvestigationCard";
 import AlertHistoryCard from "./AlertHistoryCard";
 import ResolvedIncidentBanner from "./ResolvedIncidentBanner";
 import TriggerHistoryCard from "./TriggerHistoryCard";
@@ -61,6 +62,11 @@ const IncidentDetailsContent: FunctionComponent<
       ) : (
         <ActiveIncidentBanner incident={incident} />
       )}
+
+      <AgentInvestigationCard
+        incidentId={incident.id}
+        incidentTitle={incident.title}
+      />
 
       <AlertHistoryCard incidentId={incident.id} />
       <TriggerHistoryCard incidentId={incident.id} />

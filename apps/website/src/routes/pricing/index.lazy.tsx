@@ -77,9 +77,10 @@ function Index() {
             price="0£"
             features={[
               "Up to 10 users",
-              "Up to 5 monitors",
-              "Up to 5 status pages",
-              "1 month of history",
+              "Up to 5 monitors & 1 status page",
+              "1 GB / month Log-Search",
+              "BYOA MCP Gateway access",
+              "3 Managed AI investigations",
             ]}
           />
           <PricingCard
@@ -89,10 +90,11 @@ function Index() {
             highlighted
             features={[
               "Up to 25 users",
-              "Up to 25 monitors",
-              "Up to 10 status pages",
-              "Up to 5 on-call schedules",
-              "1 year of history",
+              "Up to 25 monitors & 10 status pages",
+              "50 GB / month Log-Search",
+              "Unified MCP Gateway & BYOA webhooks",
+              "25 Managed AI investigations / mo",
+              "1-Click Automated Remediation",
             ]}
           />
           <PricingCard
@@ -100,12 +102,12 @@ function Index() {
             description="For large teams"
             price="100£"
             features={[
-              "Unlimited users",
-              "Unlimited monitors",
+              "Unlimited users & monitors",
               "Unlimited status pages",
-              "Unlimited On-call schedules",
-              "1 year of history",
-              "Priority support",
+              "Custom Log-Search retention",
+              "Pantomath Code & Infra GraphRAG",
+              "Autonomous Auto-Remediation",
+              "Priority 24/7 support",
             ]}
           />
         </Box>

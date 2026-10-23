@@ -70,9 +70,21 @@ const SidebarItem: FunctionComponent<SidebarItemProps> = ({
   return (
     <Tooltip title={collapsed ? text : ""} placement="right">
       {to ? (
-        <ListItemButton sx={sx} component={NavLink} to={to}>
-          {content}
-        </ListItemButton>
+        to.startsWith("http") ? (
+          <ListItemButton
+            sx={sx}
+            component="a"
+            href={to}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {content}
+          </ListItemButton>
+        ) : (
+          <ListItemButton sx={sx} component={NavLink} to={to}>
+            {content}
+          </ListItemButton>
+        )
       ) : (
         <ListItemButton sx={sx} onClick={onClick}>
           {content}

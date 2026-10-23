@@ -7,6 +7,7 @@ const TABS: RouteTab[] = [
   { label: "General", path: "/settings/general" },
   { label: "Integrations", path: "/settings/integrations" },
   { label: "API Keys", path: "/settings/api-keys" },
+  { label: "AI Agent", path: "/settings/ai-agent" },
   { label: "Billing", path: "/settings/billing" },
 ];
 

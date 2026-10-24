@@ -28,12 +28,13 @@ import Container from "../../../components/Container/Container";
 import { useIncidents } from "../../../hooks/incidents.query";
 import { useMonitors } from "../../../hooks/monitors.query";
 import { useAgentConfig, useServiceCatalog } from "../../../hooks/suite.query";
-import { useCurrentTeam } from "../../../hooks/team.query";
+import { useCurrentTeam, useTeamMemberCount } from "../../../hooks/team.query";
 import { useCurrentUser } from "../../../hooks/user.query";
 
 export const HubOverviewPage: FunctionComponent = () => {
   const { data: user } = useCurrentUser();
   const { data: team } = useCurrentTeam();
+  const { data: memberCount } = useTeamMemberCount();
   const { data: monitorsData } = useMonitors(0, 50);
   const { data: activeIncidents } = useIncidents(false, 0, 10);
   const { data: serviceCatalog } = useServiceCatalog();
@@ -90,7 +91,7 @@ export const HubOverviewPage: FunctionComponent = () => {
                 size="sm"
                 startDecorator={<AiOutlineTeam />}
               >
-                Team ({team?.users?.length || 1})
+                Team ({memberCount ?? 1})
               </Button>
               <Button
                 component={Link}
@@ -300,8 +301,8 @@ export const HubOverviewPage: FunctionComponent = () => {
                     </Button>
                     <Stack direction="row" spacing={1}>
                       <Button
-                        component={Link}
-                        to="/status-pages"
+                        component="a"
+                        href="https://monitoring.opsway.eu/status-pages"
                         variant="outlined"
                         color="neutral"
                         size="sm"
@@ -311,8 +312,8 @@ export const HubOverviewPage: FunctionComponent = () => {
                         Status Pages
                       </Button>
                       <Button
-                        component={Link}
-                        to="/alerting"
+                        component="a"
+                        href="https://monitoring.opsway.eu/alerting"
                         variant="outlined"
                         color="neutral"
                         size="sm"

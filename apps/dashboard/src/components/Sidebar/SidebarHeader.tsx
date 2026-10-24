@@ -12,7 +12,7 @@ import {
   Typography,
 } from "@mui/joy";
 import { memo, FunctionComponent } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import Avatar from "../Avatar/Avatar";
 import AppSwitcher from "../AppSwitcher/AppSwitcher";
 import { useSidebarCollapsed } from "./sidebarContext";
@@ -33,21 +33,41 @@ interface SidebarHeaderProps {
   teamDisplayName?: string;
 }
 
+const isMonitoringSubdomain =
+  typeof window !== "undefined" &&
+  window.location.hostname.startsWith("monitoring");
+
 const SidebarHeader: FunctionComponent<SidebarHeaderProps> = (props) => {
   const collapsed = useSidebarCollapsed();
   const navigate = useNavigate();
+  const location = useLocation();
   const authentication = useAuthenticationStore();
 
   const { data: userTeams } = useUserTeams(authentication.currentUserId);
 
+  const currentApp: "monitoring" | "logs" | "hub" | "agents" = isMonitoringSubdomain
+    ? "monitoring"
+    : location.pathname.startsWith("/agents")
+    ? "agents"
+    : "hub";
+
   const handleSwitchTeam = (teamId: number) => {
     authentication.setCurrentTeamID(teamId);
-    navigate("/monitors", { replace: true });
+    navigate(isMonitoringSubdomain ? "/monitors" : "/", { replace: true });
   };
 
   return (
-    <Box sx={{ mb: 2, width: "100%", display: "flex", alignItems: "center", gap: 0.5 }}>
-      <Box sx={{ flex: 1, minWidth: 0 }}>
+    <Box
+      sx={{
+        mb: 2,
+        width: "100%",
+        display: "flex",
+        flexDirection: collapsed ? "column" : "row",
+        alignItems: "center",
+        gap: 0.5,
+      }}
+    >
+      <Box sx={{ flex: collapsed ? "unset" : 1, width: collapsed ? "100%" : "auto", minWidth: 0 }}>
         <Dropdown>
           <Tooltip title={collapsed ? "Account & Teams" : ""} placement="right">
             <MenuButton
@@ -156,7 +176,7 @@ const SidebarHeader: FunctionComponent<SidebarHeaderProps> = (props) => {
         </Dropdown>
       </Box>
 
-      {!collapsed && <AppSwitcher currentApp="monitoring" />}
+      <AppSwitcher currentApp={currentApp} />
     </Box>
   );
 };

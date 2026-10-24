@@ -1,8 +1,7 @@
-import { Button, Card, Input, Stack } from "@mui/joy";
+import { Button, Card, IconButton, Input, Stack } from "@mui/joy";
 import { FunctionComponent, useState } from "react";
 import { Helmet } from "react-helmet";
-import { BsFilterRight } from "react-icons/bs";
-import { IoAdd, IoCloudUploadOutline, IoSearch } from "react-icons/io5";
+import { IoAdd, IoClose, IoCloudUploadOutline, IoSearch } from "react-icons/io5";
 import { NavLink } from "react-router-dom";
 import Container from "../../../components/Container/Container";
 import { Role } from "../../../components/Restrict";
@@ -113,16 +112,23 @@ const MonitorsPage: FunctionComponent = () => {
                   setQuery(e.target.value);
                   setOffset(0);
                 }}
+                endDecorator={
+                  query ? (
+                    <IconButton
+                      size="sm"
+                      variant="plain"
+                      color="neutral"
+                      onClick={() => {
+                        setQuery("");
+                        setOffset(0);
+                      }}
+                      aria-label="Clear search"
+                    >
+                      <IoClose size={16} />
+                    </IconButton>
+                  ) : null
+                }
               />
-
-              <Button
-                variant="outlined"
-                color="neutral"
-                endDecorator={<BsFilterRight />}
-                disabled
-              >
-                Filters
-              </Button>
             </Stack>
 
             <Card sx={{ p: 0, gap: 0, overflow: "hidden" }}>

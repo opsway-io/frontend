@@ -182,7 +182,7 @@ const Sidebar: FunctionComponent<SidebarProps> = ({ variant = "rail" }) => {
         },
         {
           to: "/status-pages",
-          text: "Pages",
+          text: "Status Pages",
           icon: <GoBrowser />,
           iconColor: "semantic.pages",
         },

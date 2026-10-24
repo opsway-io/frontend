@@ -11,11 +11,12 @@ const StatusPagesPage: FunctionComponent = () => {
   return (
     <>
       <Helmet>
-        <title>Pages</title>
+        <title>Status Pages</title>
       </Helmet>
 
       <Container
-        header="Pages"
+        header="Status Pages"
+        description="Public and private status pages for communicating service uptime, metrics, and incident updates with your users."
         secondaryActions={[
           <Restrict key="create" min={Role.ADMIN}>
             <Button startDecorator={<IoAdd />} component={NavLink} to="create">

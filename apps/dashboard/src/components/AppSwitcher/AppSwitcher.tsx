@@ -14,7 +14,7 @@ import { PiTerminalWindowBold, PiSparkleFill } from "react-icons/pi";
 import { MdOutlineCreditCard } from "react-icons/md";
 
 interface AppSwitcherProps {
-  currentApp?: "monitoring" | "logs" | "hub";
+  currentApp?: "monitoring" | "logs" | "hub" | "agents" | "billing";
 }
 
 const AppSwitcher: FunctionComponent<AppSwitcherProps> = ({ currentApp = "monitoring" }) => {
@@ -114,8 +114,6 @@ const AppSwitcher: FunctionComponent<AppSwitcherProps> = ({ currentApp = "monito
               key={app.id}
               component="a"
               href={app.url}
-              target={app.isInternal ? undefined : "_blank"}
-              rel={app.isInternal ? undefined : "noopener noreferrer"}
               selected={currentApp === app.id}
               sx={{
                 p: 1,

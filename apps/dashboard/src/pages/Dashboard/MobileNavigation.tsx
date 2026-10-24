@@ -21,6 +21,10 @@ const MobileBar = styled(Sheet)(({ theme }) => ({
 }));
 
 /** Top bar with a drawer-based sidebar, shown below the `md` breakpoint. */
+const isMonitoringSubdomain =
+  typeof window !== "undefined" &&
+  window.location.hostname.startsWith("monitoring");
+
 const MobileNavigation: FunctionComponent = () => {
   const { pathname } = useLocation();
   // The drawer is open for the path it was opened on, so navigating closes it.
@@ -30,7 +34,10 @@ const MobileNavigation: FunctionComponent = () => {
   return (
     <>
       <MobileBar>
-        <Link to="/monitors" style={{ display: "flex" }}>
+        <Link
+          to={isMonitoringSubdomain ? "/monitors" : "/"}
+          style={{ display: "flex" }}
+        >
           <img src="/img/logo.svg" alt="opsway" height={20} />
         </Link>
         <IconButton

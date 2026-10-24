@@ -38,7 +38,7 @@ const AppSwitcher: FunctionComponent<AppSwitcherProps> = ({ currentApp = "monito
     {
       id: "monitoring",
       name: "Monitoring",
-      desc: "Uptime, Probes & Alert Escalations",
+      desc: "Uptime, Probes, Incidents & Status Pages",
       icon: <IoPulseOutline size={20} color="#79ab5d" />,
       url: "https://monitoring.opsway.eu",
       isInternal: false,
@@ -49,14 +49,6 @@ const AppSwitcher: FunctionComponent<AppSwitcherProps> = ({ currentApp = "monito
       desc: "Semantic & SQL Log Explorer",
       icon: <PiTerminalWindowBold size={20} color="#5185a5" />,
       url: "https://logs.opsway.eu",
-      isInternal: false,
-    },
-    {
-      id: "status",
-      name: "Status Pages",
-      desc: "Public Service Health Pages",
-      icon: <IoGlobeOutline size={20} color="#5185a5" />,
-      url: "https://status.opsway.eu",
       isInternal: false,
     },
     {

@@ -236,7 +236,7 @@ export const HubOverviewPage: FunctionComponent = () => {
             </Typography>
             <Grid container spacing={2}>
               {/* Product 1: Monitoring */}
-              <Grid xs={12} md={6}>
+              <Grid xs={12} md={4}>
                 <Card
                   variant="outlined"
                   sx={{
@@ -278,40 +278,55 @@ export const HubOverviewPage: FunctionComponent = () => {
                     </Stack>
                     <Typography level="body-sm" sx={{ color: "text.secondary", mb: 2 }}>
                       End-to-end uptime monitoring with distributed multi-region probes, TLS certificate tracking,
-                      anomaly detection, incident escalation rules, and detailed SLA reports.
+                      anomaly detection, incident escalation rules, and integrated <strong>Status Pages</strong>.
                     </Typography>
                     <Stack direction="row" spacing={1} flexWrap="wrap" sx={{ mb: 2 }}>
                       <Chip size="sm" variant="outlined">HTTP & TCP Probing</Chip>
                       <Chip size="sm" variant="outlined">Multi-region EU</Chip>
-                      <Chip size="sm" variant="outlined">Alert Escalations</Chip>
+                      <Chip size="sm" variant="outlined">Status Pages</Chip>
                       <Chip size="sm" variant="outlined">SLA Reports</Chip>
                     </Stack>
                   </Box>
-                  <Stack direction="row" spacing={1.5}>
+                  <Stack spacing={1}>
                     <Button
                       component="a"
                       href="https://monitoring.opsway.eu"
                       variant="solid"
                       color="success"
                       endDecorator={<IoArrowForward />}
-                      sx={{ flex: 1 }}
+                      fullWidth
                     >
                       Open Monitoring
                     </Button>
-                    <Button
-                      component={Link}
-                      to="/alerting"
-                      variant="outlined"
-                      color="neutral"
-                    >
-                      Alerts
-                    </Button>
+                    <Stack direction="row" spacing={1}>
+                      <Button
+                        component={Link}
+                        to="/status-pages"
+                        variant="outlined"
+                        color="neutral"
+                        size="sm"
+                        startDecorator={<GoBrowser />}
+                        sx={{ flex: 1 }}
+                      >
+                        Status Pages
+                      </Button>
+                      <Button
+                        component={Link}
+                        to="/alerting"
+                        variant="outlined"
+                        color="neutral"
+                        size="sm"
+                        sx={{ flex: 1 }}
+                      >
+                        Alerts
+                      </Button>
+                    </Stack>
                   </Stack>
                 </Card>
               </Grid>
 
               {/* Product 2: Log Search */}
-              <Grid xs={12} md={6}>
+              <Grid xs={12} md={4}>
                 <Card
                   variant="outlined"
                   sx={{
@@ -362,14 +377,15 @@ export const HubOverviewPage: FunctionComponent = () => {
                       <Chip size="sm" variant="outlined">Deep Correlation</Chip>
                     </Stack>
                   </Box>
-                  <Stack direction="row" spacing={1.5}>
+                  <Stack spacing={1}>
                     <Button
                       component="a"
                       href="https://logs.opsway.eu"
                       variant="solid"
                       color="primary"
                       endDecorator={<IoArrowForward />}
-                      sx={{ flex: 1, bgcolor: "#5185a5", "&:hover": { bgcolor: "#3a6784" } }}
+                      fullWidth
+                      sx={{ bgcolor: "#5185a5", "&:hover": { bgcolor: "#3a6784" } }}
                     >
                       Open Log Search
                     </Button>
@@ -378,15 +394,16 @@ export const HubOverviewPage: FunctionComponent = () => {
                       to="/services"
                       variant="outlined"
                       color="neutral"
+                      size="sm"
                     >
-                      Services
+                      Service Catalog Mappings
                     </Button>
                   </Stack>
                 </Card>
               </Grid>
 
               {/* Product 3: Autonomous Agents (Standalone) */}
-              <Grid xs={12} md={6}>
+              <Grid xs={12} md={4}>
                 <Card
                   variant="outlined"
                   sx={{
@@ -437,14 +454,14 @@ export const HubOverviewPage: FunctionComponent = () => {
                       <Chip size="sm" variant="outlined">1-Click Remediation</Chip>
                     </Stack>
                   </Box>
-                  <Stack direction="row" spacing={1.5}>
+                  <Stack spacing={1}>
                     <Button
                       component={Link}
                       to="/agents"
                       variant="solid"
                       endDecorator={<IoArrowForward />}
+                      fullWidth
                       sx={{
-                        flex: 1,
                         bgcolor: "#A871B7",
                         "&:hover": { bgcolor: "#8f579d" },
                       }}
@@ -456,85 +473,9 @@ export const HubOverviewPage: FunctionComponent = () => {
                       to="/agents?tab=gateway"
                       variant="outlined"
                       color="neutral"
+                      size="sm"
                     >
                       MCP Gateway
-                    </Button>
-                  </Stack>
-                </Card>
-              </Grid>
-
-              {/* Product 4: Status Pages */}
-              <Grid xs={12} md={6}>
-                <Card
-                  variant="outlined"
-                  sx={{
-                    p: 2.5,
-                    bgcolor: "background.surface",
-                    display: "flex",
-                    flexDirection: "column",
-                    justifyContent: "space-between",
-                    height: "100%",
-                    transition: "border-color 0.15s ease",
-                    "&:hover": { borderColor: "#5185a5" },
-                  }}
-                >
-                  <Box>
-                    <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 1.5 }}>
-                      <Stack direction="row" alignItems="center" spacing={1.5}>
-                        <Box
-                          sx={{
-                            p: 1,
-                            borderRadius: "md",
-                            bgcolor: "rgba(81, 133, 165, 0.15)",
-                            color: "#5185a5",
-                          }}
-                        >
-                          <GoBrowser size={24} />
-                        </Box>
-                        <Box>
-                          <Typography level="title-md" sx={{ fontWeight: 700 }}>
-                            Status Pages
-                          </Typography>
-                          <Typography level="body-xs" textColor="text.tertiary">
-                            status.opsway.eu
-                          </Typography>
-                        </Box>
-                      </Stack>
-                      <Chip size="sm" variant="soft" color="neutral">
-                        Public / Private
-                      </Chip>
-                    </Stack>
-                    <Typography level="body-sm" sx={{ color: "text.secondary", mb: 2 }}>
-                      Host custom-branded public status pages to communicate real-time service health, planned
-                      maintenance, and incident timelines to your customers and stakeholders.
-                    </Typography>
-                    <Stack direction="row" spacing={1} flexWrap="wrap" sx={{ mb: 2 }}>
-                      <Chip size="sm" variant="outlined">Custom Domains</Chip>
-                      <Chip size="sm" variant="outlined">Incident History</Chip>
-                      <Chip size="sm" variant="outlined">Subscriber Alerts</Chip>
-                      <Chip size="sm" variant="outlined">Component Grouping</Chip>
-                    </Stack>
-                  </Box>
-                  <Stack direction="row" spacing={1.5}>
-                    <Button
-                      component="a"
-                      href="https://status.opsway.eu"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      variant="solid"
-                      color="neutral"
-                      endDecorator={<IoArrowForward />}
-                      sx={{ flex: 1 }}
-                    >
-                      View Live Status
-                    </Button>
-                    <Button
-                      component={Link}
-                      to="/status-pages"
-                      variant="outlined"
-                      color="neutral"
-                    >
-                      Configure
                     </Button>
                   </Stack>
                 </Card>

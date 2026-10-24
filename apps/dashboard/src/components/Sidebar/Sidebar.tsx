@@ -100,12 +100,6 @@ const Sidebar: FunctionComponent<SidebarProps> = ({ variant = "rail" }) => {
           icon: <PiTerminalWindowBold />,
           iconColor: "info",
         },
-        {
-          to: "https://status.opsway.eu",
-          text: "Status Pages ↗",
-          icon: <GoBrowser />,
-          iconColor: "semantic.pages",
-        },
       ],
     },
     {

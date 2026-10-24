@@ -39,7 +39,7 @@ interface ProductLink {
 const productLinks: ProductLink[] = [
   {
     title: "Monitoring",
-    description: "API, synthetic checks and uptime monitoring",
+    description: "API, synthetic probes, status pages & alerting",
     url: "https://monitoring.opsway.eu",
     icon: <IoPulseOutline />,
   },
@@ -52,13 +52,13 @@ const productLinks: ProductLink[] = [
   {
     title: "Autonomous AI Agents",
     description: "Root-cause investigation & 1-click remediation",
-    url: "https://my.opsway.eu/services",
+    url: "https://my.opsway.eu/agents",
     icon: <PiSparkleFill />,
   },
   {
-    title: "Status Pages",
-    description: "Public real-time incident & service health",
-    url: "https://status.opsway.eu",
+    title: "Opsway Hub",
+    description: "Platform control center, service catalog & billing",
+    url: "https://my.opsway.eu",
     icon: <IoGlobeOutline />,
   },
   {

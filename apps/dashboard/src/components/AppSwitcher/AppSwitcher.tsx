@@ -20,12 +20,28 @@ interface AppSwitcherProps {
 const AppSwitcher: FunctionComponent<AppSwitcherProps> = ({ currentApp = "monitoring" }) => {
   const apps = [
     {
+      id: "hub",
+      name: "Opsway Hub",
+      desc: "Platform Overview & Administration",
+      icon: <IoAppsOutline size={20} color="#6ba0c2" />,
+      url: "https://my.opsway.eu",
+      isInternal: false,
+    },
+    {
+      id: "agents",
+      name: "Autonomous Agents",
+      desc: "AI SRE, Incident RCA & MCP Gateway",
+      icon: <PiSparkleFill size={20} color="#A871B7" />,
+      url: "https://my.opsway.eu/agents",
+      isInternal: false,
+    },
+    {
       id: "monitoring",
       name: "Monitoring",
-      desc: "Uptime, Probes & Status Pages",
+      desc: "Uptime, Probes & Alert Escalations",
       icon: <IoPulseOutline size={20} color="#79ab5d" />,
-      url: "/monitors",
-      isInternal: true,
+      url: "https://monitoring.opsway.eu",
+      isInternal: false,
     },
     {
       id: "logs",
@@ -34,14 +50,6 @@ const AppSwitcher: FunctionComponent<AppSwitcherProps> = ({ currentApp = "monito
       icon: <PiTerminalWindowBold size={20} color="#5185a5" />,
       url: "https://logs.opsway.eu",
       isInternal: false,
-    },
-    {
-      id: "hub",
-      name: "Opsway Hub & Agents",
-      desc: "Service Catalog & AI SRE",
-      icon: <PiSparkleFill size={20} color="#A871B7" />,
-      url: "/services",
-      isInternal: true,
     },
     {
       id: "status",

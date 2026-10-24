@@ -70,6 +70,12 @@ const SettingsBillingTab = lazy(
 const ServiceCatalogPage = lazy(
   () => import("../pages/Dashboard/Services/ServiceCatalogPage"),
 );
+const HubOverviewPage = lazy(
+  () => import("../pages/Dashboard/Hub/HubOverviewPage"),
+);
+const AgentsPage = lazy(
+  () => import("../pages/Dashboard/Agents/AgentsPage"),
+);
 const TeamSelectionPage = lazy(
   () => import("../pages/Authentication/TeamSelection/TeamSelectionPage"),
 );
@@ -176,6 +182,10 @@ const TeamAcceptInvitationPage = lazy(
     import("../pages/Authentication/TeamAcceptInvitation/TeamAcceptInvitationPage"),
 );
 
+const isMonitoringSubdomain =
+  typeof window !== "undefined" &&
+  window.location.hostname.startsWith("monitoring");
+
 const Routes: FunctionComponent = () => {
   return (
     <Suspense>
@@ -187,7 +197,20 @@ const Routes: FunctionComponent = () => {
             </RestrictedRoute>
           }
         >
-          <Route index element={<Navigate to="monitors" replace />} />
+          <Route
+            index
+            element={
+              isMonitoringSubdomain ? (
+                <Navigate to="monitors" replace />
+              ) : (
+                <HubOverviewPage />
+              )
+            }
+          />
+          <Route path="hub" element={<HubOverviewPage />} />
+
+          {/* Standalone Autonomous Agents */}
+          <Route path="agents" element={<AgentsPage />} />
 
           {/* Account */}
           <Route path="account" element={<AccountPage />}>

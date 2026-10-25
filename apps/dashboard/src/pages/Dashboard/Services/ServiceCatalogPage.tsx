@@ -18,6 +18,7 @@ import { FunctionComponent, useState } from "react";
 import { Helmet } from "react-helmet";
 import { IoAdd, IoCodeSlashOutline, IoLayersOutline, IoPulseOutline, IoTrashOutline } from "react-icons/io5";
 import { PiTerminalWindowBold } from "react-icons/pi";
+import { enqueueSnackbar } from "notistack";
 import Container from "../../../components/Container/Container";
 import {
   useDeleteServiceCatalogItem,
@@ -52,12 +53,16 @@ const ServiceCatalogPage: FunctionComponent = () => {
       },
       {
         onSuccess: () => {
+          enqueueSnackbar("Service saved to catalog", { variant: "success" });
           setModalOpen(false);
           setSlug("");
           setName("");
           setDescription("");
           setLogService("");
           setRepoUrl("");
+        },
+        onError: () => {
+          enqueueSnackbar("Failed to save service", { variant: "error" });
         },
       }
     );
@@ -109,7 +114,7 @@ const ServiceCatalogPage: FunctionComponent = () => {
               ) : (
                 services.map((svc: ServiceCatalogItem) => (
                   <tr key={svc.id}>
-                    <td>
+                    <td aria-label={svc.name}>
                       <Stack direction="row" spacing={1.25} alignItems="center">
                         <Box
                           sx={{
@@ -130,7 +135,7 @@ const ServiceCatalogPage: FunctionComponent = () => {
                         </div>
                       </Stack>
                     </td>
-                    <td>
+                    <td aria-label="Log-Search service">
                       <Stack direction="row" spacing={0.75} alignItems="center">
                         <PiTerminalWindowBold size={16} color="#5185a5" />
                         <Chip size="sm" variant="soft" color="neutral">
@@ -140,7 +145,7 @@ const ServiceCatalogPage: FunctionComponent = () => {
                         </Chip>
                       </Stack>
                     </td>
-                    <td>
+                    <td aria-label="Repository">
                       {svc.repositoryUrl ? (
                         <Stack direction="row" spacing={0.75} alignItems="center">
                           <IoCodeSlashOutline size={16} color="#79ab5d" />
@@ -154,7 +159,7 @@ const ServiceCatalogPage: FunctionComponent = () => {
                         </Typography>
                       )}
                     </td>
-                    <td>
+                    <td aria-label="Monitors">
                       <Stack direction="row" spacing={0.75} alignItems="center">
                         <IoPulseOutline size={16} color="#f4ac45" />
                         <Typography level="body-sm">
@@ -162,12 +167,20 @@ const ServiceCatalogPage: FunctionComponent = () => {
                         </Typography>
                       </Stack>
                     </td>
-                    <td style={{ textAlign: "right" }}>
+                    <td style={{ textAlign: "right" }} aria-label="Actions">
                       <Button
                         size="sm"
                         variant="plain"
                         color="danger"
-                        onClick={() => deleteItem.mutate(svc.id)}
+                        aria-label={`Delete ${svc.name}`}
+                        onClick={() =>
+                          deleteItem.mutate(svc.id, {
+                            onSuccess: () =>
+                              enqueueSnackbar("Service removed from catalog", {
+                                variant: "success",
+                              }),
+                          })
+                        }
                       >
                         <IoTrashOutline size={16} />
                       </Button>

@@ -19,7 +19,6 @@ import {
   IoGlobeOutline,
   IoLogoGithub,
   IoMenu,
-  IoNotificationsOutline,
   IoPulseOutline,
   IoWarningOutline,
 } from "react-icons/io5";
@@ -315,10 +314,9 @@ const Navbar: FunctionComponent = () => {
             <Stack spacing={0.5}>
               {productLinks.map((link) => (
                 <Button
-                  key={link.hash}
-                  component={Link}
-                  to="/"
-                  hash={link.hash}
+                  key={link.title}
+                  component="a"
+                  href={link.url || "/"}
                   variant="plain"
                   color="neutral"
                   startDecorator={<ProductIcon>{link.icon}</ProductIcon>}

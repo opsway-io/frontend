@@ -196,7 +196,7 @@ const PricingCard: FunctionComponent<PricingCardProps> = ({
 
       <Button
         component="a"
-        href="https://my.opsway.eu/account/general"
+        href="https://my.opsway.eu"
         size="md"
         variant={highlighted ? "solid" : "outlined"}
         color={highlighted ? "primary" : "neutral"}
@@ -279,9 +279,27 @@ const FeatureOverview: FunctionComponent = () => {
     },
     {
       name: "Status pages",
-      free: 5,
+      free: 1,
       team: 10,
       enterprise: "Unlimited",
+    },
+    {
+      name: "Log-Search ingestion",
+      free: "5 GB / mo",
+      team: "50 GB / mo",
+      enterprise: "500+ GB / mo",
+    },
+    {
+      name: "Managed AI investigations",
+      free: "5 / mo",
+      team: "50 / mo",
+      enterprise: "500 / mo",
+    },
+    {
+      name: "Unified MCP Gateway & BYO Agent",
+      free: "yes",
+      team: "yes",
+      enterprise: "yes",
     },
     {
       name: "On-call schedules",

@@ -87,7 +87,7 @@ const Hero: FunctionComponent = () => (
         </Button>
         <Button
           component="a"
-          href={`${DASHBOARD_URL}/services`}
+          href={DASHBOARD_URL}
           size="lg"
           variant="outlined"
           color="neutral"

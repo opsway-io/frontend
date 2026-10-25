@@ -36,6 +36,7 @@ interface NavigationItem {
   text: string;
   icon: ReactNode;
   iconColor?: string;
+  end?: boolean;
   /** Hide the item from users below this team role. */
   minRole?: Role;
 }
@@ -59,6 +60,7 @@ const Sidebar: FunctionComponent<SidebarProps> = ({ variant = "rail" }) => {
           location.pathname.startsWith("/alerting") ||
           location.pathname.startsWith("/incidents") ||
           location.pathname.startsWith("/maintenance") ||
+          location.pathname.startsWith("/status-pages") ||
           location.pathname.startsWith("/reports"))));
 
   const hubNavigation: NavigationSection[] = [
@@ -67,6 +69,7 @@ const Sidebar: FunctionComponent<SidebarProps> = ({ variant = "rail" }) => {
       items: [
         {
           to: "/",
+          end: true,
           text: "Suite Overview",
           icon: <IoAppsOutline />,
           iconColor: "semantic.pages",
@@ -126,6 +129,7 @@ const Sidebar: FunctionComponent<SidebarProps> = ({ variant = "rail" }) => {
         },
         {
           to: "/settings",
+          end: true,
           text: "Platform Settings",
           icon: <IoSettingsOutline />,
           iconColor: "semantic.team",

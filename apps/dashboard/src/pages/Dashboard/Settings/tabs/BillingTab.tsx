@@ -3,6 +3,7 @@ import { enqueueSnackbar } from "notistack";
 import { FunctionComponent } from "react";
 import { IoOpenOutline } from "react-icons/io5";
 import Placeholder from "../../../../components/Placeholder/Placeholder";
+import { useEntitlements } from "../../../../hooks/suite.query";
 import {
   useChangePlan,
   useCurrentTeam,
@@ -15,6 +16,7 @@ import PricingCard from "../components/PricingCard";
 const BillingTab: FunctionComponent = () => {
   const { data: team, isPending: isLoadingTeam } = useCurrentTeam();
   const { data: productsData, isPending: isLoadingProducts } = useGetProducts();
+  const { data: entitlementsData } = useEntitlements();
   const changePlan = useChangePlan();
   const customerPortal = useOpenCustomerPortal();
 
@@ -22,6 +24,8 @@ const BillingTab: FunctionComponent = () => {
 
   const plans = toBillingPlans(productsData?.products);
   const hasPaidPlan = !!team?.paymentPlan && team.paymentPlan !== FREE_PLAN.id;
+  const entitlements = entitlementsData?.entitlements || [];
+  const getEnt = (product: string) => entitlements.find((e) => e.product === product);
 
   const selectPlan = (planId: string) => {
     changePlan.mutate(planId, {
@@ -124,7 +128,9 @@ const BillingTab: FunctionComponent = () => {
           <Box sx={{ p: 2, borderRadius: "md", bgcolor: "background.surface", border: "1px solid", borderColor: "divider" }}>
             <Stack direction="row" justifyContent="space-between" alignItems="center" mb={1}>
               <Typography level="title-sm">Opsway Monitoring</Typography>
-              <Chip size="sm" variant="soft" color="success">Active</Chip>
+              <Chip size="sm" variant="soft" color="success">
+                {getEnt("monitoring")?.tier || "FREE"} • Active
+              </Chip>
             </Stack>
             <Typography level="body-xs" textColor="text.secondary">
               Multi-location probes, IsolationForest anomaly detection, status pages, and on-call alerting.
@@ -134,7 +140,9 @@ const BillingTab: FunctionComponent = () => {
           <Box sx={{ p: 2, borderRadius: "md", bgcolor: "background.surface", border: "1px solid", borderColor: "divider" }}>
             <Stack direction="row" justifyContent="space-between" alignItems="center" mb={1}>
               <Typography level="title-sm">Opsway Log-Search</Typography>
-              <Chip size="sm" variant="soft" color="info">Active</Chip>
+              <Chip size="sm" variant="soft" color="primary">
+                {getEnt("log_search")?.tier || "FREE"} • Active
+              </Chip>
             </Stack>
             <Typography level="body-xs" textColor="text.secondary">
               Milvus vector &amp; SQL log engine, OTLP log ingestion, semantic log search, and built-in MCP server.
@@ -144,7 +152,9 @@ const BillingTab: FunctionComponent = () => {
           <Box sx={{ p: 2, borderRadius: "md", bgcolor: "background.surface", border: "1px solid", borderColor: "divider" }}>
             <Stack direction="row" justifyContent="space-between" alignItems="center" mb={1}>
               <Typography level="title-sm">Pantomath Code Graph</Typography>
-              <Chip size="sm" variant="soft" color="warning">Ready</Chip>
+              <Chip size="sm" variant="soft" color="warning">
+                {getEnt("pantomath")?.tier || "FREE"} • Ready
+              </Chip>
             </Stack>
             <Typography level="body-xs" textColor="text.secondary">
               Git AST parsing &amp; Kubernetes manifest property graph for line-level root-cause diagnosis.
@@ -153,8 +163,12 @@ const BillingTab: FunctionComponent = () => {
 
           <Box sx={{ p: 2, borderRadius: "md", bgcolor: "background.surface", border: "1px solid", borderColor: "divider" }}>
             <Stack direction="row" justifyContent="space-between" alignItems="center" mb={1}>
-              <Typography level="title-sm">Autonomous Agent (BYOA)</Typography>
-              <Chip size="sm" variant="soft" color="primary">Included</Chip>
+              <Typography level="title-sm">Autonomous Agent (Managed &amp; BYOA)</Typography>
+              <Chip size="sm" variant="soft" color="primary">
+                {getEnt("managed_agent")
+                  ? `${getEnt("managed_agent")?.currentUsage}/${getEnt("managed_agent")?.monthlyQuota} runs`
+                  : "Included"}
+              </Chip>
             </Stack>
             <Typography level="body-xs" textColor="text.secondary">
               Unified MCP Gateway (`/v1/mcp`) &amp; outbound signed webhooks to connect Claude, Cursor, or custom agents.

@@ -41,9 +41,8 @@ interface AgentInvestigationCardProps {
 
 const AgentInvestigationCard: FunctionComponent<AgentInvestigationCardProps> = ({
   incidentId,
-  incidentTitle,
 }) => {
-  const { data, isPending, error } = useIncidentInvestigations(incidentId);
+  const { data, isPending } = useIncidentInvestigations(incidentId);
   const triggerInvestigation = useTriggerInvestigation(incidentId);
   const approveRemediation = useApproveRemediation(incidentId);
 
@@ -353,7 +352,7 @@ const AgentInvestigationCard: FunctionComponent<AgentInvestigationCardProps> = (
                           >
                             <Stack direction="row" spacing={1} alignItems="center">
                               {expandedSteps[i] ? <IoChevronDown size={14} /> : <IoChevronForward size={14} />}
-                              <Typography level="title-xs" textColor="text.primary">
+                              <Typography level="title-sm" textColor="text.primary">
                                 Step {st.stepIndex}: {st.toolName || st.stepType}
                               </Typography>
                               {st.serverName && (

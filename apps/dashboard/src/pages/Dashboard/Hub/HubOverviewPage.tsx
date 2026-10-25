@@ -10,7 +10,7 @@ import {
 import { FunctionComponent } from "react";
 import { Helmet } from "react-helmet";
 import { AiOutlineTeam } from "react-icons/ai";
-import { GoBrowser, GoGraph } from "react-icons/go";
+import { GoBrowser } from "react-icons/go";
 import {
   IoAppsOutline,
   IoArrowForward,
@@ -19,7 +19,6 @@ import {
   IoLayersOutline,
   IoPersonOutline,
   IoPulseOutline,
-  IoSettingsOutline,
   IoSparklesOutline,
 } from "react-icons/io5";
 import { PiFireSimpleBold, PiTerminalWindowBold } from "react-icons/pi";
@@ -29,10 +28,8 @@ import { useIncidents } from "../../../hooks/incidents.query";
 import { useMonitors } from "../../../hooks/monitors.query";
 import { useAgentConfig, useServiceCatalog } from "../../../hooks/suite.query";
 import { useCurrentTeam, useTeamMemberCount } from "../../../hooks/team.query";
-import { useCurrentUser } from "../../../hooks/user.query";
 
 export const HubOverviewPage: FunctionComponent = () => {
-  const { data: user } = useCurrentUser();
   const { data: team } = useCurrentTeam();
   const { data: memberCount } = useTeamMemberCount();
   const { data: monitorsData } = useMonitors(0, 50);

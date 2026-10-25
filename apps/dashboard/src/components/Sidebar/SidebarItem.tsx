@@ -11,6 +11,7 @@ interface SidebarItemProps {
   iconColor?: string;
   /** Route to navigate to. Items without a route act as buttons. */
   to?: string;
+  end?: boolean;
   onClick?: () => void;
 }
 
@@ -19,6 +20,7 @@ const SidebarItem: FunctionComponent<SidebarItemProps> = ({
   icon,
   iconColor,
   to,
+  end,
   onClick,
 }) => {
   const collapsed = useSidebarCollapsed();
@@ -75,13 +77,13 @@ const SidebarItem: FunctionComponent<SidebarItemProps> = ({
             sx={sx}
             component="a"
             href={to}
-            target="_blank"
-            rel="noopener noreferrer"
+            target={to.includes("opsway.eu") ? undefined : "_blank"}
+            rel={to.includes("opsway.eu") ? undefined : "noopener noreferrer"}
           >
             {content}
           </ListItemButton>
         ) : (
-          <ListItemButton sx={sx} component={NavLink} to={to}>
+          <ListItemButton sx={sx} component={NavLink} to={to} end={end}>
             {content}
           </ListItemButton>
         )

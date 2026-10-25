@@ -1,9 +1,7 @@
 import {
-  Alert,
   Box,
   Button,
   Card,
-  CardContent,
   Chip,
   CircularProgress,
   DialogContent,
@@ -26,29 +24,27 @@ import {
   Tabs,
   Typography,
 } from "@mui/joy";
-import { FunctionComponent, useEffect, useState } from "react";
+import { FunctionComponent, useState } from "react";
 import { Helmet } from "react-helmet";
 import {
   IoCheckmark,
   IoCheckmarkCircle,
   IoChevronDown,
   IoChevronForward,
-  IoCodeSlashOutline,
   IoCopyOutline,
   IoHardwareChipOutline,
-  IoLayersOutline,
   IoOpenOutline,
   IoPlayOutline,
   IoPulseOutline,
   IoSettingsOutline,
   IoSparklesOutline,
-  IoTimeOutline,
 } from "react-icons/io5";
-import { PiFireSimpleBold, PiTerminalWindowBold } from "react-icons/pi";
+import { PiFireSimpleBold } from "react-icons/pi";
 import { Link, useSearchParams } from "react-router-dom";
+import { enqueueSnackbar } from "notistack";
+import { AgentConfig } from "../../../api/endpoints/suite";
 import Container from "../../../components/Container/Container";
 import { useIncidents } from "../../../hooks/incidents.query";
-import { useMonitors } from "../../../hooks/monitors.query";
 import {
   useAgentConfig,
   useApproveRemediation,
@@ -64,21 +60,13 @@ export const AgentsPage: FunctionComponent = () => {
 
   const { data: incidentsData } = useIncidents(false, 0, 10);
   const { data: resolvedData } = useIncidents(true, 0, 10);
-  const { data: monitorsData } = useMonitors(0, 50);
 
   const activeIncidents = incidentsData?.incidents || [];
   const resolvedIncidents = resolvedData?.incidents || [];
   const allIncidents = [...activeIncidents, ...resolvedIncidents];
 
-  const [selectedIncidentId, setSelectedIncidentId] = useState<number | null>(
-    allIncidents.length > 0 ? allIncidents[0].id : 1
-  );
-
-  useEffect(() => {
-    if (!selectedIncidentId && allIncidents.length > 0) {
-      setSelectedIncidentId(allIncidents[0].id);
-    }
-  }, [allIncidents, selectedIncidentId]);
+  const [selectedIncidentId, setSelectedIncidentId] = useState<number | null>(null);
+  const effectiveIncidentId = selectedIncidentId ?? allIncidents[0]?.id ?? 1;
 
   return (
     <>
@@ -177,7 +165,7 @@ export const AgentsPage: FunctionComponent = () => {
           {currentTab === "investigations" && (
             <InvestigationsView
               allIncidents={allIncidents}
-              selectedIncidentId={selectedIncidentId}
+              selectedIncidentId={effectiveIncidentId}
               onSelectIncident={setSelectedIncidentId}
             />
           )}
@@ -198,9 +186,33 @@ export const AgentsPage: FunctionComponent = () => {
 // ----------------------------------------------------------------------
 interface InvestigationsViewProps {
   allIncidents: Array<any>;
-  selectedIncidentId: number | null;
+  selectedIncidentId: number;
   onSelectIncident: (id: number) => void;
 }
+
+const getStatusChip = (status: string) => {
+  switch (status) {
+    case "COMPLETED":
+      return <Chip size="sm" variant="soft" color="success">COMPLETED</Chip>;
+    case "RUNNING":
+      return (
+        <Chip
+          size="sm"
+          variant="soft"
+          color="primary"
+          startDecorator={<CircularProgress size="sm" sx={{ width: 14, height: 14 }} />}
+        >
+          INVESTIGATING...
+        </Chip>
+      );
+    case "AWAITING_APPROVAL":
+      return <Chip size="sm" variant="soft" color="warning">ACTION REQUIRED</Chip>;
+    case "FAILED":
+      return <Chip size="sm" variant="soft" color="danger">FAILED</Chip>;
+    default:
+      return <Chip size="sm" variant="soft" color="neutral">{status}</Chip>;
+  }
+};
 
 const InvestigationsView: FunctionComponent<InvestigationsViewProps> = ({
   allIncidents,
@@ -208,7 +220,7 @@ const InvestigationsView: FunctionComponent<InvestigationsViewProps> = ({
   onSelectIncident,
 }) => {
   const activeIncident = allIncidents.find((i) => i.id === selectedIncidentId);
-  const targetIncidentId = selectedIncidentId || (allIncidents.length > 0 ? allIncidents[0].id : 1);
+  const targetIncidentId = selectedIncidentId;
   const { data, isPending } = useIncidentInvestigations(targetIncidentId);
   const triggerInvestigation = useTriggerInvestigation(targetIncidentId);
   const approveRemediation = useApproveRemediation(targetIncidentId);
@@ -223,34 +235,14 @@ const InvestigationsView: FunctionComponent<InvestigationsViewProps> = ({
   const handleTrigger = () => {
     triggerInvestigation.mutate(userPrompt || undefined, {
       onSuccess: () => {
+        enqueueSnackbar("Autonomous investigation started", { variant: "success" });
         setPromptModalOpen(false);
         setUserPrompt("");
       },
+      onError: () => {
+        enqueueSnackbar("Failed to start investigation", { variant: "error" });
+      },
     });
-  };
-
-  const getStatusChip = (status: string) => {
-    switch (status) {
-      case "COMPLETED":
-        return <Chip size="sm" variant="soft" color="success">COMPLETED</Chip>;
-      case "RUNNING":
-        return (
-          <Chip
-            size="sm"
-            variant="soft"
-            color="primary"
-            startDecorator={<CircularProgress size="sm" sx={{ width: 14, height: 14 }} />}
-          >
-            INVESTIGATING...
-          </Chip>
-        );
-      case "AWAITING_APPROVAL":
-        return <Chip size="sm" variant="soft" color="warning">ACTION REQUIRED</Chip>;
-      case "FAILED":
-        return <Chip size="sm" variant="soft" color="danger">FAILED</Chip>;
-      default:
-        return <Chip size="sm" variant="soft" color="neutral">{status}</Chip>;
-    }
   };
 
   return (
@@ -406,7 +398,15 @@ const InvestigationsView: FunctionComponent<InvestigationsViewProps> = ({
                             <Typography level="title-sm" sx={{ fontWeight: 600 }}>
                               {act.title}
                             </Typography>
-                            <Chip size="sm" variant="soft" color="warning">
+                            <Chip
+                              size="sm"
+                              variant="soft"
+                              color={
+                                act.status === "VERIFIED" || act.status === "EXECUTED"
+                                  ? "success"
+                                  : "warning"
+                              }
+                            >
                               {act.status}
                             </Chip>
                           </Stack>
@@ -418,6 +418,11 @@ const InvestigationsView: FunctionComponent<InvestigationsViewProps> = ({
                               <PreformattedBlock monospace>{act.diffOrCommand}</PreformattedBlock>
                             </Box>
                           )}
+                          {act.verificationSummary && (
+                            <Typography level="body-xs" color="success" sx={{ mt: 0.75 }}>
+                              ✓ {act.verificationSummary}
+                            </Typography>
+                          )}
                         </Box>
 
                         {act.status === "PENDING_APPROVAL" && (
@@ -427,10 +432,18 @@ const InvestigationsView: FunctionComponent<InvestigationsViewProps> = ({
                             color="warning"
                             loading={approveRemediation.isPending}
                             onClick={() =>
-                              approveRemediation.mutate({
-                                investigationId: latest.id,
-                                actionId: act.id,
-                              })
+                              approveRemediation.mutate(
+                                {
+                                  investigationId: latest.id,
+                                  actionId: act.id,
+                                },
+                                {
+                                  onSuccess: () =>
+                                    enqueueSnackbar("Remediation action executed & verified", {
+                                      variant: "success",
+                                    }),
+                                }
+                              )
                             }
                             startDecorator={<IoCheckmarkCircle />}
                           >
@@ -621,65 +634,85 @@ const InvestigationsView: FunctionComponent<InvestigationsViewProps> = ({
 // ----------------------------------------------------------------------
 const PoliciesView: FunctionComponent = () => {
   const { data: config, isPending } = useAgentConfig();
+
+  if (isPending || !config) {
+    return (
+      <Card variant="outlined" sx={{ bgcolor: "background.surface", p: 4, textAlign: "center" }}>
+        <CircularProgress size="md" />
+        <Typography level="body-sm" sx={{ mt: 1.5 }}>
+          Loading autonomous agent policies...
+        </Typography>
+      </Card>
+    );
+  }
+
+  return <PoliciesForm key={config.id} config={config} />;
+};
+
+const PoliciesForm: FunctionComponent<{ config: AgentConfig }> = ({ config }) => {
   const updateConfig = useUpdateAgentConfig();
 
-  const [mode, setMode] = useState<"MANAGED" | "BYOA_WEBHOOK" | "BYO_LLM">("MANAGED");
-  const [remediationLevel, setRemediationLevel] = useState<"ADVISORY" | "APPROVAL_REQUIRED" | "AUTONOMOUS">(
-    "APPROVAL_REQUIRED"
+  const [enabled, setEnabled] = useState(config.enabled ?? true);
+  const [mode, setMode] = useState<"MANAGED" | "BYOA_WEBHOOK" | "BYO_LLM">(
+    config.executionMode || "MANAGED"
   );
-  const [autoConsensus, setAutoConsensus] = useState(true);
-  const [autoAnomaly, setAutoAnomaly] = useState(true);
-  const [autoLogSpike, setAutoLogSpike] = useState(true);
-  const [cooldown, setCooldown] = useState(30);
-  const [webhookUrl, setWebhookUrl] = useState("");
-  const [webhookSecret, setWebhookSecret] = useState("");
-  const [llmProvider, setLlmProvider] = useState("openai");
-  const [llmModel, setLlmModel] = useState("gpt-4o");
+  const [remediationLevel, setRemediationLevel] = useState<
+    "ADVISORY" | "APPROVAL_REQUIRED" | "AUTONOMOUS"
+  >(config.remediationLevel || "APPROVAL_REQUIRED");
+  const [autoConsensus, setAutoConsensus] = useState(config.autoTriggerOnConsensus ?? true);
+  const [autoAnomaly, setAutoAnomaly] = useState(config.autoTriggerOnAnomaly ?? true);
+  const [autoLogSpike, setAutoLogSpike] = useState(config.autoTriggerOnLogSpike ?? true);
+  const [cooldown, setCooldown] = useState(config.cooldownMinutes ?? 30);
+  const [webhookUrl, setWebhookUrl] = useState(config.byoaWebhookUrl || "");
+  const [webhookSecret, setWebhookSecret] = useState(config.byoaWebhookSecret || "");
+  const [llmProvider, setLlmProvider] = useState(config.customLlmProvider || "openai");
+  const [llmModel, setLlmModel] = useState(config.customLlmModel || "gpt-4o");
   const [llmApiKey, setLlmApiKey] = useState("");
 
-  useEffect(() => {
-    if (config) {
-      setMode(config.executionMode || "MANAGED");
-      setRemediationLevel(config.remediationLevel || "APPROVAL_REQUIRED");
-      setAutoConsensus(config.autoTriggerOnConsensus ?? true);
-      setAutoAnomaly(config.autoTriggerOnAnomaly ?? true);
-      setAutoLogSpike(config.autoTriggerOnLogSpike ?? true);
-      setCooldown(config.cooldownMinutes ?? 30);
-      setWebhookUrl(config.byoaWebhookUrl || "");
-      setWebhookSecret(config.byoaWebhookSecret || "");
-      setLlmProvider(config.customLlmProvider || "openai");
-      setLlmModel(config.customLlmModel || "gpt-4o");
-    }
-  }, [config]);
-
   const handleSave = () => {
-    updateConfig.mutate({
-      executionMode: mode,
-      remediationLevel,
-      autoTriggerOnConsensus: autoConsensus,
-      autoTriggerOnAnomaly: autoAnomaly,
-      autoTriggerOnLogSpike: autoLogSpike,
-      cooldownMinutes: cooldown,
-      byoaWebhookUrl: webhookUrl,
-      byoaWebhookSecret: webhookSecret,
-      customLlmProvider: llmProvider,
-      customLlmModel: llmModel,
-      ...(llmApiKey ? { customLlmApiKey: llmApiKey } : {}),
-    });
+    updateConfig.mutate(
+      {
+        enabled,
+        executionMode: mode,
+        remediationLevel,
+        autoTriggerOnConsensus: autoConsensus,
+        autoTriggerOnAnomaly: autoAnomaly,
+        autoTriggerOnLogSpike: autoLogSpike,
+        cooldownMinutes: cooldown,
+        byoaWebhookUrl: webhookUrl || undefined,
+        byoaWebhookSecret:
+          webhookSecret && webhookSecret !== "********" ? webhookSecret : undefined,
+        customLlmProvider: llmProvider,
+        customLlmModel: llmModel,
+        ...(llmApiKey ? { customLlmApiKey: llmApiKey } : {}),
+      },
+      {
+        onSuccess: () =>
+          enqueueSnackbar("Autonomous agent policies saved", { variant: "success" }),
+        onError: () =>
+          enqueueSnackbar("Failed to save policies", { variant: "error" }),
+      }
+    );
   };
 
   return (
     <Card variant="outlined" sx={{ bgcolor: "background.surface", p: 3 }}>
       <Stack spacing={3}>
-        <Box>
-          <Typography level="title-lg" sx={{ fontWeight: 700 }}>
-            Autonomous Agent Policies
-          </Typography>
-          <Typography level="body-sm" textColor="text.secondary">
-            Configure how AI agents execute across the Opsway suite: native managed agents, Bring Your Own Agent
-            (BYOA) via webhooks, or Bring Your Own LLM.
-          </Typography>
-        </Box>
+        <Stack direction="row" justifyContent="space-between" alignItems="center">
+          <Box>
+            <Typography level="title-lg" sx={{ fontWeight: 700 }}>
+              Autonomous Agent Policies
+            </Typography>
+            <Typography level="body-sm" textColor="text.secondary">
+              Configure how AI agents execute across the Opsway suite: native managed agents, Bring Your Own Agent
+              (BYOA) via webhooks, or Bring Your Own LLM.
+            </Typography>
+          </Box>
+          <Stack direction="row" spacing={1.5} alignItems="center">
+            <Typography level="title-sm">Autonomous Engine Enabled</Typography>
+            <Switch checked={enabled} onChange={(e) => setEnabled(e.target.checked)} />
+          </Stack>
+        </Stack>
 
         <Divider />
 
@@ -892,6 +925,16 @@ const PoliciesView: FunctionComponent = () => {
               </Box>
               <Switch checked={autoLogSpike} onChange={(e) => setAutoLogSpike(e.target.checked)} />
             </Stack>
+
+            <FormControl sx={{ pt: 1 }}>
+              <FormLabel>Per-Incident Investigation Cooldown (Minutes)</FormLabel>
+              <Input
+                type="number"
+                value={cooldown}
+                onChange={(e) => setCooldown(Number(e.target.value) || 0)}
+                sx={{ maxWidth: 200 }}
+              />
+            </FormControl>
           </Stack>
         </Box>
 
@@ -989,34 +1032,39 @@ const MCPGatewayView: FunctionComponent = () => {
             </thead>
             <tbody>
               <tr>
-                <td><code>monitoring.list_monitors</code></td>
+                <td><code>monitoring.get_incident_details</code></td>
                 <td><Chip size="sm" variant="soft" color="success">Monitoring</Chip></td>
-                <td>Retrieve all active endpoints, uptime SLAs, and multi-region probe health.</td>
+                <td>Fetch full details of an Opsway monitoring incident, including monitor configuration and failure assertions.</td>
               </tr>
               <tr>
-                <td><code>monitoring.get_incident</code></td>
+                <td><code>monitoring.get_monitor_check_timings</code></td>
                 <td><Chip size="sm" variant="soft" color="success">Monitoring</Chip></td>
-                <td>Fetch full incident details, timeline, affected services, and error codes.</td>
+                <td>Retrieve recent ClickHouse multi-region probe timings (DNS, TCP, TLS, Server Processing, Total latency).</td>
               </tr>
               <tr>
-                <td><code>monitoring.get_probe_history</code></td>
+                <td><code>monitoring.list_active_incidents</code></td>
                 <td><Chip size="sm" variant="soft" color="success">Monitoring</Chip></td>
-                <td>Query historical ClickHouse probe metrics, latency distributions, and SSL state.</td>
+                <td>List all currently unresolved monitoring incidents for the authenticated team.</td>
               </tr>
               <tr>
-                <td><code>logs.search_logs</code></td>
+                <td><code>logs.get_error_summary</code></td>
                 <td><Chip size="sm" variant="soft" color="primary">Log Search</Chip></td>
-                <td>Sub-second SQL and semantic search over ClickHouse distributed logs.</td>
+                <td>Fast triage digest of top error clusters, stack traces, and error spike ratios across services.</td>
               </tr>
               <tr>
-                <td><code>logs.get_error_traces</code></td>
+                <td><code>logs.semantic_search</code></td>
                 <td><Chip size="sm" variant="soft" color="primary">Log Search</Chip></td>
-                <td>Retrieve contextual log lines and stack traces surrounding an incident timestamp.</td>
+                <td>Natural language vector similarity search over application error logs and traces.</td>
               </tr>
               <tr>
-                <td><code>service_catalog.get_service</code></td>
-                <td><Chip size="sm" variant="soft" color="neutral">Opsway Hub</Chip></td>
-                <td>Inspect service topology, microservice dependencies, and repository URLs.</td>
+                <td><code>logs.get_log_context</code></td>
+                <td><Chip size="sm" variant="soft" color="primary">Log Search</Chip></td>
+                <td>Retrieve surrounding log lines before and after a specific timestamp or trace ID.</td>
+              </tr>
+              <tr>
+                <td><code>pantomath.ask_codebase</code></td>
+                <td><Chip size="sm" variant="soft" color="neutral">Code GraphRAG</Chip></td>
+                <td>Query Pantomath Code & Infrastructure GraphRAG to locate source files, recent commits, or Kubernetes manifests.</td>
               </tr>
             </tbody>
           </Table>

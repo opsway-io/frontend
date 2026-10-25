@@ -14,8 +14,7 @@ const IncidentsPage: FunctionComponent = () => {
   const { data: resolvedIncidents } = useIncidents(true, 0, 100);
 
   const activeCount = activeIncidents?.incidents?.length ?? 0;
-  const resolvedCount =
-    resolvedIncidents?.totalCount ?? resolvedIncidents?.incidents?.length ?? 0;
+  const resolvedCount = resolvedIncidents?.incidents?.length ?? 0;
 
   const incidents =
     tab === "active"

@@ -9,7 +9,7 @@ import {
   Typography,
 } from "@mui/joy";
 import { FunctionComponent } from "react";
-import { IoAppsOutline, IoPulseOutline, IoGlobeOutline, IoHomeOutline } from "react-icons/io5";
+import { IoAppsOutline, IoPulseOutline, IoHomeOutline } from "react-icons/io5";
 import { PiTerminalWindowBold, PiSparkleFill } from "react-icons/pi";
 import { MdOutlineCreditCard } from "react-icons/md";
 

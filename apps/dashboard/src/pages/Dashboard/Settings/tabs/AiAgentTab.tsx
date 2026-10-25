@@ -1,10 +1,8 @@
 import {
-  Alert,
   Box,
   Button,
   Card,
   CardContent,
-  Chip,
   CircularProgress,
   Divider,
   FormControl,
@@ -18,58 +16,72 @@ import {
   Switch,
   Typography,
 } from "@mui/joy";
-import { FunctionComponent, useEffect, useState } from "react";
+import { FunctionComponent, useState } from "react";
 import { IoCheckmark, IoCodeSlashOutline, IoCopyOutline, IoSparklesOutline } from "react-icons/io5";
+import { enqueueSnackbar } from "notistack";
+import { AgentConfig } from "../../../../api/endpoints/suite";
 import { useAgentConfig, useUpdateAgentConfig } from "../../../../hooks/suite.query";
 
 const AiAgentTab: FunctionComponent = () => {
   const { data: config, isPending } = useAgentConfig();
+
+  if (isPending || !config) {
+    return (
+      <Stack direction="row" spacing={1} alignItems="center" p={3}>
+        <CircularProgress size="sm" />
+        <Typography level="body-sm">Loading AI agent settings...</Typography>
+      </Stack>
+    );
+  }
+
+  return <AiAgentTabForm key={config.id} config={config} />;
+};
+
+const AiAgentTabForm: FunctionComponent<{ config: AgentConfig }> = ({ config }) => {
   const updateConfig = useUpdateAgentConfig();
 
-  const [mode, setMode] = useState<"MANAGED" | "BYOA_WEBHOOK" | "BYO_LLM">("MANAGED");
-  const [remediationLevel, setRemediationLevel] = useState<"ADVISORY" | "APPROVAL_REQUIRED" | "AUTONOMOUS">(
-    "APPROVAL_REQUIRED"
+  const [enabled, setEnabled] = useState(config.enabled ?? true);
+  const [mode, setMode] = useState<"MANAGED" | "BYOA_WEBHOOK" | "BYO_LLM">(
+    config.executionMode || "MANAGED"
   );
-  const [autoConsensus, setAutoConsensus] = useState(true);
-  const [autoAnomaly, setAutoAnomaly] = useState(true);
-  const [autoLogSpike, setAutoLogSpike] = useState(true);
-  const [cooldown, setCooldown] = useState(30);
-  const [webhookUrl, setWebhookUrl] = useState("");
-  const [webhookSecret, setWebhookSecret] = useState("");
-  const [llmProvider, setLlmProvider] = useState("openai");
-  const [llmModel, setLlmModel] = useState("gpt-4o");
+  const [remediationLevel, setRemediationLevel] = useState<
+    "ADVISORY" | "APPROVAL_REQUIRED" | "AUTONOMOUS"
+  >(config.remediationLevel || "APPROVAL_REQUIRED");
+  const [autoConsensus, setAutoConsensus] = useState(config.autoTriggerOnConsensus ?? true);
+  const [autoAnomaly, setAutoAnomaly] = useState(config.autoTriggerOnAnomaly ?? true);
+  const [autoLogSpike, setAutoLogSpike] = useState(config.autoTriggerOnLogSpike ?? true);
+  const [cooldown, setCooldown] = useState(config.cooldownMinutes ?? 30);
+  const [webhookUrl, setWebhookUrl] = useState(config.byoaWebhookUrl || "");
+  const [webhookSecret, setWebhookSecret] = useState(config.byoaWebhookSecret || "");
+  const [llmProvider, setLlmProvider] = useState(config.customLlmProvider || "openai");
+  const [llmModel, setLlmModel] = useState(config.customLlmModel || "gpt-4o");
   const [llmApiKey, setLlmApiKey] = useState("");
   const [copied, setCopied] = useState(false);
 
-  useEffect(() => {
-    if (config) {
-      setMode(config.executionMode || "MANAGED");
-      setRemediationLevel(config.remediationLevel || "APPROVAL_REQUIRED");
-      setAutoConsensus(config.autoTriggerOnConsensus ?? true);
-      setAutoAnomaly(config.autoTriggerOnAnomaly ?? true);
-      setAutoLogSpike(config.autoTriggerOnLogSpike ?? true);
-      setCooldown(config.cooldownMinutes ?? 30);
-      setWebhookUrl(config.byoaWebhookUrl || "");
-      setWebhookSecret(config.byoaWebhookSecret || "");
-      setLlmProvider(config.customLlmProvider || "openai");
-      setLlmModel(config.customLlmModel || "gpt-4o");
-    }
-  }, [config]);
-
   const handleSave = () => {
-    updateConfig.mutate({
-      executionMode: mode,
-      remediationLevel,
-      autoTriggerOnConsensus: autoConsensus,
-      autoTriggerOnAnomaly: autoAnomaly,
-      autoTriggerOnLogSpike: autoLogSpike,
-      cooldownMinutes: Number(cooldown) || 30,
-      byoaWebhookUrl: webhookUrl || undefined,
-      byoaWebhookSecret: webhookSecret || undefined,
-      customLlmProvider: llmProvider || undefined,
-      customLlmModel: llmModel || undefined,
-      customLlmApiKey: llmApiKey || undefined,
-    });
+    updateConfig.mutate(
+      {
+        enabled,
+        executionMode: mode,
+        remediationLevel,
+        autoTriggerOnConsensus: autoConsensus,
+        autoTriggerOnAnomaly: autoAnomaly,
+        autoTriggerOnLogSpike: autoLogSpike,
+        cooldownMinutes: Number(cooldown) || 30,
+        byoaWebhookUrl: webhookUrl || undefined,
+        byoaWebhookSecret:
+          webhookSecret && webhookSecret !== "********" ? webhookSecret : undefined,
+        customLlmProvider: llmProvider || undefined,
+        customLlmModel: llmModel || undefined,
+        customLlmApiKey: llmApiKey || undefined,
+      },
+      {
+        onSuccess: () =>
+          enqueueSnackbar("AI agent settings saved", { variant: "success" }),
+        onError: () =>
+          enqueueSnackbar("Failed to save AI agent settings", { variant: "error" }),
+      }
+    );
   };
 
   const mcpConfigSnippet = JSON.stringify(
@@ -99,29 +111,28 @@ const AiAgentTab: FunctionComponent = () => {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  if (isPending) {
-    return (
-      <Stack direction="row" spacing={1} alignItems="center" p={3}>
-        <CircularProgress size="sm" />
-        <Typography level="body-sm">Loading AI agent settings...</Typography>
-      </Stack>
-    );
-  }
-
   return (
     <Stack spacing={3}>
       {/* Execution Mode Card */}
       <Card variant="outlined" sx={{ bgcolor: "background.surface", borderColor: "divider" }}>
         <CardContent>
           <Stack spacing={2}>
-            <Stack direction="row" alignItems="center" spacing={1}>
-              <IoSparklesOutline size={20} color="#A871B7" />
-              <div>
-                <Typography level="title-md">Autonomous Agent Execution Model</Typography>
-                <Typography level="body-xs" textColor="text.tertiary">
-                  Choose whether Opsway hosts and runs your investigation agents or if you connect your own external agent runtime.
+            <Stack direction="row" justifyContent="space-between" alignItems="center">
+              <Stack direction="row" alignItems="center" spacing={1}>
+                <IoSparklesOutline size={20} color="#A871B7" />
+                <div>
+                  <Typography level="title-md">Autonomous Agent Execution Model</Typography>
+                  <Typography level="body-xs" textColor="text.tertiary">
+                    Choose whether Opsway hosts and runs your investigation agents or if you connect your own external agent runtime.
+                  </Typography>
+                </div>
+              </Stack>
+              <Stack direction="row" spacing={1} alignItems="center">
+                <Typography level="body-xs" textColor="text.secondary">
+                  Enabled
                 </Typography>
-              </div>
+                <Switch checked={enabled} onChange={(e) => setEnabled(e.target.checked)} />
+              </Stack>
             </Stack>
 
             <RadioGroup

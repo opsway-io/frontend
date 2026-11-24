@@ -27,6 +27,7 @@ import {
 import { FunctionComponent, useState } from "react";
 import { Helmet } from "react-helmet";
 import {
+  IoBookOutline,
   IoCheckmark,
   IoCheckmarkCircle,
   IoChevronDown,
@@ -42,6 +43,7 @@ import {
 import { PiFireSimpleBold } from "react-icons/pi";
 import { Link, useSearchParams } from "react-router-dom";
 import { enqueueSnackbar } from "notistack";
+import AgentInsightsBanner from "../../../components/AgentInsightsBanner/AgentInsightsBanner";
 import { AgentConfig } from "../../../api/endpoints/suite";
 import Container from "../../../components/Container/Container";
 import { useIncidents } from "../../../hooks/incidents.query";
@@ -53,6 +55,7 @@ import {
   useUpdateAgentConfig,
 } from "../../../hooks/suite.query";
 import PreformattedBlock from "../Incidents/Detail/components/PreformattedBlock";
+import { ProductInfoContent } from "../Info/ProductInfoPage";
 
 export const AgentsPage: FunctionComponent = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -114,16 +117,30 @@ export const AgentsPage: FunctionComponent = () => {
                 telemetry, and microservice logs via the Unified FastMCP Gateway (<code>/v1/mcp</code>).
               </Typography>
             </Box>
-            <Button
-              component={Link}
-              to="?tab=gateway"
-              variant="outlined"
-              color="neutral"
-              startDecorator={<IoHardwareChipOutline />}
-            >
-              MCP Gateway (<code>/v1/mcp</code>)
-            </Button>
+            <Stack direction="row" spacing={1}>
+              <Button
+                component={Link}
+                to="?tab=guide"
+                variant="outlined"
+                color="neutral"
+                startDecorator={<IoBookOutline />}
+              >
+                How &amp; When to Use
+              </Button>
+              <Button
+                component={Link}
+                to="?tab=gateway"
+                variant="outlined"
+                color="neutral"
+                startDecorator={<IoHardwareChipOutline />}
+              >
+                MCP Gateway (<code>/v1/mcp</code>)
+              </Button>
+            </Stack>
           </Box>
+
+          {/* Contextual Suite Upsell when Log Search or Pantomath is disabled */}
+          <AgentInsightsBanner />
 
           {/* Navigation Tabs */}
           <Tabs
@@ -138,24 +155,31 @@ export const AgentsPage: FunctionComponent = () => {
                 borderRadius: "md",
                 bgcolor: "background.surface",
                 border: "1px solid rgba(255, 255, 255, 0.08)",
+                overflowX: "auto",
               }}
             >
               <Tab value="investigations" sx={{ borderRadius: "sm", py: 1 }}>
                 <Stack direction="row" spacing={1} alignItems="center">
                   <IoPulseOutline size={18} />
-                  <span>Live Activity & Investigations</span>
+                  <span>Live Activity &amp; Investigations</span>
                 </Stack>
               </Tab>
               <Tab value="policies" sx={{ borderRadius: "sm", py: 1 }}>
                 <Stack direction="row" spacing={1} alignItems="center">
                   <IoSettingsOutline size={18} />
-                  <span>Agent Policies & Autonomy</span>
+                  <span>Agent Policies &amp; Autonomy</span>
                 </Stack>
               </Tab>
               <Tab value="gateway" sx={{ borderRadius: "sm", py: 1 }}>
                 <Stack direction="row" spacing={1} alignItems="center">
                   <IoHardwareChipOutline size={18} />
                   <span>Unified MCP Gateway</span>
+                </Stack>
+              </Tab>
+              <Tab value="guide" sx={{ borderRadius: "sm", py: 1 }}>
+                <Stack direction="row" spacing={1} alignItems="center">
+                  <IoBookOutline size={18} />
+                  <span>Product Info &amp; How-To Guide</span>
                 </Stack>
               </Tab>
             </TabList>
@@ -175,6 +199,11 @@ export const AgentsPage: FunctionComponent = () => {
 
           {/* Tab 3: Unified MCP Gateway */}
           {currentTab === "gateway" && <MCPGatewayView />}
+
+          {/* Tab 4: Product Info & How-To Guide */}
+          {currentTab === "guide" && (
+            <ProductInfoContent initialProduct="agents" embedded />
+          )}
         </Stack>
       </Container>
     </>

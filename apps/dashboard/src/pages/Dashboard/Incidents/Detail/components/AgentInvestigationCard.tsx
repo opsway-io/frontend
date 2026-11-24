@@ -32,6 +32,7 @@ import {
   useIncidentInvestigations,
   useTriggerInvestigation,
 } from "../../../../../hooks/suite.query";
+import AgentInsightsBanner from "../../../../../components/AgentInsightsBanner/AgentInsightsBanner";
 import PreformattedBlock from "./PreformattedBlock";
 
 interface AgentInvestigationCardProps {
@@ -139,6 +140,9 @@ const AgentInvestigationCard: FunctionComponent<AgentInvestigationCardProps> = (
             </Stack>
 
             <Divider />
+
+            {/* Contextual Upsell / Service Catalog Onboarding Banner */}
+            <AgentInsightsBanner investigation={latest} />
 
             {/* State: Loading or No investigation yet */}
             {isPending && (

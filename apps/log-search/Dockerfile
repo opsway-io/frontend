@@ -10,7 +10,8 @@ COPY packages/shell ./packages/shell
 COPY apps/log-search ./apps/log-search
 
 ENV NEXT_TELEMETRY_DISABLED=1
-RUN pnpm install --filter log-search... --frozen-lockfile
+# Use hoisted node_modules so Next.js standalone outputFileTracing includes all @swc/helpers ESM files cleanly.
+RUN pnpm install --filter log-search... --frozen-lockfile --config.node-linker=hoisted
 RUN pnpm --filter log-search build
 
 FROM node:22-alpine AS runner

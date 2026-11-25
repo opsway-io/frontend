@@ -725,10 +725,15 @@ const getDefaultProductFromHost = (paramProduct?: string): ProductSlug => {
   return "hub";
 };
 
+const isMonitoringSubdomain = () =>
+  typeof window !== "undefined" &&
+  window.location.hostname.startsWith("monitoring");
+
 export const ProductInfoContent: FunctionComponent<{
   initialProduct?: ProductSlug;
   embedded?: boolean;
-}> = ({ initialProduct, embedded = false }) => {
+  hideProductSwitcher?: boolean;
+}> = ({ initialProduct, embedded = false, hideProductSwitcher = false }) => {
   const { productId } = useParams<{ productId?: string }>();
   const navigate = useNavigate();
   const authentication = useAuthenticationStore();
@@ -763,7 +768,7 @@ export const ProductInfoContent: FunctionComponent<{
   return (
     <Stack spacing={3.5} sx={{ py: embedded ? 1 : 2 }}>
       {/* Product Switcher Tabs */}
-      {!embedded && (
+      {!embedded && !hideProductSwitcher && (
         <Tabs
           value={activeSlug}
           onChange={(_, val) => val && handleTabChange(val as ProductSlug)}
@@ -1343,20 +1348,38 @@ export const ProductInfoContent: FunctionComponent<{
 };
 
 const ProductInfoPage: FunctionComponent = () => {
+  const { productId } = useParams<{ productId?: string }>();
   const authentication = useAuthenticationStore();
   const isLoggedIn = authentication.isAuthenticated();
+  const isStandaloneMonitoring =
+    isMonitoringSubdomain() || productId === "monitoring";
 
   if (isLoggedIn) {
     return (
       <>
         <Helmet>
-          <title>Product Info &amp; Operational Guides | Opsway</title>
+          <title>
+            {isStandaloneMonitoring
+              ? "Monitoring Guide | Opsway"
+              : "Product Info & Operational Guides | Opsway"}
+          </title>
         </Helmet>
         <Container
-          header="Product Info & Operational Guides"
-          description="Explore what each Opsway product does, when to use specific capabilities, and step-by-step operational playbooks."
+          header={
+            isStandaloneMonitoring
+              ? "Monitoring Guide"
+              : "Product Info & Operational Guides"
+          }
+          description={
+            isStandaloneMonitoring
+              ? PRODUCT_DEFINITIONS.monitoring.tagline
+              : "Explore what each Opsway product does, when to use specific capabilities, and step-by-step operational playbooks."
+          }
         >
-          <ProductInfoContent />
+          <ProductInfoContent
+            initialProduct={isStandaloneMonitoring ? "monitoring" : undefined}
+            hideProductSwitcher={isStandaloneMonitoring}
+          />
         </Container>
       </>
     );
@@ -1365,7 +1388,11 @@ const ProductInfoPage: FunctionComponent = () => {
   return (
     <>
       <Helmet>
-        <title>Opsway Product Suite | Overview &amp; Documentation</title>
+        <title>
+          {isStandaloneMonitoring
+            ? "Opsway Monitoring | Overview & Documentation"
+            : "Opsway Product Suite | Overview & Documentation"}
+        </title>
       </Helmet>
       <Box
         sx={{
@@ -1452,7 +1479,10 @@ const ProductInfoPage: FunctionComponent = () => {
         </Box>
 
         <Box sx={{ maxWidth: 1280, mx: "auto", px: { xs: 2, md: 4 }, pt: 3 }}>
-          <ProductInfoContent />
+          <ProductInfoContent
+            initialProduct={isStandaloneMonitoring ? "monitoring" : undefined}
+            hideProductSwitcher={isStandaloneMonitoring}
+          />
         </Box>
       </Box>
     </>

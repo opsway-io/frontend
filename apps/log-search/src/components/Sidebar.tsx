@@ -15,10 +15,11 @@ interface SidebarProps {
   variant?: "rail" | "drawer";
   collapsed: boolean;
   onToggleCollapsed: () => void;
-  viewMode: "logs" | "dashboard";
+  viewMode: "logs" | "dashboard" | "guide";
   isLive: boolean;
   onSelectLogs: () => void;
   onSelectHistogram: () => void;
+  onSelectGuide: () => void;
   onToggleLive: () => void;
   onNavigate?: () => void;
 }
@@ -130,6 +131,7 @@ export function Sidebar({
   isLive,
   onSelectLogs,
   onSelectHistogram,
+  onSelectGuide,
   onToggleLive,
   onNavigate,
 }: SidebarProps) {
@@ -198,11 +200,15 @@ export function Sidebar({
           onClick={onNavigate}
         />
         <SidebarItem
-          href="https://my.opsway.eu/info/logs"
-          text="Product Info & Guide ↗"
+          text="Product Info & Guide"
           icon={<MenuBookOutlinedIcon sx={{ fontSize: 18 }} />}
+          active={viewMode === "guide" && !isLive}
+          activeIconColor="#5185a5"
           collapsed={isCollapsed}
-          onClick={onNavigate}
+          onClick={() => {
+            onSelectGuide();
+            onNavigate?.();
+          }}
         />
       </SidebarSection>
 

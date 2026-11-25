@@ -52,6 +52,7 @@ import {
 import { OpswayTopBar } from "@opsway/shell";
 import { opswayTheme } from "../components/theme";
 import { Sidebar } from "../components/Sidebar";
+import { LogSearchGuide } from "../components/LogSearchGuide";
 
 interface LogEvent {
   id?: string;
@@ -119,7 +120,7 @@ export default function Home() {
   const [histogramData, setHistogramData] = useState<HistogramPoint[]>([]);
   const [totalMatches, setTotalMatches] = useState<number | null>(null);
   const [isSearching, setIsSearching] = useState(false);
-  const [viewMode, setViewMode] = useState<"logs" | "dashboard">("logs");
+  const [viewMode, setViewMode] = useState<"logs" | "dashboard" | "guide">("logs");
   const [expandedLogId, setExpandedLogId] = useState<string | number | null>(null);
 
   // Live Tailing
@@ -507,6 +508,10 @@ export default function Home() {
       const params = new URLSearchParams(window.location.search);
       const urlQuery = params.get("query");
       const urlRange = params.get("timeRange");
+      const urlView = params.get("view");
+      if (urlView === "guide" || urlView === "info") {
+        setViewMode("guide");
+      }
       if (urlRange) setTimeRange(urlRange);
       if (urlQuery) {
         setQuery(urlQuery);
@@ -546,6 +551,10 @@ export default function Home() {
       stopLiveTailing();
       setViewMode("dashboard");
     },
+    onSelectGuide: () => {
+      stopLiveTailing();
+      setViewMode("guide");
+    },
     onToggleLive: toggleLiveTailing,
   };
 
@@ -556,6 +565,16 @@ export default function Home() {
         {/* Global Opsway Suite TopBar */}
         <OpswayTopBar
           currentApp="logs"
+          brandHref="/"
+          guideHref="/info"
+          onNavigate={(path) => {
+            stopLiveTailing();
+            if (path === "/info") {
+              setViewMode("guide");
+            } else {
+              setViewMode("logs");
+            }
+          }}
           userName={auth0.user?.name}
           userSubtitle={auth0.user?.email}
           avatarUrl={auth0.user?.picture}
@@ -601,6 +620,25 @@ export default function Home() {
           {/* Main scrollable workspace (mirrors DashboardLayout + Container) */}
           <main className="flex-1 min-w-0 h-full overflow-auto">
           <div className="w-full max-w-[1600px] mx-auto px-4 py-4 md:px-6 md:pt-8 md:pb-12 flex flex-col gap-4">
+            {viewMode === "guide" ? (
+              <LogSearchGuide
+                onOpenErrorLogs={() => {
+                  stopLiveTailing();
+                  setViewMode("logs");
+                  setQuery("level = 'ERROR'");
+                  handleSearch("level = 'ERROR'");
+                }}
+                onOpenHistogram={() => {
+                  stopLiveTailing();
+                  setViewMode("dashboard");
+                }}
+                onOpenLiveTail={() => {
+                  setViewMode("logs");
+                  if (!isLive) toggleLiveTailing();
+                }}
+              />
+            ) : (
+            <>
             {/* Page Header (mirrors ContainerHeader + description + secondaryActions) */}
             <div className="flex flex-row justify-between items-end flex-wrap gap-4">
               <div className="flex-1 min-w-[240px] flex flex-col gap-1">
@@ -1264,6 +1302,8 @@ export default function Home() {
                   </div>
                 )}
               </Paper>
+            )}
+            </>
             )}
           </div>
         </main>

@@ -51,7 +51,7 @@ export const SUITE_APPS: SuiteAppMeta[] = [
     desc: "Semantic & SQL Log Explorer",
     accentColor: "#5185a5",
     url: "https://logs.opsway.eu",
-    guideUrl: "https://my.opsway.eu/info/logs",
+    guideUrl: "https://logs.opsway.eu/info",
   },
   {
     id: "website",

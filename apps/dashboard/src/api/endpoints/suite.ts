@@ -313,6 +313,8 @@ export interface LogSearchUsage {
   tier: "FREE" | "PRO" | "ENTERPRISE";
   enabled: boolean;
   quotas: QuotaItem[];
+  eventsIngested: number;
+  bytesIngested: number;
   activeServices: number;
   triggerRules: number;
   logTriggeredInvestigations: number;
@@ -353,11 +355,20 @@ export interface PlatformUsage {
 export interface DailyUsagePoint {
   date: string;
   probes: number;
+  logBytes: number;
+  logEvents: number;
   agentRuns: number;
   agentTokens: number;
   mcpCalls: number;
   notifications: number;
   incidents: number;
+}
+
+export interface TopLogServiceConsumer {
+  serviceName: string;
+  events: number;
+  bytes: number;
+  sharePct: number;
 }
 
 export interface TopMonitorConsumer {
@@ -396,6 +407,7 @@ export interface TeamUsageResponse {
   timeseries: DailyUsagePoint[];
   topConsumers: {
     monitors: TopMonitorConsumer[];
+    logServices: TopLogServiceConsumer[];
     agentTriggers: TopTriggerConsumer[];
     services: TopServiceConsumer[];
   };

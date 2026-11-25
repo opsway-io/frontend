@@ -34,8 +34,8 @@ import Placeholder from "../../../../components/Placeholder/Placeholder";
 import { useTeamUsage } from "../../../../hooks/suite.query";
 
 type ProductFilter = "all" | "monitoring" | "log_search" | "managed_agent" | "pantomath";
-type TrendMetric = "probes" | "agentRuns" | "agentTokens" | "mcpCalls" | "notifications";
-type ConsumerTab = "monitors" | "triggers" | "services";
+type TrendMetric = "probes" | "logMb" | "agentRuns" | "agentTokens" | "mcpCalls" | "notifications";
+type ConsumerTab = "monitors" | "logServices" | "triggers" | "services";
 
 const RANGE_LABELS: Record<UsageRange, string> = {
   current_cycle: "Current Billing Cycle",
@@ -46,6 +46,7 @@ const RANGE_LABELS: Record<UsageRange, string> = {
 
 const TREND_META: Record<TrendMetric, { label: string; color: string; unit: string }> = {
   probes: { label: "Probe Executions", color: "#79ab5d", unit: "probes" },
+  logMb: { label: "Log Ingestion (MB)", color: "#5185a5", unit: "MB" },
   agentRuns: { label: "AI Investigations", color: "#A871B7", unit: "runs" },
   agentTokens: { label: "LLM Tokens", color: "#6ba0c2", unit: "tokens" },
   mcpCalls: { label: "MCP Gateway Calls", color: "#f4ac45", unit: "calls" },
@@ -56,6 +57,26 @@ function formatCompact(n: number): string {
   if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(2)}M`;
   if (n >= 10_000) return `${(n / 1_000).toFixed(1)}k`;
   return n.toLocaleString();
+}
+
+function formatBytes(bytes: number): string {
+  if (bytes <= 0) return "0 B";
+  const gb = bytes / (1024 * 1024 * 1024);
+  if (gb >= 1) return `${gb.toFixed(2)} GB`;
+  const mb = bytes / (1024 * 1024);
+  if (mb >= 1) return `${mb.toFixed(1)} MB`;
+  const kb = bytes / 1024;
+  if (kb >= 1) return `${kb.toFixed(1)} KB`;
+  return `${bytes} B`;
+}
+
+function formatQuotaUsed(used: number, unit: string): string {
+  if (unit === "GB" && used > 0 && used < 0.1) {
+    const mb = used * 1024;
+    if (mb >= 1) return `${mb.toFixed(1)} MB`;
+    return `${(mb * 1024).toFixed(0)} KB`;
+  }
+  return `${used.toLocaleString()} ${unit}`;
 }
 
 function quotaColor(status: QuotaItem["status"]): "primary" | "warning" | "danger" | "neutral" {
@@ -88,8 +109,8 @@ const QuotaRow: FunctionComponent<QuotaRowProps> = ({ quota, compact }) => {
         </Typography>
         <Stack direction="row" spacing={0.75} alignItems="center">
           <Typography level={compact ? "body-xs" : "body-sm"} fontWeight={600}>
-            {quota.used.toLocaleString()}
-            {!isUnlimited && ` / ${quota.limit.toLocaleString()}`} {quota.unit}
+            {formatQuotaUsed(quota.used, quota.unit)}
+            {!isUnlimited && ` / ${quota.limit.toLocaleString()} ${quota.unit}`}
           </Typography>
           {isUnlimited ? (
             <Chip size="sm" variant="soft" color="neutral">
@@ -170,7 +191,11 @@ const UsageTab: FunctionComponent = () => {
     return [
       {
         name: meta.label,
-        data: usage.timeseries.map((pt) => pt[trendMetric]),
+        data: usage.timeseries.map((pt) =>
+          trendMetric === "logMb"
+            ? Math.round((pt.logBytes / (1024 * 1024)) * 100) / 100
+            : pt[trendMetric],
+        ),
       },
     ];
   }, [usage, trendMetric]);
@@ -231,6 +256,8 @@ const UsageTab: FunctionComponent = () => {
     const header = [
       "date",
       "probes",
+      "log_bytes",
+      "log_events",
       "agent_runs",
       "agent_tokens",
       "mcp_calls",
@@ -240,6 +267,8 @@ const UsageTab: FunctionComponent = () => {
     const rows = usage.timeseries.map((pt) => [
       pt.date,
       pt.probes,
+      pt.logBytes,
+      pt.logEvents,
       pt.agentRuns,
       pt.agentTokens,
       pt.mcpCalls,
@@ -498,8 +527,10 @@ const UsageTab: FunctionComponent = () => {
 
             <Divider />
 
-            <Box sx={{ display: "grid", gap: 1, gridTemplateColumns: "repeat(3, 1fr)" }}>
-              <StatPill label="Mapped Services" value={logSearch.activeServices} />
+            <Box sx={{ display: "grid", gap: 1, gridTemplateColumns: "repeat(auto-fit, minmax(110px, 1fr))" }}>
+              <StatPill label="Events Ingested" value={logSearch.eventsIngested} />
+              <StatPill label="Data Ingested" value={formatBytes(logSearch.bytesIngested)} />
+              <StatPill label="Active Services" value={logSearch.activeServices} />
               <StatPill label="Log Trigger Rules" value={logSearch.triggerRules} />
               <StatPill label="Log-Triggered RCA" value={logSearch.logTriggeredInvestigations} />
             </Box>
@@ -598,8 +629,9 @@ const UsageTab: FunctionComponent = () => {
             >
               <TabList variant="soft" size="sm">
                 <Tab value="monitors">Monitors</Tab>
+                <Tab value="logServices">Log Services</Tab>
                 <Tab value="triggers">Agent Triggers</Tab>
-                <Tab value="services">Services</Tab>
+                <Tab value="services">AI Services</Tab>
               </TabList>
             </Tabs>
           </Stack>
@@ -629,6 +661,39 @@ const UsageTab: FunctionComponent = () => {
                         <td>{m.name}</td>
                         <td style={{ textAlign: "right" }}>{m.probes.toLocaleString()}</td>
                         <td style={{ textAlign: "right" }}>{m.sharePct.toFixed(1)}%</td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </Table>
+            )}
+
+            {consumerTab === "logServices" && (
+              <Table size="sm" hoverRow>
+                <thead>
+                  <tr>
+                    <th>Log Service</th>
+                    <th style={{ textAlign: "right" }}>Events</th>
+                    <th style={{ textAlign: "right" }}>Volume</th>
+                    <th style={{ textAlign: "right" }}>Share</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {(usage.topConsumers.logServices?.length ?? 0) === 0 ? (
+                    <tr>
+                      <td colSpan={4}>
+                        <Typography level="body-xs" textColor="text.tertiary" textAlign="center" py={2}>
+                          No log ingestion recorded in this period.
+                        </Typography>
+                      </td>
+                    </tr>
+                  ) : (
+                    usage.topConsumers.logServices.map((ls) => (
+                      <tr key={ls.serviceName}>
+                        <td>{ls.serviceName}</td>
+                        <td style={{ textAlign: "right" }}>{formatCompact(ls.events)}</td>
+                        <td style={{ textAlign: "right" }}>{formatBytes(ls.bytes)}</td>
+                        <td style={{ textAlign: "right" }}>{ls.sharePct.toFixed(1)}%</td>
                       </tr>
                     ))
                   )}

@@ -18,12 +18,9 @@ import { PiFireSimpleBold, PiTerminalWindowBold } from "react-icons/pi";
 import { RiAlarmWarningLine } from "react-icons/ri";
 import { useLocation } from "react-router-dom";
 import useSidebarStore from "../../hooks/sidebar.store";
-import { useCurrentTeam } from "../../hooks/team.query";
-import { useCurrentUser } from "../../hooks/user.query";
 import { Restrict, Role } from "../Restrict";
 import { SidebarVariant, SidebarVariantContext } from "./sidebarContext";
 import SidebarContainer from "./SidebarContainer";
-import SidebarHeader from "./SidebarHeader";
 import SidebarItem from "./SidebarItem";
 import SidebarSection from "./SidebarSection";
 import SidebarSpacer from "./SidebarSpacer";
@@ -48,8 +45,6 @@ interface NavigationSection {
 }
 
 const Sidebar: FunctionComponent<SidebarProps> = ({ variant = "rail" }) => {
-  const { data: user, isPending: isLoadingUser } = useCurrentUser();
-  const { data: team, isPending: isLoadingTeam } = useCurrentTeam();
   const { collapsed, setCollapsed } = useSidebarStore();
   const location = useLocation();
 
@@ -220,13 +215,6 @@ const Sidebar: FunctionComponent<SidebarProps> = ({ variant = "rail" }) => {
   return (
     <SidebarVariantContext.Provider value={variant}>
       <SidebarContainer>
-        <SidebarHeader
-          name={user?.displayName}
-          picture={user?.avatarUrl}
-          loading={isLoadingUser || isLoadingTeam}
-          teamDisplayName={team?.displayName || team?.name}
-        />
-
         {currentNav.map((section) => (
           <SidebarSection key={section.label} label={section.label}>
             {section.items.map(({ minRole, ...item }) =>

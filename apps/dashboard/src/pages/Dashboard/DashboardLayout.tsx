@@ -1,24 +1,28 @@
-import { Box, Skeleton, styled } from "@mui/joy";
-import { FunctionComponent, Suspense } from "react";
-import { Outlet } from "react-router-dom";
+import { Box, Drawer, Skeleton, styled } from "@mui/joy";
+import { OpswayAppId, OpswayTopBar } from "@opsway/shell";
+import { FunctionComponent, Suspense, useState } from "react";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import Container from "../../components/Container/Container";
 import DelayedVisibility from "../../components/DelayedVisibility/DelayedVisibility";
 import Sidebar from "../../components/Sidebar/Sidebar";
-import MobileNavigation from "./MobileNavigation";
+import useAuthenticationStore from "../../hooks/authentication.store";
+import { useCurrentTeam } from "../../hooks/team.query";
+import { useCurrentUser, useUserTeams } from "../../hooks/user.query";
 
-const Layout = styled("div")(({ theme }) => ({
+const Shell = styled("div")(() => ({
   display: "flex",
+  flexDirection: "column",
   height: "100%",
   width: "100%",
   minWidth: 0,
+}));
 
-  [theme.breakpoints.up("md")]: {
-    flexDirection: "row",
-  },
-
-  [theme.breakpoints.down("md")]: {
-    flexDirection: "column",
-  },
+const Body = styled("div")(() => ({
+  display: "flex",
+  flexDirection: "row",
+  flex: 1,
+  minHeight: 0,
+  minWidth: 0,
 }));
 
 const Main = styled("main")(() => ({
@@ -64,20 +68,100 @@ const PageSkeleton: FunctionComponent = () => (
   </DelayedVisibility>
 );
 
-/** Authenticated app shell: sidebar navigation plus the routed page. */
+const isMonitoringHost =
+  typeof window !== "undefined" &&
+  window.location.hostname.startsWith("monitoring");
+
+/** Authenticated app shell: global OpswayTopBar, standalone sidebar rail, and routed page. */
 const DashboardLayout: FunctionComponent = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const authentication = useAuthenticationStore();
+  const { data: user } = useCurrentUser();
+  const { data: team } = useCurrentTeam();
+  const { data: userTeams } = useUserTeams(authentication.currentUserId);
+
+  // Track mobile drawer by pathname so navigating automatically closes it.
+  const [openedOnPath, setOpenedOnPath] = useState<string | null>(null);
+  const mobileDrawerOpen = openedOnPath === location.pathname;
+
+  const isMonitoringContext =
+    isMonitoringHost ||
+    (typeof window !== "undefined" &&
+      !window.location.hostname.startsWith("my") &&
+      (location.pathname.startsWith("/monitors") ||
+        location.pathname.startsWith("/alerting") ||
+        location.pathname.startsWith("/incidents") ||
+        location.pathname.startsWith("/maintenance") ||
+        location.pathname.startsWith("/status-pages") ||
+        location.pathname.startsWith("/reports") ||
+        location.pathname === "/info/monitoring"));
+
+  const currentApp: OpswayAppId = isMonitoringContext
+    ? "monitoring"
+    : location.pathname.startsWith("/agents")
+      ? "agents"
+      : "hub";
+
+  const guideHref =
+    currentApp === "monitoring"
+      ? "/info/monitoring"
+      : currentApp === "agents"
+        ? "/info/agents"
+        : "/info/hub";
+
+  const handleSelectTeam = (teamId: number | string) => {
+    authentication.setCurrentTeamID(Number(teamId));
+    navigate(isMonitoringHost ? "/monitors" : "/", { replace: true });
+  };
+
   return (
-    <Layout>
-      <MobileNavigation />
-      <Navigation>
-        <Sidebar />
-      </Navigation>
-      <Main>
-        <Suspense fallback={<PageSkeleton />}>
-          <Outlet />
-        </Suspense>
-      </Main>
-    </Layout>
+    <Shell>
+      <OpswayTopBar
+        currentApp={currentApp}
+        brandHref={isMonitoringHost ? "/monitors" : "/"}
+        guideHref={guideHref}
+        onNavigate={(path) => navigate(path)}
+        userName={user?.displayName}
+        userSubtitle={team?.displayName || team?.name}
+        avatarUrl={user?.avatarUrl}
+        isAuthenticated={authentication.isAuthenticated()}
+        teams={userTeams?.teams?.map((t) => ({
+          id: t.id,
+          name: t.displayName || t.name,
+        }))}
+        currentTeamId={authentication.currentTeamId}
+        onSelectTeam={handleSelectTeam}
+        onCreateTeam={() => navigate("/login/team/register")}
+        onAccountSettings={() => navigate("/account")}
+        onLogout={() => authentication.logOut()}
+        onOpenMobileMenu={() => setOpenedOnPath(location.pathname)}
+      />
+
+      <Drawer
+        open={mobileDrawerOpen}
+        onClose={() => setOpenedOnPath(null)}
+        size="sm"
+        slotProps={{
+          content: {
+            sx: { bgcolor: "background.surface", width: 280 },
+          },
+        }}
+      >
+        <Sidebar variant="drawer" />
+      </Drawer>
+
+      <Body>
+        <Navigation>
+          <Sidebar />
+        </Navigation>
+        <Main>
+          <Suspense fallback={<PageSkeleton />}>
+            <Outlet />
+          </Suspense>
+        </Main>
+      </Body>
+    </Shell>
   );
 };
 

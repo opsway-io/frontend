@@ -1,0 +1,43 @@
+name: Build log-search
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "apps/log-search/**"
+      - "packages/shell/**"
+      - ".github/workflows/log-search.yaml"
+
+jobs:
+  build:
+    runs-on: arc-runner-set
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Generate build ID
+        id: prep
+        run: |
+          branch=${GITHUB_REF##*/}
+          sha=${GITHUB_SHA::8}
+          ts=$(date +%s)
+          echo "BUILD_ID=${branch}-${sha}-${ts}" >> $GITHUB_OUTPUT
+
+      - name: Build and push Docker image for log-search
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./apps/log-search/Dockerfile
+          push: true
+          tags: |
+            naueramant/opsway-log-search:${{ steps.prep.outputs.BUILD_ID }}

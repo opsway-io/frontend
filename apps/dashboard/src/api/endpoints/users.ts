@@ -8,6 +8,7 @@ export interface IGetUserResponse {
   avatarUrl?: string;
   phoneNumber?: string;
   hasPassword?: boolean;
+  isPlatformOwner?: boolean;
   teams: IGetUserTeamResponse[];
   createdAt: Date;
   updatedAt: Date;

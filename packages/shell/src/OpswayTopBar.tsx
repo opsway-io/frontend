@@ -49,6 +49,8 @@ export interface OpswayTopBarProps {
   onLogout?: () => void;
   /** Mobile sidebar drawer trigger. When provided, a hamburger button is shown on mobile viewports. */
   onOpenMobileMenu?: () => void;
+  /** Optional allowlist of suite app IDs to display in the app switcher. */
+  enabledApps?: OpswayAppId[];
 }
 
 function getInitials(name?: string): string {
@@ -92,6 +94,7 @@ export function OpswayTopBar({
   onLogin,
   onLogout,
   onOpenMobileMenu,
+  enabledApps,
 }: OpswayTopBarProps) {
   const [appsOpen, setAppsOpen] = useState(false);
   const [accountOpen, setAccountOpen] = useState(false);
@@ -279,7 +282,10 @@ export function OpswayTopBar({
                 Opsway Product Suite
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-                {SUITE_APPS.map((app) => {
+                {(enabledApps
+                  ? SUITE_APPS.filter((app) => enabledApps.includes(app.id))
+                  : SUITE_APPS
+                ).map((app) => {
                   const isCurrent = app.id === currentApp;
                   const isHovered = hoveredId === `app-${app.id}`;
                   return (

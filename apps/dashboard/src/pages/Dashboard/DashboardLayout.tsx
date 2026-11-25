@@ -7,6 +7,7 @@ import DelayedVisibility from "../../components/DelayedVisibility/DelayedVisibil
 import QuotaBanner from "../../components/QuotaBanner/QuotaBanner";
 import Sidebar from "../../components/Sidebar/Sidebar";
 import useAuthenticationStore from "../../hooks/authentication.store";
+import { usePlatformProducts } from "../../hooks/platform.query";
 import { useCurrentTeam } from "../../hooks/team.query";
 import { useCurrentUser, useUserTeams } from "../../hooks/user.query";
 
@@ -81,6 +82,22 @@ const DashboardLayout: FunctionComponent = () => {
   const { data: user } = useCurrentUser();
   const { data: team } = useCurrentTeam();
   const { data: userTeams } = useUserTeams(authentication.currentUserId);
+  const { data: platformProducts } = usePlatformProducts();
+
+  const enabledApps: OpswayAppId[] = [
+    "hub",
+    "website",
+    "billing",
+    ...(platformProducts?.products?.monitoring !== false
+      ? (["monitoring"] as OpswayAppId[])
+      : []),
+    ...(platformProducts?.products?.log_search !== false
+      ? (["logs"] as OpswayAppId[])
+      : []),
+    ...(platformProducts?.products?.managed_agent !== false
+      ? (["agents"] as OpswayAppId[])
+      : []),
+  ];
 
   // Track mobile drawer by pathname so navigating automatically closes it.
   const [openedOnPath, setOpenedOnPath] = useState<string | null>(null);
@@ -137,6 +154,7 @@ const DashboardLayout: FunctionComponent = () => {
         onAccountSettings={() => navigate("/account")}
         onLogout={() => authentication.logOut()}
         onOpenMobileMenu={() => setOpenedOnPath(location.pathname)}
+        enabledApps={enabledApps}
       />
 
       <Drawer

@@ -1,7 +1,9 @@
 import { FunctionComponent, ReactNode } from "react";
 import { Navigate, Outlet, useLocation } from "react-router-dom";
+import { ProductSlug } from "../api/endpoints/platform";
 import { Role } from "../components/Restrict";
 import useAuthenticationStore from "../hooks/authentication.store";
+import { usePlatformProducts } from "../hooks/platform.query";
 import { useCurrentUserRole } from "../hooks/user.query";
 
 interface RestrictedRouteProps {
@@ -11,6 +13,10 @@ interface RestrictedRouteProps {
   authenticated?: boolean;
   /** Only for signed-out users (sign in, sign up, …). */
   unauthenticated?: boolean;
+  /** Requires this suite product to be enabled for the current user. */
+  product?: ProductSlug;
+  /** Requires the current user to be a platform owner. */
+  platformOwnerOnly?: boolean;
   /** Rendered when allowed; defaults to the nested route `<Outlet />`. */
   children?: ReactNode;
 }
@@ -26,6 +32,19 @@ const RestrictedRoute: FunctionComponent<RestrictedRouteProps> = (props) => {
 
   if (props.unauthenticated) {
     return <UnauthenticatedRoute>{props.children}</UnauthenticatedRoute>;
+  }
+
+  if (props.platformOwnerOnly || props.product) {
+    return (
+      <AuthenticatedRoute>
+        <PlatformGateRoute
+          product={props.product}
+          platformOwnerOnly={props.platformOwnerOnly}
+        >
+          {props.children}
+        </PlatformGateRoute>
+      </AuthenticatedRoute>
+    );
   }
 
   if (props.minRole) {
@@ -87,6 +106,28 @@ const RoleRoute: FunctionComponent<{
 
   const requiredRole = Role.fromString(minRole.toString());
   if (requiredRole && !requiredRole.equalOrHigher(currentRole)) {
+    return <Navigate to="/error/access-restricted" replace />;
+  }
+
+  return renderAllowed(children);
+};
+
+const PlatformGateRoute: FunctionComponent<{
+  product?: ProductSlug;
+  platformOwnerOnly?: boolean;
+  children?: ReactNode;
+}> = ({ product, platformOwnerOnly, children }) => {
+  const { data, isPending } = usePlatformProducts();
+
+  if (isPending) {
+    return null;
+  }
+
+  if (platformOwnerOnly && !data?.isPlatformOwner) {
+    return <Navigate to="/error/access-restricted" replace />;
+  }
+
+  if (product && data?.products && data.products[product] === false) {
     return <Navigate to="/error/access-restricted" replace />;
   }
 

@@ -80,6 +80,9 @@ const HubOverviewPage = lazy(
 const AgentsPage = lazy(
   () => import("../pages/Dashboard/Agents/AgentsPage"),
 );
+const PlatformProductsPage = lazy(
+  () => import("../pages/Dashboard/Platform/PlatformProductsPage"),
+);
 const ProductInfoPage = lazy(
   () => import("../pages/Dashboard/Info/ProductInfoPage"),
 );
@@ -232,7 +235,24 @@ const Routes: FunctionComponent = () => {
           <Route path="hub" element={<HubOverviewPage />} />
 
           {/* Standalone Autonomous Agents */}
-          <Route path="agents" element={<AgentsPage />} />
+          <Route
+            path="agents"
+            element={
+              <RestrictedRoute product="managed_agent">
+                <AgentsPage />
+              </RestrictedRoute>
+            }
+          />
+
+          {/* Platform Owner Rollout & Admin */}
+          <Route
+            path="platform/products"
+            element={
+              <RestrictedRoute platformOwnerOnly>
+                <PlatformProductsPage />
+              </RestrictedRoute>
+            }
+          />
 
           {/* Account */}
           <Route path="account" element={<AccountPage />}>
@@ -248,6 +268,8 @@ const Routes: FunctionComponent = () => {
           {/* Services Catalog */}
           <Route path="services" element={<ServiceCatalogPage />} />
 
+          {/* Monitoring Product Routes */}
+          <Route element={<RestrictedRoute product="monitoring" />}>
           {/* Monitor */}
           <Route path="monitors">
             <Route index path="" element={<MonitorsPage />} />
@@ -344,6 +366,7 @@ const Routes: FunctionComponent = () => {
           <Route path="reports">
             <Route index path="" element={<ReportsView />} />
             <Route path=":id" element={<ReportDetailView />} />
+          </Route>
           </Route>
 
           {/* Team */}

@@ -8,6 +8,7 @@ import {
   IoBookOutline,
   IoBuildOutline,
   IoCardOutline,
+  IoFlagOutline,
   IoLayersOutline,
   IoPersonOutline,
   IoPulseOutline,
@@ -17,6 +18,8 @@ import {
 import { PiFireSimpleBold, PiTerminalWindowBold } from "react-icons/pi";
 import { RiAlarmWarningLine } from "react-icons/ri";
 import { useLocation } from "react-router-dom";
+import { ProductSlug } from "../../api/endpoints/platform";
+import { usePlatformProducts } from "../../hooks/platform.query";
 import useSidebarStore from "../../hooks/sidebar.store";
 import { Restrict, Role } from "../Restrict";
 import { SidebarVariant, SidebarVariantContext } from "./sidebarContext";
@@ -37,6 +40,10 @@ interface NavigationItem {
   end?: boolean;
   /** Hide the item from users below this team role. */
   minRole?: Role;
+  /** Hide the item if this product is disabled for the current user. */
+  product?: ProductSlug;
+  /** Only show this item to platform owners. */
+  platformOwnerOnly?: boolean;
 }
 
 interface NavigationSection {
@@ -46,7 +53,14 @@ interface NavigationSection {
 
 const Sidebar: FunctionComponent<SidebarProps> = ({ variant = "rail" }) => {
   const { collapsed, setCollapsed } = useSidebarStore();
+  const { data: platformProducts } = usePlatformProducts();
   const location = useLocation();
+  const isPlatformOwner = platformProducts?.isPlatformOwner ?? false;
+  const isProductVisible = (product?: ProductSlug) => {
+    if (!product) return true;
+    if (!platformProducts?.products) return true;
+    return platformProducts.products[product] !== false;
+  };
 
   const isMonitoringSubdomain =
     typeof window !== "undefined" &&
@@ -76,6 +90,7 @@ const Sidebar: FunctionComponent<SidebarProps> = ({ variant = "rail" }) => {
           text: "Autonomous Agents",
           icon: <IoSparklesOutline />,
           iconColor: "warning.400",
+          product: "managed_agent",
         },
         {
           to: "/services",
@@ -99,12 +114,14 @@ const Sidebar: FunctionComponent<SidebarProps> = ({ variant = "rail" }) => {
           text: "Monitoring ↗",
           icon: <IoPulseOutline />,
           iconColor: "semantic.monitors",
+          product: "monitoring",
         },
         {
           to: "https://logs.opsway.eu",
           text: "Log Search ↗",
           icon: <PiTerminalWindowBold />,
           iconColor: "info",
+          product: "log_search",
         },
       ],
     },
@@ -144,6 +161,13 @@ const Sidebar: FunctionComponent<SidebarProps> = ({ variant = "rail" }) => {
           icon: <IoSettingsOutline />,
           iconColor: "semantic.team",
           minRole: Role.ADMIN,
+        },
+        {
+          to: "/platform/products",
+          text: "Product Rollout",
+          icon: <IoFlagOutline />,
+          iconColor: "warning.400",
+          platformOwnerOnly: true,
         },
       ],
     },
@@ -222,19 +246,27 @@ const Sidebar: FunctionComponent<SidebarProps> = ({ variant = "rail" }) => {
   return (
     <SidebarVariantContext.Provider value={variant}>
       <SidebarContainer>
-        {currentNav.map((section) => (
-          <SidebarSection key={section.label} label={section.label}>
-            {section.items.map(({ minRole, ...item }) =>
-              minRole ? (
-                <Restrict key={item.to} min={minRole}>
-                  <SidebarItem {...item} />
-                </Restrict>
-              ) : (
-                <SidebarItem key={item.to} {...item} />
-              ),
-            )}
-          </SidebarSection>
-        ))}
+        {currentNav.map((section) => {
+          const visibleItems = section.items.filter((item) => {
+            if (item.platformOwnerOnly && !isPlatformOwner) return false;
+            if (!isProductVisible(item.product)) return false;
+            return true;
+          });
+          if (visibleItems.length === 0) return null;
+          return (
+            <SidebarSection key={section.label} label={section.label}>
+              {visibleItems.map(({ minRole, product: _p, platformOwnerOnly: _o, ...item }) =>
+                minRole ? (
+                  <Restrict key={item.to} min={minRole}>
+                    <SidebarItem {...item} />
+                  </Restrict>
+                ) : (
+                  <SidebarItem key={item.to} {...item} />
+                ),
+              )}
+            </SidebarSection>
+          );
+        })}
 
         <SidebarSpacer />
 

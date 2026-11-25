@@ -2,6 +2,12 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import useAuthenticationStore from "./authentication.store";
 import {
   getAgentConfig,
+  getAgentTriggers,
+  createAgentTrigger,
+  updateAgentTrigger,
+  deleteAgentTrigger,
+  triggerAgentEvent,
+  AgentTriggerRule,
   getEntitlements,
   getIncidentInvestigations,
   getLogSearchServices,
@@ -145,5 +151,61 @@ export function useLogSearchServices() {
     queryKey: ["logSearchServices", currentTeamId],
     queryFn: () => getLogSearchServices(currentTeamId || 1),
     enabled: !!currentTeamId,
+  });
+}
+
+export function useAgentTriggers() {
+  const currentTeamId = useAuthenticationStore((s) => s.currentTeamId);
+  return useQuery({
+    queryKey: ["agentTriggers", currentTeamId],
+    queryFn: () => getAgentTriggers(currentTeamId || 1),
+    enabled: !!currentTeamId,
+  });
+}
+
+export function useCreateAgentTrigger() {
+  const queryClient = useQueryClient();
+  const currentTeamId = useAuthenticationStore((s) => s.currentTeamId);
+  return useMutation({
+    mutationFn: (rule: Partial<AgentTriggerRule>) => createAgentTrigger(currentTeamId || 1, rule),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["agentTriggers", currentTeamId] });
+    },
+  });
+}
+
+export function useUpdateAgentTrigger() {
+  const queryClient = useQueryClient();
+  const currentTeamId = useAuthenticationStore((s) => s.currentTeamId);
+  return useMutation({
+    mutationFn: ({ ruleId, rule }: { ruleId: number; rule: Partial<AgentTriggerRule> }) =>
+      updateAgentTrigger(currentTeamId || 1, ruleId, rule),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["agentTriggers", currentTeamId] });
+    },
+  });
+}
+
+export function useDeleteAgentTrigger() {
+  const queryClient = useQueryClient();
+  const currentTeamId = useAuthenticationStore((s) => s.currentTeamId);
+  return useMutation({
+    mutationFn: (ruleId: number) => deleteAgentTrigger(currentTeamId || 1, ruleId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["agentTriggers", currentTeamId] });
+    },
+  });
+}
+
+export function useTriggerAgentEvent() {
+  const queryClient = useQueryClient();
+  const currentTeamId = useAuthenticationStore((s) => s.currentTeamId);
+  return useMutation({
+    mutationFn: (payload: Parameters<typeof triggerAgentEvent>[1]) =>
+      triggerAgentEvent(currentTeamId || 1, payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["teamInvestigations", currentTeamId] });
+      queryClient.invalidateQueries({ queryKey: ["incidents", currentTeamId] });
+    },
   });
 }

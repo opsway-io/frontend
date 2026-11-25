@@ -44,6 +44,7 @@ import { PiFireSimpleBold } from "react-icons/pi";
 import { Link, useSearchParams } from "react-router-dom";
 import { enqueueSnackbar } from "notistack";
 import AgentInsightsBanner from "../../../components/AgentInsightsBanner/AgentInsightsBanner";
+import AgentTriggersPanel from "./components/AgentTriggersPanel";
 import { AgentConfig } from "../../../api/endpoints/suite";
 import Container from "../../../components/Container/Container";
 import { useIncidents } from "../../../hooks/incidents.query";
@@ -164,6 +165,12 @@ export const AgentsPage: FunctionComponent = () => {
                   <span>Live Activity &amp; Investigations</span>
                 </Stack>
               </Tab>
+              <Tab value="triggers" sx={{ borderRadius: "sm", py: 1 }}>
+                <Stack direction="row" spacing={1} alignItems="center">
+                  <IoSparklesOutline size={18} />
+                  <span>Product Triggers &amp; Hooks</span>
+                </Stack>
+              </Tab>
               <Tab value="policies" sx={{ borderRadius: "sm", py: 1 }}>
                 <Stack direction="row" spacing={1} alignItems="center">
                   <IoSettingsOutline size={18} />
@@ -194,7 +201,10 @@ export const AgentsPage: FunctionComponent = () => {
             />
           )}
 
-          {/* Tab 2: Agent Policies & Autonomy */}
+          {/* Tab 2: Product Triggers & Hooks */}
+          {currentTab === "triggers" && <AgentTriggersPanel />}
+
+          {/* Tab 3: Agent Policies & Autonomy */}
           {currentTab === "policies" && <PoliciesView />}
 
           {/* Tab 3: Unified MCP Gateway */}

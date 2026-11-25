@@ -106,12 +106,34 @@ export interface RemediationAction {
   createdAt: string;
 }
 
+export interface AgentTriggerRule {
+  id: number;
+  teamId: number;
+  product: "monitoring" | "log_search" | "pantomath" | "webhook";
+  triggerType: string;
+  name: string;
+  description?: string;
+  enabled: boolean;
+  serviceFilter?: string;
+  threshold: number;
+  windowSeconds: number;
+  pattern?: string;
+  cooldownMinutes: number;
+  createIncident: boolean;
+  remediationLevelOverride?: "ADVISORY" | "APPROVAL_REQUIRED" | "AUTONOMOUS" | "";
+  createdAt?: string;
+  updatedAt?: string;
+}
+
 export interface IncidentInvestigation {
   id: number;
   uuid: string;
   teamId: number;
-  incidentId: number;
+  incidentId?: number;
   monitorId?: number;
+  sourceProduct?: string;
+  triggerType?: string;
+  triggerRuleId?: number;
   serviceName: string;
   triggerSource: string;
   executionMode: string;
@@ -209,5 +231,48 @@ export async function approveRemediation(
 
 export async function getLogSearchServices(teamId: number): Promise<{ services: string[] }> {
   const res = await client.get(`/v1/teams/${teamId}/logs/services`);
+  return res.data;
+}
+
+export async function getAgentTriggers(teamId: number): Promise<{ triggers: AgentTriggerRule[] }> {
+  const res = await client.get(`/v1/teams/${teamId}/agent-triggers`);
+  return res.data;
+}
+
+export async function createAgentTrigger(
+  teamId: number,
+  rule: Partial<AgentTriggerRule>
+): Promise<AgentTriggerRule> {
+  const res = await client.post(`/v1/teams/${teamId}/agent-triggers`, rule);
+  return res.data;
+}
+
+export async function updateAgentTrigger(
+  teamId: number,
+  ruleId: number,
+  rule: Partial<AgentTriggerRule>
+): Promise<AgentTriggerRule> {
+  const res = await client.put(`/v1/teams/${teamId}/agent-triggers/${ruleId}`, rule);
+  return res.data;
+}
+
+export async function deleteAgentTrigger(teamId: number, ruleId: number): Promise<void> {
+  await client.delete(`/v1/teams/${teamId}/agent-triggers/${ruleId}`);
+}
+
+export async function triggerAgentEvent(
+  teamId: number,
+  payload: {
+    product: "monitoring" | "log_search" | "pantomath" | "webhook";
+    triggerType: string;
+    triggerRuleId?: number;
+    serviceName: string;
+    title: string;
+    summary: string;
+    createIncident?: boolean;
+    force?: boolean;
+  }
+): Promise<IncidentInvestigation> {
+  const res = await client.post(`/v1/teams/${teamId}/agent-events`, payload);
   return res.data;
 }

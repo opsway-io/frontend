@@ -276,3 +276,137 @@ export async function triggerAgentEvent(
   const res = await client.post(`/v1/teams/${teamId}/agent-events`, payload);
   return res.data;
 }
+
+export type UsageRange = "current_cycle" | "7d" | "30d" | "90d";
+
+export interface BillingCycleInfo {
+  start: string;
+  end: string;
+  daysElapsed: number;
+  daysTotal: number;
+  daysRemaining: number;
+}
+
+export interface QuotaItem {
+  key: string;
+  label: string;
+  used: number;
+  limit: number; // -1 means unlimited
+  unit: string;
+  percent: number;
+  projected?: number;
+  status: "ok" | "warning" | "critical" | "unlimited";
+}
+
+export interface MonitoringUsage {
+  tier: "FREE" | "PRO" | "ENTERPRISE";
+  enabled: boolean;
+  quotas: QuotaItem[];
+  probeExecutions: number;
+  activeHeartbeats: number;
+  notificationsSent: number;
+  incidentsOpened: number;
+  statusPageSubscribers: number;
+}
+
+export interface LogSearchUsage {
+  tier: "FREE" | "PRO" | "ENTERPRISE";
+  enabled: boolean;
+  quotas: QuotaItem[];
+  activeServices: number;
+  triggerRules: number;
+  logTriggeredInvestigations: number;
+}
+
+export interface ManagedAgentUsage {
+  tier: "FREE" | "PRO" | "ENTERPRISE";
+  enabled: boolean;
+  quotas: QuotaItem[];
+  managedRuns: number;
+  byoaRuns: number;
+  tokensUsed: number;
+  avgDurationMs: number;
+  mcpCalls: number;
+  remediationsSuggested: number;
+  remediationsExecuted: number;
+  activeTriggerRules: number;
+}
+
+export interface PantomathUsage {
+  tier: "FREE" | "PRO" | "ENTERPRISE";
+  enabled: boolean;
+  quotas: QuotaItem[];
+  linkedRepositories: number;
+  pantomathTriggeredInvestigations: number;
+  mcpCalls: number;
+}
+
+export interface PlatformUsage {
+  teamSeats: QuotaItem;
+  activeMembers: number;
+  pendingInvitations: number;
+  serviceCatalogCount: number;
+  activeApiKeys: number;
+  reportsGenerated: number;
+}
+
+export interface DailyUsagePoint {
+  date: string;
+  probes: number;
+  agentRuns: number;
+  agentTokens: number;
+  mcpCalls: number;
+  notifications: number;
+  incidents: number;
+}
+
+export interface TopMonitorConsumer {
+  monitorId: number;
+  name: string;
+  probes: number;
+  sharePct: number;
+}
+
+export interface TopTriggerConsumer {
+  triggerSource: string;
+  runs: number;
+  tokensUsed: number;
+  avgDurationMs: number;
+}
+
+export interface TopServiceConsumer {
+  serviceName: string;
+  runs: number;
+  tokensUsed: number;
+}
+
+export interface TeamUsageResponse {
+  teamId: number;
+  plan: string;
+  rangeStart: string;
+  rangeEnd: string;
+  billingCycle: BillingCycleInfo;
+  products: {
+    monitoring: MonitoringUsage;
+    logSearch: LogSearchUsage;
+    managedAgent: ManagedAgentUsage;
+    pantomath: PantomathUsage;
+  };
+  platform: PlatformUsage;
+  timeseries: DailyUsagePoint[];
+  topConsumers: {
+    monitors: TopMonitorConsumer[];
+    agentTriggers: TopTriggerConsumer[];
+    services: TopServiceConsumer[];
+  };
+}
+
+export async function getTeamUsage(
+  teamId: number,
+  range: UsageRange = "current_cycle"
+): Promise<TeamUsageResponse> {
+  const res = await client.get(`/v1/teams/${teamId}/usage`, {
+    params: { range },
+  });
+  return res.data;
+}

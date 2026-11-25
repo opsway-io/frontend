@@ -65,6 +65,9 @@ const SettingsApiKeysTab = lazy(
 const SettingsAiAgentTab = lazy(
   () => import("../pages/Dashboard/Settings/tabs/AiAgentTab"),
 );
+const SettingsUsageTab = lazy(
+  () => import("../pages/Dashboard/Settings/tabs/UsageTab"),
+);
 const SettingsBillingTab = lazy(
   () => import("../pages/Dashboard/Settings/tabs/BillingTab"),
 );
@@ -370,6 +373,7 @@ const Routes: FunctionComponent = () => {
             <Route path="integrations" element={<SettingsIntegrationsTab />} />
             <Route path="api-keys" element={<SettingsApiKeysTab />} />
             <Route path="ai-agent" element={<SettingsAiAgentTab />} />
+            <Route path="usage" element={<SettingsUsageTab />} />
             <Route path="billing" element={<SettingsBillingTab />} />
             <Route index element={<Navigate to="general" replace />} />
           </Route>

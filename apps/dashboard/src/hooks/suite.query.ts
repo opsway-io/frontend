@@ -12,6 +12,8 @@ import {
   getIncidentInvestigations,
   getLogSearchServices,
   getServiceCatalog,
+  getTeamUsage,
+  UsageRange,
   triggerInvestigation,
   approveRemediation,
   updateAgentConfig,
@@ -207,5 +209,14 @@ export function useTriggerAgentEvent() {
       queryClient.invalidateQueries({ queryKey: ["teamInvestigations", currentTeamId] });
       queryClient.invalidateQueries({ queryKey: ["incidents", currentTeamId] });
     },
+  });
+}
+
+export function useTeamUsage(range: UsageRange = "current_cycle") {
+  const currentTeamId = useAuthenticationStore((s) => s.currentTeamId);
+  return useQuery({
+    queryKey: ["teamUsage", currentTeamId, range],
+    queryFn: () => getTeamUsage(currentTeamId || 1, range),
+    enabled: !!currentTeamId,
   });
 }

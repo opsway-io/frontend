@@ -2,6 +2,7 @@ import { Box, Button, Chip, Stack, Typography } from "@mui/joy";
 import { enqueueSnackbar } from "notistack";
 import { FunctionComponent } from "react";
 import { IoOpenOutline } from "react-icons/io5";
+import { Link } from "react-router-dom";
 import Placeholder from "../../../../components/Placeholder/Placeholder";
 import { useEntitlements } from "../../../../hooks/suite.query";
 import {
@@ -76,17 +77,27 @@ const BillingTab: FunctionComponent = () => {
             Pick the plan that fits your team. You can change it at any time.
           </Typography>
         </Box>
-        {hasPaidPlan && (
+        <Stack direction="row" spacing={1} flexWrap="wrap">
           <Button
-            variant="outlined"
-            color="neutral"
-            endDecorator={<IoOpenOutline />}
-            loading={customerPortal.isPending}
-            onClick={openCustomerPortal}
+            component={Link}
+            to="/settings/usage"
+            variant="soft"
+            color="primary"
           >
-            Manage subscription (billing portal)
+            View Usage &amp; Quotas
           </Button>
-        )}
+          {hasPaidPlan && (
+            <Button
+              variant="outlined"
+              color="neutral"
+              endDecorator={<IoOpenOutline />}
+              loading={customerPortal.isPending}
+              onClick={openCustomerPortal}
+            >
+              Manage subscription (billing portal)
+            </Button>
+          )}
+        </Stack>
       </Stack>
 
       <Box

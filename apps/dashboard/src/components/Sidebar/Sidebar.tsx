@@ -118,6 +118,13 @@ const Sidebar: FunctionComponent<SidebarProps> = ({ variant = "rail" }) => {
           iconColor: "semantic.team",
         },
         {
+          to: "/settings/usage",
+          text: "Usage & Quotas",
+          icon: <GoGraph />,
+          iconColor: "info",
+          minRole: Role.ADMIN,
+        },
+        {
           to: "/settings/billing",
           text: "Suite Billing",
           icon: <IoCardOutline />,

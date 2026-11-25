@@ -399,6 +399,8 @@ export interface TopPantomathProductConsumer {
   repoCount: number;
   vectorChunks: number;
   source: string;
+  status?: "active" | "scheduled_delete" | "deleted";
+  deleteAt?: string;
 }
 
 export type QuotaEnforcementState =
@@ -474,6 +476,16 @@ export async function updateOverageSettings(
   const res = await client.put(`/v1/teams/${teamId}/overage-settings`, {
     allowOverage,
     overageSpendCapCents,
+  });
+  return res.data;
+}
+
+export async function setActivePantomathProduct(
+  teamId: number,
+  product: string
+): Promise<{ product: string; status: string }> {
+  const res = await client.put(`/v1/teams/${teamId}/pantomath/active-product`, {
+    product,
   });
   return res.data;
 }

@@ -40,7 +40,11 @@ import type {
   UsageRange,
 } from "../../../../api/endpoints/suite";
 import Placeholder from "../../../../components/Placeholder/Placeholder";
-import { useTeamUsage, useUpdateOverageSettings } from "../../../../hooks/suite.query";
+import {
+  useSetActivePantomathProduct,
+  useTeamUsage,
+  useUpdateOverageSettings,
+} from "../../../../hooks/suite.query";
 
 type ProductFilter = "all" | "monitoring" | "log_search" | "managed_agent" | "pantomath";
 type TrendMetric = "probes" | "logMb" | "agentRuns" | "agentTokens" | "mcpCalls" | "notifications";
@@ -217,6 +221,7 @@ const UsageTab: FunctionComponent = () => {
 
   const { data: usage, isPending, isError } = useTeamUsage(range);
   const updateOverage = useUpdateOverageSettings();
+  const setActivePantomath = useSetActivePantomathProduct();
 
   const allowOverage = draftAllowOverage ?? usage?.overage?.allowOverage ?? false;
   const spendCapDollars =
@@ -790,34 +795,81 @@ const UsageTab: FunctionComponent = () => {
                     <th style={{ textAlign: "right" }}>Repos</th>
                     <th style={{ textAlign: "right" }}>Vector Chunks</th>
                     <th style={{ textAlign: "right" }}>Status</th>
+                    <th style={{ textAlign: "right" }}>Action</th>
                   </tr>
                 </thead>
                 <tbody>
                   {(usage.topConsumers.pantomathProducts?.length ?? 0) === 0 ? (
                     <tr>
-                      <td colSpan={4}>
+                      <td colSpan={5}>
                         <Typography level="body-xs" textColor="text.tertiary" textAlign="center" py={2}>
                           No Pantomath products indexed yet.
                         </Typography>
                       </td>
                     </tr>
                   ) : (
-                    usage.topConsumers.pantomathProducts.map((pm) => (
-                      <tr key={pm.product}>
-                        <td>{pm.product}</td>
-                        <td style={{ textAlign: "right" }}>{pm.repoCount.toLocaleString()}</td>
-                        <td style={{ textAlign: "right" }}>{formatCompact(pm.vectorChunks)}</td>
-                        <td style={{ textAlign: "right" }}>
-                          <Chip
-                            size="sm"
-                            variant="soft"
-                            color={pm.source === "indexed" ? "success" : "neutral"}
-                          >
-                            {pm.source}
-                          </Chip>
-                        </td>
-                      </tr>
-                    ))
+                    usage.topConsumers.pantomathProducts.map((pm) => {
+                      const isScheduledDelete = pm.status === "scheduled_delete";
+                      const daysLeft = pm.deleteAt
+                        ? Math.max(
+                            0,
+                            Math.ceil(
+                              (new Date(pm.deleteAt).getTime() - new Date(usage.rangeEnd).getTime()) /
+                                (1000 * 60 * 60 * 24),
+                            ),
+                          )
+                        : 7;
+                      return (
+                        <tr key={pm.product}>
+                          <td>{pm.product}</td>
+                          <td style={{ textAlign: "right" }}>{pm.repoCount.toLocaleString()}</td>
+                          <td style={{ textAlign: "right" }}>{formatCompact(pm.vectorChunks)}</td>
+                          <td style={{ textAlign: "right" }}>
+                            {isScheduledDelete ? (
+                              <Chip size="sm" variant="soft" color="danger">
+                                Locked · Deletes in {daysLeft}d
+                              </Chip>
+                            ) : (
+                              <Chip
+                                size="sm"
+                                variant="soft"
+                                color={pm.source === "indexed" ? "success" : "neutral"}
+                              >
+                                {pm.source === "indexed" ? "Searchable" : pm.source}
+                              </Chip>
+                            )}
+                          </td>
+                          <td style={{ textAlign: "right" }}>
+                            {isScheduledDelete ? (
+                              <Button
+                                size="sm"
+                                variant="soft"
+                                color="primary"
+                                loading={
+                                  setActivePantomath.isPending &&
+                                  setActivePantomath.variables === pm.product
+                                }
+                                onClick={() =>
+                                  setActivePantomath.mutate(pm.product, {
+                                    onSuccess: () =>
+                                      enqueueSnackbar(
+                                        `Switched active Pantomath product to ${pm.product}`,
+                                        { variant: "success" },
+                                      ),
+                                  })
+                                }
+                              >
+                                Keep This
+                              </Button>
+                            ) : (
+                              <Typography level="body-xs" textColor="text.tertiary">
+                                Active
+                              </Typography>
+                            )}
+                          </td>
+                        </tr>
+                      );
+                    })
                   )}
                 </tbody>
               </Table>

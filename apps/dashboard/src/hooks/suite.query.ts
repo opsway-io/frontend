@@ -13,6 +13,7 @@ import {
   getLogSearchServices,
   getServiceCatalog,
   getTeamUsage,
+  setActivePantomathProduct,
   updateOverageSettings,
   UsageRange,
   triggerInvestigation,
@@ -233,6 +234,17 @@ export function useUpdateOverageSettings() {
       allowOverage: boolean;
       overageSpendCapCents: number | null;
     }) => updateOverageSettings(currentTeamId || 1, allowOverage, overageSpendCapCents),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["teamUsage", currentTeamId] });
+    },
+  });
+}
+
+export function useSetActivePantomathProduct() {
+  const queryClient = useQueryClient();
+  const currentTeamId = useAuthenticationStore((s) => s.currentTeamId);
+  return useMutation({
+    mutationFn: (product: string) => setActivePantomathProduct(currentTeamId || 1, product),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["teamUsage", currentTeamId] });
     },

@@ -339,6 +339,9 @@ export interface PantomathUsage {
   enabled: boolean;
   quotas: QuotaItem[];
   linkedRepositories: number;
+  vectorChunks: number;
+  graphEdges: number;
+  queriesExecuted: number;
   pantomathTriggeredInvestigations: number;
   mcpCalls: number;
 }
@@ -391,6 +394,13 @@ export interface TopServiceConsumer {
   tokensUsed: number;
 }
 
+export interface TopPantomathProductConsumer {
+  product: string;
+  repoCount: number;
+  vectorChunks: number;
+  source: string;
+}
+
 export interface TeamUsageResponse {
   teamId: number;
   plan: string;
@@ -408,6 +418,7 @@ export interface TeamUsageResponse {
   topConsumers: {
     monitors: TopMonitorConsumer[];
     logServices: TopLogServiceConsumer[];
+    pantomathProducts: TopPantomathProductConsumer[];
     agentTriggers: TopTriggerConsumer[];
     services: TopServiceConsumer[];
   };

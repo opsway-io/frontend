@@ -35,7 +35,7 @@ import { useTeamUsage } from "../../../../hooks/suite.query";
 
 type ProductFilter = "all" | "monitoring" | "log_search" | "managed_agent" | "pantomath";
 type TrendMetric = "probes" | "logMb" | "agentRuns" | "agentTokens" | "mcpCalls" | "notifications";
-type ConsumerTab = "monitors" | "logServices" | "triggers" | "services";
+type ConsumerTab = "monitors" | "logServices" | "pantomath" | "triggers" | "services";
 
 const RANGE_LABELS: Record<UsageRange, string> = {
   current_cycle: "Current Billing Cycle",
@@ -565,9 +565,11 @@ const UsageTab: FunctionComponent = () => {
 
             <Divider />
 
-            <Box sx={{ display: "grid", gap: 1, gridTemplateColumns: "repeat(3, 1fr)" }}>
-              <StatPill label="Linked Repos" value={pantomath.linkedRepositories} />
-              <StatPill label="GraphRAG MCP Calls" value={pantomath.mcpCalls} />
+            <Box sx={{ display: "grid", gap: 1, gridTemplateColumns: "repeat(auto-fit, minmax(110px, 1fr))" }}>
+              <StatPill label="Indexed Repos" value={pantomath.linkedRepositories} />
+              <StatPill label="Vector Chunks" value={pantomath.vectorChunks} />
+              <StatPill label="Graph Edges" value={pantomath.graphEdges} />
+              <StatPill label="GraphRAG Queries" value={pantomath.queriesExecuted} />
               <StatPill label="Deploy-Triggered RCA" value={pantomath.pantomathTriggeredInvestigations} />
             </Box>
           </Card>
@@ -630,6 +632,7 @@ const UsageTab: FunctionComponent = () => {
               <TabList variant="soft" size="sm">
                 <Tab value="monitors">Monitors</Tab>
                 <Tab value="logServices">Log Services</Tab>
+                <Tab value="pantomath">Pantomath</Tab>
                 <Tab value="triggers">Agent Triggers</Tab>
                 <Tab value="services">AI Services</Tab>
               </TabList>
@@ -694,6 +697,47 @@ const UsageTab: FunctionComponent = () => {
                         <td style={{ textAlign: "right" }}>{formatCompact(ls.events)}</td>
                         <td style={{ textAlign: "right" }}>{formatBytes(ls.bytes)}</td>
                         <td style={{ textAlign: "right" }}>{ls.sharePct.toFixed(1)}%</td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </Table>
+            )}
+
+            {consumerTab === "pantomath" && (
+              <Table size="sm" hoverRow>
+                <thead>
+                  <tr>
+                    <th>Indexed Product</th>
+                    <th style={{ textAlign: "right" }}>Repos</th>
+                    <th style={{ textAlign: "right" }}>Vector Chunks</th>
+                    <th style={{ textAlign: "right" }}>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {(usage.topConsumers.pantomathProducts?.length ?? 0) === 0 ? (
+                    <tr>
+                      <td colSpan={4}>
+                        <Typography level="body-xs" textColor="text.tertiary" textAlign="center" py={2}>
+                          No Pantomath products indexed yet.
+                        </Typography>
+                      </td>
+                    </tr>
+                  ) : (
+                    usage.topConsumers.pantomathProducts.map((pm) => (
+                      <tr key={pm.product}>
+                        <td>{pm.product}</td>
+                        <td style={{ textAlign: "right" }}>{pm.repoCount.toLocaleString()}</td>
+                        <td style={{ textAlign: "right" }}>{formatCompact(pm.vectorChunks)}</td>
+                        <td style={{ textAlign: "right" }}>
+                          <Chip
+                            size="sm"
+                            variant="soft"
+                            color={pm.source === "indexed" ? "success" : "neutral"}
+                          >
+                            {pm.source}
+                          </Chip>
+                        </td>
                       </tr>
                     ))
                   )}

@@ -4,6 +4,7 @@ import { FunctionComponent, Suspense, useState } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import Container from "../../components/Container/Container";
 import DelayedVisibility from "../../components/DelayedVisibility/DelayedVisibility";
+import QuotaBanner from "../../components/QuotaBanner/QuotaBanner";
 import Sidebar from "../../components/Sidebar/Sidebar";
 import useAuthenticationStore from "../../hooks/authentication.store";
 import { useCurrentTeam } from "../../hooks/team.query";
@@ -150,6 +151,8 @@ const DashboardLayout: FunctionComponent = () => {
       >
         <Sidebar variant="drawer" />
       </Drawer>
+
+      <QuotaBanner />
 
       <Body>
         <Navigation>

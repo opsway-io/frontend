@@ -13,6 +13,7 @@ import {
   getLogSearchServices,
   getServiceCatalog,
   getTeamUsage,
+  updateOverageSettings,
   UsageRange,
   triggerInvestigation,
   approveRemediation,
@@ -218,5 +219,22 @@ export function useTeamUsage(range: UsageRange = "current_cycle") {
     queryKey: ["teamUsage", currentTeamId, range],
     queryFn: () => getTeamUsage(currentTeamId || 1, range),
     enabled: !!currentTeamId,
+  });
+}
+
+export function useUpdateOverageSettings() {
+  const queryClient = useQueryClient();
+  const currentTeamId = useAuthenticationStore((s) => s.currentTeamId);
+  return useMutation({
+    mutationFn: ({
+      allowOverage,
+      overageSpendCapCents,
+    }: {
+      allowOverage: boolean;
+      overageSpendCapCents: number | null;
+    }) => updateOverageSettings(currentTeamId || 1, allowOverage, overageSpendCapCents),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["teamUsage", currentTeamId] });
+    },
   });
 }

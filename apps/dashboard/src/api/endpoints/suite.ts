@@ -401,12 +401,44 @@ export interface TopPantomathProductConsumer {
   source: string;
 }
 
+export type QuotaEnforcementState =
+  | "NORMAL"
+  | "WARNING"
+  | "GRACE"
+  | "OVERAGE_BILLING"
+  | "THROTTLED";
+
+export interface OverageSettings {
+  allowOverage: boolean;
+  overageSpendCapCents?: number | null;
+  estimatedOverageCents: number;
+  eligible: boolean;
+}
+
+export interface ProductEnforcementSummary {
+  product: "monitoring" | "log_search" | "managed_agent" | "pantomath";
+  quotaKey: string;
+  label: string;
+  state: QuotaEnforcementState;
+  used: number;
+  limit: number;
+  unit: string;
+  percent: number;
+  graceExpiresAt?: string;
+  graceHoursRemaining?: number;
+  estimatedOverageCents: number;
+  topConsumerHint?: string;
+  behaviorSummary: string;
+}
+
 export interface TeamUsageResponse {
   teamId: number;
   plan: string;
   rangeStart: string;
   rangeEnd: string;
   billingCycle: BillingCycleInfo;
+  overage?: OverageSettings;
+  enforcement?: ProductEnforcementSummary[];
   products: {
     monitoring: MonitoringUsage;
     logSearch: LogSearchUsage;
@@ -430,6 +462,18 @@ export async function getTeamUsage(
 ): Promise<TeamUsageResponse> {
   const res = await client.get(`/v1/teams/${teamId}/usage`, {
     params: { range },
+  });
+  return res.data;
+}
+
+export async function updateOverageSettings(
+  teamId: number,
+  allowOverage: boolean,
+  overageSpendCapCents: number | null
+): Promise<OverageSettings> {
+  const res = await client.put(`/v1/teams/${teamId}/overage-settings`, {
+    allowOverage,
+    overageSpendCapCents,
   });
   return res.data;
 }

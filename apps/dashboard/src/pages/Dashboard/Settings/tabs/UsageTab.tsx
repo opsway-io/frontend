@@ -5,11 +5,13 @@ import {
   Card,
   Chip,
   Divider,
+  Input,
   LinearProgress,
   Option,
   Select,
   Sheet,
   Stack,
+  Switch,
   Tab,
   TabList,
   Table,
@@ -17,6 +19,7 @@ import {
   Typography,
 } from "@mui/joy";
 import type { ApexOptions } from "apexcharts";
+import { enqueueSnackbar } from "notistack";
 import { FunctionComponent, useMemo, useState } from "react";
 import Chart from "react-apexcharts";
 import {
@@ -24,14 +27,20 @@ import {
   IoCodeSlashOutline,
   IoDownloadOutline,
   IoPulseOutline,
+  IoShieldCheckmarkOutline,
   IoSparklesOutline,
   IoWarningOutline,
 } from "react-icons/io5";
 import { PiTerminalWindowBold } from "react-icons/pi";
 import { Link } from "react-router-dom";
-import type { QuotaItem, UsageRange } from "../../../../api/endpoints/suite";
+import type {
+  ProductEnforcementSummary,
+  QuotaEnforcementState,
+  QuotaItem,
+  UsageRange,
+} from "../../../../api/endpoints/suite";
 import Placeholder from "../../../../components/Placeholder/Placeholder";
-import { useTeamUsage } from "../../../../hooks/suite.query";
+import { useTeamUsage, useUpdateOverageSettings } from "../../../../hooks/suite.query";
 
 type ProductFilter = "all" | "monitoring" | "log_search" | "managed_agent" | "pantomath";
 type TrendMetric = "probes" | "logMb" | "agentRuns" | "agentTokens" | "mcpCalls" | "notifications";
@@ -165,13 +174,82 @@ const StatPill: FunctionComponent<StatPillProps> = ({ label, value }) => (
   </Box>
 );
 
+function enforcementChipColor(
+  state: QuotaEnforcementState,
+): "neutral" | "warning" | "danger" | "primary" | "success" {
+  switch (state) {
+    case "THROTTLED":
+      return "danger";
+    case "GRACE":
+    case "WARNING":
+      return "warning";
+    case "OVERAGE_BILLING":
+      return "primary";
+    default:
+      return "success";
+  }
+}
+
+function enforcementLabel(e: ProductEnforcementSummary): string {
+  switch (e.state) {
+    case "THROTTLED":
+      return "Protection Mode";
+    case "GRACE":
+      return e.graceHoursRemaining !== undefined
+        ? `Grace (${e.graceHoursRemaining}h left)`
+        : "Grace Period";
+    case "OVERAGE_BILLING":
+      return "Pay-As-You-Go";
+    case "WARNING":
+      return "Warning (80%+)";
+    default:
+      return "Healthy";
+  }
+}
+
 const UsageTab: FunctionComponent = () => {
   const [range, setRange] = useState<UsageRange>("current_cycle");
   const [productFilter, setProductFilter] = useState<ProductFilter>("all");
   const [trendMetric, setTrendMetric] = useState<TrendMetric>("probes");
   const [consumerTab, setConsumerTab] = useState<ConsumerTab>("monitors");
+  const [draftAllowOverage, setDraftAllowOverage] = useState<boolean | null>(null);
+  const [draftSpendCap, setDraftSpendCap] = useState<string | null>(null);
 
   const { data: usage, isPending, isError } = useTeamUsage(range);
+  const updateOverage = useUpdateOverageSettings();
+
+  const allowOverage = draftAllowOverage ?? usage?.overage?.allowOverage ?? false;
+  const spendCapDollars =
+    draftSpendCap ??
+    (usage?.overage?.overageSpendCapCents
+      ? String(Math.round(usage.overage.overageSpendCapCents / 100))
+      : "");
+
+  const enforcementByProduct = useMemo(() => {
+    const map: Partial<Record<ProductEnforcementSummary["product"], ProductEnforcementSummary>> = {};
+    for (const item of usage?.enforcement ?? []) {
+      map[item.product] = item;
+    }
+    return map;
+  }, [usage?.enforcement]);
+
+  const handleSaveOverage = () => {
+    const parsed = spendCapDollars.trim() ? Math.round(Number(spendCapDollars) * 100) : null;
+    const capCents = parsed !== null && !Number.isNaN(parsed) && parsed > 0 ? parsed : null;
+    updateOverage.mutate(
+      { allowOverage, overageSpendCapCents: capCents },
+      {
+        onSuccess: () => {
+          setDraftAllowOverage(null);
+          setDraftSpendCap(null);
+          enqueueSnackbar("Pay-as-you-go overage settings updated", { variant: "success" });
+        },
+        onError: (err) => {
+          enqueueSnackbar(err.message || "Failed to update overage settings", { variant: "error" });
+        },
+      },
+    );
+  };
 
   const highUtilizationQuotas = useMemo(() => {
     if (!usage) return [];
@@ -836,6 +914,125 @@ const UsageTab: FunctionComponent = () => {
           </Box>
         </Card>
       </Box>
+
+      {/* Pay-As-You-Go Overage & Grace Policy */}
+      <Card variant="outlined" sx={{ bgcolor: "background.surface", gap: 2 }}>
+        <Stack
+          direction={{ xs: "column", md: "row" }}
+          justifyContent="space-between"
+          alignItems={{ xs: "flex-start", md: "center" }}
+          gap={2}
+        >
+          <Stack direction="row" spacing={1.25} alignItems="center">
+            <Box sx={{ p: 1, borderRadius: "sm", bgcolor: "rgba(107, 160, 194, 0.16)", color: "#6ba0c2" }}>
+              <IoShieldCheckmarkOutline size={20} />
+            </Box>
+            <Box>
+              <Stack direction="row" spacing={1} alignItems="center">
+                <Typography level="title-md">Overage Protection &amp; Pay-As-You-Go</Typography>
+                {usage.overage?.allowOverage && (
+                  <Chip size="sm" variant="soft" color="primary">
+                    Active · Est. ${((usage.overage.estimatedOverageCents || 0) / 100).toFixed(2)}
+                  </Chip>
+                )}
+              </Stack>
+              <Typography level="body-xs" textColor="text.secondary">
+                {usage.overage?.eligible
+                  ? "Paid plans include a 72h / +15% grace buffer. Enable Pay-As-You-Go to stay unthrottled past quota with an optional monthly spend cap."
+                  : "Free plan includes a 24h / +10% grace buffer, then switches to zero-data-loss protection (cold log spillover, read-only Pantomath, BYO-LLM fallback). Upgrade to Team to unlock Pay-As-You-Go overages."}
+              </Typography>
+            </Box>
+          </Stack>
+
+          {usage.overage?.eligible ? (
+            <Stack direction="row" spacing={1.5} alignItems="center" flexWrap="wrap">
+              <Switch
+                checked={allowOverage}
+                onChange={(e) => setDraftAllowOverage(e.target.checked)}
+                endDecorator={
+                  <Typography level="body-xs" fontWeight={600}>
+                    Allow Overages
+                  </Typography>
+                }
+              />
+              {allowOverage && (
+                <Input
+                  size="sm"
+                  type="number"
+                  placeholder="Optional cap ($)"
+                  startDecorator="$"
+                  value={spendCapDollars}
+                  onChange={(e) => setDraftSpendCap(e.target.value)}
+                  sx={{ width: 150 }}
+                />
+              )}
+              <Button
+                size="sm"
+                variant="solid"
+                color="primary"
+                loading={updateOverage.isPending}
+                onClick={handleSaveOverage}
+              >
+                Save Policy
+              </Button>
+            </Stack>
+          ) : (
+            <Button
+              size="sm"
+              variant="soft"
+              color="primary"
+              component={Link}
+              to="/settings/billing"
+            >
+              Upgrade for Pay-As-You-Go
+            </Button>
+          )}
+        </Stack>
+
+        {(usage.enforcement ?? []).some((e) => e.state !== "NORMAL") && (
+          <>
+            <Divider />
+            <Stack spacing={1}>
+              {(usage.enforcement ?? [])
+                .filter((e) => e.state !== "NORMAL")
+                .map((e) => (
+                  <Stack
+                    key={`${e.product}-${e.quotaKey}`}
+                    direction={{ xs: "column", sm: "row" }}
+                    justifyContent="space-between"
+                    alignItems={{ xs: "flex-start", sm: "center" }}
+                    gap={1}
+                    sx={{ p: 1.25, borderRadius: "sm", bgcolor: "background.level1" }}
+                  >
+                    <Box>
+                      <Stack direction="row" spacing={1} alignItems="center">
+                        <Typography level="title-sm">{e.label}</Typography>
+                        <Chip size="sm" variant="soft" color={enforcementChipColor(e.state)}>
+                          {enforcementLabel(e)}
+                        </Chip>
+                      </Stack>
+                      <Typography level="body-xs" textColor="text.secondary" sx={{ mt: 0.25 }}>
+                        {e.behaviorSummary}
+                      </Typography>
+                    </Box>
+                    {e.topConsumerHint && (
+                      <Typography level="body-xs" textColor="text.tertiary">
+                        {e.topConsumerHint}
+                      </Typography>
+                    )}
+                  </Stack>
+                ))}
+            </Stack>
+          </>
+        )}
+
+        <Typography level="body-xs" textColor="text.tertiary">
+          Pay-as-you-go rates: $0.50 / GB Log-Search · $0.25 / Managed AI run · $1.00 / Monitor · $10.00 / Pantomath product.
+          {enforcementByProduct.log_search?.state === "THROTTLED"
+            ? " Excess logs are currently preserved in cold storage."
+            : ""}
+        </Typography>
+      </Card>
     </Stack>
   );
 };

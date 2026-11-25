@@ -14,6 +14,7 @@ import { GoBrowser } from "react-icons/go";
 import {
   IoAppsOutline,
   IoArrowForward,
+  IoBookOutline,
   IoCardOutline,
   IoHardwareChipOutline,
   IoLayersOutline,
@@ -79,7 +80,17 @@ export const HubOverviewPage: FunctionComponent = () => {
                 AI agents, coordinate microservices, and manage team access and billing.
               </Typography>
             </Box>
-            <Stack direction="row" spacing={1.5}>
+            <Stack direction="row" spacing={1.5} flexWrap="wrap">
+              <Button
+                component={Link}
+                to="/info"
+                variant="outlined"
+                color="primary"
+                size="sm"
+                startDecorator={<IoBookOutline />}
+              >
+                Product Info &amp; Guides
+              </Button>
               <Button
                 component={Link}
                 to="/team"

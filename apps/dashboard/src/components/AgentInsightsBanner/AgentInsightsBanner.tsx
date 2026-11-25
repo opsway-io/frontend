@@ -44,14 +44,12 @@ const AgentInsightsBanner: FunctionComponent<AgentInsightsBannerProps> = ({ inve
       (s) => s.toolName?.startsWith("logs.") || s.serverName === "log-search-mcp"
     );
     const hasCorrelatedLogs = (investigation.correlatedLogs?.length || 0) > 0;
-    const logsReturnedZero =
-      logSteps.length === 0 ||
-      logSteps.every(
-        (s) =>
-          s.status === "FAILED" ||
-          s.outputSummary?.includes('"total_logs": 0') ||
-          s.outputSummary?.includes('"total_returned": 0')
-      );
+    const logsReturnedZero = logSteps.every(
+      (s) =>
+        s.status === "FAILED" ||
+        s.outputSummary?.includes('"total_logs": 0') ||
+        s.outputSummary?.includes('"total_returned": 0')
+    );
 
     if (!logSearchDisabled && !hasCorrelatedLogs && logsReturnedZero) {
       logSearchNoData = true;
@@ -60,13 +58,11 @@ const AgentInsightsBanner: FunctionComponent<AgentInsightsBannerProps> = ({ inve
     const pantoSteps = steps.filter(
       (s) => s.toolName?.startsWith("pantomath.") || s.serverName === "pantomath-mcp"
     );
-    const pantoReturnedEmpty =
-      pantoSteps.length === 0 ||
-      pantoSteps.every(
-        (s) =>
-          s.status === "FAILED" ||
-          s.outputSummary?.includes("No matching context was found")
-      );
+    const pantoReturnedEmpty = pantoSteps.every(
+      (s) =>
+        s.status === "FAILED" ||
+        s.outputSummary?.includes("No matching context was found")
+    );
 
     if (!pantomathDisabled && pantoReturnedEmpty) {
       pantomathNoData = true;

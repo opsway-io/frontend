@@ -15,7 +15,7 @@ import {
   Switch,
   Typography,
 } from "@mui/joy";
-import { FunctionComponent, useState } from "react";
+import { FunctionComponent, ReactNode, useState } from "react";
 import {
   IoFlashOutline,
   IoGitNetworkOutline,
@@ -35,7 +35,7 @@ import {
 
 const PRODUCT_META: Record<
   string,
-  { label: string; subtitle: string; color: "primary" | "success" | "warning" | "neutral"; icon: JSX.Element }
+  { label: string; subtitle: string; color: "primary" | "success" | "warning" | "neutral"; icon: ReactNode }
 > = {
   monitoring: {
     label: "Opsway Monitoring",
@@ -84,13 +84,13 @@ const AgentTriggersPanel: FunctionComponent = () => {
 
   const getDraft = (rule: AgentTriggerRule): AgentTriggerRule => ({
     ...rule,
-    ...(drafts[rule.id] || {}),
+    ...drafts[rule.id],
   });
 
   const patchDraft = (ruleId: number, patch: Partial<AgentTriggerRule>) => {
     setDrafts((prev) => ({
       ...prev,
-      [ruleId]: { ...(prev[ruleId] || {}), ...patch },
+      [ruleId]: { ...prev[ruleId], ...patch },
     }));
   };
 

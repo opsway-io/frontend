@@ -1,7 +1,8 @@
 import { FunctionComponent, lazy, Suspense } from "react";
-import { Navigate, Route, Routes as RouterRoutes } from "react-router-dom";
+import { Navigate, Outlet, Route, Routes as RouterRoutes } from "react-router-dom";
 
 import { Role } from "../components/Restrict";
+import useAuthenticationStore from "../hooks/authentication.store";
 import RestrictedRoute from "./RestrictedRoute";
 
 import DashboardLayout from "../pages/Dashboard/DashboardLayout";
@@ -75,6 +76,9 @@ const HubOverviewPage = lazy(
 );
 const AgentsPage = lazy(
   () => import("../pages/Dashboard/Agents/AgentsPage"),
+);
+const ProductInfoPage = lazy(
+  () => import("../pages/Dashboard/Info/ProductInfoPage"),
 );
 const TeamSelectionPage = lazy(
   () => import("../pages/Authentication/TeamSelection/TeamSelectionPage"),
@@ -186,10 +190,25 @@ const isMonitoringSubdomain =
   typeof window !== "undefined" &&
   window.location.hostname.startsWith("monitoring");
 
+/** Renders DashboardLayout when signed in with a team, or public outlet when signed out. */
+const DualModeInfoLayout: FunctionComponent = () => {
+  const authentication = useAuthenticationStore();
+  if (authentication.isAuthenticated() && authentication.currentTeamId) {
+    return <DashboardLayout />;
+  }
+  return <Outlet />;
+};
+
 const Routes: FunctionComponent = () => {
   return (
     <Suspense>
       <RouterRoutes>
+        {/* Dual-mode Product Info & Operational Guide routes (accessible both logged-out and logged-in) */}
+        <Route path="info" element={<DualModeInfoLayout />}>
+          <Route index element={<ProductInfoPage />} />
+          <Route path=":productId" element={<ProductInfoPage />} />
+        </Route>
+
         <Route
           element={
             <RestrictedRoute authenticated>

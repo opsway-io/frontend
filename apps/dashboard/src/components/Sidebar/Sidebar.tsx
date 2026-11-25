@@ -5,6 +5,7 @@ import {
   IoAppsOutline,
   IoArrowBack,
   IoArrowForward,
+  IoBookOutline,
   IoBuildOutline,
   IoCardOutline,
   IoLayersOutline,
@@ -61,7 +62,8 @@ const Sidebar: FunctionComponent<SidebarProps> = ({ variant = "rail" }) => {
           location.pathname.startsWith("/incidents") ||
           location.pathname.startsWith("/maintenance") ||
           location.pathname.startsWith("/status-pages") ||
-          location.pathname.startsWith("/reports"))));
+          location.pathname.startsWith("/reports") ||
+          location.pathname === "/info/monitoring")));
 
   const hubNavigation: NavigationSection[] = [
     {
@@ -85,6 +87,12 @@ const Sidebar: FunctionComponent<SidebarProps> = ({ variant = "rail" }) => {
           text: "Service Catalog",
           icon: <IoLayersOutline />,
           iconColor: "semantic.maintenance",
+        },
+        {
+          to: "/info",
+          text: "Product Info & Guides",
+          icon: <IoBookOutline />,
+          iconColor: "info",
         },
       ],
     },
@@ -141,17 +149,6 @@ const Sidebar: FunctionComponent<SidebarProps> = ({ variant = "rail" }) => {
 
   const monitoringNavigation: NavigationSection[] = [
     {
-      label: "Opsway Platform",
-      items: [
-        {
-          to: "https://my.opsway.eu",
-          text: "← Opsway Hub",
-          icon: <IoArrowBack />,
-          iconColor: "semantic.pages",
-        },
-      ],
-    },
-    {
       label: "Monitoring",
       items: [
         {
@@ -159,12 +156,6 @@ const Sidebar: FunctionComponent<SidebarProps> = ({ variant = "rail" }) => {
           text: "Monitors",
           icon: <IoPulseOutline />,
           iconColor: "semantic.monitors",
-        },
-        {
-          to: "/services",
-          text: "Services",
-          icon: <IoLayersOutline />,
-          iconColor: "semantic.maintenance",
         },
         {
           to: "/alerting",
@@ -196,22 +187,11 @@ const Sidebar: FunctionComponent<SidebarProps> = ({ variant = "rail" }) => {
           icon: <GoGraph />,
           iconColor: "semantic.reports",
         },
-      ],
-    },
-    {
-      label: "Opsway Suite",
-      items: [
         {
-          to: "https://logs.opsway.eu",
-          text: "Log Search ↗",
-          icon: <PiTerminalWindowBold />,
-          iconColor: "info",
-        },
-        {
-          to: "https://my.opsway.eu/agents",
-          text: "Autonomous Agents ↗",
-          icon: <IoSparklesOutline />,
-          iconColor: "warning.400",
+          to: "/info/monitoring",
+          text: "Product Info & Guide",
+          icon: <IoBookOutline />,
+          iconColor: "semantic.monitors",
         },
       ],
     },

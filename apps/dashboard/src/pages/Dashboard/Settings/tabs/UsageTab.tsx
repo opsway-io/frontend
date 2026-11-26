@@ -45,6 +45,7 @@ import {
   useTeamUsage,
   useUpdateOverageSettings,
 } from "../../../../hooks/suite.query";
+import { usePlatformProducts } from "../../../../hooks/platform.query";
 
 type ProductFilter = "all" | "monitoring" | "log_search" | "managed_agent" | "pantomath";
 type TrendMetric = "probes" | "logMb" | "agentRuns" | "agentTokens" | "mcpCalls" | "notifications";
@@ -220,8 +221,13 @@ const UsageTab: FunctionComponent = () => {
   const [draftSpendCap, setDraftSpendCap] = useState<string | null>(null);
 
   const { data: usage, isPending, isError } = useTeamUsage(range);
+  const { data: platformProducts } = usePlatformProducts();
   const updateOverage = useUpdateOverageSettings();
   const setActivePantomath = useSetActivePantomathProduct();
+
+  const isProductVisible = (
+    product: "monitoring" | "log_search" | "managed_agent" | "pantomath",
+  ) => platformProducts?.products?.[product] !== false;
 
   const allowOverage = draftAllowOverage ?? usage?.overage?.allowOverage ?? false;
   const spendCapDollars =
@@ -379,8 +385,10 @@ const UsageTab: FunctionComponent = () => {
   }
 
   const { monitoring, logSearch, managedAgent, pantomath } = usage.products;
-  const showProduct = (slug: ProductFilter) =>
-    productFilter === "all" || productFilter === slug;
+  const showProduct = (slug: ProductFilter) => {
+    if (slug !== "all" && !isProductVisible(slug)) return false;
+    return productFilter === "all" || productFilter === slug;
+  };
 
   return (
     <Stack spacing={3}>
@@ -482,10 +490,10 @@ const UsageTab: FunctionComponent = () => {
       >
         <TabList variant="plain" size="sm" sx={{ gap: 0.5 }}>
           <Tab value="all">All Products</Tab>
-          <Tab value="monitoring">Monitoring</Tab>
-          <Tab value="log_search">Log-Search</Tab>
-          <Tab value="managed_agent">AI Agents &amp; MCP</Tab>
-          <Tab value="pantomath">Pantomath</Tab>
+          {isProductVisible("monitoring") && <Tab value="monitoring">Monitoring</Tab>}
+          {isProductVisible("log_search") && <Tab value="log_search">Log-Search</Tab>}
+          {isProductVisible("managed_agent") && <Tab value="managed_agent">AI Agents &amp; MCP</Tab>}
+          {isProductVisible("pantomath") && <Tab value="pantomath">Pantomath</Tab>}
         </TabList>
       </Tabs>
 
@@ -713,11 +721,11 @@ const UsageTab: FunctionComponent = () => {
               sx={{ bgcolor: "transparent" }}
             >
               <TabList variant="soft" size="sm">
-                <Tab value="monitors">Monitors</Tab>
-                <Tab value="logServices">Log Services</Tab>
-                <Tab value="pantomath">Pantomath</Tab>
-                <Tab value="triggers">Agent Triggers</Tab>
-                <Tab value="services">AI Services</Tab>
+                {isProductVisible("monitoring") && <Tab value="monitors">Monitors</Tab>}
+                {isProductVisible("log_search") && <Tab value="logServices">Log Services</Tab>}
+                {isProductVisible("pantomath") && <Tab value="pantomath">Pantomath</Tab>}
+                {isProductVisible("managed_agent") && <Tab value="triggers">Agent Triggers</Tab>}
+                {isProductVisible("managed_agent") && <Tab value="services">AI Services</Tab>}
               </TabList>
             </Tabs>
           </Stack>

@@ -28,6 +28,7 @@ import { Link } from "react-router-dom";
 import Container from "../../../components/Container/Container";
 import { useIncidents } from "../../../hooks/incidents.query";
 import { useMonitors } from "../../../hooks/monitors.query";
+import { usePlatformProducts } from "../../../hooks/platform.query";
 import { useAgentConfig, useServiceCatalog } from "../../../hooks/suite.query";
 import { useCurrentTeam, useTeamMemberCount } from "../../../hooks/team.query";
 
@@ -38,6 +39,11 @@ export const HubOverviewPage: FunctionComponent = () => {
   const { data: activeIncidents } = useIncidents(false, 0, 10);
   const { data: serviceCatalog } = useServiceCatalog();
   const { data: agentConfig } = useAgentConfig();
+  const { data: platformProducts } = usePlatformProducts();
+
+  const isProductVisible = (
+    product: "monitoring" | "log_search" | "managed_agent" | "pantomath",
+  ) => platformProducts?.products?.[product] !== false;
 
   const totalMonitors = monitorsData?.monitors?.length || 0;
   const incidentCount = activeIncidents?.incidents?.length || 0;
@@ -246,6 +252,7 @@ export const HubOverviewPage: FunctionComponent = () => {
             </Typography>
             <Grid container spacing={2}>
               {/* Product 1: Monitoring */}
+              {isProductVisible("monitoring") && (
               <Grid xs={12} md={6}>
                 <Card
                   variant="outlined"
@@ -334,8 +341,10 @@ export const HubOverviewPage: FunctionComponent = () => {
                   </Stack>
                 </Card>
               </Grid>
+              )}
 
               {/* Product 2: Log Search */}
+              {isProductVisible("log_search") && (
               <Grid xs={12} md={6}>
                 <Card
                   variant="outlined"
@@ -411,8 +420,10 @@ export const HubOverviewPage: FunctionComponent = () => {
                   </Stack>
                 </Card>
               </Grid>
+              )}
 
               {/* Product 3: Autonomous Agents (Standalone) */}
+              {isProductVisible("managed_agent") && (
               <Grid xs={12} md={6}>
                 <Card
                   variant="outlined"
@@ -490,8 +501,10 @@ export const HubOverviewPage: FunctionComponent = () => {
                   </Stack>
                 </Card>
               </Grid>
+              )}
 
               {/* Product 4: Pantomath Code & Infra GraphRAG */}
+              {isProductVisible("pantomath") && (
               <Grid xs={12} md={6}>
                 <Card
                   variant="outlined"
@@ -569,6 +582,7 @@ export const HubOverviewPage: FunctionComponent = () => {
                   </Stack>
                 </Card>
               </Grid>
+              )}
             </Grid>
           </Box>
 

@@ -4,6 +4,7 @@ import { FunctionComponent } from "react";
 import { IoOpenOutline } from "react-icons/io5";
 import { Link } from "react-router-dom";
 import Placeholder from "../../../../components/Placeholder/Placeholder";
+import { usePlatformProducts } from "../../../../hooks/platform.query";
 import { useEntitlements } from "../../../../hooks/suite.query";
 import {
   useChangePlan,
@@ -18,10 +19,15 @@ const BillingTab: FunctionComponent = () => {
   const { data: team, isPending: isLoadingTeam } = useCurrentTeam();
   const { data: productsData, isPending: isLoadingProducts } = useGetProducts();
   const { data: entitlementsData } = useEntitlements();
+  const { data: platformProducts } = usePlatformProducts();
   const changePlan = useChangePlan();
   const customerPortal = useOpenCustomerPortal();
 
   if (isLoadingTeam || isLoadingProducts) return <Placeholder />;
+
+  const isProductVisible = (
+    product: "monitoring" | "log_search" | "managed_agent" | "pantomath",
+  ) => platformProducts?.products?.[product] !== false;
 
   const plans = toBillingPlans(productsData?.products);
   const hasPaidPlan = !!team?.paymentPlan && team.paymentPlan !== FREE_PLAN.id;
@@ -136,6 +142,7 @@ const BillingTab: FunctionComponent = () => {
             gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
           }}
         >
+          {isProductVisible("monitoring") && (
           <Box sx={{ p: 2, borderRadius: "md", bgcolor: "background.surface", border: "1px solid", borderColor: "divider" }}>
             <Stack direction="row" justifyContent="space-between" alignItems="center" mb={1}>
               <Typography level="title-sm">Opsway Monitoring</Typography>
@@ -147,7 +154,9 @@ const BillingTab: FunctionComponent = () => {
               Multi-location probes, IsolationForest anomaly detection, status pages, and on-call alerting.
             </Typography>
           </Box>
+          )}
 
+          {isProductVisible("log_search") && (
           <Box sx={{ p: 2, borderRadius: "md", bgcolor: "background.surface", border: "1px solid", borderColor: "divider" }}>
             <Stack direction="row" justifyContent="space-between" alignItems="center" mb={1}>
               <Typography level="title-sm">Opsway Log-Search</Typography>
@@ -159,7 +168,9 @@ const BillingTab: FunctionComponent = () => {
               Milvus vector &amp; SQL log engine, OTLP log ingestion, semantic log search, and built-in MCP server.
             </Typography>
           </Box>
+          )}
 
+          {isProductVisible("pantomath") && (
           <Box sx={{ p: 2, borderRadius: "md", bgcolor: "background.surface", border: "1px solid", borderColor: "divider" }}>
             <Stack direction="row" justifyContent="space-between" alignItems="center" mb={1}>
               <Typography level="title-sm">Pantomath Code Graph</Typography>
@@ -171,7 +182,9 @@ const BillingTab: FunctionComponent = () => {
               Git AST parsing &amp; Kubernetes manifest property graph for line-level root-cause diagnosis.
             </Typography>
           </Box>
+          )}
 
+          {isProductVisible("managed_agent") && (
           <Box sx={{ p: 2, borderRadius: "md", bgcolor: "background.surface", border: "1px solid", borderColor: "divider" }}>
             <Stack direction="row" justifyContent="space-between" alignItems="center" mb={1}>
               <Typography level="title-sm">Autonomous Agent (Managed &amp; BYOA)</Typography>
@@ -185,6 +198,7 @@ const BillingTab: FunctionComponent = () => {
               Unified MCP Gateway (`/v1/mcp`) &amp; outbound signed webhooks to connect Claude, Cursor, or custom agents.
             </Typography>
           </Box>
+          )}
         </Box>
       </Box>
     </Stack>

@@ -41,6 +41,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { enqueueSnackbar } from "notistack";
 import Container from "../../../components/Container/Container";
 import useAuthenticationStore from "../../../hooks/authentication.store";
+import { usePlatformProducts } from "../../../hooks/platform.query";
 import PreformattedBlock from "../Incidents/Detail/components/PreformattedBlock";
 
 export type ProductSlug = "hub" | "monitoring" | "logs" | "agents" | "pantomath";
@@ -859,11 +860,28 @@ export const ProductInfoContent: FunctionComponent<{
   const navigate = useNavigate();
   const authentication = useAuthenticationStore();
   const isLoggedIn = authentication.isAuthenticated();
+  const { data: platformProducts } = usePlatformProducts();
+
+  const isInfoTabVisible = (slug: ProductSlug): boolean => {
+    if (!isLoggedIn || !platformProducts?.products) return true;
+    switch (slug) {
+      case "monitoring":
+        return platformProducts.products.monitoring !== false;
+      case "logs":
+        return platformProducts.products.log_search !== false;
+      case "agents":
+        return platformProducts.products.managed_agent !== false;
+      case "pantomath":
+        return platformProducts.products.pantomath !== false;
+      default:
+        return true;
+    }
+  };
 
   const resolvedProduct = initialProduct || getDefaultProductFromHost(productId);
   const [selectedTab, setSelectedTab] = useState<ProductSlug>(resolvedProduct);
 
-  const activeSlug: ProductSlug = initialProduct
+  const requestedSlug: ProductSlug = initialProduct
     ? selectedTab
     : productId === "hub" ||
       productId === "monitoring" ||
@@ -872,6 +890,10 @@ export const ProductInfoContent: FunctionComponent<{
       productId === "pantomath"
     ? productId
     : selectedTab;
+
+  const activeSlug: ProductSlug = isInfoTabVisible(requestedSlug)
+    ? requestedSlug
+    : "hub";
 
   const product = PRODUCT_DEFINITIONS[activeSlug];
 
@@ -911,30 +933,38 @@ export const ProductInfoContent: FunctionComponent<{
                 <span>Opsway Hub & Catalog</span>
               </Stack>
             </Tab>
-            <Tab value="monitoring" sx={{ borderRadius: "sm", py: 1, px: 2 }}>
-              <Stack direction="row" spacing={1} alignItems="center">
-                <IoPulseOutline color="#79ab5d" />
-                <span>Monitoring & Status Pages</span>
-              </Stack>
-            </Tab>
-            <Tab value="logs" sx={{ borderRadius: "sm", py: 1, px: 2 }}>
-              <Stack direction="row" spacing={1} alignItems="center">
-                <PiTerminalWindowBold color="#5185a5" />
-                <span>Log Search</span>
-              </Stack>
-            </Tab>
-            <Tab value="agents" sx={{ borderRadius: "sm", py: 1, px: 2 }}>
-              <Stack direction="row" spacing={1} alignItems="center">
-                <IoSparklesOutline color="#A871B7" />
-                <span>Autonomous Agents & MCP</span>
-              </Stack>
-            </Tab>
-            <Tab value="pantomath" sx={{ borderRadius: "sm", py: 1, px: 2 }}>
-              <Stack direction="row" spacing={1} alignItems="center">
-                <IoGitNetworkOutline color="#2dd4bf" />
-                <span>Pantomath GraphRAG</span>
-              </Stack>
-            </Tab>
+            {isInfoTabVisible("monitoring") && (
+              <Tab value="monitoring" sx={{ borderRadius: "sm", py: 1, px: 2 }}>
+                <Stack direction="row" spacing={1} alignItems="center">
+                  <IoPulseOutline color="#79ab5d" />
+                  <span>Monitoring & Status Pages</span>
+                </Stack>
+              </Tab>
+            )}
+            {isInfoTabVisible("logs") && (
+              <Tab value="logs" sx={{ borderRadius: "sm", py: 1, px: 2 }}>
+                <Stack direction="row" spacing={1} alignItems="center">
+                  <PiTerminalWindowBold color="#5185a5" />
+                  <span>Log Search</span>
+                </Stack>
+              </Tab>
+            )}
+            {isInfoTabVisible("agents") && (
+              <Tab value="agents" sx={{ borderRadius: "sm", py: 1, px: 2 }}>
+                <Stack direction="row" spacing={1} alignItems="center">
+                  <IoSparklesOutline color="#A871B7" />
+                  <span>Autonomous Agents & MCP</span>
+                </Stack>
+              </Tab>
+            )}
+            {isInfoTabVisible("pantomath") && (
+              <Tab value="pantomath" sx={{ borderRadius: "sm", py: 1, px: 2 }}>
+                <Stack direction="row" spacing={1} alignItems="center">
+                  <IoGitNetworkOutline color="#2dd4bf" />
+                  <span>Pantomath GraphRAG</span>
+                </Stack>
+              </Tab>
+            )}
           </TabList>
         </Tabs>
       )}

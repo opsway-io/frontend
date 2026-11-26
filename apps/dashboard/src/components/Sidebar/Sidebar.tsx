@@ -97,13 +97,6 @@ const Sidebar: FunctionComponent<SidebarProps> = ({ variant = "rail" }) => {
           iconColor: "semantic.pages",
         },
         {
-          to: "/agents",
-          text: "Autonomous Agents",
-          icon: <IoSparklesOutline />,
-          iconColor: "warning.400",
-          product: "managed_agent",
-        },
-        {
           to: "/services",
           text: "Service Catalog",
           icon: <IoLayersOutline />,
@@ -140,6 +133,13 @@ const Sidebar: FunctionComponent<SidebarProps> = ({ variant = "rail" }) => {
           icon: <IoGitNetworkOutline />,
           iconColor: "#2dd4bf",
           product: "pantomath",
+        },
+        {
+          to: "/agents",
+          text: "Autonomous Agents",
+          icon: <IoSparklesOutline />,
+          iconColor: "warning.400",
+          product: "managed_agent",
         },
       ],
     },

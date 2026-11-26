@@ -1,9 +1,26 @@
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it, afterEach } from "vitest";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import ProductInfoPage from "./ProductInfoPage";
 
 const originalHostname = window.location.hostname;
+
+const renderWithProviders = (initialEntry: string) => {
+  const queryClient = new QueryClient({
+    defaultOptions: { queries: { retry: false } },
+  });
+  return render(
+    <QueryClientProvider client={queryClient}>
+      <MemoryRouter initialEntries={[initialEntry]}>
+        <Routes>
+          <Route path="/info" element={<ProductInfoPage />} />
+          <Route path="/info/:productId" element={<ProductInfoPage />} />
+        </Routes>
+      </MemoryRouter>
+    </QueryClientProvider>,
+  );
+};
 
 const setHostname = (hostname: string) => {
   Object.defineProperty(window, "location", {
@@ -21,14 +38,7 @@ describe("ProductInfoPage", () => {
   it("keeps the product switcher bar visible when clicking Monitoring & Status Pages", () => {
     setHostname("my.opsway.eu");
 
-    render(
-      <MemoryRouter initialEntries={["/info"]}>
-        <Routes>
-          <Route path="/info" element={<ProductInfoPage />} />
-          <Route path="/info/:productId" element={<ProductInfoPage />} />
-        </Routes>
-      </MemoryRouter>,
-    );
+    renderWithProviders("/info");
 
     const monitoringTab = screen.getByRole("tab", {
       name: /Monitoring & Status Pages/i,
@@ -55,14 +65,7 @@ describe("ProductInfoPage", () => {
   it("hides the product switcher bar on the monitoring subdomain", () => {
     setHostname("monitoring.opsway.eu");
 
-    render(
-      <MemoryRouter initialEntries={["/info/monitoring"]}>
-        <Routes>
-          <Route path="/info" element={<ProductInfoPage />} />
-          <Route path="/info/:productId" element={<ProductInfoPage />} />
-        </Routes>
-      </MemoryRouter>,
-    );
+    renderWithProviders("/info/monitoring");
 
     expect(screen.queryByRole("tablist")).not.toBeInTheDocument();
     expect(

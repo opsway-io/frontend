@@ -70,7 +70,8 @@ const Sidebar: FunctionComponent<SidebarProps> = ({ variant = "rail" }) => {
     typeof window !== "undefined" &&
     (window.location.hostname.startsWith("pantomath") ||
       location.pathname.startsWith("/pantomath") ||
-      location.pathname === "/info/pantomath");
+      (!window.location.hostname.startsWith("my") &&
+        location.pathname === "/info/pantomath"));
 
   const isMonitoringSubdomain =
     typeof window !== "undefined" &&

@@ -125,7 +125,9 @@ const DashboardLayout: FunctionComponent = () => {
   const isPantomathContext =
     isPantomathHost ||
     location.pathname.startsWith("/pantomath") ||
-    location.pathname === "/info/pantomath";
+    (typeof window !== "undefined" &&
+      !window.location.hostname.startsWith("my") &&
+      location.pathname === "/info/pantomath");
 
   const currentApp: OpswayAppId = isPantomathContext
     ? "pantomath"

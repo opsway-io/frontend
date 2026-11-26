@@ -50,7 +50,7 @@ const PRODUCT_META: Record<
     icon: <IoTerminalOutline size={18} />,
   },
   pantomath: {
-    label: "Pantomath Code Graph",
+    label: "Agent Context",
     subtitle: "Trigger post-deploy regression checks when code or Kubernetes manifests change.",
     color: "warning",
     icon: <IoGitNetworkOutline size={18} />,

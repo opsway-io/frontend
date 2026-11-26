@@ -66,24 +66,37 @@ const Sidebar: FunctionComponent<SidebarProps> = ({ variant = "rail" }) => {
     return platformProducts.products[product] !== false;
   };
 
-  const isPantomathSubdomain =
+  const isAgentContextHost =
     typeof window !== "undefined" &&
-    (window.location.hostname.startsWith("pantomath") ||
-      location.pathname.startsWith("/pantomath") ||
-      (!window.location.hostname.startsWith("my") &&
+    (window.location.hostname.startsWith("agent-context") ||
+      window.location.hostname.startsWith("pantomath"));
+
+  const isMonitoringHost =
+    typeof window !== "undefined" &&
+    window.location.hostname.startsWith("monitoring");
+
+  const isAgentContextSubdomain =
+    isAgentContextHost ||
+    location.pathname.startsWith("/agent-context") ||
+    location.pathname.startsWith("/pantomath") ||
+    (typeof window !== "undefined" &&
+      !window.location.hostname.startsWith("my") &&
+      (location.pathname === "/products" ||
+        location.pathname === "/mcp" ||
+        location.pathname === "/info/agent-context" ||
         location.pathname === "/info/pantomath"));
 
   const isMonitoringSubdomain =
-    typeof window !== "undefined" &&
-    (window.location.hostname.startsWith("monitoring") ||
-      (!window.location.hostname.startsWith("my") &&
-        (location.pathname.startsWith("/monitors") ||
-          location.pathname.startsWith("/alerting") ||
-          location.pathname.startsWith("/incidents") ||
-          location.pathname.startsWith("/maintenance") ||
-          location.pathname.startsWith("/status-pages") ||
-          location.pathname.startsWith("/reports") ||
-          location.pathname === "/info/monitoring")));
+    isMonitoringHost ||
+    (typeof window !== "undefined" &&
+      !window.location.hostname.startsWith("my") &&
+      (location.pathname.startsWith("/monitors") ||
+        location.pathname.startsWith("/alerting") ||
+        location.pathname.startsWith("/incidents") ||
+        location.pathname.startsWith("/maintenance") ||
+        location.pathname.startsWith("/status-pages") ||
+        location.pathname.startsWith("/reports") ||
+        location.pathname === "/info/monitoring"));
 
   const hubNavigation: NavigationSection[] = [
     {
@@ -128,8 +141,8 @@ const Sidebar: FunctionComponent<SidebarProps> = ({ variant = "rail" }) => {
           product: "log_search",
         },
         {
-          to: "https://pantomath.opsway.eu",
-          text: "Pantomath ↗",
+          to: "https://agent-context.opsway.eu",
+          text: "Agent Context ↗",
           icon: <IoGitNetworkOutline />,
           iconColor: "#2dd4bf",
           product: "pantomath",
@@ -232,7 +245,7 @@ const Sidebar: FunctionComponent<SidebarProps> = ({ variant = "rail" }) => {
           iconColor: "semantic.reports",
         },
         {
-          to: "/info/monitoring",
+          to: isMonitoringHost ? "/info" : "/info/monitoring",
           text: "Product Info & Guide",
           icon: <IoBookOutline />,
           iconColor: "semantic.monitors",
@@ -259,31 +272,31 @@ const Sidebar: FunctionComponent<SidebarProps> = ({ variant = "rail" }) => {
     },
   ];
 
-  const pantomathNavigation: NavigationSection[] = [
+  const agentContextNavigation: NavigationSection[] = [
     {
-      label: "Pantomath",
+      label: "Agent Context",
       items: [
         {
-          to: "/pantomath",
+          to: isAgentContextHost ? "/" : "/agent-context",
           end: true,
-          text: "Knowledge Playground",
+          text: "Context Playground",
           icon: <IoSearchOutline />,
           iconColor: "#2dd4bf",
         },
         {
-          to: "/pantomath/products",
+          to: "/products",
           text: "Indexed Products",
           icon: <IoGitBranchOutline />,
           iconColor: "#2dd4bf",
         },
         {
-          to: "/pantomath/mcp",
+          to: "/mcp",
           text: "MCP & IDE Setup",
           icon: <IoTerminalOutline />,
           iconColor: "info",
         },
         {
-          to: "/info/pantomath",
+          to: isAgentContextHost ? "/info" : "/info/agent-context",
           text: "Product Info & Guide",
           icon: <IoBookOutline />,
           iconColor: "#2dd4bf",
@@ -323,8 +336,8 @@ const Sidebar: FunctionComponent<SidebarProps> = ({ variant = "rail" }) => {
     },
   ];
 
-  const currentNav = isPantomathSubdomain
-    ? pantomathNavigation
+  const currentNav = isAgentContextSubdomain
+    ? agentContextNavigation
     : isMonitoringSubdomain
       ? monitoringNavigation
       : hubNavigation;

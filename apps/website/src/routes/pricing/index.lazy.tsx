@@ -105,7 +105,7 @@ function Index() {
               "Unlimited users & monitors",
               "Unlimited status pages",
               "Custom Log-Search retention",
-              "Pantomath Code & Infra GraphRAG",
+              "Agent Context (Code & Infra GraphRAG)",
               "Autonomous Auto-Remediation",
               "Priority 24/7 support",
             ]}

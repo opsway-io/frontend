@@ -417,7 +417,7 @@ curl -X POST "https://logs.opsway.eu/v1/logs" \\
     softBg: "rgba(168, 113, 183, 0.15)",
     icon: <IoSparklesOutline size={26} />,
     summary:
-      "Opsway Autonomous Agents act as an always-on AI SRE on-call engineer. When an incident triggers or an engineer requests a diagnosis, the agent executes a multi-step ReAct loop across Monitoring timings, Log Search error clusters, and Pantomath code graphs to pinpoint root causes and stage verified remediation actions.",
+      "Opsway Autonomous Agents act as an always-on AI SRE on-call engineer. When an incident triggers or an engineer requests a diagnosis, the agent executes a multi-step ReAct loop across Monitoring timings, Log Search error clusters, and Agent Context code graphs to pinpoint root causes and stage verified remediation actions.",
     standaloneValue:
       "Connect your own external AI agents (Claude Desktop, Cursor, Windsurf, LangGraph, CrewAI) to the Unified FastMCP Gateway (`/v1/mcp`), or run Opsway's turnkey Managed Agent with your own LLM keys.",
     suiteSynergy:
@@ -600,7 +600,7 @@ curl -s -X POST "https://api.opsway.eu/v1/mcp" \\
       {
         title: "Modular Suite Billing & Entitlements",
         description:
-          "Track real-time quotas and usage across Monitoring, Log Search, Pantomath Code Graph, and Managed AI Agent runs.",
+          "Track real-time quotas and usage across Monitoring, Log Search, Agent Context, and Managed AI Agent runs.",
       },
       {
         title: "Account Security & Personal Notification Rules",
@@ -687,7 +687,7 @@ curl -s -X POST "https://api.opsway.eu/v1/mcp" \\
         step: "Step 4",
         title: "Monitor Entitlements & Suite Quotas",
         description:
-          "Visit Suite Billing to review active tiers (`FREE`, `PRO`, `ENTERPRISE`) across Monitoring, Log Search, Pantomath, and Managed Agents.",
+          "Visit Suite Billing to review active tiers (`FREE`, `PRO`, `ENTERPRISE`) across Monitoring, Log Search, Agent Context, and Managed Agents.",
         proTip:
           "Every Opsway product can be used standalone on its Free tier or scaled together as a unified suite.",
         ctaLabel: "Suite Billing",
@@ -710,20 +710,20 @@ curl -s -X POST "https://api.opsway.eu/v1/mcp" \\
   },
   pantomath: {
     id: "pantomath",
-    name: "Pantomath Code & Infrastructure GraphRAG",
+    name: "Opsway Agent Context",
     tagline:
-      "Tree-sitter AST intelligence, Kustomize topology discovery, Milvus hybrid search & MCP server",
-    subdomain: "pantomath.opsway.eu",
-    subdomainUrl: "https://pantomath.opsway.eu",
+      "Product, code & infrastructure context for AI agents — powered by Tree-sitter ASTs, Kustomize topology & Milvus Hybrid GraphRAG",
+    subdomain: "agent-context.opsway.eu",
+    subdomainUrl: "https://agent-context.opsway.eu",
     accentColor: "#2dd4bf",
     softBg: "rgba(45, 212, 191, 0.15)",
     icon: <IoGitNetworkOutline size={26} />,
     summary:
-      "Pantomath maps your entire product architecture—source code ASTs, Kubernetes Kustomize overlays, Jira/Confluence docs, and web docs—into a centralized Milvus Hybrid Search + GraphRAG database exposed over the Model Context Protocol (MCP).",
+      "Opsway Agent Context maps your indexed products—source code ASTs, Kubernetes Kustomize overlays, Jira/Confluence docs, and web docs—into a centralized Milvus Hybrid Search + GraphRAG database exposed over the Model Context Protocol (MCP).",
     standaloneValue:
-      "Works standalone as an enterprise knowledge engine for engineering teams and AI coding assistants (Cursor, Antigravity, Claude Desktop) with dual-vector semantic + BM25 search and cross-encoder reranking.",
+      "Works standalone as an enterprise context engine for AI agents and engineering teams (Cursor, Antigravity, Claude Desktop) to resolve problems and answer product-specific questions with dual-vector semantic + BM25 search and cross-encoder reranking.",
     suiteSynergy:
-      "Inside the Opsway Suite, Autonomous Agents automatically invoke Pantomath during incident root-cause investigations to pinpoint the exact source files, Helm/Kustomize manifests, and recent changes behind a failing probe or log spike.",
+      "Inside the Opsway Suite, Autonomous Agents automatically invoke Agent Context during incident root-cause investigations to pinpoint the exact source files, Helm/Kustomize manifests, and recent changes behind a failing probe or log spike.",
     keyCapabilities: [
       {
         title: "Tree-sitter AST Parsing",
@@ -743,11 +743,11 @@ curl -s -X POST "https://api.opsway.eu/v1/mcp" \\
       {
         title: "Native MCP Server & Opsway Gateway",
         description:
-          "Exposes ask_pantomath, list_products, and list_repos over Streamable HTTP or through the unified Opsway Cloud MCP Gateway.",
+          "Exposes codebase, product, and repository context tools over Streamable HTTP or through the unified Opsway Cloud MCP Gateway.",
       },
     ],
     whenToUseSummary: [
-      "Onboarding engineers or AI coding agents onto large multi-repo microservice architectures.",
+      "Giving AI agents live context across your indexed products so they can resolve issues and answer product-specific questions.",
       "Tracing which Kubernetes manifest, ingress rule, or message queue connects two services.",
       "Grounding Autonomous SRE Agents with live code and infrastructure context during incidents.",
     ],
@@ -756,17 +756,17 @@ curl -s -X POST "https://api.opsway.eu/v1/mcp" \\
         situation: "Need to understand how a service handles authentication or retries across repos",
         whenToUse: "When grepping one repo isn't enough to trace cross-service calls.",
         recommendedAction:
-          "Run a multi-hop GraphRAG query in the Pantomath Knowledge Playground.",
+          "Run a multi-hop GraphRAG query in the Agent Context Playground.",
         actionLabel: "Open Playground",
-        actionUrl: "/pantomath",
+        actionUrl: "/agent-context",
       },
       {
-        situation: "Want Cursor, Antigravity, or Claude Desktop to query internal architecture",
-        whenToUse: "When pairing with AI coding assistants on private repositories.",
+        situation: "Want Cursor, Antigravity, or Claude Desktop to query internal product context",
+        whenToUse: "When pairing with AI agents on private repositories and product docs.",
         recommendedAction:
           "Copy the Opsway Cloud MCP Gateway config and pair it with a team API key.",
         actionLabel: "MCP & IDE Setup",
-        actionUrl: "/pantomath/mcp",
+        actionUrl: "/agent-context/mcp",
       },
       {
         situation: "Checking which repositories and vector chunks are indexed per product",
@@ -774,7 +774,7 @@ curl -s -X POST "https://api.opsway.eu/v1/mcp" \\
         recommendedAction:
           "Inspect indexed products, repository inventories, and chunk counts.",
         actionLabel: "Indexed Products",
-        actionUrl: "/pantomath/products",
+        actionUrl: "/agent-context/products",
       },
     ],
     loggedInHowToSteps: [
@@ -784,19 +784,19 @@ curl -s -X POST "https://api.opsway.eu/v1/mcp" \\
         description:
           "Open Indexed Products to confirm your Milvus collections and Git repositories are synced and active.",
         proTip:
-          "Map each Pantomath product slug in the Service Catalog so Autonomous Agents automatically scope queries during incidents.",
+          "Map each Agent Context product slug in the Service Catalog so Autonomous Agents automatically scope queries during incidents.",
         ctaLabel: "View Indexed Products",
-        ctaUrl: "/pantomath/products",
+        ctaUrl: "/agent-context/products",
       },
       {
         step: "02",
-        title: "Query in the Knowledge Playground",
+        title: "Query in the Context Playground",
         description:
           "Test hybrid vector + graph traversal queries, toggle LLM synthesis, and tune top_k or graph hop depth.",
         proTip:
-          "Ask 'Which repositories are indexed?' to trigger Pantomath's exact repo-inventory fast path.",
+          "Ask 'Which repositories are indexed?' to trigger Agent Context's exact repo-inventory fast path.",
         ctaLabel: "Open Playground",
-        ctaUrl: "/pantomath",
+        ctaUrl: "/agent-context",
       },
       {
         step: "03",
@@ -804,12 +804,12 @@ curl -s -X POST "https://api.opsway.eu/v1/mcp" \\
         description:
           "Mint an Opsway API key and add the Opsway MCP Gateway URL to Cursor, Antigravity, or Claude Desktop.",
         proTip:
-          "One MCP config gives your agent Pantomath, Monitoring, and Log Search tools simultaneously.",
+          "One MCP config gives your agent Agent Context, Monitoring, and Log Search tools simultaneously.",
         ctaLabel: "Configure MCP",
-        ctaUrl: "/pantomath/mcp",
+        ctaUrl: "/agent-context/mcp",
       },
     ],
-    codeExampleTitle: "Connect Pantomath via Opsway MCP Gateway",
+    codeExampleTitle: "Connect Agent Context via Opsway MCP Gateway",
     codeExampleDescription:
       "Add this block to your MCP client configuration (Cursor, Antigravity, or Claude Desktop):",
     codeExample: `{
@@ -827,6 +827,9 @@ curl -s -X POST "https://api.opsway.eu/v1/mcp" \\
 };
 
 const getDefaultProductFromHost = (paramProduct?: string): ProductSlug => {
+  if (paramProduct === "agent-context") {
+    return "pantomath";
+  }
   if (
     paramProduct === "hub" ||
     paramProduct === "monitoring" ||
@@ -837,7 +840,10 @@ const getDefaultProductFromHost = (paramProduct?: string): ProductSlug => {
     return paramProduct;
   }
   if (typeof window !== "undefined") {
-    if (window.location.hostname.startsWith("pantomath")) {
+    if (
+      window.location.hostname.startsWith("agent-context") ||
+      window.location.hostname.startsWith("pantomath")
+    ) {
       return "pantomath";
     }
     if (window.location.hostname.startsWith("monitoring")) {
@@ -883,6 +889,8 @@ export const ProductInfoContent: FunctionComponent<{
 
   const requestedSlug: ProductSlug = initialProduct
     ? selectedTab
+    : productId === "agent-context"
+    ? "pantomath"
     : productId === "hub" ||
       productId === "monitoring" ||
       productId === "logs" ||
@@ -900,7 +908,7 @@ export const ProductInfoContent: FunctionComponent<{
   const handleTabChange = (nextSlug: ProductSlug) => {
     setSelectedTab(nextSlug);
     if (!embedded) {
-      navigate(`/info/${nextSlug}`);
+      navigate(`/info/${nextSlug === "pantomath" ? "agent-context" : nextSlug}`);
     }
   };
 
@@ -961,7 +969,7 @@ export const ProductInfoContent: FunctionComponent<{
               <Tab value="pantomath" sx={{ borderRadius: "sm", py: 1, px: 2 }}>
                 <Stack direction="row" spacing={1} alignItems="center">
                   <IoGitNetworkOutline color="#2dd4bf" />
-                  <span>Pantomath GraphRAG</span>
+                  <span>Agent Context</span>
                 </Stack>
               </Tab>
             )}

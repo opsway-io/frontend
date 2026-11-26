@@ -143,7 +143,7 @@ const AgentInsightsBanner: FunctionComponent<AgentInsightsBannerProps> = ({ inve
                   <IoGitNetworkOutline size={15} />
                 </Box>
                 <Typography level="body-xs" textColor="text.secondary">
-                  <strong>Pantomath Code Graph</strong>:{" "}
+                  <strong>Agent Context</strong>:{" "}
                   {pantomathDisabled
                     ? "Map failing endpoints to their owning Kubernetes deployments, pods, upstream dependencies, and exact source files for targeted remediation."
                     : "Found no matching codebase or cluster context. Link this monitor's repository and product in the Service Catalog so the agent knows which pods and dependencies to inspect."}

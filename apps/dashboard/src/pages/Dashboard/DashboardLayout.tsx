@@ -74,9 +74,10 @@ const isMonitoringHost =
   typeof window !== "undefined" &&
   window.location.hostname.startsWith("monitoring");
 
-const isPantomathHost =
+const isAgentContextHost =
   typeof window !== "undefined" &&
-  window.location.hostname.startsWith("pantomath");
+  (window.location.hostname.startsWith("agent-context") ||
+    window.location.hostname.startsWith("pantomath"));
 
 /** Authenticated app shell: global OpswayTopBar, standalone sidebar rail, and routed page. */
 const DashboardLayout: FunctionComponent = () => {
@@ -122,14 +123,18 @@ const DashboardLayout: FunctionComponent = () => {
         location.pathname.startsWith("/reports") ||
         location.pathname === "/info/monitoring"));
 
-  const isPantomathContext =
-    isPantomathHost ||
+  const isAgentContextContext =
+    isAgentContextHost ||
+    location.pathname.startsWith("/agent-context") ||
     location.pathname.startsWith("/pantomath") ||
     (typeof window !== "undefined" &&
       !window.location.hostname.startsWith("my") &&
-      location.pathname === "/info/pantomath");
+      (location.pathname === "/products" ||
+        location.pathname === "/mcp" ||
+        location.pathname === "/info/agent-context" ||
+        location.pathname === "/info/pantomath"));
 
-  const currentApp: OpswayAppId = isPantomathContext
+  const currentApp: OpswayAppId = isAgentContextContext
     ? "pantomath"
     : isMonitoringContext
       ? "monitoring"
@@ -138,29 +143,28 @@ const DashboardLayout: FunctionComponent = () => {
         : "hub";
 
   const guideHref =
-    currentApp === "pantomath"
-      ? "/info/pantomath"
-      : currentApp === "monitoring"
-        ? "/info/monitoring"
-        : currentApp === "agents"
-          ? "/info/agents"
-          : "/info/hub";
+    isAgentContextHost || isMonitoringHost
+      ? "/info"
+      : currentApp === "pantomath"
+        ? "/info/agent-context"
+        : currentApp === "monitoring"
+          ? "/info/monitoring"
+          : currentApp === "agents"
+            ? "/info/agents"
+            : "/info/hub";
+
+  const homeHref = isMonitoringHost ? "/monitors" : "/";
 
   const handleSelectTeam = (teamId: number | string) => {
     authentication.setCurrentTeamID(Number(teamId));
-    navigate(
-      isPantomathHost ? "/pantomath" : isMonitoringHost ? "/monitors" : "/",
-      { replace: true },
-    );
+    navigate(homeHref, { replace: true });
   };
 
   return (
     <Shell>
       <OpswayTopBar
         currentApp={currentApp}
-        brandHref={
-          isPantomathHost ? "/pantomath" : isMonitoringHost ? "/monitors" : "/"
-        }
+        brandHref={homeHref}
         guideHref={guideHref}
         onNavigate={(path) => navigate(path)}
         userName={user?.displayName}

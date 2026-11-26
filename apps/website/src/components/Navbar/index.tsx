@@ -51,9 +51,9 @@ const productLinks: ProductLink[] = [
     icon: <PiTerminalWindowBold />,
   },
   {
-    title: "Pantomath",
-    description: "Code & infrastructure GraphRAG knowledge server",
-    to: "/pantomath",
+    title: "Agent Context",
+    description: "Product, code & infra context for AI agents",
+    to: "/agent-context",
     icon: <IoGitNetworkOutline />,
   },
   {
@@ -79,7 +79,7 @@ const productLinks: ProductLink[] = [
 const pageLinks: { label: string; to?: string; href?: string; hash?: string }[] = [
   { label: "Monitoring", href: "https://monitoring.opsway.eu" },
   { label: "Log Search", href: "https://logs.opsway.eu" },
-  { label: "Pantomath", to: "/pantomath" },
+  { label: "Agent Context", to: "/agent-context" },
   { label: "Opsway Hub", href: "https://my.opsway.eu" },
   { label: "Pricing", to: "/pricing" },
   { label: "FAQ", to: "/", hash: "faq" },

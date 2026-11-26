@@ -124,7 +124,7 @@ const IncidentsDataGrid: FunctionComponent<IncidentsDataGridProps> = ({
             sx={{ whiteSpace: "nowrap" }}
             onClick={(e) => e.stopPropagation()}
             component={Link}
-            to={`/incidents/incident/${row.id}`}
+            to={`/incidents/${row.id}`}
           >
             View details
           </Button>

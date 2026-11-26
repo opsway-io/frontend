@@ -68,7 +68,7 @@ const TriggerHistoryCard: FunctionComponent<TriggerHistoryCardProps> = ({
                     trigger.incidentId ? (
                       <JoyLink
                         component={Link}
-                        to={`/incidents/incident/${trigger.incidentId}`}
+                        to={`/incidents/${trigger.incidentId}`}
                         level="title-sm"
                       >
                         View Incident #{trigger.incidentId}

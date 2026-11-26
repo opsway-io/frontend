@@ -43,7 +43,7 @@ export const SUITE_APPS: SuiteAppMeta[] = [
     desc: "Uptime, Probes, Incidents & Status Pages",
     accentColor: "#79ab5d",
     url: "https://monitoring.opsway.eu",
-    guideUrl: "https://monitoring.opsway.eu/info/monitoring",
+    guideUrl: "https://monitoring.opsway.eu/info",
   },
   {
     id: "logs",
@@ -56,12 +56,12 @@ export const SUITE_APPS: SuiteAppMeta[] = [
   },
   {
     id: "pantomath",
-    name: "Pantomath",
-    shortName: "Pantomath",
-    desc: "Code & Infra GraphRAG Knowledge",
+    name: "Agent Context",
+    shortName: "Agent Context",
+    desc: "Product, Code & Infra Context for AI Agents",
     accentColor: "#2dd4bf",
-    url: "https://pantomath.opsway.eu",
-    guideUrl: "https://pantomath.opsway.eu/info/pantomath",
+    url: "https://agent-context.opsway.eu",
+    guideUrl: "https://agent-context.opsway.eu/info",
   },
   {
     id: "website",

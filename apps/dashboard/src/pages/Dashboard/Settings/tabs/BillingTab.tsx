@@ -173,7 +173,7 @@ const BillingTab: FunctionComponent = () => {
           {isProductVisible("pantomath") && (
           <Box sx={{ p: 2, borderRadius: "md", bgcolor: "background.surface", border: "1px solid", borderColor: "divider" }}>
             <Stack direction="row" justifyContent="space-between" alignItems="center" mb={1}>
-              <Typography level="title-sm">Pantomath Code Graph</Typography>
+              <Typography level="title-sm">Agent Context</Typography>
               <Chip size="sm" variant="soft" color="warning">
                 {getEnt("pantomath")?.tier || "FREE"} • Ready
               </Chip>

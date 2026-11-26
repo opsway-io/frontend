@@ -58,7 +58,7 @@ describe("ProductInfoPage", () => {
       screen.getByRole("tab", { name: /Autonomous Agents & MCP/i }),
     ).toBeInTheDocument();
     expect(
-      screen.getByRole("tab", { name: /Pantomath GraphRAG/i }),
+      screen.getByRole("tab", { name: /Agent Context/i }),
     ).toBeInTheDocument();
   });
 

@@ -503,7 +503,7 @@ export const HubOverviewPage: FunctionComponent = () => {
               </Grid>
               )}
 
-              {/* Product 4: Pantomath Code & Infra GraphRAG */}
+              {/* Product 4: Agent Context (Product, Code & Infra GraphRAG) */}
               {isProductVisible("pantomath") && (
               <Grid xs={12} md={6}>
                 <Card
@@ -534,10 +534,10 @@ export const HubOverviewPage: FunctionComponent = () => {
                         </Box>
                         <Box>
                           <Typography level="title-md" sx={{ fontWeight: 700 }}>
-                            Pantomath
+                            Agent Context
                           </Typography>
                           <Typography level="body-xs" textColor="text.tertiary">
-                            pantomath.opsway.eu
+                            agent-context.opsway.eu
                           </Typography>
                         </Box>
                       </Stack>
@@ -546,8 +546,8 @@ export const HubOverviewPage: FunctionComponent = () => {
                       </Chip>
                     </Stack>
                     <Typography level="body-sm" sx={{ color: "text.secondary", mb: 2 }}>
-                      Multi-level code and infrastructure knowledge graph. Parses Tree-sitter ASTs and Kubernetes
-                      Kustomize topologies into Milvus Hybrid Search for instant architecture Q&amp;A and MCP agents.
+                      Indexed product, code, and infrastructure context for AI agents. Parses Tree-sitter ASTs and
+                      Kubernetes Kustomize topologies into Milvus Hybrid Search for troubleshooting and product Q&amp;A.
                     </Typography>
                     <Stack direction="row" spacing={1} flexWrap="wrap" sx={{ mb: 2 }}>
                       <Chip size="sm" variant="outlined">Tree-sitter AST</Chip>
@@ -559,7 +559,7 @@ export const HubOverviewPage: FunctionComponent = () => {
                   <Stack spacing={1}>
                     <Button
                       component="a"
-                      href="https://pantomath.opsway.eu"
+                      href="https://agent-context.opsway.eu"
                       variant="solid"
                       endDecorator={<IoArrowForward />}
                       fullWidth
@@ -568,11 +568,11 @@ export const HubOverviewPage: FunctionComponent = () => {
                         "&:hover": { bgcolor: "#115e59" },
                       }}
                     >
-                      Open Pantomath
+                      Open Agent Context
                     </Button>
                     <Button
-                      component={Link}
-                      to="/pantomath/mcp"
+                      component="a"
+                      href="https://agent-context.opsway.eu/mcp"
                       variant="outlined"
                       color="neutral"
                       size="sm"

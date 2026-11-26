@@ -78,7 +78,7 @@ const MCP_TOOLS_REFERENCE = [
   {
     name: "pantomath.list_products",
     description:
-      "List all configured and indexed Pantomath products with their repository counts.",
+      "List all configured and indexed Agent Context products with their repository counts.",
     params: "(none)",
   },
   {
@@ -91,13 +91,31 @@ const MCP_TOOLS_REFERENCE = [
 
 const formatNumber = (n?: number) => (n ?? 0).toLocaleString();
 
+const isAgentContextSubdomain = () =>
+  typeof window !== "undefined" &&
+  (window.location.hostname.startsWith("agent-context") ||
+    window.location.hostname.startsWith("pantomath"));
+
 const PantomathPage: FunctionComponent = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const isDedicatedHost = isAgentContextSubdomain();
+  const playgroundPath = isDedicatedHost ? "/" : "/agent-context";
+  const guidePath = isDedicatedHost ? "/info" : "/info/agent-context";
 
   const activeTab: PantomathTab = useMemo(() => {
-    if (location.pathname.startsWith("/pantomath/products")) return "products";
-    if (location.pathname.startsWith("/pantomath/mcp")) return "mcp";
+    if (
+      location.pathname === "/products" ||
+      location.pathname.startsWith("/agent-context/products") ||
+      location.pathname.startsWith("/pantomath/products")
+    )
+      return "products";
+    if (
+      location.pathname === "/mcp" ||
+      location.pathname.startsWith("/agent-context/mcp") ||
+      location.pathname.startsWith("/pantomath/mcp")
+    )
+      return "mcp";
     return "playground";
   }, [location.pathname]);
 
@@ -138,9 +156,9 @@ const PantomathPage: FunctionComponent = () => {
   );
 
   const handleTabChange = (_: unknown, value: string | number | null) => {
-    if (value === "products") navigate("/pantomath/products");
-    else if (value === "mcp") navigate("/pantomath/mcp");
-    else navigate("/pantomath");
+    if (value === "products") navigate("/products");
+    else if (value === "mcp") navigate("/mcp");
+    else navigate(playgroundPath);
   };
 
   const runQuery = (overrideQuery?: string) => {
@@ -178,7 +196,7 @@ const PantomathPage: FunctionComponent = () => {
         },
         onError: (err: unknown) => {
           const message =
-            err instanceof Error ? err.message : "Failed to execute Pantomath query";
+            err instanceof Error ? err.message : "Failed to execute Agent Context query";
           enqueueSnackbar(message, { variant: "error" });
         },
       },
@@ -200,11 +218,11 @@ const PantomathPage: FunctionComponent = () => {
   const handleSetActiveProduct = (product: string) => {
     setActiveProductMutation.mutate(product, {
       onSuccess: () =>
-        enqueueSnackbar(`"${product}" is now your active Pantomath product`, {
+        enqueueSnackbar(`"${product}" is now your active Agent Context product`, {
           variant: "success",
         }),
       onError: () =>
-        enqueueSnackbar("Failed to update active Pantomath product", {
+        enqueueSnackbar("Failed to update active Agent Context product", {
           variant: "error",
         }),
     });
@@ -262,7 +280,7 @@ const PantomathPage: FunctionComponent = () => {
   return (
     <>
       <Helmet>
-        <title>Pantomath | Code &amp; Infrastructure GraphRAG — Opsway</title>
+        <title>Agent Context | Product, Code &amp; Infra GraphRAG — Opsway</title>
       </Helmet>
       <Container>
         <Stack spacing={3} sx={{ py: 3 }}>
@@ -288,7 +306,7 @@ const PantomathPage: FunctionComponent = () => {
                   level="h2"
                   sx={{ fontSize: { xs: "xl", md: "2xl" }, fontWeight: 700 }}
                 >
-                  Pantomath
+                  Agent Context
                 </Typography>
                 <Chip
                   size="sm"
@@ -303,9 +321,9 @@ const PantomathPage: FunctionComponent = () => {
                 </Chip>
               </Stack>
               <Typography level="body-sm" sx={{ color: "text.secondary", maxWidth: 700 }}>
-                Multi-level Code &amp; Infrastructure GraphRAG. Query Tree-sitter ASTs,
-                Kubernetes Kustomize topologies, and architecture docs with Milvus Hybrid
-                Search — or connect your AI coding agents over MCP.
+                Indexed product, code &amp; infrastructure context for AI agents. Query
+                Tree-sitter ASTs, Kubernetes Kustomize topologies, and product docs with
+                Milvus Hybrid Search — or connect agents over MCP.
               </Typography>
             </Box>
             <Stack direction="row" spacing={1.25} flexWrap="wrap">
@@ -321,7 +339,7 @@ const PantomathPage: FunctionComponent = () => {
               </Button>
               <Button
                 component={Link}
-                to="/info/pantomath"
+                to={guidePath}
                 variant="outlined"
                 color="primary"
                 size="sm"
@@ -460,7 +478,7 @@ const PantomathPage: FunctionComponent = () => {
             <TabList variant="outlined" sx={{ borderRadius: "md", p: 0.5 }}>
               <Tab value="playground" sx={{ gap: 1 }}>
                 <IoSearchOutline />
-                Knowledge Playground
+                Context Playground
               </Tab>
               <Tab value="products" sx={{ gap: 1 }}>
                 <IoGitBranchOutline />
@@ -482,7 +500,7 @@ const PantomathPage: FunctionComponent = () => {
                     <Stack spacing={2}>
                       <Box>
                         <Typography level="title-md" sx={{ mb: 0.5 }}>
-                          Ask Pantomath
+                          Ask Agent Context
                         </Typography>
                         <Typography level="body-xs" textColor="text.tertiary">
                           Ask about code architecture, service dependencies, Kubernetes
@@ -660,7 +678,7 @@ const PantomathPage: FunctionComponent = () => {
 
                         {activeEntry.response.isError && (
                           <Alert color="warning" variant="soft">
-                            Pantomath reported an error or partial result for this query.
+                            Agent Context reported an error or partial result for this query.
                           </Alert>
                         )}
 
@@ -749,7 +767,7 @@ const PantomathPage: FunctionComponent = () => {
 
                   <Card variant="outlined" sx={{ p: 2.5, bgcolor: "background.surface" }}>
                     <Typography level="title-sm" sx={{ mb: 1 }}>
-                      How Pantomath Retrieval Works
+                      How Agent Context Retrieval Works
                     </Typography>
                     <Stack spacing={1.25}>
                       <Typography level="body-xs" textColor="text.secondary">
@@ -804,9 +822,9 @@ const PantomathPage: FunctionComponent = () => {
 
                 {pantomathProducts.length === 0 ? (
                   <Alert color="neutral" variant="soft">
-                    No Pantomath products are indexed for this team yet. Configure a product
+                    No Agent Context products are indexed for this team yet. Configure a product
                     under <code>config/products/&lt;product&gt;/sources.yaml</code> or run the
-                    Pantomath sync job to populate Milvus.
+                    Agent Context sync job to populate Milvus.
                   </Alert>
                 ) : (
                   <Table hoverRow sx={{ "--TableCell-paddingY": "12px" }}>
@@ -882,7 +900,7 @@ const PantomathPage: FunctionComponent = () => {
                                   color="primary"
                                   onClick={() => {
                                     setSelectedProduct(item.product);
-                                    navigate("/pantomath");
+                                    navigate(playgroundPath);
                                   }}
                                 >
                                   Query
@@ -1001,7 +1019,7 @@ const PantomathPage: FunctionComponent = () => {
                         <Typography level="title-md">Connect AI Agents via MCP</Typography>
                         <Typography level="body-xs" textColor="text.tertiary">
                           Drop this configuration into Antigravity, Cursor, or Claude Desktop
-                          to give your coding agent live access to Pantomath.
+                          to give your coding agent live access to Agent Context.
                         </Typography>
                       </Box>
                       <Button
@@ -1059,7 +1077,7 @@ const PantomathPage: FunctionComponent = () => {
                     </Box>
 
                     <Alert color="primary" variant="soft">
-                      Using the Opsway Cloud Gateway automatically scopes Pantomath queries to
+                      Using the Opsway Cloud Gateway automatically scopes Agent Context queries to
                       your team&apos;s tenant, enforces product quotas, and shares the same MCP
                       connection with Monitoring &amp; Log Search tools.
                     </Alert>

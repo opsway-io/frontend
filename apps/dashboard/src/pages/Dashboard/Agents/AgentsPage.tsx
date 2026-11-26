@@ -1103,7 +1103,7 @@ const MCPGatewayView: FunctionComponent = () => {
               <tr>
                 <td><code>pantomath.ask_codebase</code></td>
                 <td><Chip size="sm" variant="soft" color="neutral">Code GraphRAG</Chip></td>
-                <td>Query Pantomath Code & Infrastructure GraphRAG to locate source files, recent commits, or Kubernetes manifests.</td>
+                <td>Query Agent Context (Code & Infrastructure GraphRAG) to locate source files, recent commits, or Kubernetes manifests.</td>
               </tr>
             </tbody>
           </Table>

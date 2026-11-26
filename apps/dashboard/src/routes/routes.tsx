@@ -1,5 +1,11 @@
 import { FunctionComponent, lazy, Suspense } from "react";
-import { Navigate, Outlet, Route, Routes as RouterRoutes } from "react-router-dom";
+import {
+  Navigate,
+  Outlet,
+  Route,
+  Routes as RouterRoutes,
+  useParams,
+} from "react-router-dom";
 
 import { Role } from "../components/Restrict";
 import useAuthenticationStore from "../hooks/authentication.store";
@@ -199,9 +205,10 @@ const isMonitoringSubdomain =
   typeof window !== "undefined" &&
   window.location.hostname.startsWith("monitoring");
 
-const isPantomathSubdomain =
+const isAgentContextSubdomain =
   typeof window !== "undefined" &&
-  window.location.hostname.startsWith("pantomath");
+  (window.location.hostname.startsWith("agent-context") ||
+    window.location.hostname.startsWith("pantomath"));
 
 /** Renders DashboardLayout when signed in with a team, or public outlet when signed out. */
 const DualModeInfoLayout: FunctionComponent = () => {
@@ -212,6 +219,12 @@ const DualModeInfoLayout: FunctionComponent = () => {
   return <Outlet />;
 };
 
+/** Redirects legacy /incidents/incident/:incidentId URLs to /incidents/:incidentId. */
+const LegacyIncidentRedirect: FunctionComponent = () => {
+  const { incidentId } = useParams<{ incidentId: string }>();
+  return <Navigate to={incidentId ? `/incidents/${incidentId}` : "/incidents"} replace />;
+};
+
 const Routes: FunctionComponent = () => {
   return (
     <Suspense>
@@ -219,6 +232,15 @@ const Routes: FunctionComponent = () => {
         {/* Dual-mode Product Info & Operational Guide routes (accessible both logged-out and logged-in) */}
         <Route path="info" element={<DualModeInfoLayout />}>
           <Route index element={<ProductInfoPage />} />
+          {isMonitoringSubdomain && (
+            <Route path="monitoring" element={<Navigate to="/info" replace />} />
+          )}
+          {isAgentContextSubdomain && (
+            <>
+              <Route path="agent-context" element={<Navigate to="/info" replace />} />
+              <Route path="pantomath" element={<Navigate to="/info" replace />} />
+            </>
+          )}
           <Route path=":productId" element={<ProductInfoPage />} />
         </Route>
 
@@ -232,8 +254,10 @@ const Routes: FunctionComponent = () => {
           <Route
             index
             element={
-              isPantomathSubdomain ? (
-                <Navigate to="pantomath" replace />
+              isAgentContextSubdomain ? (
+                <RestrictedRoute product="pantomath">
+                  <PantomathPage />
+                </RestrictedRoute>
               ) : isMonitoringSubdomain ? (
                 <Navigate to="monitors" replace />
               ) : (
@@ -241,7 +265,7 @@ const Routes: FunctionComponent = () => {
               )
             }
           />
-          <Route path="hub" element={<HubOverviewPage />} />
+          <Route path="hub" element={<Navigate to="/" replace />} />
 
           {/* Standalone Autonomous Agents */}
           <Route
@@ -253,11 +277,46 @@ const Routes: FunctionComponent = () => {
             }
           />
 
-          {/* Pantomath Code & Infrastructure GraphRAG */}
+          {/* Agent Context (Product, Code & Infrastructure GraphRAG) */}
           <Route element={<RestrictedRoute product="pantomath" />}>
-            <Route path="pantomath" element={<PantomathPage />} />
-            <Route path="pantomath/products" element={<PantomathPage />} />
-            <Route path="pantomath/mcp" element={<PantomathPage />} />
+            <Route path="products" element={<PantomathPage />} />
+            <Route path="mcp" element={<PantomathPage />} />
+            <Route
+              path="agent-context"
+              element={
+                isAgentContextSubdomain ? (
+                  <Navigate to="/" replace />
+                ) : (
+                  <PantomathPage />
+                )
+              }
+            />
+            <Route
+              path="agent-context/products"
+              element={<Navigate to="/products" replace />}
+            />
+            <Route
+              path="agent-context/mcp"
+              element={<Navigate to="/mcp" replace />}
+            />
+            {/* Legacy Pantomath routes kept as redirects for bookmarks */}
+            <Route
+              path="pantomath"
+              element={
+                <Navigate
+                  to={isAgentContextSubdomain ? "/" : "/agent-context"}
+                  replace
+                />
+              }
+            />
+            <Route
+              path="pantomath/products"
+              element={<Navigate to="/products" replace />}
+            />
+            <Route
+              path="pantomath/mcp"
+              element={<Navigate to="/mcp" replace />}
+            />
           </Route>
 
           {/* Platform Owner Rollout & Admin */}
@@ -332,9 +391,10 @@ const Routes: FunctionComponent = () => {
           <Route path="incidents">
             <Route index path="" element={<IncidentsView />} />
             <Route path=":id/monitor" element={<IncidentsMonitorView />} />
+            <Route path=":incidentId" element={<IncidentDetailView />} />
             <Route
               path="incident/:incidentId"
-              element={<IncidentDetailView />}
+              element={<LegacyIncidentRedirect />}
             />
           </Route>
 

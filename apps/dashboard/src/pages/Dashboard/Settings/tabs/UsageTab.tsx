@@ -410,7 +410,7 @@ const UsageTab: FunctionComponent = () => {
             </Chip>
           </Stack>
           <Typography level="body-sm" textColor="text.secondary" sx={{ mt: 0.5 }}>
-            Track consumption across Monitoring, Log-Search, Autonomous Agents, and Pantomath.
+            Track consumption across Monitoring, Log Search, Autonomous Agents, and Agent Context.
           </Typography>
         </Box>
 
@@ -493,7 +493,7 @@ const UsageTab: FunctionComponent = () => {
           {isProductVisible("monitoring") && <Tab value="monitoring">Monitoring</Tab>}
           {isProductVisible("log_search") && <Tab value="log_search">Log-Search</Tab>}
           {isProductVisible("managed_agent") && <Tab value="managed_agent">AI Agents &amp; MCP</Tab>}
-          {isProductVisible("pantomath") && <Tab value="pantomath">Pantomath</Tab>}
+          {isProductVisible("pantomath") && <Tab value="pantomath">Agent Context</Tab>}
         </TabList>
       </Tabs>
 
@@ -637,7 +637,7 @@ const UsageTab: FunctionComponent = () => {
                   <IoCodeSlashOutline size={18} />
                 </Box>
                 <Box>
-                  <Typography level="title-md">Pantomath Code &amp; Infra Graph</Typography>
+                  <Typography level="title-md">Agent Context</Typography>
                   <Typography level="body-xs" textColor="text.tertiary">
                     Git AST parsing, Kustomize topology &amp; GraphRAG
                   </Typography>
@@ -723,7 +723,7 @@ const UsageTab: FunctionComponent = () => {
               <TabList variant="soft" size="sm">
                 {isProductVisible("monitoring") && <Tab value="monitors">Monitors</Tab>}
                 {isProductVisible("log_search") && <Tab value="logServices">Log Services</Tab>}
-                {isProductVisible("pantomath") && <Tab value="pantomath">Pantomath</Tab>}
+                {isProductVisible("pantomath") && <Tab value="pantomath">Agent Context</Tab>}
                 {isProductVisible("managed_agent") && <Tab value="triggers">Agent Triggers</Tab>}
                 {isProductVisible("managed_agent") && <Tab value="services">AI Services</Tab>}
               </TabList>
@@ -811,7 +811,7 @@ const UsageTab: FunctionComponent = () => {
                     <tr>
                       <td colSpan={5}>
                         <Typography level="body-xs" textColor="text.tertiary" textAlign="center" py={2}>
-                          No Pantomath products indexed yet.
+                          No Agent Context products indexed yet.
                         </Typography>
                       </td>
                     </tr>
@@ -861,7 +861,7 @@ const UsageTab: FunctionComponent = () => {
                                   setActivePantomath.mutate(pm.product, {
                                     onSuccess: () =>
                                       enqueueSnackbar(
-                                        `Switched active Pantomath product to ${pm.product}`,
+                                        `Switched active Agent Context product to ${pm.product}`,
                                         { variant: "success" },
                                       ),
                                   })
@@ -999,7 +999,7 @@ const UsageTab: FunctionComponent = () => {
               <Typography level="body-xs" textColor="text.secondary">
                 {usage.overage?.eligible
                   ? "Paid plans include a 72h / +15% grace buffer. Enable Pay-As-You-Go to stay unthrottled past quota with an optional monthly spend cap."
-                  : "Free plan includes a 24h / +10% grace buffer, then switches to zero-data-loss protection (cold log spillover, read-only Pantomath, BYO-LLM fallback). Upgrade to Team to unlock Pay-As-You-Go overages."}
+                  : "Free plan includes a 24h / +10% grace buffer, then switches to zero-data-loss protection (cold log spillover, read-only Agent Context, BYO-LLM fallback). Upgrade to Team to unlock Pay-As-You-Go overages."}
               </Typography>
             </Box>
           </Stack>
@@ -1087,7 +1087,7 @@ const UsageTab: FunctionComponent = () => {
         )}
 
         <Typography level="body-xs" textColor="text.tertiary">
-          Pay-as-you-go rates: $0.50 / GB Log-Search · $0.25 / Managed AI run · $1.00 / Monitor · $10.00 / Pantomath product.
+          Pay-as-you-go rates: $0.50 / GB Log-Search · $0.25 / Managed AI run · $1.00 / Monitor · $10.00 / Agent Context product.
           {enforcementByProduct.log_search?.state === "THROTTLED"
             ? " Excess logs are currently preserved in cold storage."
             : ""}

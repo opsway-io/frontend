@@ -42,7 +42,7 @@ const PRODUCT_LABELS: Record<ProductSlug, string> = {
   monitoring: "Monitoring",
   log_search: "Log Search",
   managed_agent: "Autonomous Agents",
-  pantomath: "Pantomath",
+  pantomath: "Agent Context",
 };
 
 const VISIBILITY_META: Record<

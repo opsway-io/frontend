@@ -9,11 +9,23 @@ const TermsNotice: FunctionComponent = () => (
     sx={{ textAlign: "center", px: 2 }}
   >
     By clicking the button below, you agree to our{" "}
-    <Link href="#" fontWeight="md" textColor="text.secondary">
+    <Link
+      href="https://opsway.eu/terms-of-service"
+      target="_blank"
+      rel="noopener noreferrer"
+      fontWeight="md"
+      textColor="text.secondary"
+    >
       Terms of Service
     </Link>
     {" and "}
-    <Link href="#" fontWeight="md" textColor="text.secondary">
+    <Link
+      href="https://opsway.eu/privacy-policy"
+      target="_blank"
+      rel="noopener noreferrer"
+      fontWeight="md"
+      textColor="text.secondary"
+    >
       Privacy Policy
     </Link>
     .

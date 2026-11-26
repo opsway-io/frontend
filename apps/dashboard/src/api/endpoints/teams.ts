@@ -201,10 +201,11 @@ export async function acceptInvite(token: string): Promise<void> {
 export async function postCreateCheckoutSession(
   teamId: string | number,
   plan: string,
+  returnUrl?: string,
 ): Promise<string> {
   const response = await client.post<string>(
     `/v1/teams/${teamId}/create-checkout-session`,
-    { plan },
+    { plan, ...(returnUrl ? { returnUrl } : {}) },
   );
 
   return response.data;
@@ -216,12 +217,96 @@ export interface IPostCustomerPortalResponse {
 
 export async function postCustomerPortal(
   teamId: string | number,
+  returnUrl?: string,
 ): Promise<IPostCustomerPortalResponse> {
   const response = await client.post<IPostCustomerPortalResponse>(
     `/v1/teams/${teamId}/customer-portal`,
+    returnUrl ? { returnUrl } : undefined,
   );
 
   return response.data;
+}
+
+export interface IBillingSummaryResponse {
+  teamId: number;
+  paymentPlan: "FREE" | "PRO" | "ENTERPRISE";
+  canManageBilling: boolean;
+  subscription?: {
+    stripeSubscriptionId?: string;
+    baseTier: "FREE" | "PRO" | "ENTERPRISE";
+    status: string;
+    currentPeriodStart?: string;
+    currentPeriodEnd?: string;
+    cancelAtPeriodEnd: boolean;
+  } | null;
+  entitlements: {
+    id: number;
+    teamId: number;
+    product: "monitoring" | "log_search" | "pantomath" | "managed_agent";
+    tier: "FREE" | "PRO" | "ENTERPRISE";
+    source?: "SUITE" | "ADDON";
+    enabled: boolean;
+    monthlyQuota: number;
+    currentUsage: number;
+    usageResetAt?: string;
+  }[];
+  catalog: {
+    currency: string;
+    plans: {
+      id: "FREE" | "PRO" | "ENTERPRISE";
+      name: string;
+      description: string;
+      price: number;
+      currency: string;
+      interval: string;
+      lookupKey: string;
+      highlighted?: boolean;
+      features: string[];
+    }[];
+    addons: {
+      product: "monitoring" | "log_search" | "pantomath" | "managed_agent";
+      name: string;
+      description: string;
+      subdomain: string;
+      tiers: {
+        tier: "FREE" | "PRO" | "ENTERPRISE";
+        name: string;
+        price: number;
+        currency: string;
+        lookupKey: string;
+        monthlyQuota: number;
+        quotaUnit: string;
+      }[];
+    }[];
+  };
+}
+
+export async function getBillingSummary(
+  teamId: string | number,
+): Promise<IBillingSummaryResponse> {
+  const response = await client.get<IBillingSummaryResponse>(
+    `/v1/teams/${teamId}/billing/summary`,
+  );
+  return response.data;
+}
+
+export async function postProductAddon(
+  teamId: string | number,
+  product: "monitoring" | "log_search" | "pantomath" | "managed_agent",
+  tier: "FREE" | "PRO" | "ENTERPRISE",
+  returnUrl?: string,
+): Promise<{ checkoutUrl?: string }> {
+  const response = await client.post<{ checkoutUrl?: string }>(
+    `/v1/teams/${teamId}/billing/addons`,
+    { product, tier, ...(returnUrl ? { returnUrl } : {}) },
+  );
+  return response.data;
+}
+
+export async function postResumeSubscription(
+  teamId: string | number,
+): Promise<void> {
+  await client.post(`/v1/teams/${teamId}/billing/resume`);
 }
 
 export interface IGetProductsResponse {

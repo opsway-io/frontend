@@ -6,6 +6,7 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import BarChartIcon from "@mui/icons-material/BarChart";
 import CodeIcon from "@mui/icons-material/Code";
+import CreditCardIcon from "@mui/icons-material/CreditCard";
 import ListIcon from "@mui/icons-material/List";
 import MenuBookOutlinedIcon from "@mui/icons-material/MenuBookOutlined";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
@@ -15,11 +16,12 @@ interface SidebarProps {
   variant?: "rail" | "drawer";
   collapsed: boolean;
   onToggleCollapsed: () => void;
-  viewMode: "logs" | "dashboard" | "guide";
+  viewMode: "logs" | "dashboard" | "guide" | "billing";
   isLive: boolean;
   onSelectLogs: () => void;
   onSelectHistogram: () => void;
   onSelectGuide: () => void;
+  onSelectBilling: () => void;
   onToggleLive: () => void;
   onNavigate?: () => void;
 }
@@ -132,6 +134,7 @@ export function Sidebar({
   onSelectLogs,
   onSelectHistogram,
   onSelectGuide,
+  onSelectBilling,
   onToggleLive,
   onNavigate,
 }: SidebarProps) {
@@ -207,6 +210,17 @@ export function Sidebar({
           collapsed={isCollapsed}
           onClick={() => {
             onSelectGuide();
+            onNavigate?.();
+          }}
+        />
+        <SidebarItem
+          text="Usage & Billing"
+          icon={<CreditCardIcon sx={{ fontSize: 18 }} />}
+          active={viewMode === "billing" && !isLive}
+          activeIconColor="#5185a5"
+          collapsed={isCollapsed}
+          onClick={() => {
+            onSelectBilling();
             onNavigate?.();
           }}
         />

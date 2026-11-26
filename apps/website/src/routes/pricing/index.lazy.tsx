@@ -29,7 +29,7 @@ function Index() {
         <title>Pricing - opsway.eu</title>
         <meta
           name="keywords"
-          content="pricing, plans, free, team, enterprise"
+          content="pricing, plans, free, pro, enterprise, modular addons"
         />
       </Helmet>
 
@@ -73,44 +73,79 @@ function Index() {
         >
           <PricingCard
             title="Free"
-            description="For small teams"
-            price="0£"
+            description="For small teams & standalone trials"
+            price="€0"
             features={[
-              "Up to 10 users",
-              "Up to 5 monitors & 1 status page",
-              "1 GB / month Log-Search",
-              "BYOA MCP Gateway access",
-              "3 Managed AI investigations",
+              "Up to 3 team members",
+              "5 monitors & 1 status page",
+              "1 GB / month Log Search",
+              "3 Managed AI investigations / mo",
+              "1 Agent Context repository",
+              "Unified MCP Gateway & BYOA",
             ]}
           />
           <PricingCard
-            title="Team"
-            description="For medium teams"
-            price="20£"
+            title="Pro"
+            description="For growing engineering teams"
+            price="€20"
             highlighted
             features={[
-              "Up to 25 users",
-              "Up to 25 monitors & 10 status pages",
-              "50 GB / month Log-Search",
-              "Unified MCP Gateway & BYOA webhooks",
-              "25 Managed AI investigations / mo",
-              "1-Click Automated Remediation",
+              "Up to 5 team members",
+              "50 monitors & 5 status pages",
+              "50 GB / month Log Search",
+              "30 Managed AI investigations / mo",
+              "5 Agent Context repositories",
+              "Pay-as-you-go overage protection & 1-click remediation",
             ]}
           />
           <PricingCard
             title="Enterprise"
-            description="For large teams"
-            price="100£"
+            description="For full-suite operations at scale"
+            price="€100"
             features={[
-              "Unlimited users & monitors",
-              "Unlimited status pages",
-              "Custom Log-Search retention",
-              "Agent Context (Code & Infra GraphRAG)",
-              "Autonomous Auto-Remediation",
-              "Priority 24/7 support",
+              "Unlimited team members",
+              "Unlimited monitors & status pages",
+              "Unlimited Log Search ingestion",
+              "500 Managed AI investigations / mo",
+              "Unlimited Agent Context repositories",
+              "Autonomous auto-remediation & priority 24/7 support",
             ]}
           />
         </Box>
+
+        <Sheet
+          variant="outlined"
+          sx={{
+            mt: 4,
+            p: { xs: 2.5, md: 3 },
+            borderRadius: "xl",
+            display: "flex",
+            flexDirection: { xs: "column", md: "row" },
+            alignItems: { xs: "flex-start", md: "center" },
+            justifyContent: "space-between",
+            gap: 2,
+          }}
+        >
+          <Box>
+            <Typography level="title-md">
+              Prefer modular product add-ons?
+            </Typography>
+            <Typography level="body-sm" textColor="text.secondary" sx={{ mt: 0.5 }}>
+              Start on the Free Suite and upgrade individual products anytime:
+              Monitoring Pro (€9/mo), Log Search Pro (€12/mo), Agent Context Pro
+              (€12/mo), or Autonomous Agents Pro (€15/mo).
+            </Typography>
+          </Box>
+          <Button
+            component="a"
+            href="https://my.opsway.eu/settings/billing"
+            variant="soft"
+            color="primary"
+            sx={{ flexShrink: 0 }}
+          >
+            Configure in Hub
+          </Button>
+        </Sheet>
 
         <Typography
           level="h2"
@@ -266,37 +301,49 @@ const renderValue = (value: Feature["free"]): ReactNode => {
 const FeatureOverview: FunctionComponent = () => {
   const features: Feature[] = [
     {
-      name: "Users",
-      free: 10,
-      team: 25,
+      name: "Team members",
+      free: 3,
+      team: 5,
       enterprise: "Unlimited",
     },
     {
       name: "Monitors",
       free: 5,
-      team: 25,
+      team: 50,
       enterprise: "Unlimited",
     },
     {
       name: "Status pages",
       free: 1,
-      team: 10,
+      team: 5,
       enterprise: "Unlimited",
     },
     {
-      name: "Log-Search ingestion",
-      free: "5 GB / mo",
+      name: "Log Search ingestion",
+      free: "1 GB / mo",
       team: "50 GB / mo",
-      enterprise: "500+ GB / mo",
+      enterprise: "Unlimited",
     },
     {
       name: "Managed AI investigations",
-      free: "5 / mo",
-      team: "50 / mo",
+      free: "3 / mo",
+      team: "30 / mo",
       enterprise: "500 / mo",
     },
     {
+      name: "Agent Context repositories",
+      free: 1,
+      team: 5,
+      enterprise: "Unlimited",
+    },
+    {
       name: "Unified MCP Gateway & BYO Agent",
+      free: "yes",
+      team: "yes",
+      enterprise: "yes",
+    },
+    {
+      name: "Modular product add-ons",
       free: "yes",
       team: "yes",
       enterprise: "yes",
@@ -317,22 +364,10 @@ const FeatureOverview: FunctionComponent = () => {
       enterprise: "yes",
     },
     {
-      name: "Custom domain",
+      name: "Custom domain & branding",
       free: "yes",
       team: "yes",
       enterprise: "yes",
-    },
-    {
-      name: "Custom branding",
-      free: "yes",
-      team: "yes",
-      enterprise: "yes",
-    },
-    {
-      name: "Data center locations",
-      free: "3",
-      team: "3",
-      enterprise: "3",
     },
   ];
 
@@ -364,7 +399,7 @@ const FeatureOverview: FunctionComponent = () => {
           <tr>
             <th style={{ width: "34%" }}>Feature</th>
             <th>Free</th>
-            <th>Team</th>
+            <th>Pro</th>
             <th>Enterprise</th>
           </tr>
         </thead>

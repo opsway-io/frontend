@@ -16,7 +16,7 @@ const faqs: { question: string; answer: string }[] = [
   {
     question: "Is opsway free?",
     answer:
-      "Yes. The Free plan covers up to 10 users, 5 monitors and 5 status pages. Paid plans add more monitors, on-call schedules and longer history.",
+      "Yes. The Free plan covers up to 3 team members, 5 monitors, 1 status page, 1 GB/month Log Search, 3 Managed AI investigations, and 1 Agent Context repository. Pro (€20/mo), Enterprise (€100/mo), and modular per-product add-ons scale any product independently.",
   },
   {
     question: "Is opsway really open source?",

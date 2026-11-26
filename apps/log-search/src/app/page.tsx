@@ -53,6 +53,7 @@ import { OpswayTopBar } from "@opsway/shell";
 import { opswayTheme } from "../components/theme";
 import { Sidebar } from "../components/Sidebar";
 import { LogSearchGuide } from "../components/LogSearchGuide";
+import { BillingPanel } from "../components/BillingPanel";
 
 interface LogEvent {
   id?: string;
@@ -120,7 +121,7 @@ export default function Home() {
   const [histogramData, setHistogramData] = useState<HistogramPoint[]>([]);
   const [totalMatches, setTotalMatches] = useState<number | null>(null);
   const [isSearching, setIsSearching] = useState(false);
-  const [viewMode, setViewMode] = useState<"logs" | "dashboard" | "guide">("logs");
+  const [viewMode, setViewMode] = useState<"logs" | "dashboard" | "guide" | "billing">("logs");
   const [expandedLogId, setExpandedLogId] = useState<string | number | null>(null);
 
   // Live Tailing
@@ -555,6 +556,10 @@ export default function Home() {
       stopLiveTailing();
       setViewMode("guide");
     },
+    onSelectBilling: () => {
+      stopLiveTailing();
+      setViewMode("billing");
+    },
     onToggleLive: toggleLiveTailing,
   };
 
@@ -620,7 +625,9 @@ export default function Home() {
           {/* Main scrollable workspace (mirrors DashboardLayout + Container) */}
           <main className="flex-1 min-w-0 h-full overflow-auto">
           <div className="w-full max-w-[1600px] mx-auto px-4 py-4 md:px-6 md:pt-8 md:pb-12 flex flex-col gap-4">
-            {viewMode === "guide" ? (
+            {viewMode === "billing" ? (
+              <BillingPanel />
+            ) : viewMode === "guide" ? (
               <LogSearchGuide
                 onOpenErrorLogs={() => {
                   stopLiveTailing();

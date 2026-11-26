@@ -46,6 +46,7 @@ import {
   useUpdateOverageSettings,
 } from "../../../../hooks/suite.query";
 import { usePlatformProducts } from "../../../../hooks/platform.query";
+import { getSubdomainMode } from "../../../../routes/subdomain";
 
 type ProductFilter = "all" | "monitoring" | "log_search" | "managed_agent" | "pantomath";
 type TrendMetric = "probes" | "logMb" | "agentRuns" | "agentTokens" | "mcpCalls" | "notifications";
@@ -213,10 +214,24 @@ function enforcementLabel(e: ProductEnforcementSummary): string {
 }
 
 const UsageTab: FunctionComponent = () => {
+  const subdomainMode = getSubdomainMode();
+  const scopedProduct: Exclude<ProductFilter, "all"> | null =
+    subdomainMode === "monitoring"
+      ? "monitoring"
+      : subdomainMode === "agent-context"
+        ? "pantomath"
+        : null;
+
   const [range, setRange] = useState<UsageRange>("current_cycle");
-  const [productFilter, setProductFilter] = useState<ProductFilter>("all");
-  const [trendMetric, setTrendMetric] = useState<TrendMetric>("probes");
-  const [consumerTab, setConsumerTab] = useState<ConsumerTab>("monitors");
+  const [productFilter, setProductFilter] = useState<ProductFilter>(
+    scopedProduct ?? "all",
+  );
+  const [trendMetric, setTrendMetric] = useState<TrendMetric>(
+    scopedProduct === "pantomath" ? "mcpCalls" : "probes",
+  );
+  const [consumerTab, setConsumerTab] = useState<ConsumerTab>(
+    scopedProduct === "pantomath" ? "pantomath" : "monitors",
+  );
   const [draftAllowOverage, setDraftAllowOverage] = useState<boolean | null>(null);
   const [draftSpendCap, setDraftSpendCap] = useState<string | null>(null);
 
@@ -264,15 +279,24 @@ const UsageTab: FunctionComponent = () => {
 
   const highUtilizationQuotas = useMemo(() => {
     if (!usage) return [];
-    const all: QuotaItem[] = [
-      ...usage.products.monitoring.quotas,
-      ...usage.products.logSearch.quotas,
-      ...usage.products.managedAgent.quotas,
-      ...usage.products.pantomath.quotas,
-      usage.platform.teamSeats,
-    ];
+    const all: QuotaItem[] =
+      scopedProduct === "monitoring"
+        ? [...usage.products.monitoring.quotas, usage.platform.teamSeats]
+        : scopedProduct === "pantomath"
+          ? [...usage.products.pantomath.quotas]
+          : scopedProduct === "log_search"
+            ? [...usage.products.logSearch.quotas]
+            : scopedProduct === "managed_agent"
+              ? [...usage.products.managedAgent.quotas]
+              : [
+                  ...usage.products.monitoring.quotas,
+                  ...usage.products.logSearch.quotas,
+                  ...usage.products.managedAgent.quotas,
+                  ...usage.products.pantomath.quotas,
+                  usage.platform.teamSeats,
+                ];
     return all.filter((q) => q.status === "warning" || q.status === "critical");
-  }, [usage]);
+  }, [usage, scopedProduct]);
 
   const chartSeries = useMemo(() => {
     if (!usage) return [];
@@ -385,10 +409,17 @@ const UsageTab: FunctionComponent = () => {
   }
 
   const { monitoring, logSearch, managedAgent, pantomath } = usage.products;
+  const activeFilter: ProductFilter = scopedProduct ?? productFilter;
   const showProduct = (slug: ProductFilter) => {
     if (slug !== "all" && !isProductVisible(slug)) return false;
-    return productFilter === "all" || productFilter === slug;
+    return activeFilter === "all" || activeFilter === slug;
   };
+  const scopedLabel =
+    scopedProduct === "monitoring"
+      ? "Opsway Monitoring"
+      : scopedProduct === "pantomath"
+        ? "Agent Context"
+        : null;
 
   return (
     <Stack spacing={3}>
@@ -401,16 +432,20 @@ const UsageTab: FunctionComponent = () => {
       >
         <Box>
           <Stack direction="row" spacing={1} alignItems="center">
-            <Typography level="title-lg">Product Usage &amp; Quotas</Typography>
+            <Typography level="title-lg">
+              {scopedLabel ? `${scopedLabel} Usage & Quotas` : "Platform Usage & Quotas"}
+            </Typography>
             <Chip size="sm" variant="soft" color="primary">
-              {usage.plan} Plan
+              {usage.plan === "TEAM" ? "PRO" : usage.plan} Plan
             </Chip>
             <Chip size="sm" variant="outlined" color="neutral">
               Resets in {usage.billingCycle.daysRemaining}d
             </Chip>
           </Stack>
           <Typography level="body-sm" textColor="text.secondary" sx={{ mt: 0.5 }}>
-            Track consumption across Monitoring, Log Search, Autonomous Agents, and Agent Context.
+            {scopedLabel
+              ? `Consumption and quota status scoped to ${scopedLabel}.`
+              : "Track consumption across Monitoring, Log Search, Autonomous Agents, and Agent Context."}
           </Typography>
         </Box>
 
@@ -450,6 +485,18 @@ const UsageTab: FunctionComponent = () => {
           >
             Manage Plan
           </Button>
+
+          {scopedProduct && (
+            <Button
+              size="sm"
+              variant="outlined"
+              color="primary"
+              component="a"
+              href="https://my.opsway.eu/settings/usage"
+            >
+              Full Platform Usage ↗
+            </Button>
+          )}
         </Stack>
       </Stack>
 
@@ -482,20 +529,22 @@ const UsageTab: FunctionComponent = () => {
         </Alert>
       )}
 
-      {/* Product Filter Tabs */}
-      <Tabs
-        value={productFilter}
-        onChange={(_, val) => setProductFilter(val as ProductFilter)}
-        sx={{ bgcolor: "transparent" }}
-      >
-        <TabList variant="plain" size="sm" sx={{ gap: 0.5 }}>
-          <Tab value="all">All Products</Tab>
-          {isProductVisible("monitoring") && <Tab value="monitoring">Monitoring</Tab>}
-          {isProductVisible("log_search") && <Tab value="log_search">Log-Search</Tab>}
-          {isProductVisible("managed_agent") && <Tab value="managed_agent">AI Agents &amp; MCP</Tab>}
-          {isProductVisible("pantomath") && <Tab value="pantomath">Agent Context</Tab>}
-        </TabList>
-      </Tabs>
+      {/* Product Filter Tabs (Hub-only; product subdomains are strictly scoped to their own product) */}
+      {!scopedProduct && (
+        <Tabs
+          value={productFilter}
+          onChange={(_, val) => setProductFilter(val as ProductFilter)}
+          sx={{ bgcolor: "transparent" }}
+        >
+          <TabList variant="plain" size="sm" sx={{ gap: 0.5 }}>
+            <Tab value="all">All Products</Tab>
+            {isProductVisible("monitoring") && <Tab value="monitoring">Monitoring</Tab>}
+            {isProductVisible("log_search") && <Tab value="log_search">Log-Search</Tab>}
+            {isProductVisible("managed_agent") && <Tab value="managed_agent">AI Agents &amp; MCP</Tab>}
+            {isProductVisible("pantomath") && <Tab value="pantomath">Agent Context</Tab>}
+          </TabList>
+        </Tabs>
+      )}
 
       {/* Modular Product Usage Cards */}
       <Box
@@ -1049,12 +1098,16 @@ const UsageTab: FunctionComponent = () => {
           )}
         </Stack>
 
-        {(usage.enforcement ?? []).some((e) => e.state !== "NORMAL") && (
+        {(usage.enforcement ?? []).some(
+          (e) => e.state !== "NORMAL" && (!scopedProduct || e.product === scopedProduct),
+        ) && (
           <>
             <Divider />
             <Stack spacing={1}>
               {(usage.enforcement ?? [])
-                .filter((e) => e.state !== "NORMAL")
+                .filter(
+                  (e) => e.state !== "NORMAL" && (!scopedProduct || e.product === scopedProduct),
+                )
                 .map((e) => (
                   <Stack
                     key={`${e.product}-${e.quotaKey}`}
@@ -1087,8 +1140,9 @@ const UsageTab: FunctionComponent = () => {
         )}
 
         <Typography level="body-xs" textColor="text.tertiary">
-          Pay-as-you-go rates: $0.50 / GB Log-Search · $0.25 / Managed AI run · $1.00 / Monitor · $10.00 / Agent Context product.
-          {enforcementByProduct.log_search?.state === "THROTTLED"
+          Pay-as-you-go rates: €0.50 / GB Log-Search · €0.25 / Managed AI run · €1.00 / Monitor · €10.00 / Agent Context product.
+          {(!scopedProduct || scopedProduct === "log_search") &&
+          enforcementByProduct.log_search?.state === "THROTTLED"
             ? " Excess logs are currently preserved in cold storage."
             : ""}
         </Typography>

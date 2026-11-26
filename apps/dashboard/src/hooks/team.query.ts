@@ -125,16 +125,22 @@ export const useChangePlan = () => {
   const currentTeamId = useAuthenticationStore((state) => state.currentTeamId);
 
   return useMutation({
-    mutationFn: (plan: string) => {
+    mutationFn: (
+      input: string | { plan: string; returnUrl?: string },
+    ) => {
       if (!currentTeamId) {
         return Promise.reject(new Error("No team selected"));
       }
-
-      return TeamsAPI.postCreateCheckoutSession(currentTeamId, plan);
+      const plan = typeof input === "string" ? input : input.plan;
+      const returnUrl = typeof input === "string" ? undefined : input.returnUrl;
+      return TeamsAPI.postCreateCheckoutSession(currentTeamId, plan, returnUrl);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["teams"] });
       queryClient.invalidateQueries({ queryKey: ["users"] });
+      queryClient.invalidateQueries({ queryKey: ["entitlements"] });
+      queryClient.invalidateQueries({ queryKey: ["billingSummary"] });
+      queryClient.invalidateQueries({ queryKey: ["teamUsage"] });
     },
   });
 };
@@ -144,13 +150,64 @@ export const useOpenCustomerPortal = () => {
   const currentTeamId = useAuthenticationStore((state) => state.currentTeamId);
 
   return useMutation({
-    mutationFn: async () => {
+    mutationFn: async (returnUrl?: string) => {
       if (!currentTeamId) {
         throw new Error("No team selected");
       }
 
-      const { url } = await TeamsAPI.postCustomerPortal(currentTeamId);
+      const { url } = await TeamsAPI.postCustomerPortal(currentTeamId, returnUrl);
       return url;
+    },
+  });
+};
+
+export const useBillingSummary = () => {
+  const currentTeamId = useAuthenticationStore((state) => state.currentTeamId);
+  return useQuery({
+    queryKey: ["billingSummary", currentTeamId],
+    queryFn: () => TeamsAPI.getBillingSummary(currentTeamId!),
+    enabled: !!currentTeamId,
+  });
+};
+
+export const useUpsertProductAddon = () => {
+  const currentTeamId = useAuthenticationStore((state) => state.currentTeamId);
+  return useMutation({
+    mutationFn: ({
+      product,
+      tier,
+      returnUrl,
+    }: {
+      product: "monitoring" | "log_search" | "pantomath" | "managed_agent";
+      tier: "FREE" | "PRO" | "ENTERPRISE";
+      returnUrl?: string;
+    }) => {
+      if (!currentTeamId) {
+        return Promise.reject(new Error("No team selected"));
+      }
+      return TeamsAPI.postProductAddon(currentTeamId, product, tier, returnUrl);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["billingSummary"] });
+      queryClient.invalidateQueries({ queryKey: ["entitlements"] });
+      queryClient.invalidateQueries({ queryKey: ["teamUsage"] });
+      queryClient.invalidateQueries({ queryKey: ["teams"] });
+    },
+  });
+};
+
+export const useResumeSubscription = () => {
+  const currentTeamId = useAuthenticationStore((state) => state.currentTeamId);
+  return useMutation({
+    mutationFn: () => {
+      if (!currentTeamId) {
+        return Promise.reject(new Error("No team selected"));
+      }
+      return TeamsAPI.postResumeSubscription(currentTeamId);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["billingSummary"] });
+      queryClient.invalidateQueries({ queryKey: ["teams"] });
     },
   });
 };

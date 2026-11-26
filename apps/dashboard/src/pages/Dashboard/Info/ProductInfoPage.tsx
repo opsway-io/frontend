@@ -1476,11 +1476,9 @@ export const ProductInfoContent: FunctionComponent<{
 };
 
 const ProductInfoPage: FunctionComponent = () => {
-  const { productId } = useParams<{ productId?: string }>();
   const authentication = useAuthenticationStore();
   const isLoggedIn = authentication.isAuthenticated();
-  const isStandaloneMonitoring =
-    isMonitoringSubdomain() || productId === "monitoring";
+  const isStandaloneMonitoring = isMonitoringSubdomain();
 
   if (isLoggedIn) {
     return (

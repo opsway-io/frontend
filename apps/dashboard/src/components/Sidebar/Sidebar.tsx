@@ -256,6 +256,20 @@ const Sidebar: FunctionComponent<SidebarProps> = ({ variant = "rail" }) => {
       label: "Organisation",
       items: [
         {
+          to: "/settings/usage",
+          text: "Usage & Quotas",
+          icon: <GoGraph />,
+          iconColor: "info",
+          minRole: Role.ADMIN,
+        },
+        {
+          to: "/settings/billing",
+          text: "Billing",
+          icon: <IoCardOutline />,
+          iconColor: "warning.400",
+          minRole: Role.ADMIN,
+        },
+        {
           to: "/team",
           text: "Team",
           icon: <AiOutlineTeam />,
@@ -317,6 +331,13 @@ const Sidebar: FunctionComponent<SidebarProps> = ({ variant = "rail" }) => {
           text: "Usage & Quotas",
           icon: <GoGraph />,
           iconColor: "info",
+          minRole: Role.ADMIN,
+        },
+        {
+          to: "/settings/billing",
+          text: "Billing",
+          icon: <IoCardOutline />,
+          iconColor: "warning.400",
           minRole: Role.ADMIN,
         },
         {

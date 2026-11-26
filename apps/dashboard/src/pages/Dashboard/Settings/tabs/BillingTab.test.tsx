@@ -133,7 +133,7 @@ afterEach(() => {
 });
 
 describe("BillingTab subdomain scoping", () => {
-  it("shows only Monitoring usage and Hub link on monitoring.opsway.eu", () => {
+  it("shows only Monitoring billing plans, usage, and Hub link on monitoring.opsway.eu", () => {
     setHostname("monitoring.opsway.eu");
     render(
       <MemoryRouter>
@@ -141,15 +141,18 @@ describe("BillingTab subdomain scoping", () => {
       </MemoryRouter>,
     );
 
-    expect(screen.getByText(/Opsway Monitoring — Usage & Billing/i)).toBeTruthy();
+    expect(screen.getByText(/Opsway Monitoring — Billing & Usage/i)).toBeTruthy();
+    expect(screen.getByText("Monitoring Pro")).toBeTruthy();
+    expect(screen.getByText("Monitoring Enterprise")).toBeTruthy();
     expect(screen.getByText("Active Monitors")).toBeTruthy();
-    expect(screen.getByText(/Full Opsway Suite Billing/i)).toBeTruthy();
+    expect(screen.getByText(/All Product Billings in Hub/i)).toBeTruthy();
     expect(screen.queryByText("Monthly Log Ingestion")).toBeNull();
+    expect(screen.queryByText("Log Search Pro")).toBeNull();
     expect(screen.queryByText("Indexed Repositories")).toBeNull();
     expect(screen.queryByText("Managed AI Runs")).toBeNull();
   });
 
-  it("shows only Agent Context usage and Hub link on agent-context.opsway.eu", () => {
+  it("shows only Agent Context billing plans, usage, and Hub link on agent-context.opsway.eu", () => {
     setHostname("agent-context.opsway.eu");
     render(
       <MemoryRouter>
@@ -157,13 +160,16 @@ describe("BillingTab subdomain scoping", () => {
       </MemoryRouter>,
     );
 
-    expect(screen.getByText(/Agent Context — Usage & Billing/i)).toBeTruthy();
+    expect(screen.getByText(/Agent Context — Billing & Usage/i)).toBeTruthy();
+    expect(screen.getByText("Agent Context Pro")).toBeTruthy();
+    expect(screen.getByText("Agent Context Enterprise")).toBeTruthy();
     expect(screen.getByText("Indexed Repositories")).toBeTruthy();
     expect(screen.queryByText("Active Monitors")).toBeNull();
+    expect(screen.queryByText("Monitoring Pro")).toBeNull();
     expect(screen.queryByText("Monthly Log Ingestion")).toBeNull();
   });
 
-  it("shows the full 4-product Opsway Suite overview on my.opsway.eu", () => {
+  it("shows the full 4-product Opsway Suite billing overview on my.opsway.eu", () => {
     setHostname("my.opsway.eu");
     render(
       <MemoryRouter>

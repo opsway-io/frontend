@@ -179,7 +179,9 @@ const AgentTriggersPanel: FunctionComponent = () => {
               <CardContent>
                 <Stack spacing={1}>
                   <Stack direction="row" alignItems="center" spacing={1}>
-                    {meta.icon}
+                    <Box sx={{ display: "flex", color: `${meta.color}.plainColor` }}>
+                      {meta.icon}
+                    </Box>
                     <Typography level="title-md">{meta.label}</Typography>
                     <Chip size="sm" variant="soft" color="neutral">
                       Always Available
@@ -207,12 +209,14 @@ const AgentTriggersPanel: FunctionComponent = () => {
                 >
                   <Box>
                     <Stack direction="row" alignItems="center" spacing={1}>
-                      {meta.icon}
+                      <Box sx={{ display: "flex", color: `${meta.color}.plainColor` }}>
+                        {meta.icon}
+                      </Box>
                       <Typography level="title-md">{meta.label}</Typography>
                       <Chip
                         size="sm"
                         variant="soft"
-                        color={enabledInSuite ? meta.color : "neutral"}
+                        color={enabledInSuite ? "success" : "neutral"}
                       >
                         {enabledInSuite ? "Connected" : "Add-on Disabled"}
                       </Chip>

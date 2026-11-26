@@ -399,6 +399,7 @@ export interface TopPantomathProductConsumer {
   repoCount: number;
   vectorChunks: number;
   source: string;
+  indexing?: boolean;
   status?: "active" | "scheduled_delete" | "deleted";
   deleteAt?: string;
 }
@@ -528,6 +529,39 @@ export async function getPantomathProductRepos(
 ): Promise<PantomathProductReposResponse> {
   const res = await client.get(
     `/v1/teams/${teamId}/pantomath/products/${encodeURIComponent(product)}/repos`
+  );
+  return res.data;
+}
+
+export interface CreatePantomathProductPayload {
+  product: string;
+  repos: string[];
+}
+
+export interface CreatePantomathProductResponse {
+  product: string;
+  collection: string;
+  queuedRepos: string[];
+  alreadyQueued?: string[];
+  status: "CREATED" | "INDEXING";
+}
+
+export async function createPantomathProduct(
+  teamId: number,
+  payload: CreatePantomathProductPayload
+): Promise<CreatePantomathProductResponse> {
+  const res = await client.post(`/v1/teams/${teamId}/pantomath/products`, payload);
+  return res.data;
+}
+
+export async function addPantomathProductRepos(
+  teamId: number,
+  product: string,
+  repos: string[]
+): Promise<CreatePantomathProductResponse> {
+  const res = await client.post(
+    `/v1/teams/${teamId}/pantomath/products/${encodeURIComponent(product)}/repos`,
+    { repos }
   );
   return res.data;
 }

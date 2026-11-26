@@ -16,6 +16,9 @@ import {
   setActivePantomathProduct,
   queryPantomath,
   getPantomathProductRepos,
+  createPantomathProduct,
+  addPantomathProductRepos,
+  CreatePantomathProductPayload,
   PantomathQueryPayload,
   updateOverageSettings,
   UsageRange,
@@ -272,5 +275,35 @@ export function usePantomathProductRepos(product: string | null) {
     queryKey: ["pantomathProductRepos", currentTeamId, product],
     queryFn: () => getPantomathProductRepos(currentTeamId || 1, product!),
     enabled: !!currentTeamId && !!product,
+  });
+}
+
+export function useCreatePantomathProduct() {
+  const queryClient = useQueryClient();
+  const currentTeamId = useAuthenticationStore((s) => s.currentTeamId);
+  return useMutation({
+    mutationFn: (payload: CreatePantomathProductPayload) =>
+      createPantomathProduct(currentTeamId || 1, payload),
+    onSuccess: (_data, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["teamUsage", currentTeamId] });
+      queryClient.invalidateQueries({
+        queryKey: ["pantomathProductRepos", currentTeamId, variables.product],
+      });
+    },
+  });
+}
+
+export function useAddPantomathProductRepos() {
+  const queryClient = useQueryClient();
+  const currentTeamId = useAuthenticationStore((s) => s.currentTeamId);
+  return useMutation({
+    mutationFn: ({ product, repos }: { product: string; repos: string[] }) =>
+      addPantomathProductRepos(currentTeamId || 1, product, repos),
+    onSuccess: (_data, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["teamUsage", currentTeamId] });
+      queryClient.invalidateQueries({
+        queryKey: ["pantomathProductRepos", currentTeamId, variables.product],
+      });
+    },
   });
 }

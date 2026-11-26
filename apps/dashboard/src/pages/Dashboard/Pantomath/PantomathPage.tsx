@@ -5,11 +5,19 @@ import {
   Card,
   Chip,
   CircularProgress,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   Divider,
   FormControl,
+  FormHelperText,
   FormLabel,
   Grid,
   IconButton,
+  Input,
+  Modal,
+  ModalClose,
+  ModalDialog,
   Option,
   Select,
   Stack,
@@ -25,6 +33,7 @@ import { enqueueSnackbar } from "notistack";
 import { FunctionComponent, KeyboardEvent, useMemo, useState } from "react";
 import { Helmet } from "react-helmet";
 import {
+  IoAddOutline,
   IoBookOutline,
   IoCheckmarkCircleOutline,
   IoCodeSlashOutline,
@@ -45,6 +54,8 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { PantomathQueryResponse } from "../../../api/endpoints/suite";
 import Container from "../../../components/Container/Container";
 import {
+  useAddPantomathProductRepos,
+  useCreatePantomathProduct,
   usePantomathProductRepos,
   useQueryPantomath,
   useSetActivePantomathProduct,
@@ -122,6 +133,8 @@ const PantomathPage: FunctionComponent = () => {
   const { data: usage, isLoading: usageLoading, refetch: refetchUsage } = useTeamUsage();
   const queryMutation = useQueryPantomath();
   const setActiveProductMutation = useSetActivePantomathProduct();
+  const createProductMutation = useCreatePantomathProduct();
+  const addReposMutation = useAddPantomathProductRepos();
 
   const pantomathUsage = usage?.products?.pantomath;
   const pantomathProducts = useMemo(
@@ -141,6 +154,23 @@ const PantomathPage: FunctionComponent = () => {
 
   // Products tab state
   const [inspectedProduct, setInspectedProduct] = useState<string | null>(null);
+  const [addProductOpen, setAddProductOpen] = useState<boolean>(false);
+  const [newProductName, setNewProductName] = useState<string>("");
+  const [newProductReposText, setNewProductReposText] = useState<string>("");
+  const [newProductError, setNewProductError] = useState<string | null>(null);
+  const [inlineRepoInput, setInlineRepoInput] = useState<string>("");
+
+  const normalizedNewProductSlug = useMemo(
+    () =>
+      newProductName
+        .trim()
+        .toLowerCase()
+        .replace(/[^a-z0-9_]+/g, "_")
+        .replace(/^_+|_+$/g, "")
+        .slice(0, 64),
+    [newProductName],
+  );
+
   const {
     data: productRepos,
     isLoading: reposLoading,
@@ -226,6 +256,94 @@ const PantomathPage: FunctionComponent = () => {
           variant: "error",
         }),
     });
+  };
+
+  const openAddProductModal = () => {
+    setNewProductName("");
+    setNewProductReposText("");
+    setNewProductError(null);
+    setAddProductOpen(true);
+  };
+
+  const extractApiError = (err: unknown, fallback: string): string => {
+    if (err && typeof err === "object" && "response" in err) {
+      const resp = (err as { response?: { data?: { error?: string; message?: string } } })
+        .response;
+      if (resp?.data?.error) return resp.data.error;
+      if (resp?.data?.message) return resp.data.message;
+    }
+    if (err instanceof Error && err.message) return err.message;
+    return fallback;
+  };
+
+  const handleCreateProduct = () => {
+    const slug = normalizedNewProductSlug;
+    if (!slug) {
+      setNewProductError("Enter a product name with letters or numbers (e.g. payments_api).");
+      return;
+    }
+    const repos = newProductReposText
+      .split(/[\n,]+/)
+      .map((r) => r.trim())
+      .filter(Boolean);
+
+    setNewProductError(null);
+    createProductMutation.mutate(
+      { product: slug, repos },
+      {
+        onSuccess: (res) => {
+          setAddProductOpen(false);
+          setInspectedProduct(res.product);
+          if (activeTab !== "products") {
+            navigate("/products");
+          }
+          const queuedCount = res.queuedRepos?.length ?? 0;
+          enqueueSnackbar(
+            queuedCount > 0
+              ? `Created "${res.product}" and queued ${queuedCount} ${queuedCount === 1 ? "repository" : "repositories"} for indexing.`
+              : `Created product "${res.product}". You can add repositories at any time.`,
+            { variant: "success" },
+          );
+        },
+        onError: (err: unknown) => {
+          setNewProductError(extractApiError(err, "Failed to create Agent Context product."));
+        },
+      },
+    );
+  };
+
+  const handleAddRepoToInspected = () => {
+    if (!inspectedProduct) return;
+    const repos = inlineRepoInput
+      .split(/[\n,]+/)
+      .map((r) => r.trim())
+      .filter(Boolean);
+    if (repos.length === 0) {
+      enqueueSnackbar("Enter a repository URL or owner/repo to index.", {
+        variant: "warning",
+      });
+      return;
+    }
+    addReposMutation.mutate(
+      { product: inspectedProduct, repos },
+      {
+        onSuccess: (res) => {
+          setInlineRepoInput("");
+          const count = res.queuedRepos?.length ?? 0;
+          enqueueSnackbar(
+            count > 0
+              ? `Queued ${count} ${count === 1 ? "repository" : "repositories"} for indexing into "${inspectedProduct}".`
+              : `Repository is already queued for indexing into "${inspectedProduct}".`,
+            { variant: "success" },
+          );
+        },
+        onError: (err: unknown) => {
+          enqueueSnackbar(extractApiError(err, "Failed to queue repository for indexing."), {
+            variant: "error",
+          });
+        },
+      },
+    );
   };
 
   const gatewayConfigSnippet = JSON.stringify(
@@ -327,6 +445,18 @@ const PantomathPage: FunctionComponent = () => {
               </Typography>
             </Box>
             <Stack direction="row" spacing={1.25} flexWrap="wrap">
+              <Button
+                variant="solid"
+                size="sm"
+                startDecorator={<IoAddOutline />}
+                onClick={openAddProductModal}
+                sx={{
+                  bgcolor: "#0f766e",
+                  "&:hover": { bgcolor: "#115e59" },
+                }}
+              >
+                Add Product
+              </Button>
               <Button
                 variant="outlined"
                 color="neutral"
@@ -808,23 +938,54 @@ const PantomathPage: FunctionComponent = () => {
                       Inspect repositories or switch your active product below.
                     </Typography>
                   </Box>
-                  <Button
-                    component={Link}
-                    to="/services"
-                    size="sm"
-                    variant="outlined"
-                    color="neutral"
-                    startDecorator={<IoLayersOutline />}
-                  >
-                    Map to Service Catalog
-                  </Button>
+                  <Stack direction="row" spacing={1.25} flexWrap="wrap">
+                    <Button
+                      size="sm"
+                      variant="solid"
+                      startDecorator={<IoAddOutline />}
+                      onClick={openAddProductModal}
+                      sx={{
+                        bgcolor: "#0f766e",
+                        "&:hover": { bgcolor: "#115e59" },
+                      }}
+                    >
+                      Add Product
+                    </Button>
+                    <Button
+                      component={Link}
+                      to="/services"
+                      size="sm"
+                      variant="outlined"
+                      color="neutral"
+                      startDecorator={<IoLayersOutline />}
+                    >
+                      Map to Service Catalog
+                    </Button>
+                  </Stack>
                 </Stack>
 
                 {pantomathProducts.length === 0 ? (
-                  <Alert color="neutral" variant="soft">
-                    No Agent Context products are indexed for this team yet. Configure a product
-                    under <code>config/products/&lt;product&gt;/sources.yaml</code> or run the
-                    Agent Context sync job to populate Milvus.
+                  <Alert
+                    color="neutral"
+                    variant="soft"
+                    endDecorator={
+                      <Button
+                        size="sm"
+                        variant="solid"
+                        startDecorator={<IoAddOutline />}
+                        onClick={openAddProductModal}
+                        sx={{
+                          bgcolor: "#0f766e",
+                          "&:hover": { bgcolor: "#115e59" },
+                        }}
+                      >
+                        Add Product
+                      </Button>
+                    }
+                  >
+                    No Agent Context products are indexed for this team yet. Click{" "}
+                    <strong>Add Product</strong> to create a knowledge collection and index your
+                    Git repositories.
                   </Alert>
                 ) : (
                   <Table hoverRow sx={{ "--TableCell-paddingY": "12px" }}>
@@ -841,6 +1002,7 @@ const PantomathPage: FunctionComponent = () => {
                     <tbody>
                       {pantomathProducts.map((item) => {
                         const isScheduledDelete = item.status === "scheduled_delete";
+                        const isIndexing = item.indexing || item.source === "indexing";
                         const isSelected = inspectedProduct === item.product;
                         return (
                           <tr key={item.product}>
@@ -854,6 +1016,15 @@ const PantomathPage: FunctionComponent = () => {
                               {isScheduledDelete ? (
                                 <Chip size="sm" color="warning" variant="soft">
                                   Locked · Deletes {item.deleteAt || "soon"}
+                                </Chip>
+                              ) : isIndexing ? (
+                                <Chip
+                                  size="sm"
+                                  color="primary"
+                                  variant="soft"
+                                  startDecorator={<CircularProgress size="sm" thickness={2} />}
+                                >
+                                  Indexing
                                 </Chip>
                               ) : (
                                 <Chip
@@ -994,9 +1165,40 @@ const PantomathPage: FunctionComponent = () => {
                     </Grid>
                   ) : (
                     <Typography level="body-sm" textColor="text.tertiary">
-                      No indexed repositories returned for this product.
+                      No indexed repositories returned for this product yet.
                     </Typography>
                   )}
+
+                  <Divider sx={{ my: 2 }} />
+                  <Stack
+                    direction={{ xs: "column", sm: "row" }}
+                    spacing={1.25}
+                    alignItems={{ xs: "stretch", sm: "center" }}
+                  >
+                    <Input
+                      size="sm"
+                      sx={{ flex: 1 }}
+                      placeholder="Add repository (e.g. https://github.com/opsway-io/service or org/repo)"
+                      value={inlineRepoInput}
+                      onChange={(e) => setInlineRepoInput(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          e.preventDefault();
+                          handleAddRepoToInspected();
+                        }
+                      }}
+                    />
+                    <Button
+                      size="sm"
+                      variant="soft"
+                      color="primary"
+                      startDecorator={<IoAddOutline />}
+                      loading={addReposMutation.isPending}
+                      onClick={handleAddRepoToInspected}
+                    >
+                      Index Repository
+                    </Button>
+                  </Stack>
                 </Card>
               )}
             </Stack>
@@ -1129,6 +1331,93 @@ const PantomathPage: FunctionComponent = () => {
           )}
         </Stack>
       </Container>
+
+      {/* Add Product Modal */}
+      <Modal open={addProductOpen} onClose={() => setAddProductOpen(false)}>
+        <ModalDialog sx={{ maxWidth: 540, width: "100%" }}>
+          <ModalClose />
+          <DialogTitle>
+            <Stack direction="row" spacing={1} alignItems="center">
+              <IoGitNetworkOutline color="#2dd4bf" />
+              <span>Add Agent Context Product</span>
+            </Stack>
+          </DialogTitle>
+          <DialogContent>
+            <Stack spacing={2} sx={{ mt: 1 }}>
+              <Typography level="body-sm" textColor="text.secondary">
+                Create a dedicated Milvus vector &amp; knowledge graph collection for a product
+                and queue its Git repositories for indexing.
+              </Typography>
+
+              {newProductError && (
+                <Alert color="danger" variant="soft">
+                  {newProductError}
+                </Alert>
+              )}
+
+              <FormControl required>
+                <FormLabel>Product Name</FormLabel>
+                <Input
+                  placeholder="e.g. Payments Platform or checkout_api"
+                  value={newProductName}
+                  onChange={(e) => setNewProductName(e.target.value)}
+                  autoFocus
+                />
+                <FormHelperText>
+                  Collection slug:{" "}
+                  <code>{normalizedNewProductSlug || "enter_product_name"}</code>
+                </FormHelperText>
+              </FormControl>
+
+              <FormControl>
+                <FormLabel>Git Repositories (optional)</FormLabel>
+                <Textarea
+                  minRows={4}
+                  maxRows={8}
+                  placeholder={
+                    "One repository per line or comma-separated:\nhttps://github.com/opsway-io/payments-api\nopsway-io/billing-worker"
+                  }
+                  value={newProductReposText}
+                  onChange={(e) => setNewProductReposText(e.target.value)}
+                />
+                <FormHelperText>
+                  Accepts full Git URLs (<code>https://github.com/org/repo</code>),{" "}
+                  <code>owner/repo</code>, or a repo name within your configured GitHub
+                  organization.
+                </FormHelperText>
+              </FormControl>
+
+              <Alert color="primary" variant="soft" size="sm">
+                The product collection is created immediately and becomes searchable as soon as
+                the first batches finish embedding in the background.
+              </Alert>
+            </Stack>
+          </DialogContent>
+          <DialogActions>
+            <Button
+              variant="solid"
+              loading={createProductMutation.isPending}
+              disabled={!normalizedNewProductSlug}
+              startDecorator={<IoAddOutline />}
+              onClick={handleCreateProduct}
+              sx={{
+                bgcolor: "#0f766e",
+                "&:hover": { bgcolor: "#115e59" },
+              }}
+            >
+              Create &amp; Index Product
+            </Button>
+            <Button
+              variant="plain"
+              color="neutral"
+              onClick={() => setAddProductOpen(false)}
+              disabled={createProductMutation.isPending}
+            >
+              Cancel
+            </Button>
+          </DialogActions>
+        </ModalDialog>
+      </Modal>
     </>
   );
 };

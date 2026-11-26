@@ -10,6 +10,7 @@ import {
 import { Role } from "../components/Restrict";
 import useAuthenticationStore from "../hooks/authentication.store";
 import RestrictedRoute from "./RestrictedRoute";
+import { getSubdomainMode } from "./subdomain";
 
 import DashboardLayout from "../pages/Dashboard/DashboardLayout";
 import AuthenticationLayout from "../pages/Authentication/AuthenticationLayout";
@@ -201,15 +202,6 @@ const TeamAcceptInvitationPage = lazy(
     import("../pages/Authentication/TeamAcceptInvitation/TeamAcceptInvitationPage"),
 );
 
-const isMonitoringSubdomain =
-  typeof window !== "undefined" &&
-  window.location.hostname.startsWith("monitoring");
-
-const isAgentContextSubdomain =
-  typeof window !== "undefined" &&
-  (window.location.hostname.startsWith("agent-context") ||
-    window.location.hostname.startsWith("pantomath"));
-
 /** Renders DashboardLayout when signed in with a team, or public outlet when signed out. */
 const DualModeInfoLayout: FunctionComponent = () => {
   const authentication = useAuthenticationStore();
@@ -226,6 +218,16 @@ const LegacyIncidentRedirect: FunctionComponent = () => {
 };
 
 const Routes: FunctionComponent = () => {
+  const subdomainMode = getSubdomainMode();
+  const isLocal = subdomainMode === "local";
+  const isHubSubdomain = subdomainMode === "hub";
+  const isMonitoringSubdomain = subdomainMode === "monitoring";
+  const isAgentContextSubdomain = subdomainMode === "agent-context";
+
+  const allowHubRoutes = isLocal || isHubSubdomain;
+  const allowMonitoringRoutes = isLocal || isMonitoringSubdomain;
+  const allowAgentContextRoutes = isLocal || isAgentContextSubdomain;
+
   return (
     <Suspense>
       <RouterRoutes>
@@ -241,7 +243,9 @@ const Routes: FunctionComponent = () => {
               <Route path="pantomath" element={<Navigate to="/info" replace />} />
             </>
           )}
-          <Route path=":productId" element={<ProductInfoPage />} />
+          {allowHubRoutes && (
+            <Route path=":productId" element={<ProductInfoPage />} />
+          )}
         </Route>
 
         <Route
@@ -265,69 +269,75 @@ const Routes: FunctionComponent = () => {
               )
             }
           />
-          <Route path="hub" element={<Navigate to="/" replace />} />
+          {allowHubRoutes && (
+            <>
+              <Route path="hub" element={<Navigate to="/" replace />} />
 
-          {/* Standalone Autonomous Agents */}
-          <Route
-            path="agents"
-            element={
-              <RestrictedRoute product="managed_agent">
-                <AgentsPage />
-              </RestrictedRoute>
-            }
-          />
+              {/* Standalone Autonomous Agents */}
+              <Route
+                path="agents"
+                element={
+                  <RestrictedRoute product="managed_agent">
+                    <AgentsPage />
+                  </RestrictedRoute>
+                }
+              />
+
+              {/* Platform Owner Rollout & Admin */}
+              <Route
+                path="platform/products"
+                element={
+                  <RestrictedRoute platformOwnerOnly>
+                    <PlatformProductsPage />
+                  </RestrictedRoute>
+                }
+              />
+            </>
+          )}
 
           {/* Agent Context (Product, Code & Infrastructure GraphRAG) */}
-          <Route element={<RestrictedRoute product="pantomath" />}>
-            <Route path="products" element={<PantomathPage />} />
-            <Route path="mcp" element={<PantomathPage />} />
-            <Route
-              path="agent-context"
-              element={
-                isAgentContextSubdomain ? (
-                  <Navigate to="/" replace />
-                ) : (
-                  <PantomathPage />
-                )
-              }
-            />
-            <Route
-              path="agent-context/products"
-              element={<Navigate to="/products" replace />}
-            />
-            <Route
-              path="agent-context/mcp"
-              element={<Navigate to="/mcp" replace />}
-            />
-            {/* Legacy Pantomath routes kept as redirects for bookmarks */}
-            <Route
-              path="pantomath"
-              element={
-                <Navigate
-                  to={isAgentContextSubdomain ? "/" : "/agent-context"}
-                  replace
-                />
-              }
-            />
-            <Route
-              path="pantomath/products"
-              element={<Navigate to="/products" replace />}
-            />
-            <Route
-              path="pantomath/mcp"
-              element={<Navigate to="/mcp" replace />}
-            />
-          </Route>
-
-          {/* Platform Owner Rollout & Admin */}
-          <Route
-            path="platform/products"
-            element={
-              <RestrictedRoute platformOwnerOnly>
-                <PlatformProductsPage />
-              </RestrictedRoute>
-            }
-          />
+          {allowAgentContextRoutes && (
+            <Route element={<RestrictedRoute product="pantomath" />}>
+              <Route path="products" element={<PantomathPage />} />
+              <Route path="mcp" element={<PantomathPage />} />
+              <Route
+                path="agent-context"
+                element={
+                  isAgentContextSubdomain ? (
+                    <Navigate to="/" replace />
+                  ) : (
+                    <PantomathPage />
+                  )
+                }
+              />
+              <Route
+                path="agent-context/products"
+                element={<Navigate to="/products" replace />}
+              />
+              <Route
+                path="agent-context/mcp"
+                element={<Navigate to="/mcp" replace />}
+              />
+              {/* Legacy Pantomath routes kept as redirects for bookmarks */}
+              <Route
+                path="pantomath"
+                element={
+                  <Navigate
+                    to={isAgentContextSubdomain ? "/" : "/agent-context"}
+                    replace
+                  />
+                }
+              />
+              <Route
+                path="pantomath/products"
+                element={<Navigate to="/products" replace />}
+              />
+              <Route
+                path="pantomath/mcp"
+                element={<Navigate to="/mcp" replace />}
+              />
+            </Route>
+          )}
 
           {/* Account */}
           <Route path="account" element={<AccountPage />}>
@@ -344,106 +354,108 @@ const Routes: FunctionComponent = () => {
           <Route path="services" element={<ServiceCatalogPage />} />
 
           {/* Monitoring Product Routes */}
-          <Route element={<RestrictedRoute product="monitoring" />}>
-          {/* Monitor */}
-          <Route path="monitors">
-            <Route index path="" element={<MonitorsPage />} />
-            <Route path=":id" element={<MonitorDetailPage />} />
-            <Route
-              path=":id/settings"
-              element={
-                <RestrictedRoute minRole={Role.ADMIN}>
-                  <MonitorSettingsPage />
-                </RestrictedRoute>
-              }
-            />
-            <Route
-              path=":monitorId/checks/:checkId"
-              element={<CheckDetailPage />}
-            />
-            <Route path="create" element={<CreateMonitorPage />} />
-          </Route>
+          {allowMonitoringRoutes && (
+            <Route element={<RestrictedRoute product="monitoring" />}>
+              {/* Monitor */}
+              <Route path="monitors">
+                <Route index path="" element={<MonitorsPage />} />
+                <Route path=":id" element={<MonitorDetailPage />} />
+                <Route
+                  path=":id/settings"
+                  element={
+                    <RestrictedRoute minRole={Role.ADMIN}>
+                      <MonitorSettingsPage />
+                    </RestrictedRoute>
+                  }
+                />
+                <Route
+                  path=":monitorId/checks/:checkId"
+                  element={<CheckDetailPage />}
+                />
+                <Route path="create" element={<CreateMonitorPage />} />
+              </Route>
 
-          {/* Alerting */}
-          <Route path="alerting">
-            <Route element={<AlertingPage />}>
-              <Route index element={<AlertRulesTab />} />
+              {/* Alerting */}
+              <Route path="alerting">
+                <Route element={<AlertingPage />}>
+                  <Route index element={<AlertRulesTab />} />
+                  <Route
+                    path="escalation"
+                    element={
+                      <RestrictedRoute minRole={Role.ADMIN}>
+                        <EscalationTab />
+                      </RestrictedRoute>
+                    }
+                  />
+                </Route>
+                <Route path="create" element={<AlertRuleCreatePage />} />
+                <Route path=":ruleId" element={<AlertRuleDetailPage />} />
+              </Route>
+
+              <Route path="heartbeats">
+                <Route index path="" element={<HeartbeatView />} />
+                <Route path="create" element={<HeartbeatCreateView />} />
+                <Route path=":heartbeatId" element={<HeartbeatDetailView />} />
+              </Route>
+
+              {/* Incidents  */}
+              <Route path="incidents">
+                <Route index path="" element={<IncidentsView />} />
+                <Route path=":id/monitor" element={<IncidentsMonitorView />} />
+                <Route path=":incidentId" element={<IncidentDetailView />} />
+                <Route
+                  path="incident/:incidentId"
+                  element={<LegacyIncidentRedirect />}
+                />
+              </Route>
+
+              {/* Maintenance */}
+              <Route path="maintenance">
+                <Route index path="" element={<MaintenanceView />} />
+                <Route path=":id" element={<MaintenanceDetailView />} />
+                <Route path="create" element={<MaintenanceCreateView />} />
+              </Route>
+
+              {/* Changelog */}
+              <Route path="changelogs">
+                <Route index path="" element={<ChangelogView />} />
+
+                <Route path=":id">
+                  <Route index path="" element={<ChangelogEntriesView />} />
+                  <Route
+                    path="create"
+                    element={
+                      <RestrictedRoute minRole={Role.ADMIN}>
+                        <ChangelogEntriesCreateView />
+                      </RestrictedRoute>
+                    }
+                  />
+                  <Route
+                    path="entries/:entryId"
+                    element={<ChangelogEntriesDetailView />}
+                  />
+                </Route>
+              </Route>
+
+              {/* Status Pages */}
+              <Route path="status-pages" element={<StatusPagesView />} />
+              <Route path="status-pages/:id" element={<StatusPagesDetailView />} />
               <Route
-                path="escalation"
+                path="status-pages/create"
                 element={
                   <RestrictedRoute minRole={Role.ADMIN}>
-                    <EscalationTab />
+                    <StatusPagesCreateView />
                   </RestrictedRoute>
                 }
               />
+
+              {/* Reports */}
+              <Route path="reports">
+                <Route index path="" element={<ReportsView />} />
+                <Route path=":id" element={<ReportDetailView />} />
+              </Route>
             </Route>
-            <Route path="create" element={<AlertRuleCreatePage />} />
-            <Route path=":ruleId" element={<AlertRuleDetailPage />} />
-          </Route>
-
-          <Route path="heartbeats">
-            <Route index path="" element={<HeartbeatView />} />
-            <Route path="create" element={<HeartbeatCreateView />} />
-            <Route path=":heartbeatId" element={<HeartbeatDetailView />} />
-          </Route>
-
-          {/* Incidents  */}
-          <Route path="incidents">
-            <Route index path="" element={<IncidentsView />} />
-            <Route path=":id/monitor" element={<IncidentsMonitorView />} />
-            <Route path=":incidentId" element={<IncidentDetailView />} />
-            <Route
-              path="incident/:incidentId"
-              element={<LegacyIncidentRedirect />}
-            />
-          </Route>
-
-          {/* Maintenance */}
-          <Route path="maintenance">
-            <Route index path="" element={<MaintenanceView />} />
-            <Route path=":id" element={<MaintenanceDetailView />} />
-            <Route path="create" element={<MaintenanceCreateView />} />
-          </Route>
-
-          {/* Changelog */}
-          <Route path="changelogs">
-            <Route index path="" element={<ChangelogView />} />
-
-            <Route path=":id">
-              <Route index path="" element={<ChangelogEntriesView />} />
-              <Route
-                path="create"
-                element={
-                  <RestrictedRoute minRole={Role.ADMIN}>
-                    <ChangelogEntriesCreateView />
-                  </RestrictedRoute>
-                }
-              />
-              <Route
-                path="entries/:entryId"
-                element={<ChangelogEntriesDetailView />}
-              />
-            </Route>
-          </Route>
-
-          {/* Status Pages */}
-          <Route path="status-pages" element={<StatusPagesView />} />
-          <Route path="status-pages/:id" element={<StatusPagesDetailView />} />
-          <Route
-            path="status-pages/create"
-            element={
-              <RestrictedRoute minRole={Role.ADMIN}>
-                <StatusPagesCreateView />
-              </RestrictedRoute>
-            }
-          />
-
-          {/* Reports */}
-          <Route path="reports">
-            <Route index path="" element={<ReportsView />} />
-            <Route path=":id" element={<ReportDetailView />} />
-          </Route>
-          </Route>
+          )}
 
           {/* Team */}
           <Route path="team" element={<TeamPage />}>
@@ -490,10 +502,12 @@ const Routes: FunctionComponent = () => {
             path="team/subscription"
             element={<Navigate to="/settings/billing" replace />}
           />
-          <Route
-            path="team/escalation"
-            element={<Navigate to="/alerting/escalation" replace />}
-          />
+          {allowMonitoringRoutes && (
+            <Route
+              path="team/escalation"
+              element={<Navigate to="/alerting/escalation" replace />}
+            />
+          )}
         </Route>
 
         {/* Authentication  */}

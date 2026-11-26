@@ -758,7 +758,7 @@ curl -s -X POST "https://api.opsway.eu/v1/mcp" \\
         recommendedAction:
           "Run a multi-hop GraphRAG query in the Agent Context Playground.",
         actionLabel: "Open Playground",
-        actionUrl: "/agent-context",
+        actionUrl: "/",
       },
       {
         situation: "Want Cursor, Antigravity, or Claude Desktop to query internal product context",
@@ -766,7 +766,7 @@ curl -s -X POST "https://api.opsway.eu/v1/mcp" \\
         recommendedAction:
           "Copy the Opsway Cloud MCP Gateway config and pair it with a team API key.",
         actionLabel: "MCP & IDE Setup",
-        actionUrl: "/agent-context/mcp",
+        actionUrl: "/mcp",
       },
       {
         situation: "Checking which repositories and vector chunks are indexed per product",
@@ -774,7 +774,7 @@ curl -s -X POST "https://api.opsway.eu/v1/mcp" \\
         recommendedAction:
           "Inspect indexed products, repository inventories, and chunk counts.",
         actionLabel: "Indexed Products",
-        actionUrl: "/agent-context/products",
+        actionUrl: "/products",
       },
     ],
     loggedInHowToSteps: [
@@ -786,7 +786,7 @@ curl -s -X POST "https://api.opsway.eu/v1/mcp" \\
         proTip:
           "Map each Agent Context product slug in the Service Catalog so Autonomous Agents automatically scope queries during incidents.",
         ctaLabel: "View Indexed Products",
-        ctaUrl: "/agent-context/products",
+        ctaUrl: "/products",
       },
       {
         step: "02",
@@ -796,7 +796,7 @@ curl -s -X POST "https://api.opsway.eu/v1/mcp" \\
         proTip:
           "Ask 'Which repositories are indexed?' to trigger Agent Context's exact repo-inventory fast path.",
         ctaLabel: "Open Playground",
-        ctaUrl: "/agent-context",
+        ctaUrl: "/",
       },
       {
         step: "03",
@@ -806,7 +806,7 @@ curl -s -X POST "https://api.opsway.eu/v1/mcp" \\
         proTip:
           "One MCP config gives your agent Agent Context, Monitoring, and Log Search tools simultaneously.",
         ctaLabel: "Configure MCP",
-        ctaUrl: "/agent-context/mcp",
+        ctaUrl: "/mcp",
       },
     ],
     codeExampleTitle: "Connect Agent Context via Opsway MCP Gateway",
@@ -856,6 +856,42 @@ const getDefaultProductFromHost = (paramProduct?: string): ProductSlug => {
 const isMonitoringSubdomain = () =>
   typeof window !== "undefined" &&
   window.location.hostname.startsWith("monitoring");
+
+const isAgentContextSubdomain = () =>
+  typeof window !== "undefined" &&
+  (window.location.hostname.startsWith("agent-context") ||
+    window.location.hostname.startsWith("pantomath"));
+
+const isHubSubdomain = () =>
+  typeof window !== "undefined" && window.location.hostname.startsWith("my");
+
+const resolveProductActionTarget = (
+  url: string,
+  external: boolean | undefined,
+  productSlug: ProductSlug,
+): { href: string; isExternal: boolean } => {
+  if (external || url.startsWith("http://") || url.startsWith("https://")) {
+    return { href: url, isExternal: true };
+  }
+  if (isHubSubdomain()) {
+    if (productSlug === "monitoring" && !url.startsWith("/services")) {
+      return {
+        href: `https://monitoring.opsway.eu${url === "/" ? "" : url}`,
+        isExternal: true,
+      };
+    }
+    if (productSlug === "pantomath") {
+      return {
+        href: `https://agent-context.opsway.eu${url === "/" ? "" : url}`,
+        isExternal: true,
+      };
+    }
+  }
+  if (productSlug === "pantomath" && url === "/" && !isAgentContextSubdomain()) {
+    return { href: "/agent-context", isExternal: false };
+  }
+  return { href: url, isExternal: false };
+};
 
 export const ProductInfoContent: FunctionComponent<{
   initialProduct?: ProductSlug;
@@ -1244,29 +1280,36 @@ export const ProductInfoContent: FunctionComponent<{
                         </Typography>
                       </td>
                       <td style={{ textAlign: "right" }} aria-label="Action">
-                        {sc.external ? (
-                          <Button
-                            component="a"
-                            href={sc.actionUrl}
-                            size="sm"
-                            variant="soft"
-                            color="primary"
-                            endDecorator={<IoArrowForward />}
-                          >
-                            {sc.actionLabel}
-                          </Button>
-                        ) : (
-                          <Button
-                            component={Link}
-                            to={sc.actionUrl}
-                            size="sm"
-                            variant="soft"
-                            color="primary"
-                            endDecorator={<IoArrowForward />}
-                          >
-                            {sc.actionLabel}
-                          </Button>
-                        )}
+                        {(() => {
+                          const target = resolveProductActionTarget(
+                            sc.actionUrl,
+                            sc.external,
+                            product.id,
+                          );
+                          return target.isExternal ? (
+                            <Button
+                              component="a"
+                              href={target.href}
+                              size="sm"
+                              variant="soft"
+                              color="primary"
+                              endDecorator={<IoArrowForward />}
+                            >
+                              {sc.actionLabel}
+                            </Button>
+                          ) : (
+                            <Button
+                              component={Link}
+                              to={target.href}
+                              size="sm"
+                              variant="soft"
+                              color="primary"
+                              endDecorator={<IoArrowForward />}
+                            >
+                              {sc.actionLabel}
+                            </Button>
+                          );
+                        })()}
                       </td>
                     </tr>
                   ))}
@@ -1332,29 +1375,36 @@ export const ProductInfoContent: FunctionComponent<{
 
                       {st.ctaLabel && st.ctaUrl && (
                         <Box>
-                          {st.external ? (
-                            <Button
-                              component="a"
-                              href={st.ctaUrl}
-                              size="sm"
-                              variant="outlined"
-                              color="neutral"
-                              endDecorator={<IoArrowForward />}
-                            >
-                              {st.ctaLabel}
-                            </Button>
-                          ) : (
-                            <Button
-                              component={Link}
-                              to={st.ctaUrl}
-                              size="sm"
-                              variant="outlined"
-                              color="neutral"
-                              endDecorator={<IoArrowForward />}
-                            >
-                              {st.ctaLabel}
-                            </Button>
-                          )}
+                          {(() => {
+                            const target = resolveProductActionTarget(
+                              st.ctaUrl,
+                              st.external,
+                              product.id,
+                            );
+                            return target.isExternal ? (
+                              <Button
+                                component="a"
+                                href={target.href}
+                                size="sm"
+                                variant="outlined"
+                                color="neutral"
+                                endDecorator={<IoArrowForward />}
+                              >
+                                {st.ctaLabel}
+                              </Button>
+                            ) : (
+                              <Button
+                                component={Link}
+                                to={target.href}
+                                size="sm"
+                                variant="outlined"
+                                color="neutral"
+                                endDecorator={<IoArrowForward />}
+                              >
+                                {st.ctaLabel}
+                              </Button>
+                            );
+                          })()}
                         </Box>
                       )}
                     </Stack>
@@ -1517,32 +1567,45 @@ const ProductInfoPage: FunctionComponent = () => {
   const authentication = useAuthenticationStore();
   const isLoggedIn = authentication.isAuthenticated();
   const isStandaloneMonitoring = isMonitoringSubdomain();
+  const isStandaloneAgentContext = isAgentContextSubdomain();
+  const standaloneProduct: ProductSlug | undefined = isStandaloneMonitoring
+    ? "monitoring"
+    : isStandaloneAgentContext
+      ? "pantomath"
+      : undefined;
+  const isStandalone = Boolean(standaloneProduct);
+
+  const pageTitle = isStandaloneMonitoring
+    ? "Monitoring Guide | Opsway"
+    : isStandaloneAgentContext
+      ? "Agent Context Guide | Opsway"
+      : "Product Info & Operational Guides | Opsway";
+  const pageHeader = isStandaloneMonitoring
+    ? "Monitoring Guide"
+    : isStandaloneAgentContext
+      ? "Agent Context Guide"
+      : "Product Info & Operational Guides";
+  const pageDescription = isStandaloneMonitoring
+    ? PRODUCT_DEFINITIONS.monitoring.tagline
+    : isStandaloneAgentContext
+      ? PRODUCT_DEFINITIONS.pantomath.tagline
+      : "Explore what each Opsway product does, when to use specific capabilities, and step-by-step operational playbooks.";
+  const publicTitle = isStandaloneMonitoring
+    ? "Opsway Monitoring | Overview & Documentation"
+    : isStandaloneAgentContext
+      ? "Opsway Agent Context | Overview & Documentation"
+      : "Opsway Product Suite | Overview & Documentation";
 
   if (isLoggedIn) {
     return (
       <>
         <Helmet>
-          <title>
-            {isStandaloneMonitoring
-              ? "Monitoring Guide | Opsway"
-              : "Product Info & Operational Guides | Opsway"}
-          </title>
+          <title>{pageTitle}</title>
         </Helmet>
-        <Container
-          header={
-            isStandaloneMonitoring
-              ? "Monitoring Guide"
-              : "Product Info & Operational Guides"
-          }
-          description={
-            isStandaloneMonitoring
-              ? PRODUCT_DEFINITIONS.monitoring.tagline
-              : "Explore what each Opsway product does, when to use specific capabilities, and step-by-step operational playbooks."
-          }
-        >
+        <Container header={pageHeader} description={pageDescription}>
           <ProductInfoContent
-            initialProduct={isStandaloneMonitoring ? "monitoring" : undefined}
-            hideProductSwitcher={isStandaloneMonitoring}
+            initialProduct={standaloneProduct}
+            hideProductSwitcher={isStandalone}
           />
         </Container>
       </>
@@ -1552,11 +1615,7 @@ const ProductInfoPage: FunctionComponent = () => {
   return (
     <>
       <Helmet>
-        <title>
-          {isStandaloneMonitoring
-            ? "Opsway Monitoring | Overview & Documentation"
-            : "Opsway Product Suite | Overview & Documentation"}
-        </title>
+        <title>{publicTitle}</title>
       </Helmet>
       <Box
         sx={{
@@ -1644,8 +1703,8 @@ const ProductInfoPage: FunctionComponent = () => {
 
         <Box sx={{ maxWidth: 1280, mx: "auto", px: { xs: 2, md: 4 }, pt: 3 }}>
           <ProductInfoContent
-            initialProduct={isStandaloneMonitoring ? "monitoring" : undefined}
-            hideProductSwitcher={isStandaloneMonitoring}
+            initialProduct={standaloneProduct}
+            hideProductSwitcher={isStandalone}
           />
         </Box>
       </Box>

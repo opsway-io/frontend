@@ -65,11 +65,20 @@ describe("ProductInfoPage", () => {
   it("hides the product switcher bar on the monitoring subdomain", () => {
     setHostname("monitoring.opsway.eu");
 
-    renderWithProviders("/info/monitoring");
+    renderWithProviders("/info");
 
     expect(screen.queryByRole("tablist")).not.toBeInTheDocument();
     expect(
       screen.getByText("Opsway Monitoring & Status Pages"),
     ).toBeInTheDocument();
+  });
+
+  it("hides the product switcher bar on the agent-context subdomain", () => {
+    setHostname("agent-context.opsway.eu");
+
+    renderWithProviders("/info");
+
+    expect(screen.queryByRole("tablist")).not.toBeInTheDocument();
+    expect(screen.getByText("Opsway Agent Context")).toBeInTheDocument();
   });
 });

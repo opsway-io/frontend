@@ -16,6 +16,7 @@ import {
   IoArrowForward,
   IoBookOutline,
   IoCardOutline,
+  IoGitNetworkOutline,
   IoHardwareChipOutline,
   IoLayersOutline,
   IoPersonOutline,
@@ -245,7 +246,7 @@ export const HubOverviewPage: FunctionComponent = () => {
             </Typography>
             <Grid container spacing={2}>
               {/* Product 1: Monitoring */}
-              <Grid xs={12} md={4}>
+              <Grid xs={12} md={6}>
                 <Card
                   variant="outlined"
                   sx={{
@@ -335,7 +336,7 @@ export const HubOverviewPage: FunctionComponent = () => {
               </Grid>
 
               {/* Product 2: Log Search */}
-              <Grid xs={12} md={4}>
+              <Grid xs={12} md={6}>
                 <Card
                   variant="outlined"
                   sx={{
@@ -412,7 +413,7 @@ export const HubOverviewPage: FunctionComponent = () => {
               </Grid>
 
               {/* Product 3: Autonomous Agents (Standalone) */}
-              <Grid xs={12} md={4}>
+              <Grid xs={12} md={6}>
                 <Card
                   variant="outlined"
                   sx={{
@@ -485,6 +486,85 @@ export const HubOverviewPage: FunctionComponent = () => {
                       size="sm"
                     >
                       MCP Gateway
+                    </Button>
+                  </Stack>
+                </Card>
+              </Grid>
+
+              {/* Product 4: Pantomath Code & Infra GraphRAG */}
+              <Grid xs={12} md={6}>
+                <Card
+                  variant="outlined"
+                  sx={{
+                    p: 2.5,
+                    bgcolor: "background.surface",
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "space-between",
+                    height: "100%",
+                    transition: "border-color 0.15s ease",
+                    "&:hover": { borderColor: "#2dd4bf" },
+                  }}
+                >
+                  <Box>
+                    <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 1.5 }}>
+                      <Stack direction="row" alignItems="center" spacing={1.5}>
+                        <Box
+                          sx={{
+                            p: 1,
+                            borderRadius: "md",
+                            bgcolor: "rgba(45, 212, 191, 0.15)",
+                            color: "#2dd4bf",
+                          }}
+                        >
+                          <IoGitNetworkOutline size={24} />
+                        </Box>
+                        <Box>
+                          <Typography level="title-md" sx={{ fontWeight: 700 }}>
+                            Pantomath
+                          </Typography>
+                          <Typography level="body-xs" textColor="text.tertiary">
+                            pantomath.opsway.eu
+                          </Typography>
+                        </Box>
+                      </Stack>
+                      <Chip size="sm" variant="soft" sx={{ bgcolor: "rgba(45, 212, 191, 0.18)", color: "#2dd4bf" }}>
+                        GraphRAG
+                      </Chip>
+                    </Stack>
+                    <Typography level="body-sm" sx={{ color: "text.secondary", mb: 2 }}>
+                      Multi-level code and infrastructure knowledge graph. Parses Tree-sitter ASTs and Kubernetes
+                      Kustomize topologies into Milvus Hybrid Search for instant architecture Q&amp;A and MCP agents.
+                    </Typography>
+                    <Stack direction="row" spacing={1} flexWrap="wrap" sx={{ mb: 2 }}>
+                      <Chip size="sm" variant="outlined">Tree-sitter AST</Chip>
+                      <Chip size="sm" variant="outlined">Kustomize Topology</Chip>
+                      <Chip size="sm" variant="outlined">Milvus Hybrid RAG</Chip>
+                      <Chip size="sm" variant="outlined">MCP Server</Chip>
+                    </Stack>
+                  </Box>
+                  <Stack spacing={1}>
+                    <Button
+                      component="a"
+                      href="https://pantomath.opsway.eu"
+                      variant="solid"
+                      endDecorator={<IoArrowForward />}
+                      fullWidth
+                      sx={{
+                        bgcolor: "#0f766e",
+                        "&:hover": { bgcolor: "#115e59" },
+                      }}
+                    >
+                      Open Pantomath
+                    </Button>
+                    <Button
+                      component={Link}
+                      to="/pantomath/mcp"
+                      variant="outlined"
+                      color="neutral"
+                      size="sm"
+                    >
+                      MCP &amp; IDE Setup
                     </Button>
                   </Stack>
                 </Card>

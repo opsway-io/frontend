@@ -14,6 +14,9 @@ import {
   getServiceCatalog,
   getTeamUsage,
   setActivePantomathProduct,
+  queryPantomath,
+  getPantomathProductRepos,
+  PantomathQueryPayload,
   updateOverageSettings,
   UsageRange,
   triggerInvestigation,
@@ -248,5 +251,26 @@ export function useSetActivePantomathProduct() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["teamUsage", currentTeamId] });
     },
+  });
+}
+
+export function useQueryPantomath() {
+  const queryClient = useQueryClient();
+  const currentTeamId = useAuthenticationStore((s) => s.currentTeamId);
+  return useMutation({
+    mutationFn: (payload: PantomathQueryPayload) =>
+      queryPantomath(currentTeamId || 1, payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["teamUsage", currentTeamId] });
+    },
+  });
+}
+
+export function usePantomathProductRepos(product: string | null) {
+  const currentTeamId = useAuthenticationStore((s) => s.currentTeamId);
+  return useQuery({
+    queryKey: ["pantomathProductRepos", currentTeamId, product],
+    queryFn: () => getPantomathProductRepos(currentTeamId || 1, product!),
+    enabled: !!currentTeamId && !!product,
   });
 }

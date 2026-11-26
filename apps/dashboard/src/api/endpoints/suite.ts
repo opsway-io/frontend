@@ -489,3 +489,45 @@ export async function setActivePantomathProduct(
   });
   return res.data;
 }
+
+export interface PantomathQueryPayload {
+  query: string;
+  product?: string;
+  synthesize?: boolean;
+  agenticLoop?: boolean;
+  topK?: number;
+  maxHops?: number;
+}
+
+export interface PantomathQueryResponse {
+  markdown: string;
+  product?: string;
+  durationMs: number;
+  isError?: boolean;
+}
+
+export async function queryPantomath(
+  teamId: number,
+  payload: PantomathQueryPayload
+): Promise<PantomathQueryResponse> {
+  const res = await client.post(`/v1/teams/${teamId}/pantomath/query`, payload);
+  return res.data;
+}
+
+export interface PantomathProductReposResponse {
+  product: string;
+  repos: string[];
+  count: number;
+  source: string;
+  raw?: string;
+}
+
+export async function getPantomathProductRepos(
+  teamId: number,
+  product: string
+): Promise<PantomathProductReposResponse> {
+  const res = await client.get(
+    `/v1/teams/${teamId}/pantomath/products/${encodeURIComponent(product)}/repos`
+  );
+  return res.data;
+}

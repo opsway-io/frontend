@@ -80,6 +80,9 @@ const HubOverviewPage = lazy(
 const AgentsPage = lazy(
   () => import("../pages/Dashboard/Agents/AgentsPage"),
 );
+const PantomathPage = lazy(
+  () => import("../pages/Dashboard/Pantomath/PantomathPage"),
+);
 const PlatformProductsPage = lazy(
   () => import("../pages/Dashboard/Platform/PlatformProductsPage"),
 );
@@ -196,6 +199,10 @@ const isMonitoringSubdomain =
   typeof window !== "undefined" &&
   window.location.hostname.startsWith("monitoring");
 
+const isPantomathSubdomain =
+  typeof window !== "undefined" &&
+  window.location.hostname.startsWith("pantomath");
+
 /** Renders DashboardLayout when signed in with a team, or public outlet when signed out. */
 const DualModeInfoLayout: FunctionComponent = () => {
   const authentication = useAuthenticationStore();
@@ -225,7 +232,9 @@ const Routes: FunctionComponent = () => {
           <Route
             index
             element={
-              isMonitoringSubdomain ? (
+              isPantomathSubdomain ? (
+                <Navigate to="pantomath" replace />
+              ) : isMonitoringSubdomain ? (
                 <Navigate to="monitors" replace />
               ) : (
                 <HubOverviewPage />
@@ -243,6 +252,13 @@ const Routes: FunctionComponent = () => {
               </RestrictedRoute>
             }
           />
+
+          {/* Pantomath Code & Infrastructure GraphRAG */}
+          <Route element={<RestrictedRoute product="pantomath" />}>
+            <Route path="pantomath" element={<PantomathPage />} />
+            <Route path="pantomath/products" element={<PantomathPage />} />
+            <Route path="pantomath/mcp" element={<PantomathPage />} />
+          </Route>
 
           {/* Platform Owner Rollout & Admin */}
           <Route

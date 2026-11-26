@@ -24,6 +24,7 @@ import {
   IoCodeSlashOutline,
   IoCopyOutline,
   IoFlashOutline,
+  IoGitNetworkOutline,
   IoHardwareChipOutline,
   IoHelpBuoyOutline,
   IoLayersOutline,
@@ -42,7 +43,7 @@ import Container from "../../../components/Container/Container";
 import useAuthenticationStore from "../../../hooks/authentication.store";
 import PreformattedBlock from "../Incidents/Detail/components/PreformattedBlock";
 
-export type ProductSlug = "hub" | "monitoring" | "logs" | "agents";
+export type ProductSlug = "hub" | "monitoring" | "logs" | "agents" | "pantomath";
 
 interface ScenarioItem {
   situation: string;
@@ -706,6 +707,122 @@ curl -s -X POST "https://api.opsway.eu/v1/mcp" \\
     "repositoryUrl": "https://github.com/opsway-io/backend"
   }'`,
   },
+  pantomath: {
+    id: "pantomath",
+    name: "Pantomath Code & Infrastructure GraphRAG",
+    tagline:
+      "Tree-sitter AST intelligence, Kustomize topology discovery, Milvus hybrid search & MCP server",
+    subdomain: "pantomath.opsway.eu",
+    subdomainUrl: "https://pantomath.opsway.eu",
+    accentColor: "#2dd4bf",
+    softBg: "rgba(45, 212, 191, 0.15)",
+    icon: <IoGitNetworkOutline size={26} />,
+    summary:
+      "Pantomath maps your entire product architecture—source code ASTs, Kubernetes Kustomize overlays, Jira/Confluence docs, and web docs—into a centralized Milvus Hybrid Search + GraphRAG database exposed over the Model Context Protocol (MCP).",
+    standaloneValue:
+      "Works standalone as an enterprise knowledge engine for engineering teams and AI coding assistants (Cursor, Antigravity, Claude Desktop) with dual-vector semantic + BM25 search and cross-encoder reranking.",
+    suiteSynergy:
+      "Inside the Opsway Suite, Autonomous Agents automatically invoke Pantomath during incident root-cause investigations to pinpoint the exact source files, Helm/Kustomize manifests, and recent changes behind a failing probe or log spike.",
+    keyCapabilities: [
+      {
+        title: "Tree-sitter AST Parsing",
+        description:
+          "Parses Python, Go, and TypeScript/JavaScript repositories into structural code chunks and symbol call/import graphs.",
+      },
+      {
+        title: "Kubernetes & Kustomize Topology Discovery",
+        description:
+          "Inspects GitOps manifests and overlays to automatically map deployments, services, ingresses, queues, and databases.",
+      },
+      {
+        title: "Milvus Hybrid Search + Cross-Encoder Reranking",
+        description:
+          "Combines dense BGE-M3 semantic vectors with sparse BM25 exact-match tokens and Reciprocal Rank Fusion (RRF).",
+      },
+      {
+        title: "Native MCP Server & Opsway Gateway",
+        description:
+          "Exposes ask_pantomath, list_products, and list_repos over Streamable HTTP or through the unified Opsway Cloud MCP Gateway.",
+      },
+    ],
+    whenToUseSummary: [
+      "Onboarding engineers or AI coding agents onto large multi-repo microservice architectures.",
+      "Tracing which Kubernetes manifest, ingress rule, or message queue connects two services.",
+      "Grounding Autonomous SRE Agents with live code and infrastructure context during incidents.",
+    ],
+    loggedInScenarios: [
+      {
+        situation: "Need to understand how a service handles authentication or retries across repos",
+        whenToUse: "When grepping one repo isn't enough to trace cross-service calls.",
+        recommendedAction:
+          "Run a multi-hop GraphRAG query in the Pantomath Knowledge Playground.",
+        actionLabel: "Open Playground",
+        actionUrl: "/pantomath",
+      },
+      {
+        situation: "Want Cursor, Antigravity, or Claude Desktop to query internal architecture",
+        whenToUse: "When pairing with AI coding assistants on private repositories.",
+        recommendedAction:
+          "Copy the Opsway Cloud MCP Gateway config and pair it with a team API key.",
+        actionLabel: "MCP & IDE Setup",
+        actionUrl: "/pantomath/mcp",
+      },
+      {
+        situation: "Checking which repositories and vector chunks are indexed per product",
+        whenToUse: "After adding new repositories or switching active plan products.",
+        recommendedAction:
+          "Inspect indexed products, repository inventories, and chunk counts.",
+        actionLabel: "Indexed Products",
+        actionUrl: "/pantomath/products",
+      },
+    ],
+    loggedInHowToSteps: [
+      {
+        step: "01",
+        title: "Verify Indexed Products & Repositories",
+        description:
+          "Open Indexed Products to confirm your Milvus collections and Git repositories are synced and active.",
+        proTip:
+          "Map each Pantomath product slug in the Service Catalog so Autonomous Agents automatically scope queries during incidents.",
+        ctaLabel: "View Indexed Products",
+        ctaUrl: "/pantomath/products",
+      },
+      {
+        step: "02",
+        title: "Query in the Knowledge Playground",
+        description:
+          "Test hybrid vector + graph traversal queries, toggle LLM synthesis, and tune top_k or graph hop depth.",
+        proTip:
+          "Ask 'Which repositories are indexed?' to trigger Pantomath's exact repo-inventory fast path.",
+        ctaLabel: "Open Playground",
+        ctaUrl: "/pantomath",
+      },
+      {
+        step: "03",
+        title: "Connect Your IDE via MCP",
+        description:
+          "Mint an Opsway API key and add the Opsway MCP Gateway URL to Cursor, Antigravity, or Claude Desktop.",
+        proTip:
+          "One MCP config gives your agent Pantomath, Monitoring, and Log Search tools simultaneously.",
+        ctaLabel: "Configure MCP",
+        ctaUrl: "/pantomath/mcp",
+      },
+    ],
+    codeExampleTitle: "Connect Pantomath via Opsway MCP Gateway",
+    codeExampleDescription:
+      "Add this block to your MCP client configuration (Cursor, Antigravity, or Claude Desktop):",
+    codeExample: `{
+  "mcpServers": {
+    "opsway": {
+      "type": "http",
+      "url": "https://api.opsway.eu/v1/mcp",
+      "headers": {
+        "Authorization": "Bearer <YOUR_OPSWAY_API_KEY>"
+      }
+    }
+  }
+}`,
+  },
 };
 
 const getDefaultProductFromHost = (paramProduct?: string): ProductSlug => {
@@ -713,11 +830,15 @@ const getDefaultProductFromHost = (paramProduct?: string): ProductSlug => {
     paramProduct === "hub" ||
     paramProduct === "monitoring" ||
     paramProduct === "logs" ||
-    paramProduct === "agents"
+    paramProduct === "agents" ||
+    paramProduct === "pantomath"
   ) {
     return paramProduct;
   }
   if (typeof window !== "undefined") {
+    if (window.location.hostname.startsWith("pantomath")) {
+      return "pantomath";
+    }
     if (window.location.hostname.startsWith("monitoring")) {
       return "monitoring";
     }
@@ -747,7 +868,8 @@ export const ProductInfoContent: FunctionComponent<{
     : productId === "hub" ||
       productId === "monitoring" ||
       productId === "logs" ||
-      productId === "agents"
+      productId === "agents" ||
+      productId === "pantomath"
     ? productId
     : selectedTab;
 
@@ -805,6 +927,12 @@ export const ProductInfoContent: FunctionComponent<{
               <Stack direction="row" spacing={1} alignItems="center">
                 <IoSparklesOutline color="#A871B7" />
                 <span>Autonomous Agents & MCP</span>
+              </Stack>
+            </Tab>
+            <Tab value="pantomath" sx={{ borderRadius: "sm", py: 1, px: 2 }}>
+              <Stack direction="row" spacing={1} alignItems="center">
+                <IoGitNetworkOutline color="#2dd4bf" />
+                <span>Pantomath GraphRAG</span>
               </Stack>
             </Tab>
           </TabList>

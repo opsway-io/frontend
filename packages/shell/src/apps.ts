@@ -3,6 +3,7 @@ export type OpswayAppId =
   | "agents"
   | "monitoring"
   | "logs"
+  | "pantomath"
   | "website"
   | "billing";
 
@@ -52,6 +53,15 @@ export const SUITE_APPS: SuiteAppMeta[] = [
     accentColor: "#5185a5",
     url: "https://logs.opsway.eu",
     guideUrl: "https://logs.opsway.eu/info",
+  },
+  {
+    id: "pantomath",
+    name: "Pantomath",
+    shortName: "Pantomath",
+    desc: "Code & Infra GraphRAG Knowledge",
+    accentColor: "#2dd4bf",
+    url: "https://pantomath.opsway.eu",
+    guideUrl: "https://pantomath.opsway.eu/info/pantomath",
   },
   {
     id: "website",

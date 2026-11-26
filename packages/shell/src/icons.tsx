@@ -247,6 +247,27 @@ export function SuiteAppIcon({
           <line x1="13" y1="16" x2="17" y2="16" />
         </svg>
       );
+    case "pantomath":
+      return (
+        <svg
+          width={size}
+          height={size}
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke={color}
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          aria-hidden="true"
+        >
+          <circle cx="12" cy="5" r="2.5" />
+          <circle cx="5" cy="18" r="2.5" />
+          <circle cx="19" cy="18" r="2.5" />
+          <line x1="10.7" y1="7.2" x2="6.3" y2="15.8" />
+          <line x1="13.3" y1="7.2" x2="17.7" y2="15.8" />
+          <line x1="7.5" y1="18" x2="16.5" y2="18" />
+        </svg>
+      );
     case "website":
       return (
         <svg

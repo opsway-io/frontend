@@ -15,6 +15,7 @@ import { Route as rootRouteImport } from './routes/__root'
 const IndexLazyRouteImport = createFileRoute('/')()
 const ContactIndexLazyRouteImport = createFileRoute('/contact/')()
 const GdprIndexLazyRouteImport = createFileRoute('/gdpr/')()
+const PantomathIndexLazyRouteImport = createFileRoute('/pantomath/')()
 const PricingIndexLazyRouteImport = createFileRoute('/pricing/')()
 const PrivacyPolicyIndexLazyRouteImport = createFileRoute('/privacy-policy/')()
 const TermsOfServiceIndexLazyRouteImport =
@@ -35,6 +36,13 @@ const GdprIndexLazyRoute = GdprIndexLazyRouteImport.update({
   path: '/gdpr/',
   getParentRoute: () => rootRouteImport,
 } as any).lazy(() => import('./routes/gdpr/index.lazy').then((d) => d.Route))
+const PantomathIndexLazyRoute = PantomathIndexLazyRouteImport.update({
+  id: '/pantomath/',
+  path: '/pantomath/',
+  getParentRoute: () => rootRouteImport,
+} as any).lazy(() =>
+  import('./routes/pantomath/index.lazy').then((d) => d.Route),
+)
 const PricingIndexLazyRoute = PricingIndexLazyRouteImport.update({
   id: '/pricing/',
   path: '/pricing/',
@@ -59,6 +67,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexLazyRoute
   '/contact/': typeof ContactIndexLazyRoute
   '/gdpr/': typeof GdprIndexLazyRoute
+  '/pantomath/': typeof PantomathIndexLazyRoute
   '/pricing/': typeof PricingIndexLazyRoute
   '/privacy-policy/': typeof PrivacyPolicyIndexLazyRoute
   '/terms-of-service/': typeof TermsOfServiceIndexLazyRoute
@@ -67,6 +76,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexLazyRoute
   '/contact': typeof ContactIndexLazyRoute
   '/gdpr': typeof GdprIndexLazyRoute
+  '/pantomath': typeof PantomathIndexLazyRoute
   '/pricing': typeof PricingIndexLazyRoute
   '/privacy-policy': typeof PrivacyPolicyIndexLazyRoute
   '/terms-of-service': typeof TermsOfServiceIndexLazyRoute
@@ -76,6 +86,7 @@ export interface FileRoutesById {
   '/': typeof IndexLazyRoute
   '/contact/': typeof ContactIndexLazyRoute
   '/gdpr/': typeof GdprIndexLazyRoute
+  '/pantomath/': typeof PantomathIndexLazyRoute
   '/pricing/': typeof PricingIndexLazyRoute
   '/privacy-policy/': typeof PrivacyPolicyIndexLazyRoute
   '/terms-of-service/': typeof TermsOfServiceIndexLazyRoute
@@ -86,6 +97,7 @@ export interface FileRouteTypes {
     | '/'
     | '/contact/'
     | '/gdpr/'
+    | '/pantomath/'
     | '/pricing/'
     | '/privacy-policy/'
     | '/terms-of-service/'
@@ -94,6 +106,7 @@ export interface FileRouteTypes {
     | '/'
     | '/contact'
     | '/gdpr'
+    | '/pantomath'
     | '/pricing'
     | '/privacy-policy'
     | '/terms-of-service'
@@ -102,6 +115,7 @@ export interface FileRouteTypes {
     | '/'
     | '/contact/'
     | '/gdpr/'
+    | '/pantomath/'
     | '/pricing/'
     | '/privacy-policy/'
     | '/terms-of-service/'
@@ -111,6 +125,7 @@ export interface RootRouteChildren {
   IndexLazyRoute: typeof IndexLazyRoute
   ContactIndexLazyRoute: typeof ContactIndexLazyRoute
   GdprIndexLazyRoute: typeof GdprIndexLazyRoute
+  PantomathIndexLazyRoute: typeof PantomathIndexLazyRoute
   PricingIndexLazyRoute: typeof PricingIndexLazyRoute
   PrivacyPolicyIndexLazyRoute: typeof PrivacyPolicyIndexLazyRoute
   TermsOfServiceIndexLazyRoute: typeof TermsOfServiceIndexLazyRoute
@@ -137,6 +152,13 @@ declare module '@tanstack/react-router' {
       path: '/gdpr'
       fullPath: '/gdpr/'
       preLoaderRoute: typeof GdprIndexLazyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pantomath/': {
+      id: '/pantomath/'
+      path: '/pantomath'
+      fullPath: '/pantomath/'
+      preLoaderRoute: typeof PantomathIndexLazyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/pricing/': {
@@ -167,6 +189,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexLazyRoute: IndexLazyRoute,
   ContactIndexLazyRoute: ContactIndexLazyRoute,
   GdprIndexLazyRoute: GdprIndexLazyRoute,
+  PantomathIndexLazyRoute: PantomathIndexLazyRoute,
   PricingIndexLazyRoute: PricingIndexLazyRoute,
   PrivacyPolicyIndexLazyRoute: PrivacyPolicyIndexLazyRoute,
   TermsOfServiceIndexLazyRoute: TermsOfServiceIndexLazyRoute,

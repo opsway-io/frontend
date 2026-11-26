@@ -74,6 +74,10 @@ const isMonitoringHost =
   typeof window !== "undefined" &&
   window.location.hostname.startsWith("monitoring");
 
+const isPantomathHost =
+  typeof window !== "undefined" &&
+  window.location.hostname.startsWith("pantomath");
+
 /** Authenticated app shell: global OpswayTopBar, standalone sidebar rail, and routed page. */
 const DashboardLayout: FunctionComponent = () => {
   const location = useLocation();
@@ -97,6 +101,9 @@ const DashboardLayout: FunctionComponent = () => {
     ...(platformProducts?.products?.managed_agent !== false
       ? (["agents"] as OpswayAppId[])
       : []),
+    ...(platformProducts?.products?.pantomath !== false
+      ? (["pantomath"] as OpswayAppId[])
+      : []),
   ];
 
   // Track mobile drawer by pathname so navigating automatically closes it.
@@ -115,29 +122,43 @@ const DashboardLayout: FunctionComponent = () => {
         location.pathname.startsWith("/reports") ||
         location.pathname === "/info/monitoring"));
 
-  const currentApp: OpswayAppId = isMonitoringContext
-    ? "monitoring"
-    : location.pathname.startsWith("/agents")
-      ? "agents"
-      : "hub";
+  const isPantomathContext =
+    isPantomathHost ||
+    location.pathname.startsWith("/pantomath") ||
+    location.pathname === "/info/pantomath";
+
+  const currentApp: OpswayAppId = isPantomathContext
+    ? "pantomath"
+    : isMonitoringContext
+      ? "monitoring"
+      : location.pathname.startsWith("/agents")
+        ? "agents"
+        : "hub";
 
   const guideHref =
-    currentApp === "monitoring"
-      ? "/info/monitoring"
-      : currentApp === "agents"
-        ? "/info/agents"
-        : "/info/hub";
+    currentApp === "pantomath"
+      ? "/info/pantomath"
+      : currentApp === "monitoring"
+        ? "/info/monitoring"
+        : currentApp === "agents"
+          ? "/info/agents"
+          : "/info/hub";
 
   const handleSelectTeam = (teamId: number | string) => {
     authentication.setCurrentTeamID(Number(teamId));
-    navigate(isMonitoringHost ? "/monitors" : "/", { replace: true });
+    navigate(
+      isPantomathHost ? "/pantomath" : isMonitoringHost ? "/monitors" : "/",
+      { replace: true },
+    );
   };
 
   return (
     <Shell>
       <OpswayTopBar
         currentApp={currentApp}
-        brandHref={isMonitoringHost ? "/monitors" : "/"}
+        brandHref={
+          isPantomathHost ? "/pantomath" : isMonitoringHost ? "/monitors" : "/"
+        }
         guideHref={guideHref}
         onNavigate={(path) => navigate(path)}
         userName={user?.displayName}

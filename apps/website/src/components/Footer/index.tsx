@@ -49,6 +49,9 @@ const Footer: FunctionComponent = () => {
             rowGap={1.5}
             alignItems="flex-start"
           >
+            <JoyLink component={Link} to="/pantomath" sx={linkSx}>
+              Pantomath
+            </JoyLink>
             <JoyLink component={Link} to="/pricing" sx={linkSx}>
               Pricing
             </JoyLink>

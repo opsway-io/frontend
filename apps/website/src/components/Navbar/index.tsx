@@ -16,6 +16,7 @@ import { FunctionComponent, ReactNode, useEffect, useState } from "react";
 import {
   IoChevronDown,
   IoClose,
+  IoGitNetworkOutline,
   IoGlobeOutline,
   IoLogoGithub,
   IoMenu,
@@ -31,6 +32,7 @@ interface ProductLink {
   title: string;
   description: string;
   url?: string;
+  to?: string;
   hash?: string;
   icon: ReactNode;
 }
@@ -47,6 +49,12 @@ const productLinks: ProductLink[] = [
     description: "Semantic vector & SQL log exploration",
     url: "https://logs.opsway.eu",
     icon: <PiTerminalWindowBold />,
+  },
+  {
+    title: "Pantomath",
+    description: "Code & infrastructure GraphRAG knowledge server",
+    to: "/pantomath",
+    icon: <IoGitNetworkOutline />,
   },
   {
     title: "Autonomous AI Agents",
@@ -71,6 +79,7 @@ const productLinks: ProductLink[] = [
 const pageLinks: { label: string; to?: string; href?: string; hash?: string }[] = [
   { label: "Monitoring", href: "https://monitoring.opsway.eu" },
   { label: "Log Search", href: "https://logs.opsway.eu" },
+  { label: "Pantomath", to: "/pantomath" },
   { label: "Opsway Hub", href: "https://my.opsway.eu" },
   { label: "Pricing", to: "/pricing" },
   { label: "FAQ", to: "/", hash: "faq" },
@@ -136,7 +145,14 @@ const ProductMenu: FunctionComponent = () => {
             key={link.title}
             component={link.url ? "a" : "button"}
             href={link.url}
-            onClick={link.url ? undefined : () => link.hash && navigate({ to: "/", hash: link.hash })}
+            onClick={
+              link.url
+                ? undefined
+                : () =>
+                    link.to
+                      ? navigate({ to: link.to })
+                      : link.hash && navigate({ to: "/", hash: link.hash })
+            }
             sx={{ gap: 1.5, py: 1, alignItems: "flex-start", textDecoration: "none" }}
           >
             <ProductIcon>{link.icon}</ProductIcon>
@@ -312,26 +328,47 @@ const Navbar: FunctionComponent = () => {
               Product
             </Typography>
             <Stack spacing={0.5}>
-              {productLinks.map((link) => (
-                <Button
-                  key={link.title}
-                  component="a"
-                  href={link.url || "/"}
-                  variant="plain"
-                  color="neutral"
-                  startDecorator={<ProductIcon>{link.icon}</ProductIcon>}
-                  sx={{
-                    justifyContent: "flex-start",
-                    gap: 0.5,
-                    px: 1,
-                    py: 1,
-                    color: "text.primary",
-                    fontWeight: 600,
-                  }}
-                >
-                  {link.title}
-                </Button>
-              ))}
+              {productLinks.map((link) =>
+                link.to ? (
+                  <Button
+                    key={link.title}
+                    component={Link}
+                    to={link.to}
+                    variant="plain"
+                    color="neutral"
+                    startDecorator={<ProductIcon>{link.icon}</ProductIcon>}
+                    sx={{
+                      justifyContent: "flex-start",
+                      gap: 0.5,
+                      px: 1,
+                      py: 1,
+                      color: "text.primary",
+                      fontWeight: 600,
+                    }}
+                  >
+                    {link.title}
+                  </Button>
+                ) : (
+                  <Button
+                    key={link.title}
+                    component="a"
+                    href={link.url || "/"}
+                    variant="plain"
+                    color="neutral"
+                    startDecorator={<ProductIcon>{link.icon}</ProductIcon>}
+                    sx={{
+                      justifyContent: "flex-start",
+                      gap: 0.5,
+                      px: 1,
+                      py: 1,
+                      color: "text.primary",
+                      fontWeight: 600,
+                    }}
+                  >
+                    {link.title}
+                  </Button>
+                )
+              )}
             </Stack>
 
             <Divider sx={{ my: 2 }} />

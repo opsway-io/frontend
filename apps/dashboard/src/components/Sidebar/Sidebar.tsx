@@ -9,11 +9,15 @@ import {
   IoBuildOutline,
   IoCardOutline,
   IoFlagOutline,
+  IoGitBranchOutline,
+  IoGitNetworkOutline,
   IoLayersOutline,
   IoPersonOutline,
   IoPulseOutline,
+  IoSearchOutline,
   IoSettingsOutline,
   IoSparklesOutline,
+  IoTerminalOutline,
 } from "react-icons/io5";
 import { PiFireSimpleBold, PiTerminalWindowBold } from "react-icons/pi";
 import { RiAlarmWarningLine } from "react-icons/ri";
@@ -61,6 +65,12 @@ const Sidebar: FunctionComponent<SidebarProps> = ({ variant = "rail" }) => {
     if (!platformProducts?.products) return true;
     return platformProducts.products[product] !== false;
   };
+
+  const isPantomathSubdomain =
+    typeof window !== "undefined" &&
+    (window.location.hostname.startsWith("pantomath") ||
+      location.pathname.startsWith("/pantomath") ||
+      location.pathname === "/info/pantomath");
 
   const isMonitoringSubdomain =
     typeof window !== "undefined" &&
@@ -122,6 +132,13 @@ const Sidebar: FunctionComponent<SidebarProps> = ({ variant = "rail" }) => {
           icon: <PiTerminalWindowBold />,
           iconColor: "info",
           product: "log_search",
+        },
+        {
+          to: "https://pantomath.opsway.eu",
+          text: "Pantomath ↗",
+          icon: <IoGitNetworkOutline />,
+          iconColor: "#2dd4bf",
+          product: "pantomath",
         },
       ],
     },
@@ -241,7 +258,75 @@ const Sidebar: FunctionComponent<SidebarProps> = ({ variant = "rail" }) => {
     },
   ];
 
-  const currentNav = isMonitoringSubdomain ? monitoringNavigation : hubNavigation;
+  const pantomathNavigation: NavigationSection[] = [
+    {
+      label: "Pantomath",
+      items: [
+        {
+          to: "/pantomath",
+          end: true,
+          text: "Knowledge Playground",
+          icon: <IoSearchOutline />,
+          iconColor: "#2dd4bf",
+        },
+        {
+          to: "/pantomath/products",
+          text: "Indexed Products",
+          icon: <IoGitBranchOutline />,
+          iconColor: "#2dd4bf",
+        },
+        {
+          to: "/pantomath/mcp",
+          text: "MCP & IDE Setup",
+          icon: <IoTerminalOutline />,
+          iconColor: "info",
+        },
+        {
+          to: "/info/pantomath",
+          text: "Product Info & Guide",
+          icon: <IoBookOutline />,
+          iconColor: "#2dd4bf",
+        },
+      ],
+    },
+    {
+      label: "Organisation",
+      items: [
+        {
+          to: "/services",
+          text: "Service Catalog",
+          icon: <IoLayersOutline />,
+          iconColor: "semantic.maintenance",
+        },
+        {
+          to: "/settings/usage",
+          text: "Usage & Quotas",
+          icon: <GoGraph />,
+          iconColor: "info",
+          minRole: Role.ADMIN,
+        },
+        {
+          to: "/team",
+          text: "Team",
+          icon: <AiOutlineTeam />,
+          iconColor: "semantic.team",
+        },
+        {
+          to: "/settings",
+          text: "Settings",
+          icon: <IoSettingsOutline />,
+          iconColor: "semantic.team",
+          minRole: Role.ADMIN,
+        },
+      ],
+    },
+  ];
+
+  const currentNav = isPantomathSubdomain
+    ? pantomathNavigation
+    : isMonitoringSubdomain
+      ? monitoringNavigation
+      : hubNavigation;
 
   return (
     <SidebarVariantContext.Provider value={variant}>

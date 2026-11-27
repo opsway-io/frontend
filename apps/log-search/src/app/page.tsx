@@ -54,6 +54,7 @@ import { opswayTheme } from "../components/theme";
 import { Sidebar } from "../components/Sidebar";
 import { LogSearchGuide } from "../components/LogSearchGuide";
 import { BillingPanel } from "../components/BillingPanel";
+import { TeamPanel } from "../components/TeamPanel";
 
 interface LogEvent {
   id?: string;
@@ -121,7 +122,7 @@ export default function Home() {
   const [histogramData, setHistogramData] = useState<HistogramPoint[]>([]);
   const [totalMatches, setTotalMatches] = useState<number | null>(null);
   const [isSearching, setIsSearching] = useState(false);
-  const [viewMode, setViewMode] = useState<"logs" | "dashboard" | "guide" | "billing">("logs");
+  const [viewMode, setViewMode] = useState<"logs" | "dashboard" | "guide" | "billing" | "team">("logs");
   const [expandedLogId, setExpandedLogId] = useState<string | number | null>(null);
 
   // Live Tailing
@@ -560,6 +561,10 @@ export default function Home() {
       stopLiveTailing();
       setViewMode("billing");
     },
+    onSelectTeam: () => {
+      stopLiveTailing();
+      setViewMode("team");
+    },
     onToggleLive: toggleLiveTailing,
   };
 
@@ -627,6 +632,8 @@ export default function Home() {
           <div className="w-full max-w-[1600px] mx-auto px-4 py-4 md:px-6 md:pt-8 md:pb-12 flex flex-col gap-4">
             {viewMode === "billing" ? (
               <BillingPanel />
+            ) : viewMode === "team" ? (
+              <TeamPanel />
             ) : viewMode === "guide" ? (
               <LogSearchGuide
                 onOpenErrorLogs={() => {

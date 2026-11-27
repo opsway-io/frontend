@@ -20,9 +20,7 @@ import {
   ShellTeamEntitlement,
   ShellTeamSubscription,
 } from "@opsway/shell";
-
-const OPSWAY_API_URL =
-  process.env.NEXT_PUBLIC_OPSWAY_API_URL || "https://api.opsway.eu";
+import { OPSWAY_API_URL, resolveOpswaySession } from "../lib/opswayApi";
 
 type UsageRange = "current_cycle" | "7d" | "30d" | "90d";
 type LogTrendMetric = "logMb" | "logEvents";
@@ -120,65 +118,31 @@ export function BillingPanel() {
   const [draftSpendCap, setDraftSpendCap] = useState<string | null>(null);
 
   const fetchBillingState = useCallback(async (selectedRange: UsageRange) => {
-    let meRes = await fetch(`${OPSWAY_API_URL}/v1/auth/me`, {
-      credentials: "include",
-    });
-    if (meRes.status === 401) {
-      const refreshRes = await fetch(`${OPSWAY_API_URL}/v1/auth/refresh`, {
-        method: "POST",
-        credentials: "include",
-      });
-      if (refreshRes.ok) {
-        meRes = await fetch(`${OPSWAY_API_URL}/v1/auth/me`, {
-          credentials: "include",
-        });
-      }
-    }
-    if (meRes.status === 401) {
+    const session = await resolveOpswaySession();
+    if (!session.authenticated || !session.teamId) {
       return {
         error:
+          session.error ??
           "Sign in to your Opsway account to view Log Search usage and quotas.",
         teamId: null as number | null,
         summary: null as BillingSummaryPayload | null,
         usage: null as LogSearchUsagePayload | null,
       };
     }
-    if (!meRes.ok) {
-      throw new Error(`Failed to resolve Opsway user (${meRes.status})`);
-    }
-    const meData = await meRes.json();
-    const userId: number | undefined = meData?.user?.id ?? meData?.id;
-    if (!userId) {
-      throw new Error("Could not determine authenticated Opsway user.");
-    }
-
-    const teamsRes = await fetch(
-      `${OPSWAY_API_URL}/v1/users/${userId}/teams`,
-      { credentials: "include" },
-    );
-    if (!teamsRes.ok) {
-      throw new Error(`Failed to resolve Opsway team (${teamsRes.status})`);
-    }
-    const teamsData = await teamsRes.json();
-    const firstTeamId: number | undefined =
-      teamsData?.teams?.[0]?.id ?? teamsData?.[0]?.id;
-    if (!firstTeamId) {
-      throw new Error("No Opsway team found for this account.");
-    }
 
     const [sumRes, usageRes] = await Promise.all([
-      fetch(`${OPSWAY_API_URL}/v1/teams/${firstTeamId}/billing/summary`, {
+      fetch(`${OPSWAY_API_URL}/v1/teams/${session.teamId}/billing/summary`, {
         credentials: "include",
       }),
       fetch(
-        `${OPSWAY_API_URL}/v1/teams/${firstTeamId}/usage?range=${encodeURIComponent(selectedRange)}`,
+        `${OPSWAY_API_URL}/v1/teams/${session.teamId}/usage?range=${encodeURIComponent(selectedRange)}`,
         { credentials: "include" },
       ),
     ]);
 
     return {
       error: null as string | null,
-      teamId: firstTeamId,
+      teamId: session.teamId,
       summary: sumRes.ok
         ? ((await sumRes.json()) as BillingSummaryPayload)
         : null,
@@ -494,6 +458,37 @@ export function BillingPanel() {
 
   return (
     <div className="flex flex-col gap-5">
+      {/* Settings Header & Top Selection Bar (matches monitoring & agent-context SettingsPage) */}
+      <div>
+        <h1 className="m-0 text-2xl font-semibold text-[#e7e9ee]">Settings</h1>
+        <p className="mt-1 mb-0 text-sm text-[#a3aab7]">
+          Manage your team&apos;s profile, integrations, API keys and billing.
+        </p>
+      </div>
+
+      <div className="flex items-center gap-1 border-b border-white/[0.08] overflow-x-auto">
+        {[
+          { label: "General", href: "https://my.opsway.eu/settings/general" },
+          {
+            label: "Integrations",
+            href: "https://my.opsway.eu/settings/integrations",
+          },
+          { label: "API Keys", href: "https://my.opsway.eu/settings/api-keys" },
+          { label: "AI Agent", href: "https://my.opsway.eu/settings/ai-agent" },
+        ].map((tab) => (
+          <a
+            key={tab.label}
+            href={tab.href}
+            className="px-3.5 py-2 text-sm font-medium whitespace-nowrap border-b-2 border-transparent text-[#a3aab7] hover:text-[#e7e9ee] no-underline transition-colors"
+          >
+            {tab.label}
+          </a>
+        ))}
+        <span className="px-3.5 py-2 text-sm font-medium whitespace-nowrap border-b-2 border-[#5185a5] text-[#e7e9ee]">
+          Usage &amp; Billing
+        </span>
+      </div>
+
       {notice && (
         <div className="px-4 py-2.5 rounded-lg bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 text-xs">
           {notice}

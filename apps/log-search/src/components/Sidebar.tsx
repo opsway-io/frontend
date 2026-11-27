@@ -7,9 +7,11 @@ import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import BarChartIcon from "@mui/icons-material/BarChart";
 import CodeIcon from "@mui/icons-material/Code";
 import CreditCardIcon from "@mui/icons-material/CreditCard";
+import GroupOutlinedIcon from "@mui/icons-material/GroupOutlined";
 import ListIcon from "@mui/icons-material/List";
 import MenuBookOutlinedIcon from "@mui/icons-material/MenuBookOutlined";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
+import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import StopIcon from "@mui/icons-material/Stop";
 
 interface SidebarProps {
@@ -213,16 +215,34 @@ export function Sidebar({
             onNavigate?.();
           }}
         />
+      </SidebarSection>
+
+      {/* Section 3: Organisation (shared structure across all product sub-sites) */}
+      <SidebarSection label="Organisation" collapsed={isCollapsed}>
         <SidebarItem
           text="Usage & Billing"
           icon={<CreditCardIcon sx={{ fontSize: 18 }} />}
           active={viewMode === "billing" && !isLive}
-          activeIconColor="#5185a5"
+          activeIconColor="#f4ac45"
           collapsed={isCollapsed}
           onClick={() => {
             onSelectBilling();
             onNavigate?.();
           }}
+        />
+        <SidebarItem
+          href="https://my.opsway.eu/team"
+          text="Team"
+          icon={<GroupOutlinedIcon sx={{ fontSize: 18 }} />}
+          collapsed={isCollapsed}
+          onClick={onNavigate}
+        />
+        <SidebarItem
+          href="https://my.opsway.eu/settings"
+          text="Settings"
+          icon={<SettingsOutlinedIcon sx={{ fontSize: 18 }} />}
+          collapsed={isCollapsed}
+          onClick={onNavigate}
         />
       </SidebarSection>
 

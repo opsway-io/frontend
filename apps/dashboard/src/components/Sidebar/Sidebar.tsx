@@ -204,6 +204,35 @@ const Sidebar: FunctionComponent<SidebarProps> = ({ variant = "rail" }) => {
     },
   ];
 
+  // Shared Organisation section kept identical across all product sub-sites
+  // (monitoring.opsway.eu, agent-context.opsway.eu, and logs.opsway.eu).
+  const productOrganisationSection: NavigationSection = {
+    label: "Organisation",
+    items: [
+      {
+        to: "/settings/billing",
+        text: "Usage & Billing",
+        icon: <IoCardOutline />,
+        iconColor: "warning.400",
+        minRole: Role.ADMIN,
+      },
+      {
+        to: "/team",
+        text: "Team",
+        icon: <AiOutlineTeam />,
+        iconColor: "semantic.team",
+      },
+      {
+        to: "/settings",
+        end: true,
+        text: "Settings",
+        icon: <IoSettingsOutline />,
+        iconColor: "semantic.team",
+        minRole: Role.ADMIN,
+      },
+    ],
+  };
+
   const monitoringNavigation: NavigationSection[] = [
     {
       label: "Monitoring",
@@ -252,38 +281,7 @@ const Sidebar: FunctionComponent<SidebarProps> = ({ variant = "rail" }) => {
         },
       ],
     },
-    {
-      label: "Organisation",
-      items: [
-        {
-          to: "/settings/usage",
-          text: "Usage & Quotas",
-          icon: <GoGraph />,
-          iconColor: "info",
-          minRole: Role.ADMIN,
-        },
-        {
-          to: "/settings/billing",
-          text: "Billing",
-          icon: <IoCardOutline />,
-          iconColor: "warning.400",
-          minRole: Role.ADMIN,
-        },
-        {
-          to: "/team",
-          text: "Team",
-          icon: <AiOutlineTeam />,
-          iconColor: "semantic.team",
-        },
-        {
-          to: "/settings",
-          text: "Settings",
-          icon: <IoSettingsOutline />,
-          iconColor: "semantic.team",
-          minRole: Role.ADMIN,
-        },
-      ],
-    },
+    productOrganisationSection,
   ];
 
   const agentContextNavigation: NavigationSection[] = [
@@ -317,44 +315,7 @@ const Sidebar: FunctionComponent<SidebarProps> = ({ variant = "rail" }) => {
         },
       ],
     },
-    {
-      label: "Organisation",
-      items: [
-        {
-          to: "/services",
-          text: "Service Catalog",
-          icon: <IoLayersOutline />,
-          iconColor: "semantic.maintenance",
-        },
-        {
-          to: "/settings/usage",
-          text: "Usage & Quotas",
-          icon: <GoGraph />,
-          iconColor: "info",
-          minRole: Role.ADMIN,
-        },
-        {
-          to: "/settings/billing",
-          text: "Billing",
-          icon: <IoCardOutline />,
-          iconColor: "warning.400",
-          minRole: Role.ADMIN,
-        },
-        {
-          to: "/team",
-          text: "Team",
-          icon: <AiOutlineTeam />,
-          iconColor: "semantic.team",
-        },
-        {
-          to: "/settings",
-          text: "Settings",
-          icon: <IoSettingsOutline />,
-          iconColor: "semantic.team",
-          minRole: Role.ADMIN,
-        },
-      ],
-    },
+    productOrganisationSection,
   ];
 
   const currentNav = isAgentContextSubdomain

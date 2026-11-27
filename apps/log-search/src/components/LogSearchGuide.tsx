@@ -367,6 +367,46 @@ export function LogSearchGuide({
           {CODE_EXAMPLE}
         </pre>
       </Paper>
+
+      {/* Section 5: Suite Synergy & Hub Link */}
+      <Paper
+        variant="outlined"
+        sx={{
+          p: 2.5,
+          bgcolor: "#191c22",
+          borderColor: "rgba(81, 133, 165, 0.3)",
+          display: "flex",
+          flexWrap: "wrap",
+          alignItems: "center",
+          justifyContent: "space-between",
+          gap: 2,
+        }}
+      >
+        <Box sx={{ maxWidth: 720 }}>
+          <Typography
+            sx={{ fontSize: "1rem", fontWeight: 600, color: "#e7e9ee" }}
+          >
+            Works Standalone or Across the Full Opsway Suite
+          </Typography>
+          <Typography
+            sx={{ fontSize: "0.85rem", color: "#a3aab7", mt: 0.5, lineHeight: 1.5 }}
+          >
+            Link your Log Search services in the Opsway Service Catalog so
+            Monitoring incidents, Autonomous Agents, and Agent Context
+            automatically correlate failing endpoints with matching stack traces
+            and source commits.
+          </Typography>
+        </Box>
+        <Button
+          component="a"
+          href="https://my.opsway.eu"
+          variant="contained"
+          size="small"
+          sx={{ bgcolor: "#5185a5", "&:hover": { bgcolor: "#41708d" } }}
+        >
+          Open Opsway Hub ↗
+        </Button>
+      </Paper>
     </div>
   );
 }

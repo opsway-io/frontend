@@ -152,7 +152,7 @@ export function Sidebar({
             }`
       }
     >
-      {/* Section 1: Log Search */}
+      {/* Section 1: Log Search (canonical 2-section product sub-site layout) */}
       <SidebarSection label="Log Search" collapsed={isCollapsed}>
         <SidebarItem
           text="Log Records"
@@ -193,10 +193,6 @@ export function Sidebar({
             onNavigate?.();
           }}
         />
-      </SidebarSection>
-
-      {/* Section 2: Developer & Docs */}
-      <SidebarSection label="Resources" collapsed={isCollapsed}>
         <SidebarItem
           href="/mcp"
           text="MCP Endpoint"
@@ -217,7 +213,7 @@ export function Sidebar({
         />
       </SidebarSection>
 
-      {/* Section 3: Organisation (shared structure across all product sub-sites) */}
+      {/* Section 2: Organisation (shared structure across all product sub-sites) */}
       <SidebarSection label="Organisation" collapsed={isCollapsed}>
         <SidebarItem
           text="Usage & Billing"

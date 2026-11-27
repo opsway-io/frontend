@@ -755,7 +755,13 @@ const UsageTab: FunctionComponent<UsageTabProps> = ({ embedded = false }) => {
             }}
             sx={{ minWidth: 200 }}
           >
-            {(Object.keys(TREND_META) as TrendMetric[]).map((m) => (
+            {(
+              scopedProduct === "monitoring"
+                ? (["probes", "notifications"] as TrendMetric[])
+                : scopedProduct === "pantomath"
+                  ? (["mcpCalls"] as TrendMetric[])
+                  : (Object.keys(TREND_META) as TrendMetric[])
+            ).map((m) => (
               <Option key={m} value={m}>
                 {TREND_META[m].label}
               </Option>
@@ -768,12 +774,14 @@ const UsageTab: FunctionComponent<UsageTabProps> = ({ embedded = false }) => {
         </Box>
       </Card>
 
-      {/* Bottom Two-Column Section: Top Consumers & Platform Governance */}
+      {/* Bottom Section: Top Consumers (and Platform Governance on Hub only) */}
       <Box
         sx={{
           display: "grid",
           gap: 2,
-          gridTemplateColumns: { xs: "1fr", lg: "1.4fr 1fr" },
+          gridTemplateColumns: scopedProduct
+            ? "1fr"
+            : { xs: "1fr", lg: "1.4fr 1fr" },
           alignItems: "start",
         }}
       >
@@ -781,19 +789,21 @@ const UsageTab: FunctionComponent<UsageTabProps> = ({ embedded = false }) => {
         <Card variant="outlined" sx={{ bgcolor: "background.surface", gap: 1.5 }}>
           <Stack direction="row" justifyContent="space-between" alignItems="center" flexWrap="wrap" gap={1}>
             <Typography level="title-md">Top Resource Consumers</Typography>
-            <Tabs
-              value={consumerTab}
-              onChange={(_, val) => setConsumerTab(val as ConsumerTab)}
-              sx={{ bgcolor: "transparent" }}
-            >
-              <TabList variant="soft" size="sm">
-                {isProductVisible("monitoring") && <Tab value="monitors">Monitors</Tab>}
-                {isProductVisible("log_search") && <Tab value="logServices">Log Services</Tab>}
-                {isProductVisible("pantomath") && <Tab value="pantomath">Agent Context</Tab>}
-                {isProductVisible("managed_agent") && <Tab value="triggers">Agent Triggers</Tab>}
-                {isProductVisible("managed_agent") && <Tab value="services">AI Services</Tab>}
-              </TabList>
-            </Tabs>
+            {!scopedProduct && (
+              <Tabs
+                value={consumerTab}
+                onChange={(_, val) => setConsumerTab(val as ConsumerTab)}
+                sx={{ bgcolor: "transparent" }}
+              >
+                <TabList variant="soft" size="sm">
+                  {isProductVisible("monitoring") && <Tab value="monitors">Monitors</Tab>}
+                  {isProductVisible("log_search") && <Tab value="logServices">Log Services</Tab>}
+                  {isProductVisible("pantomath") && <Tab value="pantomath">Agent Context</Tab>}
+                  {isProductVisible("managed_agent") && <Tab value="triggers">Agent Triggers</Tab>}
+                  {isProductVisible("managed_agent") && <Tab value="services">AI Services</Tab>}
+                </TabList>
+              </Tabs>
+            )}
           </Stack>
 
           <Sheet variant="outlined" sx={{ borderRadius: "sm", overflow: "auto" }}>
@@ -1021,24 +1031,26 @@ const UsageTab: FunctionComponent<UsageTabProps> = ({ embedded = false }) => {
           </Sheet>
         </Card>
 
-        {/* Platform & Governance Quotas */}
-        <Card variant="outlined" sx={{ bgcolor: "background.surface", gap: 2 }}>
-          <Typography level="title-md">Platform &amp; Governance</Typography>
+        {/* Platform & Governance Quotas (Hub-only cross-product overview) */}
+        {!scopedProduct && (
+          <Card variant="outlined" sx={{ bgcolor: "background.surface", gap: 2 }}>
+            <Typography level="title-md">Platform &amp; Governance</Typography>
 
-          <QuotaRow quota={usage.platform.teamSeats} />
-          <Typography level="body-xs" textColor="text.tertiary" sx={{ mt: -1 }}>
-            {usage.platform.activeMembers} active members · {usage.platform.pendingInvitations} pending invites
-          </Typography>
+            <QuotaRow quota={usage.platform.teamSeats} />
+            <Typography level="body-xs" textColor="text.tertiary" sx={{ mt: -1 }}>
+              {usage.platform.activeMembers} active members · {usage.platform.pendingInvitations} pending invites
+            </Typography>
 
-          <Divider />
+            <Divider />
 
-          <Box sx={{ display: "grid", gap: 1, gridTemplateColumns: "repeat(2, 1fr)" }}>
-            <StatPill label="Service Catalog" value={usage.platform.serviceCatalogCount} />
-            <StatPill label="Active API Keys" value={usage.platform.activeApiKeys} />
-            <StatPill label="Reports Generated" value={usage.platform.reportsGenerated} />
-            <StatPill label="Active Trigger Rules" value={managedAgent.activeTriggerRules} />
-          </Box>
-        </Card>
+            <Box sx={{ display: "grid", gap: 1, gridTemplateColumns: "repeat(2, 1fr)" }}>
+              <StatPill label="Service Catalog" value={usage.platform.serviceCatalogCount} />
+              <StatPill label="Active API Keys" value={usage.platform.activeApiKeys} />
+              <StatPill label="Reports Generated" value={usage.platform.reportsGenerated} />
+              <StatPill label="Active Trigger Rules" value={managedAgent.activeTriggerRules} />
+            </Box>
+          </Card>
+        )}
       </Box>
 
       {/* Pay-As-You-Go Overage & Grace Policy */}
@@ -1058,7 +1070,7 @@ const UsageTab: FunctionComponent<UsageTabProps> = ({ embedded = false }) => {
                 <Typography level="title-md">Overage Protection &amp; Pay-As-You-Go</Typography>
                 {usage.overage?.allowOverage && (
                   <Chip size="sm" variant="soft" color="primary">
-                    Active · Est. ${((usage.overage.estimatedOverageCents || 0) / 100).toFixed(2)}
+                    Active · Est. €{((usage.overage.estimatedOverageCents || 0) / 100).toFixed(2)}
                   </Chip>
                 )}
               </Stack>

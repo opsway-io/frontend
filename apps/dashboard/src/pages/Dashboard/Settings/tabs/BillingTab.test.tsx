@@ -3,6 +3,10 @@ import { MemoryRouter } from "react-router-dom";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import BillingTab from "./BillingTab";
 
+vi.mock("react-apexcharts", () => ({
+  default: () => <div data-testid="apex-chart" />,
+}));
+
 vi.mock("../../../../hooks/platform.query", () => ({
   usePlatformProducts: () => ({
     data: {
@@ -78,11 +82,38 @@ vi.mock("../../../../hooks/suite.query", () => ({
       },
       platform: {
         teamSeats: { key: "seats", label: "Team Members", used: 2, limit: 5, unit: "members", percent: 40, status: "ok" },
+        activeMembers: 2,
+        pendingInvitations: 0,
+        serviceCatalogCount: 2,
+        activeApiKeys: 1,
+        reportsGenerated: 3,
+      },
+      billingCycle: {
+        start: "2026-11-01T00:00:00Z",
+        end: "2026-12-01T00:00:00Z",
+        daysElapsed: 26,
+        daysTotal: 30,
+        daysRemaining: 4,
+      },
+      timeseries: [],
+      topConsumers: {
+        monitors: [],
+        logServices: [],
+        pantomathProducts: [],
+        triggers: [],
+        services: [],
+      },
+      overage: {
+        allowOverage: false,
+        estimatedOverageCents: 0,
+        eligible: true,
       },
       enforcement: [],
     },
   }),
   useUpdateEntitlement: () => ({ mutate: vi.fn(), isPending: false }),
+  useUpdateOverageSettings: () => ({ mutate: vi.fn(), isPending: false }),
+  useSetActivePantomathProduct: () => ({ mutate: vi.fn(), isPending: false }),
 }));
 
 vi.mock("../../../../hooks/team.query", () => ({

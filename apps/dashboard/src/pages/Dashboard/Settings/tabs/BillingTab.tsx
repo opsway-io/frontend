@@ -10,7 +10,6 @@ import {
 import { enqueueSnackbar } from "notistack";
 import { FunctionComponent, useMemo } from "react";
 import { IoOpenOutline } from "react-icons/io5";
-import { Link } from "react-router-dom";
 import type { TeamUsageResponse } from "../../../../api/endpoints/suite";
 import Placeholder from "../../../../components/Placeholder/Placeholder";
 import { usePlatformProducts } from "../../../../hooks/platform.query";
@@ -31,6 +30,7 @@ import {
 import { getSubdomainMode } from "../../../../routes/subdomain";
 import { FREE_PLAN, normalizePlanId, toBillingPlans } from "../billingPlans";
 import PricingCard from "../components/PricingCard";
+import UsageTab from "./UsageTab";
 
 const PRODUCT_META: Record<
   BillingProductSlug,
@@ -288,27 +288,30 @@ const BillingTab: FunctionComponent = () => {
     const meta = PRODUCT_META[scopedProduct];
     const { quotas, stats } = getProductQuotasAndStats(scopedProduct, usageData);
     return (
-      <ProductBillingShell
-        product={scopedProduct}
-        title={meta.title}
-        description={meta.description}
-        accentColor={meta.accentColor}
-        teamPlan={currentPlanId}
-        subscription={subscription}
-        entitlement={getEnt(scopedProduct)}
-        quotas={quotas}
-        stats={stats}
-        enforcement={enforcementByProduct[scopedProduct]}
-        addonCatalog={getAddonCatalog(scopedProduct)}
-        canManageBilling={canManageBilling}
-        isBusy={isMutating}
-        hubBillingUrl="https://my.opsway.eu/settings/billing"
-        hubUsageUrl="https://my.opsway.eu/settings/usage"
-        onToggleEnabled={(enabled) => handleToggleProduct(scopedProduct, enabled)}
-        onSelectAddonTier={(tier) => handleSelectAddon(scopedProduct, tier)}
-        onOpenCustomerPortal={openCustomerPortal}
-        onResumeSubscription={handleResumeSubscription}
-      />
+      <Stack spacing={3}>
+        <ProductBillingShell
+          product={scopedProduct}
+          title={meta.title}
+          description={meta.description}
+          accentColor={meta.accentColor}
+          teamPlan={currentPlanId}
+          subscription={subscription}
+          entitlement={getEnt(scopedProduct)}
+          quotas={quotas}
+          stats={stats}
+          enforcement={enforcementByProduct[scopedProduct]}
+          addonCatalog={getAddonCatalog(scopedProduct)}
+          canManageBilling={canManageBilling}
+          isBusy={isMutating}
+          hubBillingUrl="https://my.opsway.eu/settings/billing"
+          hubUsageUrl="https://my.opsway.eu/settings/billing"
+          onToggleEnabled={(enabled) => handleToggleProduct(scopedProduct, enabled)}
+          onSelectAddonTier={(tier) => handleSelectAddon(scopedProduct, tier)}
+          onOpenCustomerPortal={openCustomerPortal}
+          onResumeSubscription={handleResumeSubscription}
+        />
+        <UsageTab embedded />
+      </Stack>
     );
   }
 
@@ -374,14 +377,6 @@ const BillingTab: FunctionComponent = () => {
           </Typography>
         </Box>
         <Stack direction="row" spacing={1} flexWrap="wrap">
-          <Button
-            component={Link}
-            to="/settings/usage"
-            variant="soft"
-            color="primary"
-          >
-            View Platform Usage &amp; Quotas
-          </Button>
           {hasPaidPlan && (
             <Button
               variant="outlined"
@@ -461,6 +456,10 @@ const BillingTab: FunctionComponent = () => {
             );
           })}
         </Box>
+      </Box>
+      {/* Unified Platform Analytics, Trends, Top Consumers & Overage Protection */}
+      <Box sx={{ pt: 1 }}>
+        <UsageTab embedded />
       </Box>
     </Stack>
   );

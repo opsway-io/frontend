@@ -8,8 +8,7 @@ const TABS: RouteTab[] = [
   { label: "Integrations", path: "/settings/integrations" },
   { label: "API Keys", path: "/settings/api-keys" },
   { label: "AI Agent", path: "/settings/ai-agent" },
-  { label: "Usage", path: "/settings/usage" },
-  { label: "Billing", path: "/settings/billing" },
+  { label: "Usage & Billing", path: "/settings/billing" },
 ];
 
 /** Team-wide settings. The route is restricted to admins and owners. */

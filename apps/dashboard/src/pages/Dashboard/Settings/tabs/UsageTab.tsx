@@ -213,7 +213,12 @@ function enforcementLabel(e: ProductEnforcementSummary): string {
   }
 }
 
-const UsageTab: FunctionComponent = () => {
+interface UsageTabProps {
+  /** When embedded inside BillingTab, skips duplicate product quota cards and Manage Plan links. */
+  embedded?: boolean;
+}
+
+const UsageTab: FunctionComponent<UsageTabProps> = ({ embedded = false }) => {
   const subdomainMode = getSubdomainMode();
   const scopedProduct: Exclude<ProductFilter, "all"> | null =
     subdomainMode === "monitoring"
@@ -432,12 +437,20 @@ const UsageTab: FunctionComponent = () => {
       >
         <Box>
           <Stack direction="row" spacing={1} alignItems="center">
-            <Typography level="title-lg">
-              {scopedLabel ? `${scopedLabel} Usage & Quotas` : "Platform Usage & Quotas"}
+            <Typography level={embedded ? "title-md" : "title-lg"}>
+              {embedded
+                ? scopedLabel
+                  ? `${scopedLabel} Analytics, Trends & Overage Protection`
+                  : "Platform Analytics, Trends & Overage Protection"
+                : scopedLabel
+                  ? `${scopedLabel} Usage & Quotas`
+                  : "Platform Usage & Quotas"}
             </Typography>
-            <Chip size="sm" variant="soft" color="primary">
-              {usage.plan === "TEAM" ? "PRO" : usage.plan} Plan
-            </Chip>
+            {!embedded && (
+              <Chip size="sm" variant="soft" color="primary">
+                {usage.plan === "TEAM" ? "PRO" : usage.plan} Plan
+              </Chip>
+            )}
             <Chip size="sm" variant="outlined" color="neutral">
               Resets in {usage.billingCycle.daysRemaining}d
             </Chip>
@@ -475,24 +488,26 @@ const UsageTab: FunctionComponent = () => {
             Export CSV
           </Button>
 
-          <Button
-            size="sm"
-            variant="soft"
-            color="primary"
-            component={Link}
-            to="/settings/billing"
-            startDecorator={<IoCardOutline />}
-          >
-            Manage Plan
-          </Button>
+          {!embedded && (
+            <Button
+              size="sm"
+              variant="soft"
+              color="primary"
+              component={Link}
+              to="/settings/billing"
+              startDecorator={<IoCardOutline />}
+            >
+              Manage Plan
+            </Button>
+          )}
 
-          {scopedProduct && (
+          {!embedded && scopedProduct && (
             <Button
               size="sm"
               variant="outlined"
               color="primary"
               component="a"
-              href="https://my.opsway.eu/settings/usage"
+              href="https://my.opsway.eu/settings/billing"
             >
               Full Platform Usage ↗
             </Button>
@@ -529,8 +544,8 @@ const UsageTab: FunctionComponent = () => {
         </Alert>
       )}
 
-      {/* Product Filter Tabs (Hub-only; product subdomains are strictly scoped to their own product) */}
-      {!scopedProduct && (
+      {/* Product Filter Tabs (Hub-only when standalone; BillingTab already renders all 4 product cards) */}
+      {!embedded && !scopedProduct && (
         <Tabs
           value={productFilter}
           onChange={(_, val) => setProductFilter(val as ProductFilter)}
@@ -546,7 +561,8 @@ const UsageTab: FunctionComponent = () => {
         </Tabs>
       )}
 
-      {/* Modular Product Usage Cards */}
+      {/* Modular Product Usage Cards (shown when standalone; BillingTab renders them in unified view) */}
+      {!embedded && (
       <Box
         sx={{
           display: "grid",
@@ -715,6 +731,7 @@ const UsageTab: FunctionComponent = () => {
           </Card>
         )}
       </Box>
+      )}
 
       {/* Daily Consumption Trend Chart */}
       <Card variant="outlined" sx={{ bgcolor: "background.surface", gap: 2 }}>

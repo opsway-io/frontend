@@ -50,10 +50,21 @@ export function BillingPanel() {
   const [usage, setUsage] = useState<LogSearchUsagePayload | null>(null);
 
   const fetchBillingState = useCallback(async () => {
-    const teamsRes = await fetch(`${OPSWAY_API_URL}/v1/users/me/teams`, {
+    let meRes = await fetch(`${OPSWAY_API_URL}/v1/auth/me`, {
       credentials: "include",
     });
-    if (teamsRes.status === 401) {
+    if (meRes.status === 401) {
+      const refreshRes = await fetch(`${OPSWAY_API_URL}/v1/auth/refresh`, {
+        method: "POST",
+        credentials: "include",
+      });
+      if (refreshRes.ok) {
+        meRes = await fetch(`${OPSWAY_API_URL}/v1/auth/me`, {
+          credentials: "include",
+        });
+      }
+    }
+    if (meRes.status === 401) {
       return {
         error:
           "Sign in to your Opsway account to view Log Search usage and quotas.",
@@ -62,6 +73,19 @@ export function BillingPanel() {
         usage: null as LogSearchUsagePayload | null,
       };
     }
+    if (!meRes.ok) {
+      throw new Error(`Failed to resolve Opsway user (${meRes.status})`);
+    }
+    const meData = await meRes.json();
+    const userId: number | undefined = meData?.user?.id ?? meData?.id;
+    if (!userId) {
+      throw new Error("Could not determine authenticated Opsway user.");
+    }
+
+    const teamsRes = await fetch(
+      `${OPSWAY_API_URL}/v1/users/${userId}/teams`,
+      { credentials: "include" },
+    );
     if (!teamsRes.ok) {
       throw new Error(`Failed to resolve Opsway team (${teamsRes.status})`);
     }

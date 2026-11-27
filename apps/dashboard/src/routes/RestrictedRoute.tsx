@@ -88,7 +88,7 @@ const UnauthenticatedRoute: FunctionComponent<{ children?: ReactNode }> = ({
 
   if (authentication.isAuthenticated()) {
     const returnTo = new URLSearchParams(location.search).get("returnTo");
-    return <Navigate to={returnTo || "/monitors"} replace />;
+    return <Navigate to={returnTo || "/"} replace />;
   }
 
   return renderAllowed(children);

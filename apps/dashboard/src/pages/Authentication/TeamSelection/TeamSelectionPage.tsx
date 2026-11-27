@@ -17,7 +17,7 @@ const TeamSelectionPage: FunctionComponent = () => {
 
   const handleTeamSelect = (teamId: number) => {
     authentication.setCurrentTeamID(teamId);
-    navigate("/monitors", { replace: true });
+    navigate("/", { replace: true });
   };
 
   return (

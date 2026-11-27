@@ -29,7 +29,7 @@ const OAuthCallbackPage: FunctionComponent = () => {
 
         if (currentTeamId) {
           setCurrentTeamID(currentTeamId);
-          navigate("/monitors", { replace: true });
+          navigate("/", { replace: true });
         } else {
           navigate("/login/team/select", { replace: true });
         }

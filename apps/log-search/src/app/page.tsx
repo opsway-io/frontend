@@ -53,7 +53,7 @@ import { OpswayTopBar } from "@opsway/shell";
 import { opswayTheme } from "../components/theme";
 import { Sidebar } from "../components/Sidebar";
 import { LogSearchGuide } from "../components/LogSearchGuide";
-import { BillingPanel } from "../components/BillingPanel";
+import { SettingsPanel, SettingsTabId } from "../components/SettingsPanel";
 import { TeamPanel } from "../components/TeamPanel";
 
 interface LogEvent {
@@ -122,7 +122,38 @@ export default function Home() {
   const [histogramData, setHistogramData] = useState<HistogramPoint[]>([]);
   const [totalMatches, setTotalMatches] = useState<number | null>(null);
   const [isSearching, setIsSearching] = useState(false);
-  const [viewMode, setViewMode] = useState<"logs" | "dashboard" | "guide" | "billing" | "team">("logs");
+  const [viewMode, setViewMode] = useState<
+    "logs" | "dashboard" | "guide" | "billing" | "team" | "settings"
+  >(() => {
+    if (typeof window === "undefined") return "logs";
+    const v = new URLSearchParams(window.location.search).get("view");
+    if (
+      v === "guide" ||
+      v === "billing" ||
+      v === "team" ||
+      v === "settings" ||
+      v === "dashboard"
+    ) {
+      return v;
+    }
+    return "logs";
+  });
+  const [settingsTab, setSettingsTab] = useState<SettingsTabId>(() => {
+    if (typeof window === "undefined") return "general";
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("view") === "billing") return "billing";
+    const t = params.get("tab");
+    if (
+      t === "general" ||
+      t === "integrations" ||
+      t === "api-keys" ||
+      t === "ai-agent" ||
+      t === "billing"
+    ) {
+      return t;
+    }
+    return "general";
+  });
   const [expandedLogId, setExpandedLogId] = useState<string | number | null>(null);
 
   // Live Tailing
@@ -559,11 +590,17 @@ export default function Home() {
     },
     onSelectBilling: () => {
       stopLiveTailing();
+      setSettingsTab("billing");
       setViewMode("billing");
     },
     onSelectTeam: () => {
       stopLiveTailing();
       setViewMode("team");
+    },
+    onSelectSettings: () => {
+      stopLiveTailing();
+      setSettingsTab("general");
+      setViewMode("settings");
     },
     onToggleLive: toggleLiveTailing,
   };
@@ -630,8 +667,14 @@ export default function Home() {
           {/* Main scrollable workspace (mirrors DashboardLayout + Container) */}
           <main className="flex-1 min-w-0 h-full overflow-auto">
           <div className="w-full max-w-[1600px] mx-auto px-4 py-4 md:px-6 md:pt-8 md:pb-12 flex flex-col gap-4">
-            {viewMode === "billing" ? (
-              <BillingPanel />
+            {viewMode === "billing" || viewMode === "settings" ? (
+              <SettingsPanel
+                activeTab={viewMode === "billing" ? "billing" : settingsTab}
+                onSelectTab={(tab) => {
+                  setSettingsTab(tab);
+                  setViewMode(tab === "billing" ? "billing" : "settings");
+                }}
+              />
             ) : viewMode === "team" ? (
               <TeamPanel />
             ) : viewMode === "guide" ? (

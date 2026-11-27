@@ -101,7 +101,11 @@ function formatBytes(bytes: number): string {
   return `${bytes} B`;
 }
 
-export function BillingPanel() {
+export function BillingPanel({
+  hideSettingsChrome = false,
+}: {
+  hideSettingsChrome?: boolean;
+} = {}) {
   const [range, setRange] = useState<UsageRange>("current_cycle");
   const [trendMetric, setTrendMetric] = useState<LogTrendMetric>("logMb");
   const [loading, setLoading] = useState(true);
@@ -203,8 +207,8 @@ export function BillingPanel() {
 
   const returnUrl =
     typeof window !== "undefined"
-      ? `${window.location.origin}/billing`
-      : "https://logs.opsway.eu/billing";
+      ? `${window.location.origin}/settings/billing`
+      : "https://logs.opsway.eu/settings/billing";
 
   const chartData = useMemo(() => {
     return (usage?.timeseries ?? []).map((pt) => ({
@@ -459,35 +463,36 @@ export function BillingPanel() {
   return (
     <div className="flex flex-col gap-5">
       {/* Settings Header & Top Selection Bar (matches monitoring & agent-context SettingsPage) */}
-      <div>
-        <h1 className="m-0 text-2xl font-semibold text-[#e7e9ee]">Settings</h1>
-        <p className="mt-1 mb-0 text-sm text-[#a3aab7]">
-          Manage your team&apos;s profile, integrations, API keys and billing.
-        </p>
-      </div>
+      {!hideSettingsChrome && (
+        <>
+          <div>
+            <h1 className="m-0 text-2xl font-semibold text-[#e7e9ee]">Settings</h1>
+            <p className="mt-1 mb-0 text-sm text-[#a3aab7]">
+              Manage your team&apos;s profile, integrations, API keys and billing.
+            </p>
+          </div>
 
-      <div className="flex items-center gap-1 border-b border-white/[0.08] overflow-x-auto">
-        {[
-          { label: "General", href: "https://my.opsway.eu/settings/general" },
-          {
-            label: "Integrations",
-            href: "https://my.opsway.eu/settings/integrations",
-          },
-          { label: "API Keys", href: "https://my.opsway.eu/settings/api-keys" },
-          { label: "AI Agent", href: "https://my.opsway.eu/settings/ai-agent" },
-        ].map((tab) => (
-          <a
-            key={tab.label}
-            href={tab.href}
-            className="px-3.5 py-2 text-sm font-medium whitespace-nowrap border-b-2 border-transparent text-[#a3aab7] hover:text-[#e7e9ee] no-underline transition-colors"
-          >
-            {tab.label}
-          </a>
-        ))}
-        <span className="px-3.5 py-2 text-sm font-medium whitespace-nowrap border-b-2 border-[#5185a5] text-[#e7e9ee]">
-          Usage &amp; Billing
-        </span>
-      </div>
+          <div className="flex items-center gap-1 border-b border-white/[0.08] overflow-x-auto">
+            {[
+              { label: "General", href: "/settings/general" },
+              { label: "Integrations", href: "/settings/integrations" },
+              { label: "API Keys", href: "/settings/api-keys" },
+              { label: "AI Agent", href: "/settings/ai-agent" },
+            ].map((tab) => (
+              <a
+                key={tab.label}
+                href={tab.href}
+                className="px-3.5 py-2 text-sm font-medium whitespace-nowrap border-b-2 border-transparent text-[#a3aab7] hover:text-[#e7e9ee] no-underline transition-colors"
+              >
+                {tab.label}
+              </a>
+            ))}
+            <span className="px-3.5 py-2 text-sm font-medium whitespace-nowrap border-b-2 border-[#5185a5] text-[#e7e9ee]">
+              Usage &amp; Billing
+            </span>
+          </div>
+        </>
+      )}
 
       {notice && (
         <div className="px-4 py-2.5 rounded-lg bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 text-xs">

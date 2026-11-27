@@ -18,13 +18,14 @@ interface SidebarProps {
   variant?: "rail" | "drawer";
   collapsed: boolean;
   onToggleCollapsed: () => void;
-  viewMode: "logs" | "dashboard" | "guide" | "billing" | "team";
+  viewMode: "logs" | "dashboard" | "guide" | "billing" | "team" | "settings";
   isLive: boolean;
   onSelectLogs: () => void;
   onSelectHistogram: () => void;
   onSelectGuide: () => void;
   onSelectBilling: () => void;
   onSelectTeam: () => void;
+  onSelectSettings: () => void;
   onToggleLive: () => void;
   onNavigate?: () => void;
 }
@@ -139,6 +140,7 @@ export function Sidebar({
   onSelectGuide,
   onSelectBilling,
   onSelectTeam,
+  onSelectSettings,
   onToggleLive,
   onNavigate,
 }: SidebarProps) {
@@ -240,11 +242,15 @@ export function Sidebar({
           }}
         />
         <SidebarItem
-          href="https://my.opsway.eu/settings"
           text="Settings"
           icon={<SettingsOutlinedIcon sx={{ fontSize: 18 }} />}
+          active={viewMode === "settings" && !isLive}
+          activeIconColor="#5185a5"
           collapsed={isCollapsed}
-          onClick={onNavigate}
+          onClick={() => {
+            onSelectSettings();
+            onNavigate?.();
+          }}
         />
       </SidebarSection>
 
